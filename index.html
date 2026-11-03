@@ -122,22 +122,6 @@
         .live-embed-container { margin: 10px auto; width: 100%; max-width: 800px; height: 0; padding-bottom: 56.25%; position: relative; background: #000; border-radius: 8px; overflow: hidden; }
         .live-embed-container iframe { position: absolute; top:0; left:0; width: 100%; height: 100%; border: none; }
 
-        .community-main-grid { display: grid; grid-template-columns: 1fr; gap: 20px; margin-bottom: 20px; }
-        @media(min-width: 850px) { .community-main-grid { grid-template-columns: 1fr 340px; } }
-        .panel-card { background: var(--panel-bg); border: 1px solid var(--steel-border); padding: 20px; border-radius: 12px; display: flex; flex-direction: column; }
-        .panel-card h3 { font-family: 'Orbitron', sans-serif; font-size: 16px; color: var(--accent-color); margin-bottom: 15px; }
-
-        .social-buttons-flex { display: flex; flex-direction: column; gap: 10px; }
-        .social-btn-item { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 12px; border-radius: 8px; font-family: 'Orbitron'; font-size: 13px; font-weight: 700; text-decoration: none; color: #fff; transition: 0.2s; }
-        .btn-discord-net { background: #5865F2; }
-        .btn-youtube-net { background: #FF0000; }
-        .btn-instagram-net { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
-        .social-btn-item:hover { filter: brightness(1.2); }
-
-        .qrcode-box { display: flex; flex-direction: column; align-items: center; justify-content: center; background: #0b0f17; border: 1px solid var(--steel-border); padding: 15px; border-radius: 8px; text-align: center; }
-        .qrcode-img { width: 170px; height: 170px; object-fit: contain; background: #fff; padding: 5px; border-radius: 6px; margin-bottom: 10px; }
-        .btn-qrcode-link { display: inline-block; background: var(--gold-warning); color: #000; text-decoration: none; font-family: 'Orbitron'; font-size: 11px; font-weight: 800; padding: 6px 12px; border-radius: 6px; margin-top: 8px; }
-
         .admin-section { display: none; background: #070a10; border-top: 3px solid var(--accent-color); padding: 40px 20px; margin-top: 40px; }
         .admin-container { width: 100%; max-width: 1100px; margin: 0 auto; background: var(--panel-bg); border: 1px solid var(--steel-bright); padding: 30px; border-radius: 16px; }
         .admin-grid-tools { display: grid; grid-template-columns: 1fr; gap: 20px; margin-bottom: 20px; }
@@ -199,7 +183,6 @@
         </div>
     </div>
 
-    <!-- TÍTULO CORRIGIDO PARA WAVECOMBAT HUB -->
     <header class="hero" id="heroHeader">
         <h1 id="heroTitle">WAVECOMBAT <span>HUB</span></h1>
         <p id="heroDesc">Plataforma moderna de jogos, arcade e experiências imersivas.</p>
@@ -236,40 +219,8 @@
         </div>
     </section>
 
-    <section id="transmissaoAoVivo">
-        <div class="live-section-box" id="liveSectionBox">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                <h3 style="margin:0; font-size:14px; color:var(--alert-red); font-family:'Orbitron';">🔴 TRANSMISSÃO AO VIVO / YOUTUBE</h3>
-            </div>
-            <div class="live-embed-container">
-                <iframe id="youtubeLiveIframe" src="about:blank" allowfullscreen></iframe>
-            </div>
-        </div>
-    </section>
-
-    <section id="comunidade">
-        <h2 class="section-title">Central Social & Comunidade</h2>
-        <div class="community-main-grid">
-            <div class="panel-card">
-                <h3>🌐 Minhas Redes & Comunidade</h3>
-                <p style="font-size:13px; color:#94a3b8; margin-bottom:15px;">Conecte-se às redes oficiais:</p>
-                <div class="social-buttons-flex">
-                    <a href="https://discord.gg/FaeYug6XBx" target="_blank" class="social-btn-item btn-discord-net" id="linkBtnDiscord">🎮 Discord Oficial</a>
-                    <a href="https://youtube.com/@capudooficial7" target="_blank" class="social-btn-item btn-youtube-net" id="linkBtnYoutube">▶ YouTube (@capudooficial7)</a>
-                    <a href="https://www.instagram.com/capudooficial.7/" target="_blank" class="social-btn-item btn-instagram-net" id="linkBtnInstagram">📸 Instagram Oficial</a>
-                </div>
-            </div>
-            <div class="qrcode-box">
-                <h4 style="font-family:'Orbitron'; font-size:12px; color:var(--accent-color); margin-bottom:8px;">🎁 Doação LivePix</h4>
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://livepix.gg/capudooficial" alt="QR Code LivePix" class="qrcode-img" id="qrCodeImageDisplay">
-                <span style="font-size:11px; color:#94a3b8; margin-bottom:4px;">Aponte a câmara para doar</span>
-                <a href="https://livepix.gg/capudooficial" target="_blank" class="btn-qrcode-link" id="btnQrCodeDirectLink">🔗 Acessar Link LivePix</a>
-            </div>
-        </div>
-    </section>
-
     <!-- PAINEL ADM -->
-    <div class="admin-section" id="adminSection">
+    <div class="admin-section" id="adminSection" style="display:none; background:#070a10; border-top:3px solid var(--accent-color); padding:40px 20px; margin-top:40px;">
         <div class="admin-container">
             <h3 style="color:var(--accent-color); font-family:'Orbitron'; text-align:center; margin-bottom:20px; font-size:18px;">⚙️ PAINEL ADMINISTRATIVO</h3>
 
@@ -287,7 +238,7 @@
                 </div>
             </div>
 
-            <h4 style="color:#fff; margin-bottom:12px; font-family:'Orbitron';">🎮 Gestão, Edição e Publicação de Games</h4>
+            <h4 style="color:#fff; margin-bottom:12px; font-family:'Orbitron';">🎮 Gestão, Testes e Publicação de Games</h4>
             <div id="adminListaJogos" style="display:flex; flex-direction:column; gap:12px;"></div>
 
             <div style="text-align:center; margin-top:20px;">
@@ -297,11 +248,11 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.051 (Fixed Title & Unified State)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.053 (Private Draft Testing)</strong>
     </footer>
 
     <script>
-        // LISTA OFICIAL ÚNICA (Sem duplicar no painel ADM e sincronizada para todos)
+        // LISTA INICIAL: Apenas o Riverbed Warfare publicado; os outros vêm como 'publicado: false' para você testar e editar à vontade!
         const jogosIniciais = [
             {
                 id: 101,
@@ -323,7 +274,7 @@
                 arquivo: "jogos/esquadrãoao-de-tanques.html",
                 img: "",
                 extras: [],
-                publicado: false,
+                publicado: false, // Privado para testes no ADM
                 destaqueManual: false,
                 acessos: 88
             },
@@ -335,7 +286,7 @@
                 arquivo: "jogos/Gravitas-Arena.html",
                 img: "",
                 extras: [],
-                publicado: false,
+                publicado: false, // Privado para testes no ADM
                 destaqueManual: false,
                 acessos: 64
             },
@@ -347,7 +298,7 @@
                 arquivo: "jogos/Casa_Zumbi.html",
                 img: "",
                 extras: [],
-                publicado: false,
+                publicado: false, // Privado para testes no ADM
                 destaqueManual: false,
                 acessos: 120
             }
@@ -385,18 +336,17 @@
             });
         }
 
-        // UNIFICAÇÃO: Garante que os dados do localStorage respeitem a lista unificada sem duplicar IDs
         function obterJogos() {
-            let salvos = localStorage.getItem('wavecombat_jogos_v2');
+            let salvos = localStorage.getItem('wavecombat_jogos_v4');
             if(!salvos) {
-                localStorage.setItem('wavecombat_jogos_v2', JSON.stringify(jogosIniciais));
+                localStorage.setItem('wavecombat_jogos_v4', JSON.stringify(jogosIniciais));
                 return jogosIniciais;
             }
             return JSON.parse(salvos);
         }
 
         function salvarJogos(jogos) {
-            localStorage.setItem('wavecombat_jogos_v2', JSON.stringify(jogos));
+            localStorage.setItem('wavecombat_jogos_v4', JSON.stringify(jogos));
             atualizarPlataforma();
             return true;
         }
@@ -428,7 +378,6 @@
                 renderizarJogosAdmin();
                 document.getElementById('inputAdminLiveUrl').value = localStorage.getItem('wavecombat_live_url') || '';
             }
-            atualizarVisibilidadeLiveGeral();
         }
 
         function fazerLoginPlataforma(e) {
@@ -444,7 +393,6 @@
                 alert('Credenciais inválidas.'); return;
             }
             fecharModalAuth();
-            atualizarVisibilidadeLiveGeral();
         }
 
         function fazerLogoutAdmin() {
@@ -454,83 +402,6 @@
             document.getElementById('btnToggleAdmNav').style.display = 'none';
             document.getElementById('btnAuthNav').textContent = 'Entrar';
             alert('Sessão encerrada.');
-            atualizarVisibilidadeLiveGeral();
-        }
-
-        function converterUrlYoutubeParaEmbed(url) {
-            if(!url) return "";
-            let videoId = "";
-            if (url.includes("embed/")) return url;
-            if (url.includes("watch?v=")) videoId = url.split("watch?v=")[1].split("&")[0];
-            else if (url.includes("youtu.be/")) videoId = url.split("youtu.be/")[1].split("?")[0];
-            else if (url.includes("live/")) videoId = url.split("live/")[1].split("?")[0];
-            return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
-        }
-
-        function atualizarVisibilidadeLiveGeral() {
-            const liveAtiva = localStorage.getItem('wavecombat_live_ativa') === 'true';
-            const rawUrl = localStorage.getItem('wavecombat_live_url') || '';
-            const box = document.getElementById('liveSectionBox');
-            const deveExibir = (liveAtiva && rawUrl.trim() !== '') || painelAdmAberto;
-            box.style.display = deveExibir ? 'block' : 'none';
-            document.getElementById('youtubeLiveIframe').src = (deveExibir && rawUrl) ? converterUrlYoutubeParaEmbed(rawUrl) : "about:blank";
-        }
-
-        function toggleStatusLiveAdm() {
-            const atual = localStorage.getItem('wavecombat_live_ativa') === 'true';
-            localStorage.setItem('wavecombat_live_ativa', (!atual).toString());
-            atualizarVisibilidadeLiveGeral();
-        }
-
-        function salvarUrlLiveAdmDireto() {
-            localStorage.setItem('wavecombat_live_url', document.getElementById('inputAdminLiveUrl').value.trim());
-            atualizarVisibilidadeLiveGeral();
-            alert('Live atualizada!');
-        }
-
-        function carregarLogoEConfig() {
-            const logo = localStorage.getItem('wavecombat_logo');
-            if (logo) {
-                document.getElementById('defaultLogoSvg').style.display = 'none';
-                let img = document.getElementById('customNavLogo');
-                if(!img) {
-                    img = document.createElement('img');
-                    img.id = 'customNavLogo'; img.className = 'logo-img-custom';
-                    document.getElementById('navLogoContainer').prepend(img);
-                }
-                img.src = logo;
-            }
-            atualizarVisibilidadeLiveGeral();
-        }
-
-        function alterarLogoSite() {
-            const f = document.getElementById('admLogoFile').files[0];
-            if(f) {
-                comprimirImagem(f, 400, 0.9).then(imgUrl => {
-                    localStorage.setItem('wavecombat_logo', imgUrl);
-                    carregarLogoEConfig();
-                    alert('Logo atualizada!');
-                });
-            }
-        }
-
-        function aplicarCorDinamicaDaImagem(imgSrc) {
-            if(!imgSrc) return;
-            const img = new Image();
-            img.crossOrigin = "Anonymous";
-            img.src = imgSrc;
-            img.onload = function() {
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                canvas.width = 50; canvas.height = 50;
-                ctx.drawImage(img, 0, 0, 50, 50);
-                const p = ctx.getImageData(10, 10, 30, 30).data;
-                let r = 0, g = 0, b = 0, count = 0;
-                for (let i = 0; i < p.length; i += 4) { r += p[i]; g += p[i+1]; b += p[i+2]; count++; }
-                r = Math.floor(r / count); g = Math.floor(g / count); b = Math.floor(b / count);
-                if(r < 40 && g < 40 && b < 40) { r = 0; g = 240; b = 255; }
-                document.documentElement.style.setProperty('--accent-color', `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`);
-            };
         }
 
         function tentarExecutarJogo(jogo) {
@@ -584,6 +455,7 @@
 
         function atualizarPlataforma() {
             let todosJogos = obterJogos();
+            // Visitantes normais só veem os publicados. ADM no painel vê todos para testar e gerir.
             let jogosPublicados = todosJogos.filter(j => j.publicado);
 
             const busca = (document.getElementById('inputSearchGames')?.value || '').toLowerCase();
@@ -599,19 +471,15 @@
 
             if(capaDestaque) {
                 document.getElementById('heroHeader').style.backgroundImage = `url('${capaDestaque}')`;
-                aplicarCorDinamicaDaImagem(capaDestaque);
             }
 
             const featuredContainer = document.getElementById('featuredGameContainer');
             if(destaque) {
                 const isFav = favs.includes(destaque.id);
-                let extrasHtml = (destaque.extras && destaque.extras.length > 0) ? `<div class="carousel-container">` + destaque.extras.map(e => `<img src="${e}" class="carousel-thumb" onclick="trocarCapaDestaque(this.src)">`).join('') + `</div>` : '';
-
                 featuredContainer.innerHTML = `
                     <div class="featured-game-box">
-                        <div class="featured-badge">${destaque.destaqueManual ? '★ DESTAQUE MANUAL' : '🔥 DESTAQUE AUTOMÁTICO (Mais Jogado)'}</div>
-                        <img src="${capaDestaque}" class="featured-img" id="mainFeaturedImg" alt="${destaque.nome}" onclick="tentarExecutarJogo(${JSON.stringify(destaque).replace(/"/g, '&quot;')})">
-                        ${extrasHtml}
+                        <div class="featured-badge">${destaque.destaqueManual ? '★ DESTAQUE MANUAL' : '🔥 DESTAQUE AUTOMÁTICO'}</div>
+                        <img src="${capaDestaque}" class="featured-img" alt="${destaque.nome}" onclick="tentarExecutarJogo(${JSON.stringify(destaque).replace(/"/g, '&quot;')})">
                         <h3 style="font-size:18px; font-family:'Orbitron';">${destaque.nome}</h3>
                         <p style="font-size:13px; color:#94a3b8;">${destaque.desc}</p>
                         <div class="game-card-actions">
@@ -645,11 +513,6 @@
             if(painelAdmAberto) renderizarJogosAdmin();
         }
 
-        function trocarCapaDestaque(src) {
-            document.getElementById('mainFeaturedImg').src = src;
-            aplicarCorDinamicaDaImagem(src);
-        }
-
         function renderizarJogosAdmin() {
             const container = document.getElementById('adminListaJogos');
             const jogos = obterJogos();
@@ -663,16 +526,18 @@
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <span style="color:var(--accent-color); font-weight:bold; font-size:13px;">${jogo.nome} (Acessos: ${jogo.acessos || 0})</span>
                         <div style="display:flex; gap:8px;">
+                            <!-- Botão de Teste Direto para ADM -->
+                            <button type="button" class="btn-gaming" onclick="tentarExecutarJogo(${JSON.stringify(jogo).replace(/"/g, '&quot;')})" style="font-size:10px; padding:4px 8px;">🎮 Testar</button>
                             <button type="button" class="btn-gaming ${jogo.publicado ? 'btn-danger' : 'btn-success'}" onclick="togglePublicarJogo(${jogo.id})" style="font-size:10px; padding:4px 10px;">
                                 ${jogo.publicado ? '👁️ Ocultar do Site' : '🚀 Publicar no Site'}
                             </button>
                             <button type="button" class="btn-gaming" onclick="fixarDestaqueAdm(${jogo.id})" style="font-size:10px; padding:4px 8px; background:${jogo.destaqueManual?'var(--gold-warning)':'var(--steel-bright)'}; color:${jogo.destaqueManual?'#000':'#fff'};">
-                                ${jogo.destaqueManual ? '★ Fixado Manual' : '☆ Definir Destaque'}
+                                ${jogo.destaqueManual ? '★ Fixado' : '☆ Destaque'}
                             </button>
                         </div>
                     </div>
                     <label class="file-upload-label">Título: <input type="text" value="${jogo.nome}" id="editNome_${jogo.id}" class="auth-input"></label>
-                    <label class="file-upload-label">Gênero / Categoria: 
+                    <label class="file-upload-label">Gênero: 
                         <select id="editCat_${jogo.id}" class="auth-input">
                             <option value="Arcade" ${jogo.categoria==='Arcade'?'selected':''}>Arcade</option>
                             <option value="Estratégia" ${jogo.categoria==='Estratégia'?'selected':''}>Estratégia</option>
@@ -680,8 +545,7 @@
                         </select>
                     </label>
                     <label class="file-upload-label">Descrição: <textarea id="editDesc_${jogo.id}" class="auth-input" style="height:40px;">${jogo.desc}</textarea></label>
-                    <label class="file-upload-label">🖼️ Alterar Capa Principal: <input type="file" id="editImgFile_${jogo.id}" accept="image/*"></label>
-                    <label class="file-upload-label">🖼️ Adicionar Prints (Carrossel): <input type="file" id="editExtraFiles_${jogo.id}" accept="image/*" multiple></label>
+                    <label class="file-upload-label">🖼️ Alterar Capa: <input type="file" id="editImgFile_${jogo.id}" accept="image/*"></label>
                     <button type="button" class="btn-gaming" onclick="salvarEdicaoJogoAdm(${jogo.id})" style="font-size:10px; padding:6px; margin-top:5px;">💾 Guardar Alterações</button>
                 `;
                 container.appendChild(item);
@@ -695,7 +559,7 @@
                 j.publicado = !j.publicado;
                 salvarJogos(jogos);
                 renderizarJogosAdmin();
-                alert(j.publicado ? "Jogo publicado com sucesso!" : "Jogo ocultado.");
+                alert(j.publicado ? "Jogo publicado e visível para todos!" : "Jogo ocultado (fica privado para testes no ADM).");
             }
         }
 
@@ -704,7 +568,7 @@
             jogos.forEach(j => j.destaqueManual = (j.id === id));
             salvarJogos(jogos);
             renderizarJogosAdmin();
-            alert("Destaque manual definido!");
+            alert("Destaque definido!");
         }
 
         async function salvarEdicaoJogoAdm(id) {
@@ -716,14 +580,7 @@
                 jogos[idx].desc = document.getElementById(`editDesc_${id}`).value;
                 
                 const imgInput = document.getElementById(`editImgFile_${id}`)?.files[0];
-                const extraInput = document.getElementById(`editExtraFiles_${id}`)?.files;
-
                 if(imgInput) jogos[idx].img = await comprimirImagem(imgInput);
-                if(extraInput && extraInput.length > 0) {
-                    let extrasComp = [];
-                    for(let f of extraInput) extrasComp.push(await comprimirImagem(f));
-                    jogos[idx].extras = (jogos[idx].extras || []).concat(extrasComp);
-                }
 
                 if(salvarJogos(jogos)) alert("Alterações guardadas com sucesso!");
             }
