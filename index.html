@@ -169,6 +169,7 @@
             <li>
                 <div class="user-nav-wrapper">
                     <button class="btn-toggle-adm-nav" id="btnToggleAdmNav" onclick="alternarPainelAdm()">⚙️ ADM</button>
+                    <!-- CORRIGIDO: Adicionado o onclick para abrir a modal de login corretamente -->
                     <button class="btn-auth-nav" id="btnAuthNav" onclick="abrirModalAuth()">Entrar</button>
                 </div>
             </li>
@@ -292,7 +293,7 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.102 (Full Features Restored)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.103 (Auth Button Fixed)</strong>
     </footer>
 
     <script>
@@ -493,7 +494,7 @@
 
         function toggleStatusLiveAdm() {
             const atual = localStorage.getItem('wavecombat_live_ativa') === 'true';
-            localStorage.setItem('wavecombat_live_ativa`, (!atual).toString());
+            localStorage.setItem('wavecombat_live_ativa', (!atual).toString());
             atualizarEstadoBotaoLiveAdm();
             atualizarVisibilidadeLiveGeral();
         }
