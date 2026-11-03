@@ -234,18 +234,18 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.054 (Fixed Paths & Stable State)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.055 (Exact Path Matching)</strong>
     </footer>
 
     <script>
-        // CAMINHOS CORRIGIDOS E EXATOS PARA OS JOGOS NA PASTA DO GITHUB
+        // CAMINHOS EXATOS CORRESPONDENTES ÀS PASTAS DO GITHUB
         const jogosIniciais = [
             {
                 id: 101,
                 nome: "Riverbed Warfare",
                 categoria: "Estratégia",
                 desc: "Combate veicular em tempo real, extração de recursos e defesa contra hordas.",
-                arquivo: "jogos/guerra-no-leito-do-rio.html",
+                arquivo: "jogos/riverbed-warfare.html",
                 img: "",
                 extras: [],
                 publicado: true,
@@ -281,7 +281,7 @@
                 nome: "Zombie House",
                 categoria: "Multiplayer",
                 desc: "Sobreviva ao apocalipse zumbi na casa florestal.",
-                arquivo: "jogos/Casa_Zumbi.html",
+                arquivo: "jogos/Zombie_House.html",
                 img: "",
                 extras: [],
                 publicado: true,
@@ -322,18 +322,17 @@
             });
         }
 
-        // UNIFICAÇÃO PERMANENTE: Atualizado para v5 para evitar resets indesejados
         function obterJogos() {
-            let salvos = localStorage.getItem('wavecombat_jogos_v5');
+            let salvos = localStorage.getItem('wavecombat_jogos_v6');
             if(!salvos) {
-                localStorage.setItem('wavecombat_jogos_v5', JSON.stringify(jogosIniciais));
+                localStorage.setItem('wavecombat_jogos_v6', JSON.stringify(jogosIniciais));
                 return jogosIniciais;
             }
             return JSON.parse(salvos);
         }
 
         function salvarJogos(jogos) {
-            localStorage.setItem('wavecombat_jogos_v5', JSON.stringify(jogos));
+            localStorage.setItem('wavecombat_jogos_v6', JSON.stringify(jogos));
             atualizarPlataforma();
             return true;
         }
