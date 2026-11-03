@@ -669,7 +669,7 @@
         </div>
     </section>
 
-    <!-- TRANSMISSÃO AO VIVO -->
+    <!-- TRANSMISSÃO AO VIVO (AUTOMÁTICA) -->
     <section id="transmissaoAoVivo">
         <div class="live-section-box" id="liveSectionBox">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
@@ -754,7 +754,7 @@
             </div>
 
             <div class="admin-block" style="border-color:var(--accent-color); margin-bottom:20px;">
-                <h4 style="color:#fff;">➕ Cadastrar Novo Game</h4>
+                <h4 style="color:#fff;">➕ Cadastrar Novo Game (Local)</h4>
                 <input type="text" id="novoNome" placeholder="Nome do Jogo" class="auth-input">
                 <textarea id="novaDesc" placeholder="Descrição curta" class="auth-input" style="height:60px;"></textarea>
                 <select id="novoCategoria" class="auth-input">
@@ -765,7 +765,7 @@
                 <label class="file-upload-label">Capa Principal: <input type="file" id="novoImgFile" accept="image/*"></label>
                 <label class="file-upload-label">Screenshots extras (Carrossel): <input type="file" id="novoExtraImgs" accept="image/*" multiple></label>
                 <label class="file-upload-label">Arquivo HTML do Jogo (.html): <input type="file" id="novoHtmlFile" accept=".html"></label>
-                <button type="button" class="btn-gaming" onclick="criarNovoJogo()" style="font-size:12px; padding:10px;">Publicar Game</button>
+                <button type="button" class="btn-gaming" onclick="criarNovoJogo()" style="font-size:12px; padding:10px;">Publicar Game Local</button>
             </div>
 
             <h4 style="color:#fff; margin-bottom:12px; font-family:'Orbitron';">🎮 Gerenciar Games Existentes (Editar / Excluir)</h4>
@@ -778,31 +778,71 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.030 (Storage & Image Compression Fix)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.040 (Public Server Games & Transparent PNG Fix)</strong>
     </footer>
 
-    <!-- LÓGICA DA PLATAFORMA COM COMPRESSÃO AUTOMÁTICA -->
+    <!-- LÓGICA DA PLATAFORMA -->
     <script>
+        // JOGOS OFICIAIS PÚBLICOS NA PASTA /jogos/ DO SERVIDOR
         const jogosPadrao = [
             {
-                id: 1,
+                id: 101,
                 nome: "Riverbed Warfare",
                 categoria: "Estratégia",
                 desc: "Combate veicular em tempo real, extração de recursos e defesa contra hordas.",
-                arquivo: "Riverbed Warfare v0.0011.html",
+                arquivo: "jogos/guerra-no-leito-do-rio.html",
+                img: "",
+                extras: [],
+                destaqueManual: true,
+                acessos: 150,
+                rating: 5,
+                reviews: ["Excelente jogabilidade!", "Muito fluido no telemóvel e no PC."]
+            },
+            {
+                id: 102,
+                nome: "Esquadrão de Tanques",
+                categoria: "Arcade",
+                desc: "Jogo de sobrevivência de tanques combate intenso.",
+                arquivo: "jogos/esquadrãoao-de-tanques.html",
                 img: "",
                 extras: [],
                 destaqueManual: false,
-                acessos: 25,
+                acessos: 88,
                 rating: 5,
-                reviews: ["Excelente jogabilidade!", "Muito fluido e tático."]
+                reviews: ["Combate incrível!"]
+            },
+            {
+                id: 103,
+                nome: "Gravitas Arena",
+                categoria: "Estratégia",
+                desc: "Jogo de guerra de tanques e estratégia tática.",
+                arquivo: "jogos/Gravitas-Arena.html",
+                img: "",
+                extras: [],
+                destaqueManual: false,
+                acessos: 64,
+                rating: 5,
+                reviews: ["Estratégia perfeita."]
+            },
+            {
+                id: 104,
+                nome: "Zombie House",
+                categoria: "Multiplayer",
+                desc: "Sobreviva ao apocalipse zumbi na casa florestal.",
+                arquivo: "jogos/Casa_Zumbi.html",
+                img: "",
+                extras: [],
+                destaqueManual: false,
+                acessos: 120,
+                rating: 5,
+                reviews: ["Muito divertido!"]
             }
         ];
 
         let usuarioLogado = null;
         let painelAdmAberto = false;
 
-        // Função de compressão de imagens via Canvas (evita erro de memória no localStorage)
+        // Compressão com suporte a Transparência PNG (sem fundo preto)
         function comprimirImagem(file, maxWidth = 800, maxQuality = 0.7) {
             return new Promise((resolve) => {
                 if(!file) return resolve("");
@@ -822,8 +862,18 @@
                         canvas.width = width;
                         canvas.height = height;
                         const ctx = canvas.getContext('2d');
+                        
+                        const isPng = file.type === 'image/png' || file.name.endsWith('.png');
+                        if (isPng) {
+                            ctx.clearRect(0, 0, width, height);
+                        } else {
+                            ctx.fillStyle = '#0b0f17';
+                            ctx.fillRect(0, 0, width, height);
+                        }
+
                         ctx.drawImage(img, 0, 0, width, height);
-                        resolve(canvas.toDataURL('image/jpeg', maxQuality));
+                        const mimeType = isPng ? 'image/png' : 'image/jpeg';
+                        resolve(canvas.toDataURL(mimeType, maxQuality));
                     };
                     img.onerror = () => resolve(event.target.result);
                 };
@@ -833,7 +883,15 @@
 
         function obterJogos() {
             let salvos = localStorage.getItem('wavecombat_jogos');
-            return salvos ? JSON.parse(salvos) : jogosPadrao;
+            if(!salvos) return jogosPadrao;
+            let listaLocal = JSON.parse(salvos);
+            // Garante que os jogos padrão do servidor estejam sempre sincronizados
+            jogosPadrao.forEach(jp => {
+                if(!listaLocal.some(l => l.id === jp.id)) {
+                    listaLocal.unshift(jp);
+                }
+            });
+            return listaLocal;
         }
 
         function salvarJogos(jogos) {
@@ -842,7 +900,7 @@
                 atualizarPlataforma();
                 return true;
             } catch (err) {
-                alert("Erro ao salvar! O espaço de armazenamento do navegador foi excedido. Tente enviar imagens menores.");
+                alert("Erro ao salvar! O espaço de armazenamento do navegador foi excedido.");
                 console.error(err);
                 return false;
             }
@@ -958,15 +1016,21 @@
             return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
         }
 
+        // VISIBILIDADE AUTOMÁTICA DO PLAYER DA LIVE
         function atualizarVisibilidadeLiveGeral() {
             const liveAtiva = localStorage.getItem('wavecombat_live_ativa') === 'true';
+            const rawUrl = localStorage.getItem('wavecombat_live_url') || '';
             const box = document.getElementById('liveSectionBox');
-            box.style.display = (liveAtiva || painelAdmAberto) ? 'block' : 'none';
 
-            if(liveAtiva || painelAdmAberto) {
-                const rawUrl = localStorage.getItem('wavecombat_live_url') || 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+            // Só exibe se a live estiver ATIVA e houver URL configurada (ou se o ADM estiver aberto)
+            const deveExibir = (liveAtiva && rawUrl.trim() !== '') || painelAdmAberto;
+            box.style.display = deveExibir ? 'block' : 'none';
+
+            if(deveExibir && rawUrl) {
                 const embedUrl = converterUrlYoutubeParaEmbed(rawUrl);
                 document.getElementById('youtubeLiveIframe').src = embedUrl;
+            } else {
+                document.getElementById('youtubeLiveIframe').src = "about:blank";
             }
         }
 
@@ -1046,15 +1110,16 @@
         function alterarLogoSite() {
             const f = document.getElementById('admLogoFile').files[0];
             if(f) {
-                comprimirImagem(f, 400, 0.8).then(imgUrl => {
+                comprimirImagem(f, 400, 0.9).then(imgUrl => {
                     localStorage.setItem('wavecombat_logo', imgUrl);
                     carregarLogoEConfig();
-                    alert('Logo atualizada!');
+                    alert('Logo atualizada com sucesso!');
                 });
             }
         }
 
         function aplicarCorDinamicaDaImagem(imgSrc, callback) {
+            if(!imgSrc) return;
             const img = new Image();
             img.crossOrigin = "Anonymous";
             img.src = imgSrc;
@@ -1081,7 +1146,6 @@
         }
 
         function tentarExecutarJogo(jogo) {
-            if (!usuarioLogado) { alert('Faça login para jogar!'); abrirModalAuth(); return; }
             let jogos = obterJogos();
             let idx = jogos.findIndex(j => j.id === jogo.id);
             if(idx !== -1) { jogos[idx].acessos = (jogos[idx].acessos || 0) + 1; salvarJogos(jogos); }
@@ -1242,7 +1306,6 @@
                     <label class="file-upload-label">Descrição: <textarea id="editDesc_${jogo.id}" class="auth-input" style="height:40px;">${jogo.desc}</textarea></label>
                     <label class="file-upload-label">🖼️ Alterar Capa Principal: <input type="file" id="editImgFile_${jogo.id}" accept="image/*"></label>
                     <label class="file-upload-label">🖼️ Adicionar Screenshots Extras (Carrossel): <input type="file" id="editExtraFiles_${jogo.id}" accept="image/*" multiple></label>
-                    <label class="file-upload-label">🎮 Substituir Arquivo HTML (.html): <input type="file" id="editHtmlFile_${jogo.id}" accept=".html"></label>
                     <div style="display:flex; gap:8px; margin-top:6px;">
                         <button type="button" class="btn-gaming" onclick="salvarEdicaoJogo(${jogo.id})" style="font-size:10px; padding:6px; flex-grow:1;">Salvar Alterações</button>
                         <button type="button" class="btn-gaming btn-danger" onclick="excluirJogoAdm(${jogo.id})" style="font-size:10px; padding:6px;">Excluir</button>
@@ -1268,7 +1331,6 @@
                 
                 const imgInput = document.getElementById(`editImgFile_${id}`)?.files[0];
                 const extraInput = document.getElementById(`editExtraFiles_${id}`)?.files;
-                const htmlInput = document.getElementById(`editHtmlFile_${id}`)?.files[0];
 
                 if(imgInput) {
                     jogos[idx].img = await comprimirImagem(imgInput);
@@ -1282,17 +1344,7 @@
                     jogos[idx].extras = (jogos[idx].extras || []).concat(extrasComp);
                 }
 
-                if(htmlInput) {
-                    const readerHtml = new FileReader();
-                    readerHtml.onload = function(eHtml) {
-                        const blob = new Blob([eHtml.target.result], {type: 'text/html'});
-                        jogos[idx].arquivo = URL.createObjectURL(blob);
-                        if(salvarJogos(jogos)) alert("Alterações salvas com sucesso!");
-                    };
-                    readerHtml.readAsText(htmlInput);
-                } else {
-                    if(salvarJogos(jogos)) alert("Alterações salvas com sucesso!");
-                }
+                if(salvarJogos(jogos)) alert("Alterações salvas com sucesso!");
             }
         }
 
@@ -1312,7 +1364,6 @@
 
             if(!nome || !htmlFile) { alert('Preencha o Nome e selecione o HTML do jogo!'); return; }
 
-            // Comprime capa principal e screenshots extras
             const imgUrl = imgFile ? await comprimirImagem(imgFile) : "";
             let extraUrls = [];
             if(extraFiles && extraFiles.length > 0) {
@@ -1342,8 +1393,7 @@
                 });
                 
                 if(salvarJogos(jogos)) {
-                    alert('Game publicado com sucesso!');
-                    // Limpar campos
+                    alert('Game publicado localmente com sucesso!');
                     document.getElementById('novoNome').value = '';
                     document.getElementById('novaDesc').value = '';
                     document.getElementById('novoImgFile').value = '';
