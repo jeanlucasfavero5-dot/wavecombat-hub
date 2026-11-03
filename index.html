@@ -234,18 +234,18 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.057 (Absolute Fix)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.058 (Direct Root Paths)</strong>
     </footer>
 
     <script>
-        // CAMINHOS EXATOS E VALidados CONFORME O GITHUB
+        // LISTA COM CAMINHOS DIRETOS SEM DEPENDÊNCIA DE SUBPASTAS
         const jogosIniciais = [
             {
                 id: 101,
                 nome: "Riverbed Warfare",
                 categoria: "Estratégia",
                 desc: "Combate veicular em tempo real, extração de recursos e defesa contra hordas.",
-                arquivo: "jogos/riverbed-warfare.html",
+                arquivo: "riverbed-warfare.html",
                 img: "",
                 extras: [],
                 publicado: true,
@@ -257,7 +257,7 @@
                 nome: "Esquadrão de Tanques",
                 categoria: "Arcade",
                 desc: "Jogo de sobrevivência de tanques combate intenso.",
-                arquivo: "jogos/esquadrao-de-tanques.html",
+                arquivo: "esquadrao-de-tanques.html",
                 img: "",
                 extras: [],
                 publicado: true,
@@ -269,7 +269,7 @@
                 nome: "Gravitas Arena",
                 categoria: "Estratégia",
                 desc: "Jogo de guerra de tanques e estratégia tática.",
-                arquivo: "jogos/Gravitas-Arena.html",
+                arquivo: "Gravitas-Arena.html",
                 img: "",
                 extras: [],
                 publicado: true,
@@ -281,7 +281,7 @@
                 nome: "Zombie House",
                 categoria: "Multiplayer",
                 desc: "Sobreviva ao apocalipse zumbi na casa florestal.",
-                arquivo: "jogos/Zombie_House.html",
+                arquivo: "Zombie_House.html",
                 img: "",
                 extras: [],
                 publicado: true,
@@ -322,18 +322,18 @@
             });
         }
 
-        // CHAVE V7 PARA EVITAR QUALQUER CONFLITO COM CACHES ANTIGOS
+        // CHAVE V8 PARA LIMPAR QUALQUER DADO ANTIGO EM CACHE
         function obterJogos() {
-            let salvos = localStorage.getItem('wavecombat_jogos_v7');
+            let salvos = localStorage.getItem('wavecombat_jogos_v8');
             if(!salvos) {
-                localStorage.setItem('wavecombat_jogos_v7', JSON.stringify(jogosIniciais));
+                localStorage.setItem('wavecombat_jogos_v8', JSON.stringify(jogosIniciais));
                 return jogosIniciais;
             }
             return JSON.parse(salvos);
         }
 
         function salvarJogos(jogos) {
-            localStorage.setItem('wavecombat_jogos_v7', JSON.stringify(jogos));
+            localStorage.setItem('wavecombat_jogos_v8', JSON.stringify(jogos));
             atualizarPlataforma();
             return true;
         }
@@ -529,7 +529,7 @@
                         </select>
                     </label>
                     <label class="file-upload-label">Descrição: <textarea id="editDesc_${jogo.id}" class="auth-input" style="height:40px;">${jogo.desc}</textarea></label>
-                    <label class="file-upload-label">Caminho do Ficheiro (GitHub): <input type="text" value="${jogo.arquivo}" id="editArq_${jogo.id}" class="auth-input"></label>
+                    <label class="file-upload-label">Ficheiro do Jogo: <input type="text" value="${jogo.arquivo}" id="editArq_${jogo.id}" class="auth-input"></label>
                     <label class="file-upload-label">🖼️ Alterar Capa: <input type="file" id="editImgFile_${jogo.id}" accept="image/*"></label>
                     <button type="button" class="btn-gaming" onclick="salvarEdicaoJogoAdm(${jogo.id})" style="font-size:10px; padding:6px; margin-top:5px;">💾 Guardar Alterações</button>
                 `;
