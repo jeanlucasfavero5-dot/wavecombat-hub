@@ -52,13 +52,13 @@
         .btn-toggle-adm-nav { display: none; background: var(--gold-warning); color: #000; border: none; padding: 8px 12px; font-family: 'Orbitron'; font-size: 12px; font-weight: bold; cursor: pointer; border-radius: 6px; }
 
         header.hero {
-            min-height: 40vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            min-height: 45vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
             text-align: center; padding: 40px 20px; position: relative; background-size: cover; background-position: center;
-            border-bottom: 2px solid var(--steel-border); margin-top: 65px; width: 100%;
+            border-bottom: 2px solid var(--steel-border); margin-top: 65px; width: 100%; transition: background-image 0.5s ease;
         }
         header.hero::before {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(180deg, rgba(11,15,23,0.65) 0%, rgba(11,15,23,0.95) 100%); z-index: 1;
+            background: linear-gradient(180deg, rgba(11,15,23,0.7) 0%, rgba(11,15,23,0.95) 100%); z-index: 1;
         }
         header.hero > * { position: relative; z-index: 2; }
         header.hero h1 { font-family: 'Orbitron', sans-serif; font-size: clamp(26px, 4vw, 48px); font-weight: 900; color: #fff; margin-bottom: 10px; text-transform: uppercase; }
@@ -113,6 +113,26 @@
         .embed-container { display: none; background: #000; border: 2px solid var(--accent-color); width: 100%; height: 80vh; max-height: 900px; position: relative; box-shadow: 0 0 35px var(--accent-glow); margin-top: 20px; border-radius: 12px; }
         .embed-container iframe { width: 100%; height: 100%; border: none; border-radius: 10px; }
         .player-controls-bar { display: none; justify-content: center; align-items: center; gap: 15px; margin-top: 15px; padding: 12px; background: var(--panel-bg); border: 1px solid var(--steel-border); border-radius: 8px; }
+
+        .live-section-box { display: none; background: var(--panel-bg); border: 1px solid var(--alert-red); padding: 20px; text-align: center; margin-bottom: 25px; border-radius: 12px; }
+        .live-embed-container { margin: 10px auto; width: 100%; max-width: 800px; height: 0; padding-bottom: 56.25%; position: relative; background: #000; border-radius: 8px; overflow: hidden; }
+        .live-embed-container iframe { position: absolute; top:0; left:0; width: 100%; height: 100%; border: none; }
+
+        .community-main-grid { display: grid; grid-template-columns: 1fr; gap: 20px; margin-bottom: 20px; }
+        @media(min-width: 850px) { .community-main-grid { grid-template-columns: 1fr 340px; } }
+        .panel-card { background: var(--panel-bg); border: 1px solid var(--steel-border); padding: 20px; border-radius: 12px; display: flex; flex-direction: column; }
+        .panel-card h3 { font-family: 'Orbitron', sans-serif; font-size: 16px; color: var(--accent-color); margin-bottom: 15px; }
+
+        .social-buttons-flex { display: flex; flex-direction: column; gap: 10px; }
+        .social-btn-item { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 12px; border-radius: 8px; font-family: 'Orbitron'; font-size: 13px; font-weight: 700; text-decoration: none; color: #fff; transition: 0.2s; }
+        .btn-discord-net { background: #5865F2; }
+        .btn-youtube-net { background: #FF0000; }
+        .btn-instagram-net { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+        .social-btn-item:hover { filter: brightness(1.2); }
+
+        .qrcode-box { display: flex; flex-direction: column; align-items: center; justify-content: center; background: #0b0f17; border: 1px solid var(--steel-border); padding: 15px; border-radius: 8px; text-align: center; }
+        .qrcode-img { width: 150px; height: 150px; object-fit: contain; background: #fff; padding: 5px; border-radius: 6px; margin-bottom: 8px; }
+        .btn-qrcode-link { display: inline-block; background: var(--gold-warning); color: #000; text-decoration: none; font-family: 'Orbitron'; font-size: 11px; font-weight: 800; padding: 6px 12px; border-radius: 6px; margin-top: 8px; }
 
         .admin-section { display: none; background: #070a10; border-top: 3px solid var(--accent-color); padding: 40px 20px; margin-top: 40px; }
         .admin-container { width: 100%; max-width: 1100px; margin: 0 auto; background: var(--panel-bg); border: 1px solid var(--steel-bright); padding: 30px; border-radius: 16px; }
@@ -211,6 +231,38 @@
         </div>
     </section>
 
+    <section id="transmissaoAoVivo">
+        <div class="live-section-box" id="liveSectionBox">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <h3 style="margin:0; font-size:14px; color:var(--alert-red); font-family:'Orbitron';">🔴 TRANSMISSÃO AO VIVO / YOUTUBE</h3>
+            </div>
+            <div class="live-embed-container">
+                <iframe id="youtubeLiveIframe" src="about:blank" allowfullscreen></iframe>
+            </div>
+        </div>
+    </section>
+
+    <section id="comunidade">
+        <h2 class="section-title">Central Social & Comunidade</h2>
+        <div class="community-main-grid">
+            <div class="panel-card">
+                <h3>🌐 Minhas Redes & Comunidade</h3>
+                <p style="font-size:13px; color:#94a3b8; margin-bottom:15px;">Conecte-se às redes oficiais:</p>
+                <div class="social-buttons-flex">
+                    <a href="https://discord.gg/FaeYug6XBx" target="_blank" class="social-btn-item btn-discord-net">🎮 Discord Oficial</a>
+                    <a href="https://youtube.com/@capudooficial7" target="_blank" class="social-btn-item btn-youtube-net">▶ YouTube (@capudooficial7)</a>
+                    <a href="https://www.instagram.com/capudooficial.7/" target="_blank" class="social-btn-item btn-instagram-net">📸 Instagram Oficial</a>
+                </div>
+            </div>
+            <div class="qrcode-box">
+                <h4 style="font-family:'Orbitron'; font-size:12px; color:var(--accent-color); margin-bottom:8px;">🎁 Doação LivePix</h4>
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://livepix.gg/capudooficial" alt="QR Code LivePix" class="qrcode-img">
+                <span style="font-size:11px; color:#94a3b8; margin-bottom:4px;">Aponte a câmara para doar</span>
+                <a href="https://livepix.gg/capudooficial" target="_blank" class="btn-qrcode-link">🔗 Acessar Link LivePix</a>
+            </div>
+        </div>
+    </section>
+
     <!-- PAINEL ADM -->
     <div class="admin-section" id="adminSection" style="display:none; background:#070a10; border-top:3px solid var(--accent-color); padding:40px 20px; margin-top:40px;">
         <div class="admin-container">
@@ -221,6 +273,12 @@
                     <h4>🖼️ Alterar Logo Principal</h4>
                     <input type="file" id="admLogoFile" accept="image/*">
                     <button type="button" class="btn-gaming" onclick="alterarLogoSite()" style="font-size:12px; padding:8px;">Atualizar Logo</button>
+                </div>
+                <div class="admin-block">
+                    <h4>🔴 Gerenciar Transmissão ao Vivo</h4>
+                    <button type="button" class="btn-gaming" id="btnToggleLiveStatus" onclick="toggleStatusLiveAdm()" style="font-size:11px; background:var(--alert-red); border-color:var(--alert-red); color:#fff; padding:8px;">Live: OFFLINE</button>
+                    <input type="text" id="inputAdminLiveUrl" placeholder="Cole o link do YouTube da Live" class="auth-input" style="font-size:11px; margin-top:5px;">
+                    <button type="button" class="btn-gaming" onclick="salvarUrlLiveAdmDireto()" style="font-size:11px; padding:6px; margin-top:5px;">💾 Salvar Live</button>
                 </div>
             </div>
 
@@ -234,7 +292,7 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.101 (Persistent Storage Fix)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.102 (Full Features Restored)</strong>
     </footer>
 
     <script>
@@ -323,9 +381,9 @@
 
         function obterJogos() {
             try {
-                let salvos = localStorage.getItem('wavecombat_jogos_v11');
+                let salvos = localStorage.getItem('wavecombat_jogos_v12');
                 if(!salvos) {
-                    localStorage.setItem('wavecombat_jogos_v11', JSON.stringify(jogosIniciais));
+                    localStorage.setItem('wavecombat_jogos_v12', JSON.stringify(jogosIniciais));
                     return jogosIniciais;
                 }
                 return JSON.parse(salvos);
@@ -336,11 +394,11 @@
 
         function salvarJogos(jogos) {
             try {
-                localStorage.setItem('wavecombat_jogos_v11', JSON.stringify(jogos));
+                localStorage.setItem('wavecombat_jogos_v12', JSON.stringify(jogos));
                 atualizarPlataforma();
                 return true;
             } catch(err) {
-                alert("Erro ao gravar no armazenamento local. Verifique espaço ou permissões.");
+                alert("Erro ao gravar no armazenamento local.");
                 return false;
             }
         }
@@ -372,7 +430,10 @@
             if(painelAdmAberto) {
                 painel.scrollIntoView({ behavior: 'smooth' });
                 renderizarJogosAdmin();
+                document.getElementById('inputAdminLiveUrl').value = localStorage.getItem('wavecombat_live_url') || '';
+                atualizarEstadoBotaoLiveAdm();
             }
+            atualizarVisibilidadeLiveGeral();
         }
 
         function fazerLoginPlataforma(e) {
@@ -388,6 +449,7 @@
                 alert('Credenciais inválidas.'); return;
             }
             fecharModalAuth();
+            atualizarVisibilidadeLiveGeral();
         }
 
         function fazerLogoutAdmin() {
@@ -397,6 +459,50 @@
             document.getElementById('btnToggleAdmNav').style.display = 'none';
             document.getElementById('btnAuthNav').textContent = 'Entrar';
             alert('Sessão encerrada.');
+            atualizarVisibilidadeLiveGeral();
+        }
+
+        function converterUrlYoutubeParaEmbed(url) {
+            if(!url) return "";
+            let videoId = "";
+            if (url.includes("embed/")) return url;
+            if (url.includes("watch?v=")) videoId = url.split("watch?v=")[1].split("&")[0];
+            else if (url.includes("youtu.be/")) videoId = url.split("youtu.be/")[1].split("?")[0];
+            else if (url.includes("live/")) videoId = url.split("live/")[1].split("?")[0];
+            return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
+        }
+
+        function atualizarVisibilidadeLiveGeral() {
+            const liveAtiva = localStorage.getItem('wavecombat_live_ativa') === 'true';
+            const rawUrl = localStorage.getItem('wavecombat_live_url') || '';
+            const box = document.getElementById('liveSectionBox');
+            const deveExibir = (liveAtiva && rawUrl.trim() !== '') || painelAdmAberto;
+            box.style.display = deveExibir ? 'block' : 'none';
+            document.getElementById('youtubeLiveIframe').src = (deveExibir && rawUrl) ? converterUrlYoutubeParaEmbed(rawUrl) : "about:blank";
+        }
+
+        function atualizarEstadoBotaoLiveAdm() {
+            const liveAtiva = localStorage.getItem('wavecombat_live_ativa') === 'true';
+            const btn = document.getElementById('btnToggleLiveStatus');
+            if(btn) {
+                btn.textContent = liveAtiva ? "Live: ONLINE (Visível)" : "Live: OFFLINE";
+                btn.style.background = liveAtiva ? "#22c55e" : "var(--alert-red)";
+                btn.style.borderColor = liveAtiva ? "#22c55e" : "var(--alert-red)";
+            }
+        }
+
+        function toggleStatusLiveAdm() {
+            const atual = localStorage.getItem('wavecombat_live_ativa') === 'true';
+            localStorage.setItem('wavecombat_live_ativa`, (!atual).toString());
+            atualizarEstadoBotaoLiveAdm();
+            atualizarVisibilidadeLiveGeral();
+        }
+
+        function salvarUrlLiveAdmDireto() {
+            const url = document.getElementById('inputAdminLiveUrl').value.trim();
+            localStorage.setItem('wavecombat_live_url', url);
+            atualizarVisibilidadeLiveGeral();
+            alert('Link da live guardado com sucesso!');
         }
 
         function tentarExecutarJogo(jogo) {
@@ -462,6 +568,7 @@
                     img.src = logo;
                 }
             } catch(e) {}
+            atualizarVisibilidadeLiveGeral();
         }
 
         async function alterarLogoSite() {
@@ -478,6 +585,28 @@
             } else {
                 alert('Selecione um ficheiro de imagem primeiro.');
             }
+        }
+
+        function aplicarCorDinamicaDaImagem(imgSrc) {
+            if(!imgSrc) return;
+            const img = new Image();
+            img.crossOrigin = "Anonymous";
+            img.src = imgSrc;
+            img.onload = function() {
+                try {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = 50; canvas.height = 50;
+                    ctx.drawImage(img, 0, 0, 50, 50);
+                    const p = ctx.getImageData(10, 10, 30, 30).data;
+                    let r = 0, g = 0, b = 0, count = 0;
+                    for (let i = 0; i < p.length; i += 4) { r += p[i]; g += p[i+1]; b += p[i+2]; count++; }
+                    r = Math.floor(r / count); g = Math.floor(g / count); b = Math.floor(b / count);
+                    if(r < 40 && g < 40 && b < 40) { r = 0; g = 240; b = 255; }
+                    const hex = `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+                    document.documentElement.style.setProperty('--accent-color', hex);
+                } catch(e) {}
+            };
         }
 
         function atualizarPlataforma() {
@@ -497,6 +626,7 @@
 
             if(capaDestaque) {
                 document.getElementById('heroHeader').style.backgroundImage = `url('${capaDestaque}')`;
+                aplicarCorDinamicaDaImagem(capaDestaque);
             }
 
             const featuredContainer = document.getElementById('featuredGameContainer');
