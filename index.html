@@ -234,11 +234,10 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.100 (Fresh Restart Clean State)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.101 (Persistent Storage Fix)</strong>
     </footer>
 
     <script>
-        // LISTA INICIAL LIMPA (Os jogos abrem diretamente na raiz do repositório)
         const jogosIniciais = [
             {
                 id: 101,
@@ -322,28 +321,38 @@
             });
         }
 
-        // CHAVE V10 PARA REINICIAR COMPLETAMENTE O STORAGE SEM LIXO ANTIGO
         function obterJogos() {
-            let salvos = localStorage.getItem('wavecombat_jogos_v10');
-            if(!salvos) {
-                localStorage.setItem('wavecombat_jogos_v10', JSON.stringify(jogosIniciais));
+            try {
+                let salvos = localStorage.getItem('wavecombat_jogos_v11');
+                if(!salvos) {
+                    localStorage.setItem('wavecombat_jogos_v11', JSON.stringify(jogosIniciais));
+                    return jogosIniciais;
+                }
+                return JSON.parse(salvos);
+            } catch(err) {
                 return jogosIniciais;
             }
-            return JSON.parse(salvos);
         }
 
         function salvarJogos(jogos) {
-            localStorage.setItem('wavecombat_jogos_v10', JSON.stringify(jogos));
-            atualizarPlataforma();
-            return true;
+            try {
+                localStorage.setItem('wavecombat_jogos_v11', JSON.stringify(jogos));
+                atualizarPlataforma();
+                return true;
+            } catch(err) {
+                alert("Erro ao gravar no armazenamento local. Verifique espaço ou permissões.");
+                return false;
+            }
         }
 
-        function obterFavoritos() { return JSON.parse(localStorage.getItem('wavecombat_favs') || '[]'); }
+        function obterFavoritos() { 
+            try { return JSON.parse(localStorage.getItem('wavecombat_favs') || '[]'); } catch(e) { return []; } 
+        }
         function toggleFavorito(id) {
             let favs = obterFavoritos();
             if(favs.includes(id)) favs = favs.filter(i => i !== id);
             else favs.push(id);
-            localStorage.setItem('wavecombat_favs', JSON.stringify(favs));
+            try { localStorage.setItem('wavecombat_favs', JSON.stringify(favs)); } catch(e) {}
             atualizarPlataforma();
         }
 
@@ -439,6 +448,38 @@
             return [...jogosPublicados].sort((a,b) => (b.acessos || 0) - (a.acessos || 0))[0] || null;
         }
 
+        function carregarLogoEConfig() {
+            try {
+                const logo = localStorage.getItem('wavecombat_logo');
+                if (logo) {
+                    document.getElementById('defaultLogoSvg').style.display = 'none';
+                    let img = document.getElementById('customNavLogo');
+                    if(!img) {
+                        img = document.createElement('img');
+                        img.id = 'customNavLogo'; img.className = 'logo-img-custom';
+                        document.getElementById('navLogoContainer').prepend(img);
+                    }
+                    img.src = logo;
+                }
+            } catch(e) {}
+        }
+
+        async function alterarLogoSite() {
+            const f = document.getElementById('admLogoFile').files[0];
+            if(f) {
+                try {
+                    let imgUrl = await comprimirImagem(f, 400, 0.9);
+                    localStorage.setItem('wavecombat_logo', imgUrl);
+                    carregarLogoEConfig();
+                    alert('Logo atualizada e guardada com sucesso!');
+                } catch(err) {
+                    alert('Erro ao guardar a imagem da logo.');
+                }
+            } else {
+                alert('Selecione um ficheiro de imagem primeiro.');
+            }
+        }
+
         function atualizarPlataforma() {
             let todosJogos = obterJogos();
             let jogosPublicados = todosJogos.filter(j => j.publicado);
@@ -529,7 +570,7 @@
                         </select>
                     </label>
                     <label class="file-upload-label">Descrição: <textarea id="editDesc_${jogo.id}" class="auth-input" style="height:40px;">${jogo.desc}</textarea></label>
-                    <label class="file-upload-label">Caminho do Ficheiro (Raiz): <input type="text" value="${jogo.arquivo}" id="editArq_${jogo.id}" class="auth-input"></label>
+                    <label class="file-upload-label">Caminho do Ficheiro: <input type="text" value="${jogo.arquivo}" id="editArq_${jogo.id}" class="auth-input"></label>
                     <label class="file-upload-label">🖼️ Alterar Capa: <input type="file" id="editImgFile_${jogo.id}" accept="image/*"></label>
                     <button type="button" class="btn-gaming" onclick="salvarEdicaoJogoAdm(${jogo.id})" style="font-size:10px; padding:6px; margin-top:5px;">💾 Guardar Alterações</button>
                 `;
@@ -542,18 +583,20 @@
             let j = jogos.find(x => x.id === id);
             if(j) {
                 j.publicado = !j.publicado;
-                salvarJogos(jogos);
-                renderizarJogosAdmin();
-                alert(j.publicado ? "Jogo publicado!" : "Jogo ocultado.");
+                if(salvarJogos(jogos)) {
+                    renderizarJogosAdmin();
+                    alert(j.publicado ? "Jogo publicado com sucesso!" : "Jogo ocultado.");
+                }
             }
         }
 
         function fixarDestaqueAdm(id) {
             let jogos = obterJogos();
             jogos.forEach(j => j.destaqueManual = (j.id === id));
-            salvarJogos(jogos);
-            renderizarJogosAdmin();
-            alert("Destaque definido!");
+            if(salvarJogos(jogos)) {
+                renderizarJogosAdmin();
+                alert("Destaque definido com sucesso!");
+            }
         }
 
         async function salvarEdicaoJogoAdm(id) {
@@ -566,9 +609,13 @@
                 jogos[idx].arquivo = document.getElementById(`editArq_${id}`).value;
                 
                 const imgInput = document.getElementById(`editImgFile_${id}`)?.files[0];
-                if(imgInput) jogos[idx].img = await comprimirImagem(imgInput);
+                if(imgInput) {
+                    jogos[idx].img = await comprimirImagem(imgInput);
+                }
 
-                if(salvarJogos(jogos)) alert("Alterações guardadas com sucesso!");
+                if(salvarJogos(jogos)) {
+                    alert("Alterações guardadas com sucesso!");
+                }
             }
         }
 
