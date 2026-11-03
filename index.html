@@ -85,10 +85,6 @@
         .featured-badge { position: absolute; top: 20px; right: 20px; background: var(--gold-warning); color: #000; font-weight: 800; font-size: 11px; padding: 5px 12px; font-family: 'Orbitron'; border-radius: 6px; }
         .featured-img { width: 100%; height: 300px; object-fit: cover; border-radius: 8px; border: 1px solid var(--steel-border); cursor: pointer; }
 
-        .carousel-container { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; }
-        .carousel-thumb { width: 80px; height: 45px; object-fit: cover; border-radius: 4px; border: 1px solid var(--steel-border); cursor: pointer; opacity: 0.6; transition: 0.2s; }
-        .carousel-thumb:hover, .carousel-thumb.active { opacity: 1; border-color: var(--accent-color); }
-
         .game-card-actions { display: flex; gap: 12px; align-items: center; }
         .btn-fav { background: none; border: 1px solid var(--gold-warning); color: var(--gold-warning); padding: 8px 14px; font-size: 16px; cursor: pointer; border-radius: 8px; }
 
@@ -117,10 +113,6 @@
         .embed-container { display: none; background: #000; border: 2px solid var(--accent-color); width: 100%; height: 80vh; max-height: 900px; position: relative; box-shadow: 0 0 35px var(--accent-glow); margin-top: 20px; border-radius: 12px; }
         .embed-container iframe { width: 100%; height: 100%; border: none; border-radius: 10px; }
         .player-controls-bar { display: none; justify-content: center; align-items: center; gap: 15px; margin-top: 15px; padding: 12px; background: var(--panel-bg); border: 1px solid var(--steel-border); border-radius: 8px; }
-
-        .live-section-box { display: none; background: var(--panel-bg); border: 1px solid var(--alert-red); padding: 20px; text-align: center; margin-bottom: 25px; border-radius: 12px; }
-        .live-embed-container { margin: 10px auto; width: 100%; max-width: 800px; height: 0; padding-bottom: 56.25%; position: relative; background: #000; border-radius: 8px; overflow: hidden; }
-        .live-embed-container iframe { position: absolute; top:0; left:0; width: 100%; height: 100%; border: none; }
 
         .admin-section { display: none; background: #070a10; border-top: 3px solid var(--accent-color); padding: 40px 20px; margin-top: 40px; }
         .admin-container { width: 100%; max-width: 1100px; margin: 0 auto; background: var(--panel-bg); border: 1px solid var(--steel-bright); padding: 30px; border-radius: 16px; }
@@ -230,12 +222,6 @@
                     <input type="file" id="admLogoFile" accept="image/*">
                     <button type="button" class="btn-gaming" onclick="alterarLogoSite()" style="font-size:12px; padding:8px;">Atualizar Logo</button>
                 </div>
-                <div class="admin-block">
-                    <h4>🔴 Gerenciar Live / Vídeo do YouTube</h4>
-                    <button type="button" class="btn-gaming" id="btnToggleLiveStatus" onclick="toggleStatusLiveAdm()" style="font-size:11px; background:var(--alert-red); border-color:var(--alert-red); color:#fff; padding:8px;">Live: OFFLINE</button>
-                    <input type="text" id="inputAdminLiveUrl" placeholder="Cole o link do YouTube" class="auth-input" style="font-size:11px; margin-top:5px;">
-                    <button type="button" class="btn-gaming" onclick="salvarUrlLiveAdmDireto()" style="font-size:11px; padding:6px; margin-top:5px;">💾 Salvar e Atualizar Live</button>
-                </div>
             </div>
 
             <h4 style="color:#fff; margin-bottom:12px; font-family:'Orbitron';">🎮 Gestão, Testes e Publicação de Games</h4>
@@ -248,11 +234,11 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.053 (Private Draft Testing)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.054 (Fixed Paths & Stable State)</strong>
     </footer>
 
     <script>
-        // LISTA INICIAL: Apenas o Riverbed Warfare publicado; os outros vêm como 'publicado: false' para você testar e editar à vontade!
+        // CAMINHOS CORRIGIDOS E EXATOS PARA OS JOGOS NA PASTA DO GITHUB
         const jogosIniciais = [
             {
                 id: 101,
@@ -271,10 +257,10 @@
                 nome: "Esquadrão de Tanques",
                 categoria: "Arcade",
                 desc: "Jogo de sobrevivência de tanques combate intenso.",
-                arquivo: "jogos/esquadrãoao-de-tanques.html",
+                arquivo: "jogos/esquadrao-de-tanques.html",
                 img: "",
                 extras: [],
-                publicado: false, // Privado para testes no ADM
+                publicado: true,
                 destaqueManual: false,
                 acessos: 88
             },
@@ -286,7 +272,7 @@
                 arquivo: "jogos/Gravitas-Arena.html",
                 img: "",
                 extras: [],
-                publicado: false, // Privado para testes no ADM
+                publicado: true,
                 destaqueManual: false,
                 acessos: 64
             },
@@ -298,7 +284,7 @@
                 arquivo: "jogos/Casa_Zumbi.html",
                 img: "",
                 extras: [],
-                publicado: false, // Privado para testes no ADM
+                publicado: true,
                 destaqueManual: false,
                 acessos: 120
             }
@@ -336,17 +322,18 @@
             });
         }
 
+        // UNIFICAÇÃO PERMANENTE: Atualizado para v5 para evitar resets indesejados
         function obterJogos() {
-            let salvos = localStorage.getItem('wavecombat_jogos_v4');
+            let salvos = localStorage.getItem('wavecombat_jogos_v5');
             if(!salvos) {
-                localStorage.setItem('wavecombat_jogos_v4', JSON.stringify(jogosIniciais));
+                localStorage.setItem('wavecombat_jogos_v5', JSON.stringify(jogosIniciais));
                 return jogosIniciais;
             }
             return JSON.parse(salvos);
         }
 
         function salvarJogos(jogos) {
-            localStorage.setItem('wavecombat_jogos_v4', JSON.stringify(jogos));
+            localStorage.setItem('wavecombat_jogos_v5', JSON.stringify(jogos));
             atualizarPlataforma();
             return true;
         }
@@ -376,7 +363,6 @@
             if(painelAdmAberto) {
                 painel.scrollIntoView({ behavior: 'smooth' });
                 renderizarJogosAdmin();
-                document.getElementById('inputAdminLiveUrl').value = localStorage.getItem('wavecombat_live_url') || '';
             }
         }
 
@@ -455,7 +441,6 @@
 
         function atualizarPlataforma() {
             let todosJogos = obterJogos();
-            // Visitantes normais só veem os publicados. ADM no painel vê todos para testar e gerir.
             let jogosPublicados = todosJogos.filter(j => j.publicado);
 
             const busca = (document.getElementById('inputSearchGames')?.value || '').toLowerCase();
@@ -526,10 +511,9 @@
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <span style="color:var(--accent-color); font-weight:bold; font-size:13px;">${jogo.nome} (Acessos: ${jogo.acessos || 0})</span>
                         <div style="display:flex; gap:8px;">
-                            <!-- Botão de Teste Direto para ADM -->
                             <button type="button" class="btn-gaming" onclick="tentarExecutarJogo(${JSON.stringify(jogo).replace(/"/g, '&quot;')})" style="font-size:10px; padding:4px 8px;">🎮 Testar</button>
                             <button type="button" class="btn-gaming ${jogo.publicado ? 'btn-danger' : 'btn-success'}" onclick="togglePublicarJogo(${jogo.id})" style="font-size:10px; padding:4px 10px;">
-                                ${jogo.publicado ? '👁️ Ocultar do Site' : '🚀 Publicar no Site'}
+                                ${jogo.publicado ? '👁️ Ocultar' : '🚀 Publicar'}
                             </button>
                             <button type="button" class="btn-gaming" onclick="fixarDestaqueAdm(${jogo.id})" style="font-size:10px; padding:4px 8px; background:${jogo.destaqueManual?'var(--gold-warning)':'var(--steel-bright)'}; color:${jogo.destaqueManual?'#000':'#fff'};">
                                 ${jogo.destaqueManual ? '★ Fixado' : '☆ Destaque'}
@@ -545,6 +529,7 @@
                         </select>
                     </label>
                     <label class="file-upload-label">Descrição: <textarea id="editDesc_${jogo.id}" class="auth-input" style="height:40px;">${jogo.desc}</textarea></label>
+                    <label class="file-upload-label">Caminho do Ficheiro (GitHub): <input type="text" value="${jogo.arquivo}" id="editArq_${jogo.id}" class="auth-input"></label>
                     <label class="file-upload-label">🖼️ Alterar Capa: <input type="file" id="editImgFile_${jogo.id}" accept="image/*"></label>
                     <button type="button" class="btn-gaming" onclick="salvarEdicaoJogoAdm(${jogo.id})" style="font-size:10px; padding:6px; margin-top:5px;">💾 Guardar Alterações</button>
                 `;
@@ -559,7 +544,7 @@
                 j.publicado = !j.publicado;
                 salvarJogos(jogos);
                 renderizarJogosAdmin();
-                alert(j.publicado ? "Jogo publicado e visível para todos!" : "Jogo ocultado (fica privado para testes no ADM).");
+                alert(j.publicado ? "Jogo publicado!" : "Jogo ocultado.");
             }
         }
 
@@ -578,6 +563,7 @@
                 jogos[idx].nome = document.getElementById(`editNome_${id}`).value;
                 jogos[idx].categoria = document.getElementById(`editCat_${id}`).value;
                 jogos[idx].desc = document.getElementById(`editDesc_${id}`).value;
+                jogos[idx].arquivo = document.getElementById(`editArq_${id}`).value;
                 
                 const imgInput = document.getElementById(`editImgFile_${id}`)?.files[0];
                 if(imgInput) jogos[idx].img = await comprimirImagem(imgInput);
