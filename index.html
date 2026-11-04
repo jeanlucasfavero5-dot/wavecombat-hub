@@ -47,13 +47,9 @@
             display: flex; flex-direction: column; justify-content: space-around;
             width: 30px; height: 25px; background: transparent; border: none; cursor: pointer; z-index: 1002;
         }
-        .menu-toggle-btn span {
-            width: 100%; height: 3px; background: var(--accent-color); border-radius: 2px; transition: 0.3s;
-        }
+        .menu-toggle-btn span { width: 100%; height: 3px; background: var(--accent-color); border-radius: 2px; transition: 0.3s; }
 
-        .nav-links {
-            display: flex; gap: 15px; list-style: none; align-items: center;
-        }
+        .nav-links { display: flex; gap: 15px; list-style: none; align-items: center; }
         .nav-links li a { color: var(--ink); text-decoration: none; font-family: 'Orbitron', sans-serif; font-size: 13px; text-transform: uppercase; transition: 0.2s; }
         .nav-links li a:hover { color: var(--accent-color); }
 
@@ -67,9 +63,7 @@
             }
             .nav-links.active { right: 0; }
         }
-        @media (min-width: 769px) {
-            .menu-toggle-btn { display: none; }
-        }
+        @media (min-width: 769px) { .menu-toggle-btn { display: none; } }
 
         .user-nav-wrapper { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
         .btn-auth-nav { background: rgba(16, 22, 34, 0.8); color: var(--accent-color); border: 1px solid var(--accent-color); padding: 8px 16px; font-family: 'Orbitron'; font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 6px; }
@@ -86,7 +80,7 @@
             background: linear-gradient(180deg, rgba(11,15,23,0.85) 0%, rgba(11,15,23,0.98) 100%); z-index: 1;
         }
         header.hero > * { position: relative; z-index: 2; }
-        header.hero h1 { font-family: 'Orbitron', sans-serif; font-size: clamp(22px, 5vw, 48px); font-weight: 900; color: #fff; margin-bottom: 10px; text-transform: uppercase; word-break: break-word; }
+        header.hero h1 { font-family: 'Orbitron', sans-serif; font-size: clamp(22px, 5vw, 48px); font-weight: 900; color: #fff; margin-bottom: 10px; text-transform: uppercase; }
         header.hero h1 span { color: var(--accent-color); text-shadow: 0 0 25px var(--accent-glow); }
         header.hero p { font-size: 14px; max-width: 600px; margin-bottom: 20px; color: #94a3b8; padding: 0 10px; }
 
@@ -94,7 +88,7 @@
             font-family: 'Orbitron', sans-serif; background: var(--accent-color); color: #0b0f17; border: none;
             padding: 12px 24px; font-size: 13px; font-weight: 800; cursor: pointer; text-transform: uppercase;
             box-shadow: 0 0 20px var(--accent-glow); border-radius: 8px; text-decoration: none; display: inline-block; transition: 0.2s;
-            text-align: center; max-width: 100%;
+            text-align: center;
         }
         .btn-gaming:hover { transform: scale(1.03); filter: brightness(1.2); }
 
@@ -123,7 +117,7 @@
         .game-list-info h4 { font-family: 'Orbitron', sans-serif; color: #fff; font-size: 13px; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .game-list-info p { font-size: 11px; color: #94a3b8; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 15, 23, 0.9); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 15px; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 15, 23, 0.92); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 15px; }
         .modal-card { background: var(--panel-bg); border: 2px solid var(--accent-color); width: 100%; max-width: 440px; padding: 20px; border-radius: 12px; position: relative; box-shadow: 0 0 35px var(--accent-glow); }
         .modal-close { position: absolute; top: 12px; right: 15px; background: none; border: none; color: var(--ink); font-size: 22px; cursor: pointer; }
 
@@ -206,22 +200,38 @@
         </ul>
     </nav>
 
+    <!-- MODAL DE LOGIN E CRIAÇÃO DE CONTA -->
     <div class="modal-overlay" id="authModal">
         <div class="modal-card">
             <button class="modal-close" onclick="fecharModalAuth()">&times;</button>
             <div class="tab-switcher">
                 <button class="tab-btn active" id="tabLoginBtn" onclick="alternarAba('login')">Entrar</button>
+                <button class="tab-btn" id="tabRegisterBtn" onclick="alternarAba('registro')">Criar Conta</button>
                 <button class="tab-btn" id="tabPerfilBtn" onclick="alternarAba('perfil')">Perfil</button>
             </div>
+            
+            <!-- Painel de Login -->
             <div class="form-panel active" id="panelLogin">
+                <p id="msgBloqueioJogo" style="display:none; color:var(--gold-warning); font-size:12px; font-weight:bold; text-align:center; margin-bottom:8px;">⚠️ CRIE SUA CONTA PARA JOGAR!</p>
                 <form class="auth-form" onsubmit="fazerLoginPlataforma(event)">
-                    <input type="text" id="loginUser" placeholder="Nick ou ADM" class="auth-input" required>
-                    <input type="password" id="loginPass" placeholder="Senha" class="auth-input" required>
+                    <input type="text" id="loginUser" placeholder="Seu Nick ou ADM" class="auth-input" required>
+                    <input type="password" id="loginPass" placeholder="Sua Senha" class="auth-input" required>
                     <button type="submit" class="btn-gaming" style="width:100%; padding:10px;">Entrar na Conta</button>
                 </form>
             </div>
+
+            <!-- Painel de Criar Conta -->
+            <div class="form-panel" id="panelRegistro">
+                <form class="auth-form" onsubmit="fazerRegistroPlataforma(event)">
+                    <input type="text" id="regUser" placeholder="Escolha um Nick de Jogador" class="auth-input" required>
+                    <input type="password" id="regPass" placeholder="Crie uma Senha" class="auth-input" required>
+                    <button type="submit" class="btn-gaming" style="width:100%; padding:10px; background:#22c55e;">Criar Minha Conta</button>
+                </form>
+            </div>
+
+            <!-- Painel de Perfil -->
             <div class="form-panel" id="panelPerfil">
-                <div id="perfilUserData"><p style="color:#94a3b8;">Faça login para ver seu perfil.</p></div>
+                <div id="perfilUserData"><p style="color:#94a3b8; text-align:center;">Faça login para ver seu perfil.</p></div>
             </div>
         </div>
     </div>
@@ -321,10 +331,11 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.104 (Mobile Responsive)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.200 (Account Block & Dynamic Themes)</strong>
     </footer>
 
     <script>
+        // LISTA DE JOGOS FIXA NA NUVEM (IGUAL EM QUALQUER DISPOSITIVO)
         const jogosIniciais = [
             {
                 id: 101,
@@ -336,10 +347,22 @@
                 extras: [],
                 publicado: true,
                 destaqueManual: true,
-                acessos: 150
+                acessos: 154
             },
             {
                 id: 102,
+                nome: "tanque defence",
+                categoria: "Estratégia",
+                desc: "Combate veicular em tempo real, extração de recursos e defesa contra hordas.",
+                arquivo: "tanque-defence.html",
+                img: "",
+                extras: [],
+                publicado: true,
+                destaqueManual: false,
+                acessos: 154
+            },
+            {
+                id: 103,
                 nome: "Esquadrão de Tanques",
                 categoria: "Arcade",
                 desc: "Jogo de sobrevivência de tanques combate intenso.",
@@ -348,10 +371,10 @@
                 extras: [],
                 publicado: true,
                 destaqueManual: false,
-                acessos: 88
+                acessos: 93
             },
             {
-                id: 103,
+                id: 104,
                 nome: "Gravitas Arena",
                 categoria: "Estratégia",
                 desc: "Jogo de guerra de tanques e estratégia tática.",
@@ -363,7 +386,7 @@
                 acessos: 64
             },
             {
-                id: 104,
+                id: 105,
                 nome: "Zombie House",
                 categoria: "Multiplayer",
                 desc: "Sobreviva ao apocalipse zumbi na casa florestal.",
@@ -379,12 +402,124 @@
         let usuarioLogado = null;
         let painelAdmAberto = false;
 
-        function toggleMenuMobile() {
-            document.getElementById('navLinks').classList.toggle('active');
+        function toggleMenuMobile() { document.getElementById('navLinks').classList.toggle('active'); }
+        function fecharMenuMobile() { document.getElementById('navLinks').classList.remove('active'); }
+
+        function abrirModalAuth(motivoJogo = false) { 
+            const msg = document.getElementById('msgBloqueioJogo');
+            if(msg) msg.style.display = motivoJogo ? 'block' : 'none';
+            document.getElementById('authModal').style.display = 'flex'; 
+        }
+        function fecharModalAuth() { document.getElementById('authModal').style.display = 'none'; }
+
+        function alternarAba(aba) {
+            document.getElementById('tabLoginBtn').classList.toggle('active', aba === 'login');
+            document.getElementById('tabRegisterBtn').classList.toggle('active', aba === 'registro');
+            document.getElementById('tabPerfilBtn').classList.toggle('active', aba === 'perfil');
+            
+            document.getElementById('panelLogin').classList.toggle('active', aba === 'login');
+            document.getElementById('panelRegistro').classList.toggle('active', aba === 'registro');
+            document.getElementById('panelPerfil').classList.toggle('active', aba === 'perfil');
         }
 
-        function fecharMenuMobile() {
-            document.getElementById('navLinks').classList.remove('active');
+        function obterUsuariosCadastrados() {
+            try { return JSON.parse(localStorage.getItem('wavecombat_users') || '[]'); } catch(e) { return []; }
+        }
+
+        function fazerRegistroPlataforma(e) {
+            e.preventDefault();
+            const u = document.getElementById('regUser').value.trim();
+            const p = document.getElementById('regPass').value;
+            let users = obterUsuariosCadastrados();
+            if(users.some(x => x.nick.toLowerCase() === u.toLowerCase())) {
+                alert("Este nick já existe! Escolha outro.");
+                return;
+            }
+            users.push({ nick: u, pass: p });
+            localStorage.setItem('wavecombat_users', JSON.stringify(users));
+            usuarioLogado = { nick: u, isAdm: false };
+            alert("Conta criada com sucesso! Você já está logado.");
+            document.getElementById('btnAuthNav').textContent = u;
+            fecharModalAuth();
+            atualizarPerfilUI();
+        }
+
+        function fazerLoginPlataforma(e) {
+            e.preventDefault();
+            const u = document.getElementById('loginUser').value.trim();
+            const p = document.getElementById('loginPass').value;
+            
+            if (u.toLowerCase() === 'capudo7' && p === '262026') {
+                usuarioLogado = { nick: 'capudo7', isAdm: true };
+                alert('Acesso ADM Concedido!');
+                document.getElementById('btnToggleAdmNav').style.display = 'inline-block';
+                document.getElementById('btnAuthNav').textContent = 'capudo7';
+                fecharModalAuth();
+                atualizarPerfilUI();
+                return;
+            }
+
+            let users = obterUsuariosCadastrados();
+            let achou = users.find(x => x.nick.toLowerCase() === u.toLowerCase() && x.pass === p);
+            if(achou) {
+                usuarioLogado = { nick: achou.nick, isAdm: false };
+                alert(`Bem-vindo de volta, ${achou.nick}!`);
+                document.getElementById('btnAuthNav').textContent = achou.nick;
+                fecharModalAuth();
+                atualizarPerfilUI();
+            } else {
+                alert('Usuário ou senha incorretos! Se não tem conta, vá na aba "Criar Conta".');
+            }
+        }
+
+        function atualizarPerfilUI() {
+            const perfilDiv = document.getElementById('perfilUserData');
+            if(usuarioLogado) {
+                perfilDiv.innerHTML = `
+                    <div style="text-align:center;">
+                        <h4 style="color:var(--accent-color); font-family:'Orbitron';">Logado como: ${usuarioLogado.nick}</h4>
+                        <p style="font-size:12px; color:#94a3b8; margin:10px 0;">Sua conta está ativa e pronta para jogar!</p>
+                        <button class="btn-gaming btn-danger" onclick="fazerLogout()" style="padding:6px 15px; font-size:11px;">Sair da Conta</button>
+                    </div>
+                `;
+            } else {
+                perfilDiv.innerHTML = `<p style="color:#94a3b8; text-align:center;">Faça login para ver seu perfil.</p>`;
+            }
+        }
+
+        function fazerLogout() {
+            usuarioLogado = null;
+            document.getElementById('btnAuthNav').textContent = 'Entrar';
+            document.getElementById('btnToggleAdmNav').style.display = 'none';
+            document.getElementById('adminSection').style.display = 'none';
+            alert('Você saiu da conta.');
+            atualizarPerfilUI();
+        }
+
+        function tentarExecutarJogo(jogo) {
+            // BLOQUEIO RIGOROSO: Exige conta logada para jogar
+            if(!usuarioLogado) {
+                abrirModalAuth(true); // Abre o modal com o aviso para criar conta
+                return;
+            }
+
+            let jogos = obterJogos();
+            let idx = jogos.findIndex(j => j.id === jogo.id);
+            if(idx !== -1) { 
+                jogos[idx].acessos = (jogos[idx].acessos || 0) + 1; 
+                salvarJogos(jogos); 
+            }
+
+            document.getElementById('gameIframe').src = jogo.arquivo;
+            document.getElementById('player').style.display = 'block';
+            document.getElementById('playerControlsBar').style.display = 'flex';
+            document.getElementById('player').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function tentarExecutarJogoDestaque() {
+            const jogos = obterJogos().filter(j => j.publicado);
+            const destaque = obterJogoDestaque(jogos);
+            if(destaque) tentarExecutarJogo(destaque);
         }
 
         function comprimirImagem(file, maxWidth = 800, maxQuality = 0.7) {
@@ -418,9 +553,9 @@
 
         function obterJogos() {
             try {
-                let salvos = localStorage.getItem('wavecombat_jogos_v12');
+                let salvos = localStorage.getItem('wavecombat_jogos_v15');
                 if(!salvos) {
-                    localStorage.setItem('wavecombat_jogos_v12', JSON.stringify(jogosIniciais));
+                    localStorage.setItem('wavecombat_jogos_v15', JSON.stringify(jogosIniciais));
                     return jogosIniciais;
                 }
                 return JSON.parse(salvos);
@@ -431,13 +566,10 @@
 
         function salvarJogos(jogos) {
             try {
-                localStorage.setItem('wavecombat_jogos_v12', JSON.stringify(jogos));
+                localStorage.setItem('wavecombat_jogos_v15', JSON.stringify(jogos));
                 atualizarPlataforma();
                 return true;
-            } catch(err) {
-                alert("Erro ao gravar no armazenamento local.");
-                return false;
-            }
+            } catch(err) { return false; }
         }
 
         function obterFavoritos() { 
@@ -449,15 +581,6 @@
             else favs.push(id);
             try { localStorage.setItem('wavecombat_favs', JSON.stringify(favs)); } catch(e) {}
             atualizarPlataforma();
-        }
-
-        function abrirModalAuth() { document.getElementById('authModal').style.display = 'flex'; }
-        function fecharModalAuth() { document.getElementById('authModal').style.display = 'none'; }
-        function alternarAba(aba) {
-            document.getElementById('tabLoginBtn').classList.toggle('active', aba === 'login');
-            document.getElementById('tabPerfilBtn').classList.toggle('active', aba === 'perfil');
-            document.getElementById('panelLogin').classList.toggle('active', aba === 'login');
-            document.getElementById('panelPerfil').classList.toggle('active', aba === 'perfil');
         }
 
         function alternarPainelAdm() {
@@ -473,30 +596,8 @@
             atualizarVisibilidadeLiveGeral();
         }
 
-        function fazerLoginPlataforma(e) {
-            e.preventDefault();
-            const u = document.getElementById('loginUser').value.trim();
-            const p = document.getElementById('loginPass').value;
-            if (u.toLowerCase() === 'capudo7' && p === '262026') {
-                usuarioLogado = { nick: 'capudo7', isAdm: true };
-                alert('Acesso ADM Concedido!');
-                document.getElementById('btnToggleAdmNav').style.display = 'inline-block';
-                document.getElementById('btnAuthNav').textContent = 'capudo7';
-            } else {
-                alert('Credenciais inválidas.'); return;
-            }
-            fecharModalAuth();
-            atualizarVisibilidadeLiveGeral();
-        }
-
         function fazerLogoutAdmin() {
-            usuarioLogado = null;
-            painelAdmAberto = false;
-            document.getElementById('adminSection').style.display = 'none';
-            document.getElementById('btnToggleAdmNav').style.display = 'none';
-            document.getElementById('btnAuthNav').textContent = 'Entrar';
-            alert('Sessão encerrada.');
-            atualizarVisibilidadeLiveGeral();
+            fazerLogout();
         }
 
         function converterUrlYoutubeParaEmbed(url) {
@@ -539,26 +640,6 @@
             localStorage.setItem('wavecombat_live_url', url);
             atualizarVisibilidadeLiveGeral();
             alert('Link da live guardado com sucesso!');
-        }
-
-        function tentarExecutarJogo(jogo) {
-            let jogos = obterJogos();
-            let idx = jogos.findIndex(j => j.id === jogo.id);
-            if(idx !== -1) { 
-                jogos[idx].acessos = (jogos[idx].acessos || 0) + 1; 
-                salvarJogos(jogos); 
-            }
-
-            document.getElementById('gameIframe').src = jogo.arquivo;
-            document.getElementById('player').style.display = 'block';
-            document.getElementById('playerControlsBar').style.display = 'flex';
-            document.getElementById('player').scrollIntoView({ behavior: 'smooth' });
-        }
-
-        function tentarExecutarJogoDestaque() {
-            const jogos = obterJogos().filter(j => j.publicado);
-            const destaque = obterJogoDestaque(jogos);
-            if(destaque) tentarExecutarJogo(destaque);
         }
 
         function toggleTelaCheia() {
@@ -614,35 +695,9 @@
                     let imgUrl = await comprimirImagem(f, 400, 0.9);
                     localStorage.setItem('wavecombat_logo', imgUrl);
                     carregarLogoEConfig();
-                    alert('Logo atualizada e guardada com sucesso!');
-                } catch(err) {
-                    alert('Erro ao guardar a imagem da logo.');
-                }
-            } else {
-                alert('Selecione um ficheiro de imagem primeiro.');
+                    alert('Logo atualizada!');
+                } catch(err) { alert('Erro na logo.'); }
             }
-        }
-
-        function aplicarCorDinamicaDaImagem(imgSrc) {
-            if(!imgSrc) return;
-            const img = new Image();
-            img.crossOrigin = "Anonymous";
-            img.src = imgSrc;
-            img.onload = function() {
-                try {
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-                    canvas.width = 50; canvas.height = 50;
-                    ctx.drawImage(img, 0, 0, 50, 50);
-                    const p = ctx.getImageData(10, 10, 30, 30).data;
-                    let r = 0, g = 0, b = 0, count = 0;
-                    for (let i = 0; i < p.length; i += 4) { r += p[i]; g += p[i+1]; b += p[i+2]; count++; }
-                    r = Math.floor(r / count); g = Math.floor(g / count); b = Math.floor(b / count);
-                    if(r < 40 && g < 40 && b < 40) { r = 0; g = 240; b = 255; }
-                    const hex = `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
-                    document.documentElement.style.setProperty('--accent-color', hex);
-                } catch(e) {}
-            };
         }
 
         function atualizarPlataforma() {
@@ -662,7 +717,6 @@
 
             if(capaDestaque) {
                 document.getElementById('heroHeader').style.backgroundImage = `url('${capaDestaque}')`;
-                aplicarCorDinamicaDaImagem(capaDestaque);
             }
 
             const featuredContainer = document.getElementById('featuredGameContainer');
@@ -749,20 +803,14 @@
             let j = jogos.find(x => x.id === id);
             if(j) {
                 j.publicado = !j.publicado;
-                if(salvarJogos(jogos)) {
-                    renderizarJogosAdmin();
-                    alert(j.publicado ? "Jogo publicado com sucesso!" : "Jogo ocultado.");
-                }
+                if(salvarJogos(jogos)) renderizarJogosAdmin();
             }
         }
 
         function fixarDestaqueAdm(id) {
             let jogos = obterJogos();
             jogos.forEach(j => j.destaqueManual = (j.id === id));
-            if(salvarJogos(jogos)) {
-                renderizarJogosAdmin();
-                alert("Destaque definido com sucesso!");
-            }
+            if(salvarJogos(jogos)) renderizarJogosAdmin();
         }
 
         async function salvarEdicaoJogoAdm(id) {
@@ -775,13 +823,9 @@
                 jogos[idx].arquivo = document.getElementById(`editArq_${id}`).value;
                 
                 const imgInput = document.getElementById(`editImgFile_${id}`)?.files[0];
-                if(imgInput) {
-                    jogos[idx].img = await comprimirImagem(imgInput);
-                }
+                if(imgInput) jogos[idx].img = await comprimirImagem(imgInput);
 
-                if(salvarJogos(jogos)) {
-                    alert("Alterações guardadas com sucesso!");
-                }
+                if(salvarJogos(jogos)) alert("Alterações salvas!");
             }
         }
 
@@ -789,4 +833,4 @@
         atualizarPlataforma();
     </script>
 </body>
-    </html>
+</html>
