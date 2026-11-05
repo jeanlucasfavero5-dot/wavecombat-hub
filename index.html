@@ -309,7 +309,7 @@
                 <div class="admin-block">
                     <h4>🖼️ Alterar Logo Principal</h4>
                     <input type="file" id="admLogoFile" accept="image/*">
-                    <button type="button" class="btn-gaming" onclick="alterarLogoSite()" style="font-size:11px; padding:6px;">Atualizar Logo</button>
+                    <button type="button" class="btn-gaming" onclick="alterarLogoSite()" style="font-size:11px; padding:6px;">Atualizar Logo na Nuvem</button>
                 </div>
                 <div class="admin-block">
                     <h4>🔴 Gerenciar Transmissão ao Vivo</h4>
@@ -329,7 +329,7 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.308 (Cloud Live Status & Sync)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.310 (Final Cloud Synchronization)</strong>
     </footer>
 
     <script>
@@ -348,7 +348,7 @@
         let listaJogosCache = [];
         let usuarioLogado = null;
         let painelAdmAberto = false;
-        let liveConfigGlobal = { url: "", ativa: false };
+        let siteConfigGlobal = { url: "", ativa: false, logo: "" };
 
         function carregarSessaoSalva() {
             try {
@@ -484,27 +484,26 @@
                 const { data: confData } = await supabaseClient.from('configuracoes').select('*');
                 if(confData) {
                     confData.forEach(item => {
-                        if(item.chave === 'live_url') liveConfigGlobal.url = item.valor || "";
-                        if(item.chave === 'live_ativa') liveConfigGlobal.ativa = (item.valor === 'true');
+                        if(item.chave === 'live_url') siteConfigGlobal.url = item.valor || "";
+                        if(item.chave === 'live_ativa') siteConfigGlobal.ativa = (item.valor === 'true');
+                        if(item.chave === 'site_logo') siteConfigGlobal.logo = item.valor || "";
                     });
                 }
-            } catch(e) {
-                liveConfigGlobal.url = localStorage.getItem('wavecombat_live_url') || "";
-                liveConfigGlobal.ativa = (localStorage.getItem('wavecombat_live_ativa') === 'true');
-            }
+            } catch(e) {}
 
             sincronizarCamposAdmUI();
+            aplicarLogoNoSite();
             atualizarVisibilidadeLiveGeral();
             atualizarPlataforma();
         }
 
         function sincronizarCamposAdmUI() {
             const inputLive = document.getElementById('inputAdminLiveUrl');
-            if(inputLive) inputLive.value = liveConfigGlobal.url;
+            if(inputLive) inputLive.value = siteConfigGlobal.url;
 
             const btnStatus = document.getElementById('btnToggleLiveStatus');
             if(btnStatus) {
-                if(liveConfigGlobal.ativa) {
+                if(siteConfigGlobal.ativa) {
                     btnStatus.textContent = "LIVE: ONLINE";
                     btnStatus.style.background = "#22c55e";
                     btnStatus.style.color = "#000";
@@ -517,24 +516,60 @@
         }
 
         function alternarStatusLiveAdm() {
-            liveConfigGlobal.ativa = !liveConfigGlobal.ativa;
+            siteConfigGlobal.ativa = !siteConfigGlobal.ativa;
             sincronizarCamposAdmUI();
         }
 
         async function salvarConfigLiveAdm() {
             const url = document.getElementById('inputAdminLiveUrl').value.trim();
-            liveConfigGlobal.url = url;
-
-            localStorage.setItem('wavecombat_live_url', url);
-            localStorage.setItem('wavecombat_live_ativa', liveConfigGlobal.ativa);
+            siteConfigGlobal.url = url;
 
             try {
                 await supabaseClient.from('configuracoes').upsert({ chave: 'live_url', valor: url });
-                await supabaseClient.from('configuracoes').upsert({ chave: 'live_ativa', valor: String(liveConfigGlobal.ativa) });
-            } catch(e){}
+                await supabaseClient.from('configuracoes').upsert({ chave: 'live_ativa', valor: String(siteConfigGlobal.ativa) });
+                alert('Configurações da live guardadas na nuvem com sucesso!');
+            } catch(e) {
+                alert('Erro ao salvar live na nuvem.');
+            }
 
             atualizarVisibilidadeLiveGeral();
-            alert('Configurações da live guardadas na nuvem com sucesso!');
+        }
+
+        async function alterarLogoSite() {
+            const f = document.getElementById('admLogoFile').files[0];
+            if(f) {
+                const fileName = `logo_${Date.now()}_${f.name}`;
+                const { error } = await supabaseClient.storage.from('capas').upload(fileName, f);
+                if(!error) {
+                    const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/capas/${fileName}`;
+                    siteConfigGlobal.logo = publicUrl;
+
+                    try {
+                        await supabaseClient.from('configuracoes').upsert({ chave: 'site_logo', valor: publicUrl });
+                    } catch(e) {}
+
+                    aplicarLogoNoSite();
+                    alert('Logo atualizada e sincronizada na nuvem com sucesso!');
+                } else {
+                    alert('Erro ao enviar imagem do logo para o Supabase Storage.');
+                }
+            } else {
+                alert('Selecione um ficheiro de imagem primeiro.');
+            }
+        }
+
+        function aplicarLogoNoSite() {
+            const logoUrl = siteConfigGlobal.logo;
+            if (logoUrl && logoUrl.trim() !== "") {
+                document.getElementById('defaultLogoSvg').style.display = 'none';
+                let img = document.getElementById('customNavLogo');
+                if(!img) {
+                    img = document.createElement('img');
+                    img.id = 'customNavLogo'; img.className = 'logo-img-custom';
+                    document.getElementById('navLogoContainer').prepend(img);
+                }
+                img.src = logoUrl;
+            }
         }
 
         async function tentarExecutarJogo(jogo) {
@@ -597,10 +632,9 @@
             const iframe = document.getElementById('youtubeLiveIframe');
             if(!box || !iframe) return;
 
-            // O player só aparece se a live estiver ativa (ONLINE) e houver URL preenchida
-            if (liveConfigGlobal.ativa && liveConfigGlobal.url.trim() !== "") {
+            if (siteConfigGlobal.ativa && siteConfigGlobal.url.trim() !== "") {
                 box.style.display = 'block';
-                iframe.src = converterUrlYoutubeParaEmbed(liveConfigGlobal.url);
+                iframe.src = converterUrlYoutubeParaEmbed(siteConfigGlobal.url);
             } else {
                 box.style.display = 'none';
                 iframe.src = "about:blank";
@@ -662,38 +696,6 @@
             const manual = jogosPublicados.find(j => j.destaque_manual);
             if(manual) return manual;
             return [...jogosPublicados].sort((a,b) => (b.acessos || 0) - (a.acessos || 0))[0] || null;
-        }
-
-        function carregarLogoEConfig() {
-            try {
-                const logo = localStorage.getItem('wavecombat_logo');
-                if (logo) {
-                    document.getElementById('defaultLogoSvg').style.display = 'none';
-                    let img = document.getElementById('customNavLogo');
-                    if(!img) {
-                        img = document.createElement('img');
-                        img.id = 'customNavLogo'; img.className = 'logo-img-custom';
-                        document.getElementById('navLogoContainer').prepend(img);
-                    }
-                    img.src = logo;
-                }
-            } catch(e) {}
-        }
-
-        async function alterarLogoSite() {
-            const f = document.getElementById('admLogoFile').files[0];
-            if(f) {
-                const fileName = `logo_${Date.now()}_${f.name}`;
-                const { error } = await supabaseClient.storage.from('capas').upload(fileName, f);
-                if(!error) {
-                    const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/capas/${fileName}`;
-                    localStorage.setItem('wavecombat_logo', publicUrl);
-                    carregarLogoEConfig();
-                    alert('Logo atualizada na nuvem!');
-                } else {
-                    alert('Erro ao enviar imagem do logo para o Supabase Storage.');
-                }
-            }
         }
 
         function atualizarPlataforma() {
@@ -845,13 +847,13 @@
             }
         }
 
+        // Sincronização em tempo real (Realtime) para tudo atualizar sozinho
         supabaseClient.channel('realtime_all')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'jogos' }, () => buscarDadosNuvem())
             .on('postgres_changes', { event: '*', schema: 'public', table: 'configuracoes' }, () => buscarDadosNuvem())
             .subscribe();
 
         carregarSessaoSalva();
-        carregarLogoEConfig();
         buscarDadosNuvem();
     </script>
 </body>
