@@ -280,7 +280,7 @@
             </div>
             
             <div class="form-panel active" id="panelLogin">
-                <p id="msgBloqueioJogo" style="display:none; color:var(--gold-warning); font-size:12px; font-weight:bold; text-align:center; margin-bottom:8px;">⚠️ CRIE SUA CONTA PARA JOGAR!</p>
+                <p id="msgBloqueioJogo" style="display:none; color:var(--gold-warning); font-size:12px; font-weight:bold; text-align:center; margin-bottom:8px;">⚠️ CRIE SUA CONTA OU FAÇA LOGIN PARA CONTINUAR!</p>
                 <form class="auth-form" onsubmit="fazerLoginPlataforma(event)">
                     <input type="text" id="loginUser" placeholder="Seu Nick ou ADM" class="auth-input" required>
                     <input type="password" id="loginPass" placeholder="Sua Senha" class="auth-input" required>
@@ -497,7 +497,7 @@
                 </div>
             </div>
 
-            <!-- NOVA FERRAMENTA DE ENVIO DE DIAMANTES ADM -->
+            <!-- FERRAMENTA DE ENVIO DE DIAMANTES ADM -->
             <div class="admin-grid-tools" style="margin-top: 15px;">
                 <div class="admin-block">
                     <h4>💎 Envio Manual de Diamantes (ADM)</h4>
@@ -517,7 +517,7 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.341 (Pix Automático & ADM Diamantes)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.342 (Pix Automático & Realtime Sync)</strong>
     </footer>
 
     <script>
@@ -625,21 +625,7 @@
             }
         }
 
-        function inicializarIdentidadeLocal() {
-            if (!localStorage.getItem('wavecombat_id')) {
-                const idGerado = Math.floor(100000000 + Math.random() * 900000000).toString();
-                localStorage.setItem('wavecombat_id', idGerado);
-            }
-            if (!localStorage.getItem('wavecombat_nick')) {
-                localStorage.setItem('wavecombat_nick', 'Player_' + localStorage.getItem('wavecombat_id').substring(0, 4));
-            }
-            if (!localStorage.getItem('wavecombat_historico')) {
-                localStorage.setItem('wavecombat_historico', JSON.stringify([]));
-            }
-        }
-
         function carregarSessaoSalva() {
-            inicializarIdentidadeLocal();
             if (localStorage.getItem('wavecombat_oled') === 'true') {
                 document.getElementById('checkThemeOLED').checked = true;
                 document.getElementById('mainBody').classList.add('theme-oled');
@@ -647,11 +633,12 @@
 
             try {
                 const sessaoSalva = localStorage.getItem('wavecombat_sessao_ativa');
-                if(sessaoSalva) {
+                if (sessaoSalva) {
                     usuarioLogado = JSON.parse(sessaoSalva);
                     document.getElementById('btnAuthNav').textContent = usuarioLogado.nick;
                     localStorage.setItem('wavecombat_nick', usuarioLogado.nick);
-                    if(usuarioLogado.isAdm) {
+                    if (usuarioLogado.id) localStorage.setItem('wavecombat_id', usuarioLogado.id);
+                    if (usuarioLogado.isAdm) {
                         document.getElementById('btnToggleAdmNav').style.display = 'inline-block';
                     }
                 }
@@ -692,9 +679,9 @@
         function toggleMenuMobile() { document.getElementById('navLinks').classList.toggle('active'); }
         function fecharMenuMobile() { document.getElementById('navLinks').classList.remove('active'); }
 
-        function abrirModalAuth(motivoJogo = false) { 
+        function abrirModalAuth(motivoBloqueio = false) { 
             const msg = document.getElementById('msgBloqueioJogo');
-            if(msg) msg.style.display = motivoJogo ? 'block' : 'none';
+            if(msg) msg.style.display = motivoBloqueio ? 'block' : 'none';
             document.getElementById('authModal').style.display = 'flex'; 
             atualizarAbasPerfilUI();
         }
@@ -710,7 +697,10 @@
 
         async function carregarSaldoDiamantesSite() {
             const idJogador = localStorage.getItem('wavecombat_id');
-            if (!idJogador) return;
+            if (!usuarioLogado || !idJogador) {
+                document.getElementById('userDiamondBalance').textContent = 0;
+                return;
+            }
 
             try {
                 const { data } = await supabaseClient
@@ -733,9 +723,10 @@
             const idJogador = localStorage.getItem('wavecombat_id');
             const nick = localStorage.getItem('wavecombat_nick') || 'Jogador';
 
-            if (!idJogador) {
-                alert("Crie uma conta ou faça login para comprar diamantes!");
-                abrirModalAuth();
+            // OBRIGATÓRIO: Se o utilizador não estiver logado, bloqueia e abre o modal de Login/Criar Conta
+            if (!usuarioLogado || !idJogador) {
+                mostrarToast("⚠️ Faça login ou crie uma conta para comprar!");
+                abrirModalAuth(true);
                 return;
             }
 
@@ -840,6 +831,7 @@
             
             mostrarToast("✨ Conta criada com ID de 9 dígitos!");
             document.getElementById('btnAuthNav').textContent = u;
+            fecharModalAuth();
             atualizarAbasPerfilUI();
             carregarSaldoDiamantesSite();
         }
@@ -858,6 +850,7 @@
                 mostrarToast('⭐ Acesso ADM Concedido!');
                 document.getElementById('btnToggleAdmNav').style.display = 'inline-block';
                 document.getElementById('btnAuthNav').textContent = 'capudo7';
+                fecharModalAuth();
                 atualizarAbasPerfilUI();
                 carregarSaldoDiamantesSite();
                 return;
@@ -873,6 +866,7 @@
                 localStorage.setItem('wavecombat_id', achou.id);
                 mostrarToast(`👋 Bem-vindo de volta, ${achou.nick}!`);
                 document.getElementById('btnAuthNav').textContent = achou.nick;
+                fecharModalAuth();
                 atualizarAbasPerfilUI();
                 carregarSaldoDiamantesSite();
             } else {
@@ -895,17 +889,18 @@
                 <div style="display:flex; flex-direction:column; gap:10px;">
                     <div style="background:#0b0f17; border:1px solid var(--steel-border); padding:10px; border-radius:8px; text-align:center;">
                         <h4 style="color:var(--accent-color); font-family:'Orbitron'; font-size:13px;">${usuarioLogado ? usuarioLogado.nick : 'Convidado'}</h4>
-                        <p style="font-size:11px; color:var(--gold-warning); font-family:'Orbitron'; margin-top:4px;">ID Único (9 Dígitos): <strong>${idAtual}</strong></p>
+                        <p style="font-size:11px; color:var(--gold-warning); font-family:'Orbitron'; margin-top:4px;">ID Único: <strong>${usuarioLogado ? idAtual : 'Faça Login'}</strong></p>
                     </div>
+                    ${usuarioLogado ? `
                     <div>
                         <label style="font-size:11px; color:#94a3b8;">Editar Nick nos Jogos:</label>
                         <input type="text" id="inputHubNickEdit" value="${nickAtual}" class="auth-input" oninput="salvarNickManualSite(this.value)">
-                    </div>
+                    </div>` : ''}
                     <div>
                         <h5 style="font-family:'Orbitron'; font-size:11px; color:var(--accent-color); margin-bottom:4px;">📜 Últimos Jogos Acessados:</h5>
                         <ul style="padding-left:15px; display:flex; flex-direction:column; gap:3px;">${histHtml}</ul>
                     </div>
-                    ${usuarioLogado ? `<button class="btn-gaming btn-danger" onclick="fazerLogout(); tocarSomClique();" style="padding:6px; font-size:11px;">Sair da Conta</button>` : `<p style="font-size:10px; color:#94a3b8; text-align:center;">Faça login para salvar seu progresso no ranking global.</p>`}
+                    ${usuarioLogado ? `<button class="btn-gaming btn-danger" onclick="fazerLogout(); tocarSomClique();" style="padding:6px; font-size:11px;">Sair da Conta</button>` : `<p style="font-size:10px; color:#94a3b8; text-align:center;">Faça login para salvar seu progresso e comprar diamantes.</p>`}
                 </div>
             `;
         }
@@ -920,9 +915,8 @@
         function fazerLogout() {
             usuarioLogado = null;
             localStorage.removeItem('wavecombat_sessao_ativa');
-            const novoId = Math.floor(100000000 + Math.random() * 900000000).toString();
-            localStorage.setItem('wavecombat_id', novoId);
-            localStorage.setItem('wavecombat_nick', 'Player_' + novoId.substring(0, 4));
+            localStorage.removeItem('wavecombat_id');
+            localStorage.removeItem('wavecombat_nick');
 
             document.getElementById('btnAuthNav').textContent = 'Entrar';
             document.getElementById('btnToggleAdmNav').style.display = 'none';
@@ -1102,7 +1096,10 @@
         }
 
         async function tentarExecutarJogo(jogo) {
-            inicializarIdentidadeLocal();
+            if (!usuarioLogado) {
+                abrirModalAuth(true);
+                return;
+            }
             registrarHistoricoJogo(jogo.nome);
 
             try {
@@ -1376,12 +1373,25 @@
             }
         }
 
+        // REALTIME SUBSCRIPTION COM AUTO-CLOSE DO PIX E SOM DE VITÓRIA
         supabaseClient.channel('realtime_all')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'jogos' }, () => buscarDadosNuvem())
             .on('postgres_changes', { event: '*', schema: 'public', table: 'configuracoes' }, () => buscarDadosNuvem())
             .on('postgres_changes', { event: '*', schema: 'public', table: 'chat_global' }, () => carregarMensagensChat())
             .on('postgres_changes', { event: '*', schema: 'public', table: 'leaderboard' }, () => carregarLeaderboardSite())
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'carteira_diamantes' }, () => carregarSaldoDiamantesSite())
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'carteira_diamantes' }, (payload) => {
+                const idJogadorAtual = localStorage.getItem('wavecombat_id');
+                if (payload.new && payload.new.id_jogador === idJogadorAtual) {
+                    carregarSaldoDiamantesSite();
+                    
+                    const pixModal = document.getElementById('pixModal');
+                    if (pixModal && pixModal.style.display === 'flex') {
+                        pixModal.style.display = 'none';
+                        tocarSomLevelUp();
+                        mostrarToast("💎 Pagamento confirmado! Diamantes adicionados com sucesso!");
+                    }
+                }
+            })
             .subscribe();
 
         gerarParticulasFundo();
