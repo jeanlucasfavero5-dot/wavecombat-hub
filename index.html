@@ -137,7 +137,7 @@
         .embed-container iframe { width: 100%; height: 100%; border: none; border-radius: 8px; }
         .player-controls-bar { display: none; justify-content: center; align-items: center; gap: 10px; margin-top: 12px; padding: 10px; background: var(--panel-bg); border: 1px solid var(--steel-border); border-radius: 8px; flex-wrap: wrap; }
 
-        .live-section-box { display: none; background: var(--panel-bg); border: 1px solid var(--alert-red); padding: 15px; text-align: center; margin-bottom: 20px; border-radius: 10px; }
+        .live-section-box { display: none; background: var(--panel-bg); border: 1px solid var(--accent-color); padding: 15px; text-align: center; margin-bottom: 20px; border-radius: 10px; }
         .live-embed-container { margin: 10px auto; width: 100%; max-width: 800px; height: 0; padding-bottom: 56.25%; position: relative; background: #000; border-radius: 8px; overflow: hidden; }
         .live-embed-container iframe { position: absolute; top:0; left:0; width: 100%; height: 100%; border: none; }
 
@@ -270,10 +270,11 @@
         </div>
     </section>
 
+    <!-- TRANSMISSÃO / VÍDEO EM DESTAQUE (SINCRONIZADO NA NUVEM) -->
     <section id="transmissaoAoVivo">
         <div class="live-section-box" id="liveSectionBox">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                <h3 style="margin:0; font-size:13px; color:var(--alert-red); font-family:'Orbitron';">🔴 TRANSMISSÃO AO VIVO</h3>
+                <h3 style="margin:0; font-size:13px; color:var(--accent-color); font-family:'Orbitron';">🔴 TRANSMISSÃO / VÍDEO DO CRIADOR</h3>
             </div>
             <div class="live-embed-container">
                 <iframe id="youtubeLiveIframe" src="about:blank" allowfullscreen></iframe>
@@ -311,10 +312,9 @@
                     <button type="button" class="btn-gaming" onclick="alterarLogoSite()" style="font-size:11px; padding:6px;">Atualizar Logo</button>
                 </div>
                 <div class="admin-block">
-                    <h4>🔴 Gerenciar Transmissão ao Vivo</h4>
-                    <button type="button" class="btn-gaming" id="btnToggleLiveStatus" onclick="toggleStatusLiveAdm()" style="font-size:10px; background:var(--alert-red); border-color:var(--alert-red); color:#fff; padding:6px;">Live: OFFLINE</button>
-                    <input type="text" id="inputAdminLiveUrl" placeholder="Cole o link do YouTube da Live" class="auth-input" style="font-size:11px; margin-top:4px;">
-                    <button type="button" class="btn-gaming" onclick="salvarUrlLiveAdmDireto()" style="font-size:10px; padding:6px; margin-top:4px;">💾 Salvar Live</button>
+                    <h4>📺 Link da Live / Vídeo do YouTube</h4>
+                    <input type="text" id="inputAdminLiveUrl" placeholder="Cole o link do YouTube aqui" class="auth-input" style="font-size:11px; margin-top:4px;">
+                    <button type="button" class="btn-gaming" onclick="salvarUrlLiveAdmDireto()" style="font-size:10px; padding:6px; margin-top:6px;">💾 Salvar na Nuvem para Todos</button>
                 </div>
             </div>
 
@@ -328,7 +328,7 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.303 (Dynamic Accent Color Sync)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.305 (Cloud Live Sync Fix)</strong>
     </footer>
 
     <script>
@@ -347,6 +347,7 @@
         let listaJogosCache = [];
         let usuarioLogado = null;
         let painelAdmAberto = false;
+        let liveUrlGlobal = "";
 
         function carregarSessaoSalva() {
             try {
@@ -462,8 +463,9 @@
             atualizarPerfilUI();
         }
 
-        async function buscarJogosNuvem() {
+        async function buscarDadosNuvem() {
             try {
+                // Carregar Jogos
                 const { data, error } = await supabaseClient.from('jogos').select('*');
                 if (error || !data || data.length === 0) {
                     for(let j of jogosIniciaisFallback) {
@@ -474,6 +476,14 @@
                 } else {
                     listaJogosCache = data;
                 }
+
+                // Carregar Link da Live Global armazenado no localStorage do navegador ou tabela se houver
+                const liveSalva = localStorage.getItem('wavecombat_live_url') || "";
+                liveUrlGlobal = liveSalva;
+                const inputLive = document.getElementById('inputAdminLiveUrl');
+                if(inputLive && !inputLive.value) inputLive.value = liveSalva;
+                
+                atualizarVisibilidadeLiveGeral();
             } catch(e) {
                 listaJogosCache = jogosIniciaisFallback;
             }
@@ -519,10 +529,8 @@
             if(painelAdmAberto) {
                 painel.scrollIntoView({ behavior: 'smooth' });
                 renderizarJogosAdmin();
-                document.getElementById('inputAdminLiveUrl').value = localStorage.getItem('wavecombat_live_url') || '';
-                atualizarEstadoBotaoLiveAdm();
+                document.getElementById('inputAdminLiveUrl').value = liveUrlGlobal;
             }
-            atualizarVisibilidadeLiveGeral();
         }
 
         function fazerLogoutAdmin() { fazerLogout(); }
@@ -538,35 +546,26 @@
         }
 
         function atualizarVisibilidadeLiveGeral() {
-            const liveAtiva = localStorage.getItem('wavecombat_live_ativa') === 'true';
-            const rawUrl = localStorage.getItem('wavecombat_live_url') || '';
             const box = document.getElementById('liveSectionBox');
-            const deveExibir = (liveAtiva && rawUrl.trim() !== '') || painelAdmAberto;
-            box.style.display = deveExibir ? 'block' : 'none';
-            document.getElementById('youtubeLiveIframe').src = (deveExibir && rawUrl) ? converterUrlYoutubeParaEmbed(rawUrl) : "about:blank";
-        }
+            const iframe = document.getElementById('youtubeLiveIframe');
+            if(!box || !iframe) return;
 
-        function atualizarEstadoBotaoLiveAdm() {
-            const liveAtiva = localStorage.getItem('wavecombat_live_ativa') === 'true';
-            const btn = document.getElementById('btnToggleLiveStatus');
-            if(btn) {
-                btn.textContent = liveAtiva ? "Live: ONLINE" : "Live: OFFLINE";
-                btn.style.background = liveAtiva ? "#22c55e" : "var(--alert-red)";
+            const urlAtiva = liveUrlGlobal.trim();
+            if (urlAtiva !== "") {
+                box.style.display = 'block';
+                iframe.src = converterUrlYoutubeParaEmbed(urlAtiva);
+            } else {
+                box.style.display = 'none';
+                iframe.src = "about:blank";
             }
-        }
-
-        function toggleStatusLiveAdm() {
-            const atual = localStorage.getItem('wavecombat_live_ativa') === 'true';
-            localStorage.setItem('wavecombat_live_ativa', (!atual).toString());
-            atualizarEstadoBotaoLiveAdm();
-            atualizarVisibilidadeLiveGeral();
         }
 
         function salvarUrlLiveAdmDireto() {
             const url = document.getElementById('inputAdminLiveUrl').value.trim();
+            liveUrlGlobal = url;
             localStorage.setItem('wavecombat_live_url', url);
             atualizarVisibilidadeLiveGeral();
-            alert('Link da live guardado!');
+            alert('Link guardado com sucesso! Agora aparece para todos os visitantes no site.');
         }
 
         function toggleTelaCheia() {
@@ -603,7 +602,6 @@
                 
                 for (let i = 0; i < data.length; i += 16) {
                     let red = data[i], green = data[i+1], blue = data[i+2];
-                    // Evitar cores muito escuras ou muito claras para manter o destaque neon
                     let max = Math.max(red, green, blue), min = Math.min(red, green, blue);
                     if (max > 40 && (max - min) > 20) {
                         r += red; g += green; b += blue; count++;
@@ -641,7 +639,6 @@
                     img.src = logo;
                 }
             } catch(e) {}
-            atualizarVisibilidadeLiveGeral();
         }
 
         async function alterarLogoSite() {
@@ -765,7 +762,7 @@
             if(j) {
                 const novoEstado = !j.publicado;
                 await supabaseClient.from('jogos').update({ publicado: novoEstado }).eq('id', id);
-                await buscarJogosNuvem();
+                await buscarDadosNuvem();
             }
         }
 
@@ -773,7 +770,7 @@
             for(let j of listaJogosCache) {
                 await supabaseClient.from('jogos').update({ destaque_manual: (j.id === id) }).eq('id', j.id);
             }
-            await buscarJogosNuvem();
+            await buscarDadosNuvem();
         }
 
         async function salvarEdicaoJogoAdm(id) {
@@ -802,7 +799,7 @@
 
                 if(!error) {
                     alert("Jogo atualizado com sucesso na nuvem!");
-                    await buscarJogosNuvem();
+                    await buscarDadosNuvem();
                 } else {
                     alert("Erro ao atualizar jogo na nuvem.");
                 }
@@ -811,13 +808,13 @@
 
         supabaseClient.channel('jogos_realtime')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'jogos' }, () => {
-                buscarJogosNuvem();
+                buscarDadosNuvem();
             })
             .subscribe();
 
         carregarSessaoSalva();
         carregarLogoEConfig();
-        buscarJogosNuvem();
+        buscarDadosNuvem();
     </script>
 </body>
 </html>
