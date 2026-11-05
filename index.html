@@ -734,7 +734,9 @@
             try {
                 const res = await fetch(`${SUPABASE_URL}/functions/v1/gerar-pix`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
+                    headers: { 
+                        'Content-Type': 'application/json' 
+                    },
                     body: JSON.stringify({
                         valor: valor,
                         diamantes: quantDiamantes,
