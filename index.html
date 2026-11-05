@@ -75,7 +75,7 @@
         .logo-text { font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 16px; color: var(--accent-color); letter-spacing: 1px; transition: color 0.4s ease; }
 
         .menu-toggle-btn {
-            display: flex; flex-direction: column; justify-content: space-around;
+            display: flex; flex-direction: column; justify-around;
             width: 30px; height: 25px; background: transparent; border: none; cursor: pointer; z-index: 1002;
         }
         .menu-toggle-btn span { width: 100%; height: 3px; background: var(--accent-color); border-radius: 2px; transition: 0.3s; }
@@ -280,7 +280,7 @@
             </div>
             
             <div class="form-panel active" id="panelLogin">
-                <p id="msgBloqueioJogo" style="display:none; color:var(--gold-warning); font-size:12px; font-weight:bold; text-align:center; margin-bottom:8px;">⚠️ CRIE SUA CONTA OU FAÇA LOGIN PARA CONTINUAR!</p>
+                <p id="msgBloqueioJogo" style="display:none; color:var(--gold-warning); font-size:12px; font-weight:bold; text-align:center; margin-bottom:8px;">⚠️ CRIE SUA CONTA OU FAÇA LOGIN PARA REALIZAR COMPRAS!</p>
                 <form class="auth-form" onsubmit="fazerLoginPlataforma(event)">
                     <input type="text" id="loginUser" placeholder="Seu Nick ou ADM" class="auth-input" required>
                     <input type="password" id="loginPass" placeholder="Sua Senha" class="auth-input" required>
@@ -517,7 +517,7 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.342 (Pix Automático & Realtime Sync)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.342 (Pix Automático & Fechamento Automático)</strong>
     </footer>
 
     <script>
@@ -610,7 +610,7 @@
             const toast = document.getElementById('toastNotification');
             toast.textContent = texto;
             toast.classList.add('show');
-            setTimeout(() => { toast.classList.remove('show'); }, 3000);
+            setTimeout(() => { toast.classList.remove('show'); }, 3500);
         }
 
         function gerarParticulasFundo() {
@@ -625,6 +625,12 @@
             }
         }
 
+        function inicializarIdentidadeLocal() {
+            if (!localStorage.getItem('wavecombat_id') && usuarioLogado) {
+                localStorage.setItem('wavecombat_id', usuarioLogado.id);
+            }
+        }
+
         function carregarSessaoSalva() {
             if (localStorage.getItem('wavecombat_oled') === 'true') {
                 document.getElementById('checkThemeOLED').checked = true;
@@ -633,12 +639,12 @@
 
             try {
                 const sessaoSalva = localStorage.getItem('wavecombat_sessao_ativa');
-                if (sessaoSalva) {
+                if(sessaoSalva) {
                     usuarioLogado = JSON.parse(sessaoSalva);
                     document.getElementById('btnAuthNav').textContent = usuarioLogado.nick;
                     localStorage.setItem('wavecombat_nick', usuarioLogado.nick);
-                    if (usuarioLogado.id) localStorage.setItem('wavecombat_id', usuarioLogado.id);
-                    if (usuarioLogado.isAdm) {
+                    localStorage.setItem('wavecombat_id', usuarioLogado.id);
+                    if(usuarioLogado.isAdm) {
                         document.getElementById('btnToggleAdmNav').style.display = 'inline-block';
                     }
                 }
@@ -679,9 +685,9 @@
         function toggleMenuMobile() { document.getElementById('navLinks').classList.toggle('active'); }
         function fecharMenuMobile() { document.getElementById('navLinks').classList.remove('active'); }
 
-        function abrirModalAuth(motivoBloqueio = false) { 
+        function abrirModalAuth(motivoJogo = false) { 
             const msg = document.getElementById('msgBloqueioJogo');
-            if(msg) msg.style.display = motivoBloqueio ? 'block' : 'none';
+            if(msg) msg.style.display = motivoJogo ? 'block' : 'none';
             document.getElementById('authModal').style.display = 'flex'; 
             atualizarAbasPerfilUI();
         }
@@ -697,7 +703,7 @@
 
         async function carregarSaldoDiamantesSite() {
             const idJogador = localStorage.getItem('wavecombat_id');
-            if (!usuarioLogado || !idJogador) {
+            if (!idJogador) {
                 document.getElementById('userDiamondBalance').textContent = 0;
                 return;
             }
@@ -723,9 +729,9 @@
             const idJogador = localStorage.getItem('wavecombat_id');
             const nick = localStorage.getItem('wavecombat_nick') || 'Jogador';
 
-            // OBRIGATÓRIO: Se o utilizador não estiver logado, bloqueia e abre o modal de Login/Criar Conta
+            // BLOQUEIO OBRIGATÓRIO SE NÃO ESTIVER LOGADO
             if (!usuarioLogado || !idJogador) {
-                mostrarToast("⚠️ Faça login ou crie uma conta para comprar!");
+                alert("⚠️ Ação necessária: Você precisa criar uma conta ou fazer login para comprar diamantes!");
                 abrirModalAuth(true);
                 return;
             }
@@ -829,7 +835,7 @@
             localStorage.setItem('wavecombat_nick', u);
             localStorage.setItem('wavecombat_id', novoId);
             
-            mostrarToast("✨ Conta criada com ID de 9 dígitos!");
+            mostrarToast("✨ Conta criada com sucesso!");
             document.getElementById('btnAuthNav').textContent = u;
             fecharModalAuth();
             atualizarAbasPerfilUI();
@@ -889,18 +895,17 @@
                 <div style="display:flex; flex-direction:column; gap:10px;">
                     <div style="background:#0b0f17; border:1px solid var(--steel-border); padding:10px; border-radius:8px; text-align:center;">
                         <h4 style="color:var(--accent-color); font-family:'Orbitron'; font-size:13px;">${usuarioLogado ? usuarioLogado.nick : 'Convidado'}</h4>
-                        <p style="font-size:11px; color:var(--gold-warning); font-family:'Orbitron'; margin-top:4px;">ID Único: <strong>${usuarioLogado ? idAtual : 'Faça Login'}</strong></p>
+                        <p style="font-size:11px; color:var(--gold-warning); font-family:'Orbitron'; margin-top:4px;">ID Único: <strong>${idAtual || 'Não Logado'}</strong></p>
                     </div>
-                    ${usuarioLogado ? `
                     <div>
                         <label style="font-size:11px; color:#94a3b8;">Editar Nick nos Jogos:</label>
                         <input type="text" id="inputHubNickEdit" value="${nickAtual}" class="auth-input" oninput="salvarNickManualSite(this.value)">
-                    </div>` : ''}
+                    </div>
                     <div>
                         <h5 style="font-family:'Orbitron'; font-size:11px; color:var(--accent-color); margin-bottom:4px;">📜 Últimos Jogos Acessados:</h5>
                         <ul style="padding-left:15px; display:flex; flex-direction:column; gap:3px;">${histHtml}</ul>
                     </div>
-                    ${usuarioLogado ? `<button class="btn-gaming btn-danger" onclick="fazerLogout(); tocarSomClique();" style="padding:6px; font-size:11px;">Sair da Conta</button>` : `<p style="font-size:10px; color:#94a3b8; text-align:center;">Faça login para salvar seu progresso e comprar diamantes.</p>`}
+                    ${usuarioLogado ? `<button class="btn-gaming btn-danger" onclick="fazerLogout(); tocarSomClique();" style="padding:6px; font-size:11px;">Sair da Conta</button>` : `<p style="font-size:10px; color:#94a3b8; text-align:center;">Faça login para salvar seu progresso no ranking global.</p>`}
                 </div>
             `;
         }
@@ -921,9 +926,9 @@
             document.getElementById('btnAuthNav').textContent = 'Entrar';
             document.getElementById('btnToggleAdmNav').style.display = 'none';
             document.getElementById('adminSection').style.display = 'none';
+            document.getElementById('userDiamondBalance').textContent = '0';
             mostrarToast('Sessão encerrada com sucesso.');
             atualizarAbasPerfilUI();
-            carregarSaldoDiamantesSite();
         }
 
         async function carregarLeaderboardSite() {
@@ -1096,10 +1101,7 @@
         }
 
         async function tentarExecutarJogo(jogo) {
-            if (!usuarioLogado) {
-                abrirModalAuth(true);
-                return;
-            }
+            inicializarIdentidadeLocal();
             registrarHistoricoJogo(jogo.nome);
 
             try {
@@ -1373,7 +1375,7 @@
             }
         }
 
-        // REALTIME SUBSCRIPTION COM AUTO-CLOSE DO PIX E SOM DE VITÓRIA
+        // CANAL REALTIME ÚNICO E UNIFICADO
         supabaseClient.channel('realtime_all')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'jogos' }, () => buscarDadosNuvem())
             .on('postgres_changes', { event: '*', schema: 'public', table: 'configuracoes' }, () => buscarDadosNuvem())
@@ -1381,14 +1383,15 @@
             .on('postgres_changes', { event: '*', schema: 'public', table: 'leaderboard' }, () => carregarLeaderboardSite())
             .on('postgres_changes', { event: '*', schema: 'public', table: 'carteira_diamantes' }, (payload) => {
                 const idJogadorAtual = localStorage.getItem('wavecombat_id');
+                // Se o evento pertencer à conta ativa no navegador
                 if (payload.new && payload.new.id_jogador === idJogadorAtual) {
                     carregarSaldoDiamantesSite();
                     
                     const pixModal = document.getElementById('pixModal');
-                    if (pixModal && pixModal.style.display === 'flex') {
+                    if (pixModal && (pixModal.style.display === 'flex' || pixModal.style.display === 'block')) {
                         pixModal.style.display = 'none';
                         tocarSomLevelUp();
-                        mostrarToast("💎 Pagamento confirmado! Diamantes adicionados com sucesso!");
+                        mostrarToast("💎 Pagamento confirmado! Diamantes adicionados à sua conta!");
                     }
                 }
             })
