@@ -497,7 +497,17 @@
                 </div>
             </div>
 
-            <h4 style="color:#fff; margin-bottom:10px; font-family:'Orbitron'; font-size:14px;">🎮 Gestão de Games na Nuvem</h4>
+            <!-- NOVA FERRAMENTA DE ENVIO DE DIAMANTES ADM -->
+            <div class="admin-grid-tools" style="margin-top: 15px;">
+                <div class="admin-block">
+                    <h4>💎 Envio Manual de Diamantes (ADM)</h4>
+                    <input type="text" id="admTargetId" placeholder="ID do Jogador (9 dígitos)" class="auth-input" style="font-size:11px; margin-bottom:6px;">
+                    <input type="number" id="admTargetQtd" placeholder="Quantidade de Diamantes" class="auth-input" style="font-size:11px; margin-bottom:6px;">
+                    <button type="button" class="btn-gaming" onclick="admEnviarDiamantesLivre()" style="font-size:10px; padding:6px; background:#22c55e; color:#000;">⚡ Enviar Diamantes sem Limites</button>
+                </div>
+            </div>
+
+            <h4 style="color:#fff; margin-bottom:10px; font-family:'Orbitron'; font-size:14px; margin-top:15px;">🎮 Gestão de Games na Nuvem</h4>
             <div id="adminListaJogos" style="display:flex; flex-direction:column; gap:10px;"></div>
 
             <div style="text-align:center; margin-top:15px;">
@@ -507,7 +517,7 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.340 (Pix Mercado Pago & PWA)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.341 (Pix Automático & ADM Diamantes)</strong>
     </footer>
 
     <script>
@@ -757,6 +767,42 @@
                 }
             } catch (e) {
                 alert("Erro na conexão com a Edge Function de pagamento.");
+            }
+        }
+
+        async function admEnviarDiamantesLivre() {
+            const idDestino = document.getElementById('admTargetId').value.trim();
+            const qtd = parseInt(document.getElementById('admTargetQtd').value);
+
+            if (!idDestino || isNaN(qtd) || qtd <= 0) {
+                alert("Insira um ID de jogador válido e uma quantidade correta.");
+                return;
+            }
+
+            try {
+                const { data: carteira } = await supabaseClient
+                    .from('carteira_diamantes')
+                    .select('diamantes')
+                    .eq('id_jogador', idDestino)
+                    .single();
+
+                const saldoAtual = carteira ? (carteira.diamantes || 0) : 0;
+                const novoSaldo = saldoAtual + qtd;
+
+                const { error } = await supabaseClient
+                    .from('carteira_diamantes')
+                    .upsert({ id_jogador: idDestino, diamantes: novoSaldo }, { onConflict: 'id_jogador' });
+
+                if (!error) {
+                    mostrarToast(`⚡ Sucesso! ${qtd} diamantes enviados para o ID: ${idDestino}`);
+                    document.getElementById('admTargetId').value = '';
+                    document.getElementById('admTargetQtd').value = '';
+                    carregarSaldoDiamantesSite();
+                } else {
+                    alert("Erro ao atualizar diamantes no banco de dados.");
+                }
+            } catch (e) {
+                alert("Erro de conexão com o Supabase.");
             }
         }
 
