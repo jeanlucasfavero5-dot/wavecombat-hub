@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>WaveCombat | Modern Gaming Hub</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Orbitron:wght@600;800;900&display=swap" rel="stylesheet">
-    <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
@@ -202,7 +201,6 @@
         </ul>
     </nav>
 
-    <!-- MODAL DE LOGIN E CRIAÇÃO DE CONTA -->
     <div class="modal-overlay" id="authModal">
         <div class="modal-card">
             <button class="modal-close" onclick="fecharModalAuth()">&times;</button>
@@ -301,7 +299,6 @@
         </div>
     </section>
 
-    <!-- PAINEL ADM -->
     <div class="admin-section" id="adminSection" style="display:none;">
         <div class="admin-container">
             <h3 style="color:var(--accent-color); font-family:'Orbitron'; text-align:center; margin-bottom:15px; font-size:16px;">⚙️ PAINEL ADMINISTRATIVO</h3>
@@ -330,11 +327,10 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.301 (Supabase Cloud Sync Fix)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.302 (Supabase UUID Fixed)</strong>
     </footer>
 
     <script>
-        // CONEXÃO AO SUPABASE
         const SUPABASE_URL = "https://ipqjeacdfiomcxfuixdj.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_EWW84q_43YbOvMwB_Rua-A_X465PbLP";
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -663,7 +659,7 @@
                         <p style="font-size:12px; color:#94a3b8;">${destaque.desc}</p>
                         <div class="game-card-actions">
                             <button type="button" class="btn-gaming" onclick="tentarExecutarJogo(${JSON.stringify(destaque).replace(/"/g, '&quot;')})" style="flex:1; padding:8px;">▶ JOGAR AGORA</button>
-                            <button type="button" class="btn-fav" onclick="toggleFavorito(${destaque.id})">${isFav ? '★' : '☆'}</button>
+                            <button type="button" class="btn-fav" onclick="toggleFavorito('${destaque.id}')">${isFav ? '★' : '☆'}</button>
                         </div>
                     </div>
                 `;
@@ -684,7 +680,7 @@
                         <h4>${jogo.nome}</h4>
                         <p>${jogo.desc}</p>
                     </div>
-                    <button type="button" class="btn-fav" onclick="toggleFavorito(${jogo.id})">${isFav ? '★' : '☆'}</button>
+                    <button type="button" class="btn-fav" onclick="toggleFavorito('${jogo.id}')">${isFav ? '★' : '☆'}</button>
                 `;
                 listContainer.appendChild(item);
             });
@@ -705,10 +701,10 @@
                         <span style="color:var(--accent-color); font-weight:bold; font-size:12px;">${jogo.nome} (${jogo.acessos || 0})</span>
                         <div style="display:flex; gap:4px;">
                             <button type="button" class="btn-gaming" onclick="tentarExecutarJogo(${JSON.stringify(jogo).replace(/"/g, '&quot;')})" style="font-size:9px; padding:3px 6px;">🎮 Testar</button>
-                            <button type="button" class="btn-gaming ${jogo.publicado ? 'btn-danger' : 'btn-success'}" onclick="togglePublicarJogo(${jogo.id})" style="font-size:9px; padding:3px 6px;">
+                            <button type="button" class="btn-gaming ${jogo.publicado ? 'btn-danger' : 'btn-success'}" onclick="togglePublicarJogo('${jogo.id}')" style="font-size:9px; padding:3px 6px;">
                                 ${jogo.publicado ? '👁️ Ocultar' : '🚀 Publicar'}
                             </button>
-                            <button type="button" class="btn-gaming" onclick="fixarDestaqueAdm(${jogo.id})" style="font-size:9px; padding:3px 6px; background:${jogo.destaque_manual?'var(--gold-warning)':'var(--steel-bright)'}; color:${jogo.destaque_manual?'#000':'#fff'};">
+                            <button type="button" class="btn-gaming" onclick="fixarDestaqueAdm('${jogo.id}')" style="font-size:9px; padding:3px 6px; background:${jogo.destaque_manual?'var(--gold-warning)':'var(--steel-bright)'}; color:${jogo.destaque_manual?'#000':'#fff'};">
                                 ${jogo.destaque_manual ? '★ Fixado' : '☆ Destaque'}
                             </button>
                         </div>
@@ -724,7 +720,7 @@
                     <label class="file-upload-label">Descrição: <textarea id="editDesc_${jogo.id}" class="auth-input" style="height:35px;">${jogo.desc}</textarea></label>
                     <label class="file-upload-label">Caminho do Ficheiro: <input type="text" value="${jogo.arquivo}" id="editArq_${jogo.id}" class="auth-input"></label>
                     <label class="file-upload-label">🖼️ Alterar Capa (Upload Supabase): <input type="file" id="editImgFile_${jogo.id}" accept="image/*"></label>
-                    <button type="button" class="btn-gaming" onclick="salvarEdicaoJogoAdm(${jogo.id})" style="font-size:10px; padding:5px; margin-top:3px;">💾 Guardar na Nuvem</button>
+                    <button type="button" class="btn-gaming" onclick="salvarEdicaoJogoAdm('${jogo.id}')" style="font-size:10px; padding:5px; margin-top:3px;">💾 Guardar na Nuvem</button>
                 `;
                 container.appendChild(item);
             });
@@ -757,7 +753,7 @@
 
                 const imgInput = document.getElementById(`editImgFile_${id}`)?.files[0];
                 if(imgInput) {
-                    const fileName = `capa_${id}_${Date.now()}_${imgInput.name}`;
+                    const fileName = `capa_${Date.now()}_${imgInput.name}`;
                     const { error } = await supabaseClient.storage.from('capas').upload(fileName, imgInput);
                     if(!error) {
                         imgUrl = `${SUPABASE_URL}/storage/v1/object/public/capas/${fileName}`;
