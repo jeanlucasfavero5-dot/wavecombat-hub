@@ -72,6 +72,7 @@
             z-index: 1;
             touch-action: none;
         }
+        #vinheta { position: fixed; inset: 0; z-index: 1; pointer-events: none; display: none; background: radial-gradient(ellipse at 50% 45%, transparent 55%, rgba(0, 0, 0, 0.3) 100%); }
         canvas#gameCanvas {
             position: fixed;
             top: 0; left: 0;
@@ -690,6 +691,7 @@
     <!-- CAMADA 3D (Three.js): só aparece durante a partida -->
     <canvas id="glCanvas" style="display:none"></canvas>
     <!-- CAMADA 2D: textos por cima do 3D e plano B 2D -->
+    <div id="vinheta"></div>
     <canvas id="gameCanvas"></canvas>
 
     <div id="toast" class="toast hidden"></div>
@@ -770,7 +772,7 @@
                 <button id="btn-start-fullscreen" class="td-mini">🔲 Expandir Tela Cheia</button>
                 <a href="https://youtube.com/@capudooficial7?si=0pe1kJfQaeM4orgV" target="_blank" rel="noopener" class="td-mini td-yt">▶️ Siga o Criador</a>
             </div>
-            <div class="inicio-versao">Versão: <b>v0.012</b></div>
+            <div class="inicio-versao">Versão: <b>v0.013</b></div>
         </div>
     </div>
 
@@ -918,7 +920,7 @@
 
     <script>
         /* =========================================================
-           TANQUE DEFENCE  (v0.012)
+           TANQUE DEFENCE  (v0.013)
            ========================================================= */
 
         /* --- ESTADO GLOBAL & DADOS DE SAVE --- */
@@ -931,9 +933,9 @@
         // Perfis gráficos: part = fração de partículas, cap = máx. de partículas vivas, sombra = resolução do mapa (0 = sem sombras),
         // tone = tone mapping cinematográfico (ACES), clima = partículas ambientes do bioma (pólen, areia, neve), luz = flashes de luz dinâmica
         const QUALIDADE_FX = {
-            EXCELENTE: { part: 1,   cap: 420, sombra: 2048, tone: true,  clima: 110, luz: true,  deco: 1 },
-            MEDIO:     { part: 0.6, cap: 240, sombra: 1024, tone: false, clima: 45,  luz: true,  deco: 0.7 },
-            BASICO:    { part: 0.3, cap: 100, sombra: 0,    tone: false, clima: 0,   luz: false, deco: 0.35 }
+            EXCELENTE: { part: 1,   cap: 420, sombra: 4096, tone: true,  real: true,  clima: 110, luz: true,  deco: 1 },
+            MEDIO:     { part: 0.6, cap: 240, sombra: 1024, tone: true,  real: true,  clima: 45,  luz: true,  deco: 0.7 },
+            BASICO:    { part: 0.3, cap: 100, sombra: 0,    tone: false, real: false, clima: 0,   luz: false, deco: 0.35 }
         };
         function qFx() { return QUALIDADE_FX[configJogo.qualidade] || QUALIDADE_FX.MEDIO; }
 
@@ -1340,7 +1342,8 @@
                 this.geo.disco = new T.CylinderGeometry(1, 1, 1, 18);
                 this.geo.anel = new T.RingGeometry(0.94, 1, 56).rotateX(-Math.PI / 2);
                 this.geo.feixe = new T.CylinderGeometry(1, 1, 1, 12, 1, true);
-                this.matTanque = new T.MeshStandardMaterial({ vertexColors: true, roughness: 0.55, metalness: 0.25 });
+                this.matTanque = new T.MeshStandardMaterial({ vertexColors: true, roughness: 0.5, metalness: 0.3, envMapIntensity: 1.1 });
+                this.matCena = new T.MeshStandardMaterial({ vertexColors: true, roughness: 0.88, metalness: 0.02 });   // vegetação e pedras: foscas
 
                 this.redimensionar();
             },
@@ -1359,7 +1362,10 @@
                     this.cvVisivel = sim;
                 }
                 this.ativo = sim;
+                this.vinhetar();
             },
+
+            vinhetar() { const v = document.getElementById('vinheta'); if (v) v.style.display = this.ativo && qFx().real ? 'block' : 'none'; },
 
             aplicarQualidade() {
                 const q = configJogo.qualidade;
@@ -1376,6 +1382,7 @@
                     if (this.sol.shadow.map) { this.sol.shadow.map.dispose(); this.sol.shadow.map = null; }
                 }
                 this.redimensionar();
+                this.vinhetar();
                 this.ultimoElementos = null;   // refaz o cenário (grade e tufos só fora do modo BASICO)
             },
 
@@ -2850,11 +2857,11 @@
         const TD3D_FOV = 38;
         const TD3D_TEMAS = [
             { nome: 'campo', chao: '#2f6b2a', t1: '#4aa13f', t2: '#418f37', caminho: '#c9a56b', ceu: '#a9d8f5', neblina: '#bfe0f0',
-              sol: '#fff0d0', solI: 2.5, hemiC: '#dbeafe', hemiG: '#3b5a32', hemiI: 1.05, arv: '#2f8a3e', arv2: '#23702f', rocha: '#8d949c', mont: '#6f8aa0', agua: '#3b82c4', neb0: 200, neb1: 540, expo: 1.05 },
+              sol: '#fff0d0', solI: 2.5, hemiC: '#dbeafe', hemiG: '#3b5a32', hemiI: 1.05, arv: '#2f8a3e', arv2: '#23702f', rocha: '#8d949c', mont: '#6f8aa0', agua: '#3b82c4', neb0: 200, neb1: 540, expo: 1.25 },
             { nome: 'deserto', chao: '#d3ad62', t1: '#e0bd77', t2: '#d8b36b', caminho: '#a97a45', ceu: '#ffd9a3', neblina: '#f6dcae',
-              sol: '#ffd9a0', solI: 3.2, hemiC: '#ffe8c4', hemiG: '#b8863f', hemiI: 1.0, arv: '#4f9d4a', arv2: '#3f8a3e', rocha: '#b08a5a', mont: '#c28a52', agua: '#4aa3c7', neb0: 150, neb1: 420, expo: 1.12 },
+              sol: '#ffd9a0', solI: 3.2, hemiC: '#ffe8c4', hemiG: '#b8863f', hemiI: 1.0, arv: '#4f9d4a', arv2: '#3f8a3e', rocha: '#b08a5a', mont: '#c28a52', agua: '#4aa3c7', neb0: 150, neb1: 420, expo: 1.2 },
             { nome: 'neve', chao: '#dfeaf2', t1: '#f2f8fc', t2: '#e5eef5', caminho: '#9aa9b8', ceu: '#cfe3f2', neblina: '#dbe9f4',
-              sol: '#e6f0ff', solI: 2.1, hemiC: '#d6e8ff', hemiG: '#8ea3b8', hemiI: 1.25, arv: '#2c6e4f', arv2: '#235a41', rocha: '#7d8794', mont: '#9db4cc', agua: '#a5d8ef', neb0: 130, neb1: 380, expo: 1.0 }
+              sol: '#e6f0ff', solI: 2.1, hemiC: '#d6e8ff', hemiG: '#8ea3b8', hemiI: 1.25, arv: '#2c6e4f', arv2: '#235a41', rocha: '#7d8794', mont: '#9db4cc', agua: '#a5d8ef', neb0: 130, neb1: 380, expo: 1.15 }
         ];
 
         const TD3D = {
@@ -2912,7 +2919,7 @@
                     sol.shadow.bias = -0.0006; sol.shadow.normalBias = 1.5;
                     sol.color.set(0xfff1d6); sol.intensity = 2.4;
                     GL.hemi.color.set(0xdbeafe); GL.hemi.groundColor.set(0x2b3a2b); GL.hemi.intensity = 1.0;
-                    GL.scene.background = null; GL.scene.fog = null; GL.renderer.toneMappingExposure = 1;
+                    GL.scene.background = null; GL.scene.fog = null; GL.scene.environment = null; GL.renderer.toneMappingExposure = 1;
                     GL.tanMeio = Math.tan(CAMERA_3D.fov * Math.PI / 360);
                     for (const L of GL.luzes) { L.intensity = 0; L.userData.t = 0; L.userData.clarao.visible = false; L.distance = 340; }
                 }
@@ -2921,11 +2928,13 @@
 
             aplicarTema() {
                 const T = GL.T, tm = this.tema;
-                GL.scene.background = new T.Color(tm.ceu);
+                const F = qFx();
+                GL.scene.background = F.real ? this.fundoCeu(tm) : new T.Color(tm.ceu);
                 GL.scene.fog = new T.Fog(tm.neblina, tm.neb0 || 170, tm.neb1 || 470);
-                GL.renderer.toneMappingExposure = tm.expo || 1;
-                GL.sol.color.set(tm.sol); GL.sol.intensity = tm.solI;
-                GL.hemi.color.set(tm.hemiC); GL.hemi.groundColor.set(tm.hemiG); GL.hemi.intensity = tm.hemiI;
+                GL.renderer.toneMappingExposure = F.tone ? (tm.expo || 1) : 1;
+                this.criarAmbiente(tm);
+                GL.sol.color.set(tm.sol); GL.sol.intensity = tm.solI * (F.real ? 1.1 : 1);
+                GL.hemi.color.set(tm.hemiC); GL.hemi.groundColor.set(tm.hemiG); GL.hemi.intensity = tm.hemiI * (F.real ? 0.55 : 1);
             },
 
             /* ---------- construtor de peças: junta várias formas numa só malha (poucas chamadas de desenho) ---------- */
@@ -3083,15 +3092,15 @@
                 const cor = new T.Color(), d = new T.Object3D();
 
                 // chão grande (a paisagem em volta) e a "mesa" da arena
-                const solo = new T.Mesh(new T.PlaneGeometry(640, 640), new T.MeshStandardMaterial({ color: tm.chao, roughness: 1 }));
+                const solo = new T.Mesh(new T.PlaneGeometry(640, 640), new T.MeshStandardMaterial({ color: tm.chao, roughness: 1, map: qFx().real ? this.texSolo(tm.nome, 60) : null }));
                 solo.rotation.x = -Math.PI / 2; solo.position.set(X / 2, 0, Z / 2); solo.receiveShadow = true;
                 this.arena.add(solo);
 
                 // casas livres (xadrez) e casas do caminho (um degrau mais baixo)
                 const livres = [], trilha = [];
                 for (let v = 0; v < Lc; v++) for (let u = 0; u < Wc; u++) (td.grade[v][u] === 1 ? trilha : livres).push([u, v]);
-                const mkInst = (lista, esc, y, base1, base2, variacao, sombra) => {
-                    const im = new T.InstancedMesh(caixa, new T.MeshStandardMaterial({ roughness: 0.95 }), lista.length);
+                const mkInst = (lista, esc, y, base1, base2, variacao, sombra, mapa) => {
+                    const im = new T.InstancedMesh(caixa, new T.MeshStandardMaterial({ roughness: 0.95, map: mapa || null, bumpMap: mapa || null, bumpScale: 1.2 }), lista.length);
                     lista.forEach(([u, v], i) => {
                         const p = this.pos(u + 0.5, v + 0.5);
                         d.position.set(p[0], y, p[1]); d.rotation.set(0, 0, 0); d.scale.set(C * esc[0], esc[1], C * esc[0]); d.updateMatrix();
@@ -3102,8 +3111,8 @@
                     im.receiveShadow = true; im.frustumCulled = false;
                     this.arena.add(im);
                 };
-                mkInst(livres, [0.985, 1], 0, tm.t1, tm.t2, 0.035);
-                mkInst(trilha, [1.0, 0.6], -0.1, tm.caminho, tm.caminho, 0.07);
+                mkInst(livres, [0.985, 1], 0, tm.t1, tm.t2, 0.035, false, qFx().real ? this.texSolo(tm.nome, 1) : null);
+                mkInst(trilha, [1.0, 0.6], -0.1, tm.caminho, tm.caminho, 0.07, false, qFx().real ? this.texSolo('trilha', 1) : null);
 
                 // pedrinhas e marcas no caminho
                 const P = this.pecas(), Q = this.pecas();   // P: projeta sombra; Q: só decoração baixa
@@ -3199,13 +3208,13 @@
                 if (tm.nome !== 'deserto') {
                     const lado = rng() < 0.5 ? -1 : 1;
                     const lx = lado < 0 ? -62 - rng() * 20 : X + 62 + rng() * 20, lz = Z * (0.25 + rng() * 0.45);
-                    const lago = new T.Mesh(GL.geo.cilindro, new T.MeshStandardMaterial({ color: tm.agua, roughness: 0.15, metalness: 0.25 }));
+                    const lago = new T.Mesh(GL.geo.cilindro, new T.MeshStandardMaterial({ color: tm.agua, roughness: qFx().real ? 0.04 : 0.15, metalness: qFx().real ? 0.4 : 0.25, envMapIntensity: 1.8 }));
                     lago.scale.set(28 + rng() * 10, 0.4, 18 + rng() * 8); lago.position.set(lx, 0.05, lz); lago.receiveShadow = true;
                     this.arena.add(lago);
                 }
 
-                const mP = new T.Mesh(P.fundir().lit, GL.matTanque); mP.castShadow = true; mP.receiveShadow = true; mP.frustumCulled = false;
-                const mQ = new T.Mesh(Q.fundir().lit, GL.matTanque); mQ.receiveShadow = true; mQ.frustumCulled = false;
+                const mP = new T.Mesh(P.fundir().lit, GL.matCena); mP.castShadow = true; mP.receiveShadow = true; mP.frustumCulled = false;
+                const mQ = new T.Mesh(Q.fundir().lit, GL.matCena); mQ.receiveShadow = true; mQ.frustumCulled = false;
                 this.arena.add(mP, mQ);
 
                 // cursor (quadrado no chão), anel de alcance e fantasma de pré-visualização
@@ -3219,11 +3228,78 @@
                 this.arena.add(cur, alc);
             },
 
+            // textura procedural (sem imagens externas): grama, areia, neve ou cascalho; vira mapa de cor + relevo (bump)
+            texSolo(nome, rep) {
+                const T = GL.T, chave = nome + '|' + rep;
+                this.texCache = this.texCache || {};
+                if (this.texCache[chave]) return this.texCache[chave];
+                const N = 128, cv = document.createElement('canvas'); cv.width = cv.height = N;
+                const g = cv.getContext('2d');
+                g.fillStyle = '#d8d8d8'; g.fillRect(0, 0, N, N);
+                let sd = nome.length * 7919 + 13;
+                const R = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
+                const marca = (x, y, w, h, c) => { g.fillStyle = c; for (const dx of [-N, 0, N]) for (const dy of [-N, 0, N]) g.fillRect(x + dx, y + dy, w, h); };
+                const gris = (a, b) => { const v = Math.round(a + R() * (b - a)); return `rgb(${v},${v},${v})`; };
+                if (nome === 'campo') for (let i = 0; i < 1100; i++) marca(R() * N, R() * N, 1, 2 + R() * 4, gris(150, 255));
+                else if (nome === 'deserto') { for (let i = 0; i < 900; i++) marca(R() * N, R() * N, 1 + R() * 2, 1, gris(170, 255)); for (let y = 6; y < N; y += 14) marca(0, y + R() * 3, N, 1, 'rgba(120,120,120,0.35)'); }
+                else if (nome === 'neve') for (let i = 0; i < 500; i++) marca(R() * N, R() * N, 1 + R() * 2, 1 + R() * 2, gris(215, 255));
+                else for (let i = 0; i < 260; i++) marca(R() * N, R() * N, 2 + R() * 3, 2 + R() * 3, gris(120, 245));
+                const t = new T.CanvasTexture(cv);
+                t.wrapS = t.wrapT = T.RepeatWrapping; t.repeat.set(rep, rep);
+                t.colorSpace = T.SRGBColorSpace;
+                t.anisotropy = Math.min(8, GL.renderer.capabilities.getMaxAnisotropy());
+                this.texCache[chave] = t;
+                return t;
+            },
+
+            // céu em degradê (zênite → horizonte) no lugar da cor chapada
+            fundoCeu(tm) {
+                const T = GL.T, cv = document.createElement('canvas'); cv.width = 4; cv.height = 256;
+                const g = cv.getContext('2d'), gr = g.createLinearGradient(0, 0, 0, 256);
+                const topo = new T.Color(tm.ceu).lerp(new T.Color(tm.nome === 'deserto' ? '#e0894a' : '#3b6fb5'), 0.5);
+                gr.addColorStop(0, '#' + topo.getHexString()); gr.addColorStop(0.65, tm.ceu); gr.addColorStop(1, tm.neblina);
+                g.fillStyle = gr; g.fillRect(0, 0, 4, 256);
+                if (this.fundoTex) this.fundoTex.dispose();
+                const t = this.fundoTex = new T.CanvasTexture(cv); t.colorSpace = T.SRGBColorSpace;
+                return t;
+            },
+
+            // iluminação por imagem (IBL): um céu procedural com sol vira o ambiente que reflete em metais, água e pedras
+            criarAmbiente(tm) {
+                const T = GL.T;
+                if (this.envRT) { this.envRT.dispose(); this.envRT = null; }
+                GL.scene.environment = null;
+                if (!qFx().real) return;
+                const sc = new T.Scene(), geo = new T.SphereGeometry(50, 24, 16), pos = geo.attributes.position, col = new Float32Array(pos.count * 3);
+                const topo = new T.Color(tm.ceu).lerp(new T.Color('#3b6fb5'), 0.45), hor = new T.Color(tm.neblina), chao = new T.Color(tm.hemiG), c = new T.Color();
+                for (let i = 0; i < pos.count; i++) {
+                    const y = pos.getY(i) / 50;
+                    if (y >= 0) c.copy(hor).lerp(topo, Math.pow(y, 0.6)); else c.copy(hor).lerp(chao, Math.min(1, -y * 2));
+                    col[i * 3] = c.r; col[i * 3 + 1] = c.g; col[i * 3 + 2] = c.b;
+                }
+                geo.setAttribute('color', new T.BufferAttribute(col, 3));
+                const mc = new T.MeshBasicMaterial({ vertexColors: true, side: T.BackSide });
+                sc.add(new T.Mesh(geo, mc));
+                const sg = new T.SphereGeometry(4, 12, 8), sm = new T.MeshBasicMaterial({ color: new T.Color(tm.sol).multiplyScalar(6) });
+                const sol = new T.Mesh(sg, sm); sol.position.set(-30, 35, 15); sc.add(sol);
+                const pm = new T.PMREMGenerator(GL.renderer);
+                this.envRT = pm.fromScene(sc, 0.04);
+                pm.dispose(); geo.dispose(); mc.dispose(); sg.dispose(); sm.dispose();
+                GL.scene.environment = this.envRT.texture;
+            },
+
             // decoração própria de cada bioma (campo: feno/casinhas; deserto: dunas/palmeiras/obeliscos; neve: bonecos/gelo)
             decorTema(Q, rng, livres, X, Z, tm) {
                 const g = GL.geo, k = qFx().deco, n = v => Math.max(1, Math.round(v * k));
                 const livre = () => { const c = livres[Math.floor(rng() * livres.length)]; return this.pos(c[0] + rng(), c[1] + rng()); };
                 const fora = (m, fn) => { const x = -95 + rng() * (X + 190), z = -90 + rng() * (Z + 150); if (x > -m && x < X + m && z > -m && z < Z + m) return; fn(x, z); };
+                const nt = Math.round(3 * k);
+                for (let i = 0; i < livres.length * nt; i++) {
+                    const p = livre(), r = rng();
+                    if (tm.nome === 'campo') Q.add(this.geos.cone7, r < 0.5 ? '#3f8f35' : '#5aa845', p[0], 0.75, p[1], 0.16, 1.2 + rng() * 1.1, 0.16, (rng() - 0.5) * 0.5, rng() * 6, (rng() - 0.5) * 0.5);
+                    else if (tm.nome === 'deserto') Q.add(g.octa, r < 0.5 ? '#c9a15f' : '#a98450', p[0], 0.55, p[1], 0.35, 0.18, 0.3, 0, rng() * 6, 0);
+                    else Q.add(g.esfera, '#f6fbff', p[0], 0.5, p[1], 0.7, 0.22, 0.6);
+                }
                 if (tm.nome === 'campo') {
                     for (let i = 0; i < n(6); i++) { const p = livre(); Q.add(g.esfera, '#2f8a3e', p[0], 1.0, p[1], 1.5, 1.1, 1.5); Q.add(g.octa, '#f43f5e', p[0] + 0.7, 1.7, p[1] + 0.4, 0.3, 0.3, 0.3); }
                     for (let i = 0; i < n(10); i++) fora(18, (x, z) => Q.add(this.geos.cil14, '#e3c15a', x, 1.5, z, 1.5, 2.4, 1.5, 0, rng() * 3, Math.PI / 2));
