@@ -75,7 +75,7 @@
         .logo-text { font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 16px; color: var(--accent-color); letter-spacing: 1px; transition: color 0.4s ease; }
 
         .menu-toggle-btn {
-            display: flex; flex-direction: column; justify-around;
+            display: flex; flex-direction: column; justify-content: space-around;
             width: 30px; height: 25px; background: transparent; border: none; cursor: pointer; z-index: 1002;
         }
         .menu-toggle-btn span { width: 100%; height: 3px; background: var(--accent-color); border-radius: 2px; transition: 0.3s; }
@@ -501,7 +501,7 @@
             <div class="admin-grid-tools" style="margin-top: 15px;">
                 <div class="admin-block">
                     <h4>💎 Envio Manual de Diamantes (ADM)</h4>
-                    <input type="text" id="admTargetId" placeholder="ID do Jogador (9 dígitos)" class="auth-input" style="font-size:11px; margin-bottom:6px;">
+                    <input type="text" id="admTargetId" placeholder="ID do Jogador (ex: 577082415)" class="auth-input" style="font-size:11px; margin-bottom:6px;">
                     <input type="number" id="admTargetQtd" placeholder="Quantidade de Diamantes" class="auth-input" style="font-size:11px; margin-bottom:6px;">
                     <button type="button" class="btn-gaming" onclick="admEnviarDiamantesLivre()" style="font-size:10px; padding:6px; background:#22c55e; color:#000;">⚡ Enviar Diamantes sem Limites</button>
                 </div>
@@ -517,13 +517,15 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.342 (Pix Automático & Fechamento Automático)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.343 (ID Mestre Fixo 577082415 & Pix Auto)</strong>
     </footer>
 
     <script>
         const SUPABASE_URL = "https://ipqjeacdfiomcxfuixdj.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_EWW84q_43YbOvMwB_Rua-A_X465PbLP";
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        const MEU_ID_MESTRE = "577082415"; // ID fixo para sua conta em todos os jogos
 
         const jogosIniciaisFallback = [
             { nome: "Riverbed Warfare", categoria: "Estratégia", desc: "Combate veicular em tempo real, extração de recursos e defesa contra hordas.", arquivo: "riverbed-warfare.html", img: "", publicado: true, destaque_manual: true, acessos: 154 },
@@ -641,6 +643,13 @@
                 const sessaoSalva = localStorage.getItem('wavecombat_sessao_ativa');
                 if(sessaoSalva) {
                     usuarioLogado = JSON.parse(sessaoSalva);
+                    
+                    // Se for a conta do Capudo, fixa sempre o ID Mestre
+                    if (usuarioLogado.nick.toLowerCase() === 'capudo7') {
+                        usuarioLogado.id = MEU_ID_MESTRE;
+                        usuarioLogado.isAdm = true;
+                    }
+                    
                     document.getElementById('btnAuthNav').textContent = usuarioLogado.nick;
                     localStorage.setItem('wavecombat_nick', usuarioLogado.nick);
                     localStorage.setItem('wavecombat_id', usuarioLogado.id);
@@ -729,9 +738,9 @@
             const idJogador = localStorage.getItem('wavecombat_id');
             const nick = localStorage.getItem('wavecombat_nick') || 'Jogador';
 
-            // BLOQUEIO OBRIGATÓRIO SE NÃO ESTIVER LOGADO
+            // OBRIGA O USUÁRIO A ESTAR LOGADO
             if (!usuarioLogado || !idJogador) {
-                alert("⚠️ Ação necessária: Você precisa criar uma conta ou fazer login para comprar diamantes!");
+                alert("⚠️ Você precisa criar uma conta ou fazer login para comprar diamantes!");
                 abrirModalAuth(true);
                 return;
             }
@@ -848,12 +857,11 @@
             const p = document.getElementById('loginPass').value;
             
             if (u.toLowerCase() === 'capudo7' && p === '262026') {
-                const admId = '999999999';
-                usuarioLogado = { nick: 'capudo7', isAdm: true, id: admId };
+                usuarioLogado = { nick: 'capudo7', isAdm: true, id: MEU_ID_MESTRE };
                 localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
                 localStorage.setItem('wavecombat_nick', 'capudo7');
-                localStorage.setItem('wavecombat_id', admId);
-                mostrarToast('⭐ Acesso ADM Concedido!');
+                localStorage.setItem('wavecombat_id', MEU_ID_MESTRE);
+                mostrarToast('⭐ Acesso ADM Concedido (ID 577082415)!');
                 document.getElementById('btnToggleAdmNav').style.display = 'inline-block';
                 document.getElementById('btnAuthNav').textContent = 'capudo7';
                 fecharModalAuth();
@@ -1375,7 +1383,7 @@
             }
         }
 
-        // CANAL REALTIME ÚNICO E UNIFICADO
+        // ESCHUTA REALTIME SUPABASE UNIFICADA COM COMPARAÇÃO STRING
         supabaseClient.channel('realtime_all')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'jogos' }, () => buscarDadosNuvem())
             .on('postgres_changes', { event: '*', schema: 'public', table: 'configuracoes' }, () => buscarDadosNuvem())
@@ -1383,16 +1391,16 @@
             .on('postgres_changes', { event: '*', schema: 'public', table: 'leaderboard' }, () => carregarLeaderboardSite())
             .on('postgres_changes', { event: '*', schema: 'public', table: 'carteira_diamantes' }, (payload) => {
                 const idJogadorAtual = localStorage.getItem('wavecombat_id');
-                // Se o evento pertencer à conta ativa no navegador
-                if (payload.new && payload.new.id_jogador === idJogadorAtual) {
+                // Converte ambos os IDs para string para garantir comparação idêntica
+                if (payload.new && String(payload.new.id_jogador) === String(idJogadorAtual)) {
                     carregarSaldoDiamantesSite();
                     
                     const pixModal = document.getElementById('pixModal');
-                    if (pixModal && (pixModal.style.display === 'flex' || pixModal.style.display === 'block')) {
-                        pixModal.style.display = 'none';
-                        tocarSomLevelUp();
-                        mostrarToast("💎 Pagamento confirmado! Diamantes adicionados à sua conta!");
+                    if (pixModal) {
+                        pixModal.style.display = 'none'; // Fecha o QR Code automaticamente
                     }
+                    tocarSomLevelUp();
+                    mostrarToast("💎 Pagamento confirmado! Diamantes adicionados à sua conta!");
                 }
             })
             .subscribe();
