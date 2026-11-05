@@ -312,9 +312,10 @@
                     <button type="button" class="btn-gaming" onclick="alterarLogoSite()" style="font-size:11px; padding:6px;">Atualizar Logo</button>
                 </div>
                 <div class="admin-block">
-                    <h4>📺 Link da Live / Vídeo do YouTube</h4>
-                    <input type="text" id="inputAdminLiveUrl" placeholder="Cole o link do YouTube aqui" class="auth-input" style="font-size:11px; margin-top:4px;">
-                    <button type="button" class="btn-gaming" onclick="salvarUrlLiveAdmDireto()" style="font-size:10px; padding:6px; margin-top:6px;">💾 Salvar e Exibir para Todos</button>
+                    <h4>🔴 Gerenciar Transmissão ao Vivo</h4>
+                    <button type="button" id="btnToggleLiveStatus" class="btn-gaming" onclick="alternarStatusLiveAdm()" style="font-size:11px; padding:8px; margin-bottom:6px; background:#ef4444; color:#fff;">LIVE: OFFLINE</button>
+                    <input type="text" id="inputAdminLiveUrl" placeholder="Cole o link do YouTube aqui" class="auth-input" style="font-size:11px; margin-bottom:6px;">
+                    <button type="button" class="btn-gaming" onclick="salvarConfigLiveAdm()" style="font-size:10px; padding:6px;">💾 Salvar Live na Nuvem</button>
                 </div>
             </div>
 
@@ -328,7 +329,7 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.307 (Robust Fallback Live Sync)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.308 (Cloud Live Status & Sync)</strong>
     </footer>
 
     <script>
@@ -347,7 +348,7 @@
         let listaJogosCache = [];
         let usuarioLogado = null;
         let painelAdmAberto = false;
-        let liveUrlGlobal = "";
+        let liveConfigGlobal = { url: "", ativa: false };
 
         function carregarSessaoSalva() {
             try {
@@ -479,24 +480,61 @@
                 listaJogosCache = jogosIniciaisFallback;
             }
 
-            // Tenta buscar o link do Supabase, se falhar usa o localStorage
             try {
-                const { data: confData } = await supabaseClient.from('configuracoes').select('valor').eq('chave', 'live_url').single();
-                if(confData && confData.valor) {
-                    liveUrlGlobal = confData.valor;
-                    localStorage.setItem('wavecombat_live_url', confData.valor);
-                } else {
-                    liveUrlGlobal = localStorage.getItem('wavecombat_live_url') || "";
+                const { data: confData } = await supabaseClient.from('configuracoes').select('*');
+                if(confData) {
+                    confData.forEach(item => {
+                        if(item.chave === 'live_url') liveConfigGlobal.url = item.valor || "";
+                        if(item.chave === 'live_ativa') liveConfigGlobal.ativa = (item.valor === 'true');
+                    });
                 }
             } catch(e) {
-                liveUrlGlobal = localStorage.getItem('wavecombat_live_url') || "";
+                liveConfigGlobal.url = localStorage.getItem('wavecombat_live_url') || "";
+                liveConfigGlobal.ativa = (localStorage.getItem('wavecombat_live_ativa') === 'true');
             }
 
-            const inputLive = document.getElementById('inputAdminLiveUrl');
-            if(inputLive) inputLive.value = liveUrlGlobal;
-
+            sincronizarCamposAdmUI();
             atualizarVisibilidadeLiveGeral();
             atualizarPlataforma();
+        }
+
+        function sincronizarCamposAdmUI() {
+            const inputLive = document.getElementById('inputAdminLiveUrl');
+            if(inputLive) inputLive.value = liveConfigGlobal.url;
+
+            const btnStatus = document.getElementById('btnToggleLiveStatus');
+            if(btnStatus) {
+                if(liveConfigGlobal.ativa) {
+                    btnStatus.textContent = "LIVE: ONLINE";
+                    btnStatus.style.background = "#22c55e";
+                    btnStatus.style.color = "#000";
+                } else {
+                    btnStatus.textContent = "LIVE: OFFLINE";
+                    btnStatus.style.background = "#ef4444";
+                    btnStatus.style.color = "#fff";
+                }
+            }
+        }
+
+        function alternarStatusLiveAdm() {
+            liveConfigGlobal.ativa = !liveConfigGlobal.ativa;
+            sincronizarCamposAdmUI();
+        }
+
+        async function salvarConfigLiveAdm() {
+            const url = document.getElementById('inputAdminLiveUrl').value.trim();
+            liveConfigGlobal.url = url;
+
+            localStorage.setItem('wavecombat_live_url', url);
+            localStorage.setItem('wavecombat_live_ativa', liveConfigGlobal.ativa);
+
+            try {
+                await supabaseClient.from('configuracoes').upsert({ chave: 'live_url', valor: url });
+                await supabaseClient.from('configuracoes').upsert({ chave: 'live_ativa', valor: String(liveConfigGlobal.ativa) });
+            } catch(e){}
+
+            atualizarVisibilidadeLiveGeral();
+            alert('Configurações da live guardadas na nuvem com sucesso!');
         }
 
         async function tentarExecutarJogo(jogo) {
@@ -538,7 +576,7 @@
             if(painelAdmAberto) {
                 painel.scrollIntoView({ behavior: 'smooth' });
                 renderizarJogosAdmin();
-                document.getElementById('inputAdminLiveUrl').value = liveUrlGlobal;
+                sincronizarCamposAdmUI();
             }
         }
 
@@ -559,27 +597,14 @@
             const iframe = document.getElementById('youtubeLiveIframe');
             if(!box || !iframe) return;
 
-            const urlAtiva = liveUrlGlobal.trim();
-            if (urlAtiva !== "") {
+            // O player só aparece se a live estiver ativa (ONLINE) e houver URL preenchida
+            if (liveConfigGlobal.ativa && liveConfigGlobal.url.trim() !== "") {
                 box.style.display = 'block';
-                iframe.src = converterUrlYoutubeParaEmbed(urlAtiva);
+                iframe.src = converterUrlYoutubeParaEmbed(liveConfigGlobal.url);
             } else {
                 box.style.display = 'none';
                 iframe.src = "about:blank";
             }
-        }
-
-        async function salvarUrlLiveAdmDireto() {
-            const url = document.getElementById('inputAdminLiveUrl').value.trim();
-            liveUrlGlobal = url;
-            localStorage.setItem('wavecombat_live_url', url);
-
-            try {
-                await supabaseClient.from('configuracoes').upsert({ chave: 'live_url', valor: url });
-            } catch(e){}
-
-            atualizarVisibilidadeLiveGeral();
-            alert('Link guardado com sucesso! O player agora está ativo e visível para todos no site.');
         }
 
         function toggleTelaCheia() {
