@@ -131,7 +131,7 @@
         .btn-gaming:hover { transform: scale(1.03); filter: brightness(1.2); }
 
         .btn-pwa-install {
-            display: none; background: #22c55e; color: #000; border: none; padding: 8px 14px;
+            display: inline-block; background: #22c55e; color: #000; border: none; padding: 8px 14px;
             font-family: 'Orbitron'; font-size: 11px; font-weight: bold; border-radius: 6px;
             cursor: pointer; margin-top: 10px; box-shadow: 0 0 15px rgba(34, 197, 94, 0.4);
         }
@@ -517,7 +517,7 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.343 (ID Mestre Fixo 577082415 & Pix Auto)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.344 (Polling Pix & PWA Mobile Fix)</strong>
     </footer>
 
     <script>
@@ -557,8 +557,9 @@
                         mostrarToast("📲 Aplicativo instalado com sucesso!");
                     }
                     deferredPrompt = null;
-                    document.getElementById('btnPwaInstall').style.display = 'none';
                 });
+            } else {
+                alert("Para instalar no telemóvel:\n\nNo Android: Toque nos 3 pontos do navegador e selecione 'Adicionar ao ecrã principal' ou 'Instalar aplicação'.\n\nNo iPhone (Safari): Toque no botão de Partilha e selecione 'Adicionar ao ecrã principal'.");
             }
         }
 
@@ -644,7 +645,6 @@
                 if(sessaoSalva) {
                     usuarioLogado = JSON.parse(sessaoSalva);
                     
-                    // Se for a conta do Capudo, fixa sempre o ID Mestre
                     if (usuarioLogado.nick.toLowerCase() === 'capudo7') {
                         usuarioLogado.id = MEU_ID_MESTRE;
                         usuarioLogado.isAdm = true;
@@ -701,7 +701,14 @@
             atualizarAbasPerfilUI();
         }
         function fecharModalAuth() { document.getElementById('authModal').style.display = 'none'; }
-        function fecharModalPix() { document.getElementById('pixModal').style.display = 'none'; }
+        
+        let pixIntervalCheck = null;
+        let saldoAnteriorPix = 0;
+
+        function fecharModalPix() {
+            document.getElementById('pixModal').style.display = 'none';
+            if (pixIntervalCheck) clearInterval(pixIntervalCheck);
+        }
 
         function copiarPixCopiaCola() {
             const input = document.getElementById('pixCopiaColaInput');
@@ -738,21 +745,21 @@
             const idJogador = localStorage.getItem('wavecombat_id');
             const nick = localStorage.getItem('wavecombat_nick') || 'Jogador';
 
-            // OBRIGA O USUÁRIO A ESTAR LOGADO
             if (!usuarioLogado || !idJogador) {
                 alert("⚠️ Você precisa criar uma conta ou fazer login para comprar diamantes!");
                 abrirModalAuth(true);
                 return;
             }
 
+            const saldoEl = document.getElementById('userDiamondBalance');
+            saldoAnteriorPix = parseInt(saldoEl ? saldoEl.textContent : '0', 10);
+
             mostrarToast("⏳ Gerando cobrança Pix no Mercado Pago...");
 
             try {
                 const res = await fetch(`${SUPABASE_URL}/functions/v1/gerar-pix`, {
                     method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json' 
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         valor: valor,
                         diamantes: quantDiamantes,
@@ -767,7 +774,26 @@
                     document.getElementById('pixQrContainer').innerHTML = `<img src="data:image/png;base64,${data.qr_code_base64}" style="width:180px; height:180px; border-radius:8px; border:2px solid var(--accent-color);">`;
                     document.getElementById('pixCopiaColaInput').value = data.qr_code;
                     document.getElementById('pixModal').style.display = 'flex';
-                    mostrarToast("✅ Pix gerado com sucesso!");
+                    mostrarToast("✅ Pix gerado com sucesso! Aguardando pagamento...");
+
+                    // SISTEMA DE POLLING: Verifica a cada 3 segundos se o saldo aumentou
+                    if (pixIntervalCheck) clearInterval(pixIntervalCheck);
+                    pixIntervalCheck = setInterval(async () => {
+                        const { data: carteira } = await supabaseClient
+                            .from('carteira_diamantes')
+                            .select('diamantes')
+                            .eq('id_jogador', idJogador)
+                            .single();
+
+                        if (carteira && carteira.diamantes > saldoAnteriorPix) {
+                            clearInterval(pixIntervalCheck);
+                            document.getElementById('pixModal').style.display = 'none';
+                            carregarSaldoDiamantesSite();
+                            tocarSomLevelUp();
+                            mostrarToast("💎 Pagamento confirmado! Diamantes adicionados à sua conta!");
+                        }
+                    }, 3000);
+
                 } else {
                     alert("Erro ao gerar o Pix. Verifique os dados.");
                 }
@@ -1382,28 +1408,6 @@
                 }
             }
         }
-
-        // ESCHUTA REALTIME SUPABASE UNIFICADA COM COMPARAÇÃO STRING
-        supabaseClient.channel('realtime_all')
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'jogos' }, () => buscarDadosNuvem())
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'configuracoes' }, () => buscarDadosNuvem())
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'chat_global' }, () => carregarMensagensChat())
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'leaderboard' }, () => carregarLeaderboardSite())
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'carteira_diamantes' }, (payload) => {
-                const idJogadorAtual = localStorage.getItem('wavecombat_id');
-                // Converte ambos os IDs para string para garantir comparação idêntica
-                if (payload.new && String(payload.new.id_jogador) === String(idJogadorAtual)) {
-                    carregarSaldoDiamantesSite();
-                    
-                    const pixModal = document.getElementById('pixModal');
-                    if (pixModal) {
-                        pixModal.style.display = 'none'; // Fecha o QR Code automaticamente
-                    }
-                    tocarSomLevelUp();
-                    mostrarToast("💎 Pagamento confirmado! Diamantes adicionados à sua conta!");
-                }
-            })
-            .subscribe();
 
         gerarParticulasFundo();
         carregarSessaoSalva();
