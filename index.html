@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>WaveCombat | Modern Gaming Hub</title>
+    
+    <!-- Meta Tags para PWA (Aplicativo Mobile) -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#00f0ff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="WaveCombat">
+
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Orbitron:wght@600;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -19,7 +27,6 @@
             --alert-red: #ef4444;
         }
 
-        /* Tema OLED Opcional */
         body.theme-oled {
             --bg-dark: #000000;
             --panel-bg: rgba(8, 8, 12, 0.98);
@@ -40,7 +47,6 @@
             position: relative;
         }
 
-        /* Partículas de Fundo FX */
         .bg-particles {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             pointer-events: none; z-index: 0; overflow: hidden;
@@ -109,7 +115,6 @@
         header.hero h1 span { color: var(--accent-color); text-shadow: 0 0 25px var(--accent-glow); transition: color 0.4s ease; }
         header.hero p { font-size: 14px; max-width: 600px; margin-bottom: 20px; color: #94a3b8; padding: 0 10px; }
 
-        /* Estatísticas Globais do Hub */
         .global-stats-bar {
             display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;
             background: var(--panel-bg); border: 1px solid var(--steel-border);
@@ -124,6 +129,13 @@
             text-align: center;
         }
         .btn-gaming:hover { transform: scale(1.03); filter: brightness(1.2); }
+
+        /* Botão para Instalar App Mobile */
+        .btn-pwa-install {
+            display: none; background: #22c55e; color: #000; border: none; padding: 8px 14px;
+            font-family: 'Orbitron'; font-size: 11px; font-weight: bold; border-radius: 6px;
+            cursor: pointer; margin-top: 10px; box-shadow: 0 0 15px rgba(34, 197, 94, 0.4);
+        }
 
         section { padding: 25px 15px; width: 100%; max-width: 1350px; margin: 0 auto; box-sizing: border-box; z-index: 2; position: relative; }
         .section-title { font-family: 'Orbitron', sans-serif; font-size: 18px; margin-bottom: 20px; border-left: 4px solid var(--accent-color); padding-left: 10px; text-transform: uppercase; color: #fff; transition: border-color 0.4s ease; }
@@ -155,7 +167,7 @@
         .modal-close { position: absolute; top: 12px; right: 15px; background: none; border: none; color: var(--ink); font-size: 22px; cursor: pointer; }
 
         .tab-switcher { display: flex; border-bottom: 2px solid var(--steel-border); margin-bottom: 15px; flex-wrap: wrap; }
-        .tab-btn { flex: 1; background: none; border: none; padding: 8px; font-family: 'Orbitron'; font-weight: 700; font-size: 11px; color: #64748b; cursor: pointer; }
+        .tab-btn { flex: 1; background: none; border: none; padding: 8px; font-family: 'Orbitron'; font-weight: 700; font-size: 11px; color: #64748b; cursor: pointer; display: block; }
         .tab-btn.active { color: var(--accent-color); border-bottom: 2px solid var(--accent-color); margin-bottom: -2px; }
 
         .auth-form { display: flex; flex-direction: column; gap: 10px; }
@@ -167,6 +179,14 @@
         .embed-container { display: none; background: #000; border: 2px solid var(--accent-color); width: 100%; height: 70vh; max-height: 800px; position: relative; box-shadow: 0 0 35px var(--accent-glow); margin-top: 15px; border-radius: 10px; transition: border-color 0.4s ease; }
         .embed-container iframe { width: 100%; height: 100%; border: none; border-radius: 8px; }
         .player-controls-bar { display: none; justify-content: center; align-items: center; gap: 10px; margin-top: 12px; padding: 10px; background: var(--panel-bg); border: 1px solid var(--steel-border); border-radius: 8px; flex-wrap: wrap; }
+
+        .site-leaderboard-section {
+            display: none; background: var(--panel-bg); border: 2px solid var(--accent-color);
+            padding: 15px; border-radius: 10px; margin-top: 15px; box-shadow: 0 0 25px var(--accent-glow);
+        }
+        .site-leaderboard-list {
+            display: flex; flex-direction: column; gap: 6px; max-height: 220px; overflow-y: auto; margin-top: 10px;
+        }
 
         .live-section-box { display: none; background: var(--panel-bg); border: 1px solid var(--accent-color); padding: 15px; text-align: center; margin-bottom: 20px; border-radius: 10px; }
         .live-embed-container { margin: 10px auto; width: 100%; max-width: 800px; height: 0; padding-bottom: 56.25%; position: relative; background: #000; border-radius: 8px; overflow: hidden; }
@@ -187,14 +207,12 @@
         .qrcode-img { width: 130px; height: 130px; object-fit: contain; background: #fff; padding: 4px; border-radius: 6px; margin-bottom: 6px; }
         .btn-qrcode-link { display: inline-block; background: var(--gold-warning); color: #000; text-decoration: none; font-family: 'Orbitron'; font-size: 10px; font-weight: 800; padding: 6px 10px; border-radius: 4px; margin-top: 6px; }
 
-        /* Mini-Chat Global Estilo */
         .minichat-container { display: flex; flex-direction: column; height: 180px; background: #0b0f17; border: 1px solid var(--steel-border); border-radius: 6px; overflow: hidden; margin-top: 8px; }
         .minichat-messages { flex: 1; padding: 8px; overflow-y: auto; font-size: 11px; display: flex; flex-direction: column; gap: 4px; }
         .minichat-input-box { display: flex; border-top: 1px solid var(--steel-border); }
         .minichat-input-box input { flex: 1; background: #0f172a; border: none; padding: 6px 10px; color: #fff; font-size: 11px; outline: none; }
         .minichat-input-box button { background: var(--accent-color); border: none; padding: 0 12px; font-family: 'Orbitron'; font-weight: bold; font-size: 10px; cursor: pointer; color: #0b0f17; }
 
-        /* Notificação Toast */
         .toast-notification {
             position: fixed; bottom: 20px; right: 20px; background: var(--panel-bg);
             border: 2px solid var(--accent-color); padding: 12px 20px; border-radius: 8px;
@@ -221,10 +239,7 @@
 </head>
 <body id="mainBody">
 
-    <!-- Fundo com Efeito de Partículas FX -->
     <div class="bg-particles" id="bgParticles"></div>
-
-    <!-- Notificação Toast Flutuante -->
     <div class="toast-notification" id="toastNotification">⚡ Ação realizada com sucesso!</div>
 
     <nav>
@@ -255,15 +270,13 @@
         </ul>
     </nav>
 
-    <!-- Modal de Autenticação / Perfil Expandido / Leaderboard -->
     <div class="modal-overlay" id="authModal">
         <div class="modal-card">
             <button class="modal-close" onclick="fecharModalAuth(); tocarSomClique();">&times;</button>
-            <div class="tab-switcher">
+            <div class="tab-switcher" id="modalTabSwitcher">
                 <button class="tab-btn active" id="tabLoginBtn" onclick="alternarAba('login'); tocarSomClique();">Entrar</button>
                 <button class="tab-btn" id="tabRegisterBtn" onclick="alternarAba('registro'); tocarSomClique();">Criar Conta</button>
                 <button class="tab-btn" id="tabPerfilBtn" onclick="alternarAba('perfil'); tocarSomClique();">Perfil & Estatísticas</button>
-                <button class="tab-btn" id="tabLeaderboardBtn" onclick="alternarAba('leaderboard'); carregarLeaderboardSupabase(); tocarSomClique();">🏆 Ranking</button>
             </div>
             
             <div class="form-panel active" id="panelLogin">
@@ -286,13 +299,6 @@
             <div class="form-panel" id="panelPerfil">
                 <div id="perfilUserData"><p style="color:#94a3b8; text-align:center;">Faça login para ver seu perfil expandido.</p></div>
             </div>
-
-            <div class="form-panel" id="panelLeaderboard">
-                <h4 style="color:var(--accent-color); font-family:'Orbitron'; text-align:center; font-size:13px; margin-bottom:8px;">🏆 TOP 10 MELHORES JOGADORES</h4>
-                <div id="leaderboardListContainer" style="display:flex; flex-direction:column; gap:6px; max-height:250px; overflow-y:auto;">
-                    <p style="color:#94a3b8; text-align:center; font-size:11px;">Carregando ranking global...</p>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -300,7 +306,6 @@
         <h1 id="heroTitle">WAVECOMBAT <span>HUB</span></h1>
         <p id="heroDesc">Plataforma moderna de jogos, arcade e experiências imersivas.</p>
         
-        <!-- Estatísticas Globais da Plataforma -->
         <div class="global-stats-bar" id="globalStatsBar">
             <span>Partidas Jogadas: <strong id="statTotalPartidas">--</strong></span>
             <span>Jogadores Registrados: <strong id="statTotalUsuarios">--</strong></span>
@@ -308,6 +313,9 @@
         </div>
 
         <a href="#player" class="btn-gaming" onclick="tentarExecutarJogoDestaque(); tocarSomClique();">Jogar Destaque Agora</a>
+        
+        <!-- Botão de Instalação Mobile PWA -->
+        <button class="btn-pwa-install" id="btnPwaInstall" onclick="instalarAppMobile()">📲 INSTALAR APLICATIVO DO SITE</button>
     </header>
 
     <section id="jogos">
@@ -338,6 +346,13 @@
             <button class="btn-gaming" onclick="toggleTelaCheia(); tocarSomClique();" style="padding:8px 14px; font-size:11px;">⛶ Tela Cheia</button>
             <button class="btn-gaming btn-danger" onclick="encerrarJogo(); tocarSomClique();" style="padding:8px 14px; font-size:11px;">✖ Sair do Game</button>
         </div>
+
+        <div class="site-leaderboard-section" id="siteLeaderboardSection">
+            <h3 style="color:var(--accent-color); font-family:'Orbitron'; font-size:14px; text-align:center;">🏆 RANKING GLOBAL DE JOGADORES</h3>
+            <div class="site-leaderboard-list" id="siteLeaderboardListContainer">
+                <p style="color:#94a3b8; text-align:center; font-size:11px;">Carregando ranking global...</p>
+            </div>
+        </div>
     </section>
 
     <!-- PLAYER DE LIVE/VÍDEO -->
@@ -363,7 +378,6 @@
                     <a href="https://www.instagram.com/capudooficial.7/" target="_blank" class="social-btn-item btn-instagram-net" onclick="tocarSomClique()">📸 Instagram Oficial</a>
                 </div>
 
-                <!-- Mini-Chat Global (Comunidade ao Vivo) -->
                 <h4 style="font-family:'Orbitron'; font-size:11px; color:var(--accent-color); margin-bottom:4px;">💬 Chat Global ao Vivo</h4>
                 <div class="minichat-container">
                     <div class="minichat-messages" id="miniChatMessages">
@@ -383,7 +397,6 @@
                     <a href="https://livepix.gg/capudooficial" target="_blank" class="btn-qrcode-link" onclick="tocarSomClique()">🔗 Acessar Link LivePix</a>
                 </div>
 
-                <!-- Painel de Preferências (Sons e Tema OLED) -->
                 <div class="panel-card" style="padding:10px;">
                     <h3 style="font-size:12px; margin-bottom:8px;">⚙️ Preferências do Hub</h3>
                     <div style="display:flex; flex-direction:column; gap:8px; font-size:11px;">
@@ -429,7 +442,7 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.320 (Leaderboard, Profile & SFX Sync)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.330 (PWA Mobile Ready)</strong>
     </footer>
 
     <script>
@@ -451,7 +464,28 @@
         let siteConfigGlobal = { url: "", ativa: false, logo: "" };
         let audioSfxAtivo = true;
 
-        // Efeitos Sonoros Arcade via Web Audio API (Sem arquivos externos)
+        // Lógica do PWA para Instalação no Celular
+        let deferredPrompt = null;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const btn = document.getElementById('btnPwaInstall');
+            if (btn) btn.style.display = 'inline-block';
+        });
+
+        function instalarAppMobile() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        mostrarToast("📲 Aplicativo instalado com sucesso!");
+                    }
+                    deferredPrompt = null;
+                    document.getElementById('btnPwaInstall').style.display = 'none';
+                });
+            }
+        }
+
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function tocarSomClique() {
             if (!audioSfxAtivo) return;
@@ -505,7 +539,6 @@
             setTimeout(() => { toast.classList.remove('show'); }, 3000);
         }
 
-        // Criar Partículas Dinâmicas no Fundo
         function gerarParticulasFundo() {
             const container = document.getElementById('bgParticles');
             for (let i = 0; i < 25; i++) {
@@ -518,7 +551,6 @@
             }
         }
 
-        // Inicializar Identidade Local e ID de 9 dígitos
         function inicializarIdentidadeLocal() {
             if (!localStorage.getItem('wavecombat_id')) {
                 const idGerado = Math.floor(100000000 + Math.random() * 900000000).toString();
@@ -548,16 +580,36 @@
                     if(usuarioLogado.isAdm) {
                         document.getElementById('btnToggleAdmNav').style.display = 'inline-block';
                     }
-                    atualizarPerfilExpandidoUI();
                 }
             } catch(e) {}
+            atualizarAbasPerfilUI();
+        }
+
+        function atualizarAbasPerfilUI() {
+            const tabLogin = document.getElementById('tabLoginBtn');
+            const tabRegister = document.getElementById('tabRegisterBtn');
+            const tabPerfil = document.getElementById('tabPerfilBtn');
+
+            if (usuarioLogado) {
+                tabLogin.style.display = 'none';
+                tabRegister.style.display = 'none';
+                tabPerfil.classList.add('active');
+                alternarAba('perfil');
+            } else {
+                tabLogin.style.display = 'block';
+                tabRegister.style.display = 'block';
+                tabLogin.classList.add('active');
+                tabPerfil.classList.remove('active');
+                alternarAba('login');
+            }
+            atualizarPerfilExpandidoUI();
         }
 
         function registrarHistoricoJogo(nomeJogo) {
             try {
                 let hist = JSON.parse(localStorage.getItem('wavecombat_historico') || '[]');
                 hist.unshift({ nome: nomeJogo, data: new Date().toLocaleDateString('pt-BR') });
-                if (hist.length > 5) hist.pop(); // Mantém os últimos 5
+                if (hist.length > 5) hist.pop();
                 localStorage.setItem('wavecombat_historico', JSON.stringify(hist));
             } catch(e) {}
         }
@@ -569,20 +621,18 @@
             const msg = document.getElementById('msgBloqueioJogo');
             if(msg) msg.style.display = motivoJogo ? 'block' : 'none';
             document.getElementById('authModal').style.display = 'flex'; 
-            atualizarPerfilExpandidoUI();
+            atualizarAbasPerfilUI();
         }
         function fecharModalAuth() { document.getElementById('authModal').style.display = 'none'; }
 
         function alternarAba(aba) {
-            document.getElementById('tabLoginBtn').classList.toggle('active', aba === 'login');
-            document.getElementById('tabRegisterBtn').classList.toggle('active', aba === 'registro');
-            document.getElementById('tabPerfilBtn').classList.toggle('active', aba === 'perfil');
-            document.getElementById('tabLeaderboardBtn').classList.toggle('active', aba === 'leaderboard');
+            document.getElementById('tabLoginBtn')?.classList.toggle('active', aba === 'login');
+            document.getElementById('tabRegisterBtn')?.classList.toggle('active', aba === 'registro');
+            document.getElementById('tabPerfilBtn')?.classList.toggle('active', aba === 'perfil');
             
             document.getElementById('panelLogin').classList.toggle('active', aba === 'login');
             document.getElementById('panelRegistro').classList.toggle('active', aba === 'registro');
             document.getElementById('panelPerfil').classList.toggle('active', aba === 'perfil');
-            document.getElementById('panelLeaderboard').classList.toggle('active', aba === 'leaderboard');
         }
 
         function obterUsuariosCadastrados() {
@@ -609,8 +659,7 @@
             
             mostrarToast("✨ Conta criada com ID de 9 dígitos!");
             document.getElementById('btnAuthNav').textContent = u;
-            fecharModalAuth();
-            atualizarPerfilExpandidoUI();
+            atualizarAbasPerfilUI();
         }
 
         function fazerLoginPlataforma(e) {
@@ -627,8 +676,7 @@
                 mostrarToast('⭐ Acesso ADM Concedido!');
                 document.getElementById('btnToggleAdmNav').style.display = 'inline-block';
                 document.getElementById('btnAuthNav').textContent = 'capudo7';
-                fecharModalAuth();
-                atualizarPerfilExpandidoUI();
+                atualizarAbasPerfilUI();
                 return;
             }
 
@@ -642,8 +690,7 @@
                 localStorage.setItem('wavecombat_id', achou.id);
                 mostrarToast(`👋 Bem-vindo de volta, ${achou.nick}!`);
                 document.getElementById('btnAuthNav').textContent = achou.nick;
-                fecharModalAuth();
-                atualizarPerfilExpandidoUI();
+                atualizarAbasPerfilUI();
             } else {
                 alert('Usuário ou senha incorretos!');
             }
@@ -683,7 +730,6 @@
             const limpo = novoNick.trim();
             if (limpo) {
                 localStorage.setItem('wavecombat_nick', limpo);
-                mostrarToast("💾 Nick atualizado com sucesso!");
             }
         }
 
@@ -698,13 +744,15 @@
             document.getElementById('btnToggleAdmNav').style.display = 'none';
             document.getElementById('adminSection').style.display = 'none';
             mostrarToast('Sessão encerrada com sucesso.');
-            atualizarPerfilExpandidoUI();
+            atualizarAbasPerfilUI();
         }
 
-        // Leaderboard & Mini-Chat via Supabase
-        async function carregarLeaderboardSupabase() {
-            const container = document.getElementById('leaderboardListContainer');
-            container.innerHTML = `<p style="color:#94a3b8; text-align:center; font-size:11px;">Buscando recordes...</p>`;
+        async function carregarLeaderboardSite() {
+            const container = document.getElementById('siteLeaderboardListContainer');
+            const section = document.getElementById('siteLeaderboardSection');
+            if(!container || !section) return;
+
+            section.style.display = 'block';
             try {
                 const { data, error } = await supabaseClient.from('leaderboard').select('*').order('pontos', { ascending: false }).limit(10);
                 if (error || !data || data.length === 0) {
@@ -718,7 +766,7 @@
                     </div>
                 `).join('');
             } catch(e) {
-                container.innerHTML = `<p style="color:#ef4444; text-align:center; font-size:11px;">Erro ao carregar ranking.</p>`;
+                container.innerHTML = `<p style="color:#ef4444; text-align:center; font-size:11px;">Erro ao carregar ranking global.</p>`;
             }
         }
 
@@ -726,6 +774,7 @@
             try {
                 const { data } = await supabaseClient.from('chat_global').select('*').order('created_at', { ascending: false }).limit(20);
                 const container = document.getElementById('miniChatMessages');
+                if (!container) return;
                 if (!data || data.length === 0) {
                     container.innerHTML = `<div style="color:#64748b; font-style:italic;">Nenhuma mensagem recente. Seja o primeiro a falar!</div>`;
                     return;
@@ -784,7 +833,6 @@
                 }
             } catch(e) {}
 
-            // Atualiza estatísticas globais fictícias / baseadas em acessos
             let totalAcessos = listaJogosCache.reduce((acc, curr) => acc + (curr.acessos || 0), 1250);
             let totalUsers = obterUsuariosCadastrados().length + 42;
             document.getElementById('statTotalPartidas').textContent = totalAcessos;
@@ -794,6 +842,7 @@
             aplicarLogoNoSite();
             atualizarVisibilidadeLiveGeral();
             atualizarPlataforma();
+            carregarLeaderboardSite();
         }
 
         function sincronizarCamposAdmUI() {
@@ -1142,11 +1191,11 @@
             }
         }
 
-        // Realtime sync do Supabase e Chat
         supabaseClient.channel('realtime_all')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'jogos' }, () => buscarDadosNuvem())
             .on('postgres_changes', { event: '*', schema: 'public', table: 'configuracoes' }, () => buscarDadosNuvem())
             .on('postgres_changes', { event: '*', schema: 'public', table: 'chat_global' }, () => carregarMensagensChat())
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'leaderboard' }, () => carregarLeaderboardSite())
             .subscribe();
 
         gerarParticulasFundo();
