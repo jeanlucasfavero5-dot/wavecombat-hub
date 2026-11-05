@@ -656,6 +656,267 @@
         .panel { border-radius: 8px; }
         .btn { border-radius: 4px; clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%); letter-spacing: 0.03em; }
 
+        /* =========================================================
+           MODOS DE JOGO (seletor da garagem)
+           ========================================================= */
+        .modo-box {
+            margin: 8px 0;
+            padding: 8px;
+            background: rgba(5, 10, 8, 0.7);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            text-align: left;
+        }
+        .modo-titulo {
+            font: 800 0.7rem/1 ui-monospace, Menlo, Consolas, monospace;
+            letter-spacing: 0.14em;
+            color: #9ca3af;
+            margin-bottom: 6px;
+        }
+        .modo-chips { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+        .modo-chip {
+            --cor: #10b981;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            background: rgba(17, 24, 39, 0.85);
+            border: 1.5px solid rgba(255, 255, 255, 0.12);
+            border-radius: 4px;
+            color: #d1d5db;
+            font-weight: 800;
+            font-size: 0.74rem;
+            line-height: 1.1;
+            text-align: left;
+            cursor: pointer;
+            transition: transform 0.12s, border-color 0.12s, background 0.12s;
+        }
+        .modo-chip .ico { font-size: 1.35rem; }
+        .modo-chip:active { transform: scale(0.97); }
+        .modo-chip.ativo {
+            border-color: var(--cor);
+            background: rgba(16, 185, 129, 0.18);
+            background: color-mix(in srgb, var(--cor) 22%, #0b1210);
+            color: #fff;
+            box-shadow: 0 0 12px color-mix(in srgb, var(--cor) 45%, transparent);
+        }
+        .modo-detalhe {
+            --cor: #10b981;
+            margin-top: 6px;
+            padding: 8px 10px;
+            border-left: 4px solid var(--cor);
+            background: rgba(17, 24, 39, 0.7);
+            font-size: 0.72rem;
+            color: #d1d5db;
+        }
+        .modo-desc { margin-bottom: 4px; }
+        .modo-meta { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 0.66rem; font-weight: 700; color: #fcd34d; }
+        .st-recorde { font-weight: 800; font-size: 0.8rem; color: #fcd34d; margin: 0 0 8px; }
+
+        /* =========================================================
+           MENU DE PAUSA E AJUSTES
+           ========================================================= */
+        #settings-overlay {
+            background: radial-gradient(ellipse at center, rgba(4, 10, 8, 0.55), rgba(2, 5, 4, 0.84));
+            -webkit-backdrop-filter: blur(6px);
+            backdrop-filter: blur(6px);
+        }
+        .pausa-panel { width: 420px; padding: 0; text-align: left; animation: pausaEntra 0.22s ease-out; }
+        @keyframes pausaEntra { from { opacity: 0; transform: translateY(16px) scale(0.97); } to { opacity: 1; transform: none; } }
+        .pausa-topo {
+            position: relative;
+            padding: 16px 16px 12px;
+            text-align: center;
+            background: linear-gradient(180deg, rgba(16, 185, 129, 0.28), rgba(16, 185, 129, 0));
+            border-bottom: 1px solid rgba(16, 185, 129, 0.35);
+        }
+        .pausa-faixa {
+            position: absolute; left: 0; right: 0; top: 0; height: 5px;
+            background: repeating-linear-gradient(135deg, #ffb02e 0 10px, #1d0a00 10px 20px);
+        }
+        .pausa-ico { font-size: 1.3rem; line-height: 1; }
+        .pausa-titulo {
+            margin: 2px 0 8px;
+            font: 400 1.7rem/1 'Black Ops One', Impact, 'Arial Black', sans-serif;
+            letter-spacing: 0.22em;
+            padding-left: 0.22em;
+            color: #fff;
+            text-shadow: 0 0 14px rgba(16, 185, 129, 0.7);
+        }
+        .pausa-chip {
+            display: inline-block;
+            padding: 5px 12px;
+            font: 800 0.7rem/1 ui-monospace, Menlo, Consolas, monospace;
+            letter-spacing: 0.06em;
+            color: #fcd34d;
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px solid rgba(252, 211, 77, 0.5);
+        }
+        .pausa-corpo { padding: 12px 16px 14px; }
+        .pausa-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+        .pausa-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+        .ps {
+            display: flex; flex-direction: column; align-items: center;
+            padding: 7px 4px;
+            background: rgba(17, 24, 39, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .ps-ico { font-size: 1rem; line-height: 1; }
+        .ps b { font: 800 0.95rem/1.25 ui-monospace, Menlo, Consolas, monospace; color: #fff; }
+        .ps small { font-size: 0.6rem; color: #9ca3af; letter-spacing: 0.06em; text-transform: uppercase; }
+        .pausa-meta { margin-top: 8px; }
+        .pausa-meta-txt { font-size: 0.68rem; color: #d1d5db; margin-bottom: 4px; }
+        .pausa-barra { height: 8px; background: rgba(255, 255, 255, 0.1); overflow: hidden; }
+        .pausa-barra > div { height: 100%; width: 0; background: linear-gradient(90deg, #10b981, #fcd34d); transition: width 0.3s; }
+        .pausa-btn {
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+            width: 100%;
+            margin: 0;
+            padding: 11px 12px;
+            font-family: inherit;
+            font-weight: 800;
+            font-size: 0.82rem;
+            color: #e5e7eb;
+            background: rgba(31, 41, 55, 0.9);
+            border: 1.5px solid rgba(255, 255, 255, 0.18);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: transform 0.1s, background 0.15s, border-color 0.15s;
+        }
+        .pausa-btn:hover { background: rgba(55, 65, 81, 0.95); border-color: rgba(255, 255, 255, 0.35); }
+        .pausa-btn:active { transform: scale(0.97); }
+        .pausa-primario {
+            margin-top: 10px;
+            padding: 14px;
+            font-size: 1rem;
+            letter-spacing: 0.12em;
+            color: #04140d;
+            background: linear-gradient(180deg, #34d399, #059669);
+            border-color: #a7f3d0;
+            box-shadow: 0 0 16px rgba(16, 185, 129, 0.55);
+        }
+        .pausa-primario:hover { background: linear-gradient(180deg, #6ee7b7, #10b981); border-color: #d1fae5; }
+        .pausa-dir .pausa-primario { margin-top: 0; }
+        .pausa-linha { display: flex; gap: 8px; margin-top: 8px; }
+        .pausa-perigo { margin-top: 8px; color: #fecaca; background: rgba(127, 29, 29, 0.55); border-color: rgba(248, 113, 113, 0.55); }
+        .pausa-perigo:hover { background: rgba(153, 27, 27, 0.75); border-color: #f87171; }
+        .pausa-confirma {
+            margin-top: 8px; padding: 10px;
+            background: rgba(127, 29, 29, 0.35);
+            border: 1px solid rgba(248, 113, 113, 0.5);
+            font-size: 0.72rem;
+        }
+        .pausa-confirma p { margin: 0 0 8px; }
+        .pausa-confirma .pausa-linha, .pausa-confirma .pausa-perigo { margin-top: 0; }
+        .pausa-dica { margin: 10px 0 0; text-align: center; font-size: 0.68rem; color: #9ca3af; min-height: 1.2em; }
+        .ajustes-titulo { margin: 0 0 8px; font-size: 1.15rem; font-weight: 900; text-align: center; }
+        .ajustes-grupo { margin: 8px 0; padding: 8px 10px; background: rgba(17, 24, 39, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .ajustes-rotulo { font: 800 0.62rem/1 ui-monospace, Menlo, Consolas, monospace; letter-spacing: 0.14em; color: #6ee7b7; margin-bottom: 4px; }
+        .ajuste { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 6px 0; font-size: 0.78rem; cursor: pointer; }
+        .ajuste input[type=range] { width: 46%; accent-color: #10b981; }
+        .ajuste select { background: #1f2937; color: #fff; padding: 6px; border-radius: 4px; border: 1px solid #10b981; max-width: 55%; }
+        #ajustes-vista .pausa-btn { margin-top: 8px; }
+        #ajustes-vista .pausa-primario { margin-top: 10px; }
+        .chave { position: relative; display: inline-block; width: 44px; height: 24px; flex: none; }
+        .chave input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; z-index: 2; }
+        .chave-trilho { position: absolute; inset: 0; background: #374151; border-radius: 999px; transition: background 0.2s; }
+        .chave-trilho::after {
+            content: ''; position: absolute; left: 3px; top: 3px; width: 18px; height: 18px;
+            border-radius: 50%; background: #fff; transition: transform 0.2s;
+        }
+        .chave input:checked + .chave-trilho { background: #10b981; }
+        .chave input:checked + .chave-trilho::after { transform: translateX(20px); }
+        @media (max-height: 460px) and (orientation: landscape) {
+            .pausa-panel { width: min(760px, 94vw); }
+            .pausa-grid { grid-template-columns: 1fr 1fr; gap: 14px; align-items: start; }
+            .pausa-topo { padding: 10px 12px 6px; }
+            .pausa-ico { display: none; }
+            .pausa-titulo { font-size: 1.25rem; margin-bottom: 4px; }
+            .pausa-corpo { padding: 8px 14px 10px; }
+            .pausa-dica { display: none; }
+            #ajustes-vista { display: grid; grid-template-columns: 1fr 1fr; gap: 0 14px; align-items: start; padding: 8px 14px 10px; }
+            .ajustes-titulo { grid-column: 1 / -1; margin-bottom: 2px; font-size: 1rem; }
+            .ajustes-grupo { margin: 4px 0; padding: 6px 10px; }
+            .ajuste { padding: 4px 0; }
+            .ajustes-botoes { align-self: end; }
+            #ajustes-vista .ajustes-botoes .pausa-btn { margin-top: 6px; padding-top: 9px; padding-bottom: 9px; }
+        }
+
+        /* contagem 3-2-1 ao retomar */
+        #retomar-overlay {
+            position: fixed; inset: 0; z-index: 119;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            pointer-events: none;
+            background: rgba(2, 6, 4, 0.35);
+        }
+        .retomar-txt { font: 800 0.8rem/1 ui-monospace, Menlo, Consolas, monospace; letter-spacing: 0.3em; color: #fcd34d; text-shadow: 0 1px 6px #000; }
+        #retomar-num {
+            font: 400 7rem/1.1 'Black Ops One', Impact, 'Arial Black', sans-serif;
+            color: #fff;
+            text-shadow: 0 0 30px rgba(16, 185, 129, 0.9), 0 4px 0 #064e3b;
+        }
+        #retomar-num.pop { animation: retomarPop 0.7s ease-out both; }
+        @keyframes retomarPop { 0% { transform: scale(2); opacity: 0; } 25% { opacity: 1; } 100% { transform: scale(0.9); opacity: 0.85; } }
+
+        .fps-badge {
+            position: fixed; left: 8px; bottom: 6px; z-index: 6;
+            padding: 2px 6px;
+            font: 700 11px/1.3 ui-monospace, Menlo, Consolas, monospace;
+            color: #7dffb0;
+            background: rgba(0, 0, 0, 0.55);
+            border-radius: 4px;
+            pointer-events: none;
+        }
+
+        /* =========================================================
+           IDENTIDADE DO JOGADOR E PAINEL ADM
+           ========================================================= */
+        .sv-boasvindas .sv-id { display: inline-block; margin-left: 6px; font: 700 0.68rem/1 ui-monospace, Menlo, Consolas, monospace; color: #ffcf99; opacity: 0.9; }
+        .adm-tag {
+            display: inline-block; padding: 2px 6px; margin-left: 4px;
+            font: 900 0.6rem/1.1 ui-monospace, Menlo, Consolas, monospace; letter-spacing: 0.08em;
+            color: #1d0a00; background: linear-gradient(180deg, #ffd34d, #f59e0b); border-radius: 3px;
+            vertical-align: middle;
+        }
+        .jogador-linha { margin: 0 0 6px; font-size: 0.72rem; color: #d1d5db; }
+        .jogador-linha b { color: #7dffb0; }
+        .hud-badge.hud-jogador {
+            padding: 4px 10px;
+            font: 700 0.68rem/1.2 ui-monospace, Menlo, Consolas, monospace;
+            color: #d1fae5; background: rgba(13, 16, 36, 0.7);
+            max-width: 100%; overflow: hidden; white-space: nowrap;
+        }
+        .hud-jogador b { color: #7dffb0; }
+        .pausa-jogador { margin-top: 8px; font: 700 0.68rem/1.2 ui-monospace, Menlo, Consolas, monospace; color: #9ca3af; }
+        .pausa-jogador b { color: #7dffb0; }
+
+        #adm-overlay { z-index: 125; background: rgba(2, 5, 4, 0.78); }
+        .adm-panel { width: 460px; text-align: left; border-color: #f59e0b; box-shadow: 0 0 30px rgba(245, 158, 11, 0.35); }
+        .adm-titulo { margin: 0 0 6px; text-align: center; font: 400 1.4rem/1 'Black Ops One', Impact, 'Arial Black', sans-serif; letter-spacing: 0.12em; color: #fbbf24; }
+        .adm-conta { text-align: center; font-size: 0.74rem; color: #d1d5db; }
+        .adm-conta b { color: #7dffb0; }
+        .adm-resumo { margin: 6px 0; padding: 6px; text-align: center; font: 700 0.72rem/1.2 ui-monospace, Menlo, Consolas, monospace; color: #fcd34d; background: rgba(0, 0, 0, 0.45); border: 1px solid rgba(252, 211, 77, 0.35); }
+        .adm-grupo { margin: 8px 0; padding: 8px 10px; background: rgba(17, 24, 39, 0.7); border: 1px solid rgba(245, 158, 11, 0.25); }
+        .adm-campo { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 6px; font-size: 0.76rem; }
+        .adm-campo input { width: 55%; padding: 7px; background: #111827; color: #fff; border: 1px solid #f59e0b; border-radius: 4px; font: 700 0.85rem ui-monospace, Menlo, Consolas, monospace; }
+        .adm-grade { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+        .adm-btn {
+            display: flex; align-items: center; justify-content: center; gap: 6px; text-align: center;
+            padding: 9px 6px; margin: 0;
+            font-weight: 800; font-size: 0.72rem; line-height: 1.15; font-family: inherit;
+            color: #e5e7eb; background: rgba(31, 41, 55, 0.92); border: 1.5px solid rgba(245, 158, 11, 0.5); border-radius: 4px; cursor: pointer;
+        }
+        .adm-btn:hover { background: rgba(55, 65, 81, 0.95); border-color: #fbbf24; }
+        .adm-btn:active { transform: scale(0.96); }
+        .adm-perigo { color: #fecaca; border-color: rgba(248, 113, 113, 0.6); background: rgba(127, 29, 29, 0.5); }
+        .adm-ok { color: #04140d; background: linear-gradient(180deg, #34d399, #059669); border-color: #a7f3d0; }
+        .adm-sel select { background: #111827; color: #fff; border: 1px solid #f59e0b; border-radius: 4px; padding: 3px; }
+        .adm-texto { width: 100%; margin-top: 8px; box-sizing: border-box; padding: 6px; resize: vertical; background: #0b1210; color: #a7f3d0; border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 4px; font: 0.68rem ui-monospace, Menlo, Consolas, monospace; }
+        .adm-panel .pausa-primario { margin-top: 8px; }
+        @media (max-height: 460px) and (orientation: landscape) {
+            .adm-panel { width: min(760px, 94vw); }
+            .adm-grade { grid-template-columns: repeat(4, 1fr); }
+        }
+
         .hidden {
             display: none !important;
         }
@@ -685,12 +946,8 @@
         </div>
 
         <div class="inicio-base">
-            <!-- NICK: só aparece na primeira vez; depois de confirmado fica salvo -->
-            <div id="nick-box" class="sv-nick">
-                <label for="player-name-input">🪖 Escolha seu nick (só na primeira vez):</label>
-                <input type="text" id="player-name-input" value="" maxlength="15" placeholder="Digite seu nick" autocomplete="off">
-            </div>
-            <div id="welcome-box" class="sv-boasvindas hidden">🪖 Bem-vindo, <strong id="welcome-name"></strong>!</div>
+            <!-- JOGADOR: nick e ID vêm do WaveCombat Hub (localStorage), sem login -->
+            <div id="welcome-box" class="sv-boasvindas">🪖 <strong id="welcome-name"></strong><span class="sv-id">ID <span id="welcome-id"></span></span><span class="adm-tag adm-so hidden">ADM</span></div>
 
             <div class="inicio-cta inicio-cta-sv piscar">
                 <button id="btn-start-to-lobby" class="sv-iniciar"><span>▶ INICIAR</span></button>
@@ -699,10 +956,11 @@
             <div class="inicio-extras">
                 <button id="btn-open-daily" class="sv-mini">📅 Login Diário <span id="daily-badge" class="hidden">🎁</span></button>
                 <button id="btn-open-ranking" class="sv-mini">🏆 Ranking</button>
+                <button class="sv-mini adm-abrir adm-so hidden">🛠️ Painel ADM</button>
                 <button id="btn-start-fullscreen" class="sv-mini">🔲 Expandir Tela Cheia</button>
                 <a href="https://youtube.com/@capudooficial7?si=0pe1kJfQaeM4orgV" target="_blank" rel="noopener" class="sv-mini sv-yt">▶️ Siga o Criador</a>
             </div>
-            <div class="inicio-versao">Versão: <b>v0.010</b></div>
+            <div class="inicio-versao">Versão: <b>v0.012</b></div>
         </div>
     </div>
 
@@ -712,6 +970,7 @@
             <h1 class="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-200 mb-1">
                 GARAGEM DE GUERRA
             </h1>
+            <p class="jogador-linha">🪖 <b id="menu-jogador-nick"></b> · ID <span id="menu-jogador-id"></span><span class="adm-tag adm-so hidden">ADM</span></p>
             <p class="text-xs text-gray-300 mb-1">Toque em um tanque para selecioná-lo: melhore com moedas ou funda com outro igual!</p>
             <p class="text-[11px] text-yellow-300 mb-1">👑 O tanque de maior nível lidera a batalha. Os níveis não têm limite!</p>
             <div id="leader-info" class="text-[11px] text-gray-200 bg-gray-900/70 rounded-lg p-2 mb-2 border border-yellow-500/30"></div>
@@ -735,11 +994,19 @@
                 <p class="text-[10px] text-gray-400 mt-1">Dica: com um tanque selecionado, toque em outro do mesmo nível para fundir.</p>
             </div>
 
+            <!-- MODOS DE JOGO -->
+            <div id="modo-box" class="modo-box">
+                <div class="modo-titulo">🎮 MODO DE JOGO</div>
+                <div id="modo-chips" class="modo-chips"></div>
+                <div id="modo-detalhe" class="modo-detalhe"></div>
+            </div>
+
             <div class="flex flex-wrap justify-center gap-1">
                 <button id="btn-buy-tank" class="btn text-xs">🛒 Comprar (🪙 <span id="buy-price">1000</span>)</button>
                 <button id="btn-auto-merge" class="btn btn-secondary text-xs">⚡ Fusão Auto</button>
                 <button id="btn-sell-lowest" class="btn btn-secondary text-xs" style="background:#dc2626; border:none;">💰 Vender</button>
                 <button id="btn-back-to-start" class="btn btn-secondary text-xs">⬅️ Início</button>
+                <button class="btn btn-secondary text-xs adm-abrir adm-so hidden">🛠️ ADM</button>
                 <button id="btn-start-battle" class="btn text-sm font-black w-full mt-2 py-3">🔥 INICIAR RONDA 🔥</button>
             </div>
         </div>
@@ -776,11 +1043,13 @@
     <div id="hud" class="hidden">
         <div class="hud-top">
             <div class="hud-badge">⏱️ <span id="hud-timer">10:00</span></div>
-            <div class="hud-badge">⚔️ Ronda <span id="hud-round">1</span></div>
-            <div class="hud-badge">💀 <span id="hud-kills">0</span>/1000</div>
+            <div class="hud-badge"><span id="hud-modo-ico">⚔️</span> <span id="hud-modo-nome">Ronda</span> <span id="hud-round">1</span></div>
+            <div class="hud-badge">💀 <span id="hud-kills">0</span><span id="hud-kills-total">/1000</span></div>
+            <div id="hud-bosses-badge" class="hud-badge hidden">👹 <span id="hud-bosses">0</span>/<span id="hud-bosses-meta">5</span></div>
             <div class="hud-badge">🪙 <span id="hud-gold-session">0</span> <span style="font-size:0.7rem; opacity:0.85;">→ 💰 <span id="hud-gold-recebe">0</span></span></div>
             <div class="hud-badge">❤️ <span id="hud-hp">0</span></div>
             <div class="hud-badge">⬆️ Nv <span id="hud-level">1</span></div>
+            <div id="hud-jogador" class="hud-badge hud-jogador">🪖 <b id="hud-nick"></b> · #<span id="hud-id"></span><span id="hud-adm-estado"></span><span class="adm-tag adm-so hidden">ADM</span></div>
             <div id="boss-hud-badge" class="hud-badge hidden" style="border-color:#ef4444; background:rgba(239,68,68,0.2); color:#ef4444;">
                 👹 CHEFÃO ATIVO!
             </div>
@@ -825,39 +1094,174 @@
         </div>
     </div>
 
-    <!-- MODAL DE CONFIGURAÇÕES -->
-    <div id="settings-overlay" class="overlay hidden">
-        <div class="panel">
-            <h1 class="text-xl font-bold mb-2">⚙️ Configurações</h1>
+    <!-- PAINEL ADM (só aparece para a conta administradora) -->
+    <div id="adm-overlay" class="overlay hidden">
+        <div class="panel adm-panel">
+            <h1 class="adm-titulo">🛠️ PAINEL ADM</h1>
+            <div class="adm-conta">🪖 <b id="adm-nick"></b> · ID <b id="adm-id"></b> <span class="adm-tag">ADMINISTRADOR</span></div>
+            <div id="adm-resumo" class="adm-resumo"></div>
 
-            <div style="display:flex; flex-direction:column; gap:12px; text-align:left; margin: 12px 0;" class="text-xs">
-                <label style="display:flex; justify-content:space-between; align-items:center;">
-                    <span>🎵 Volume da Música:</span>
-                    <input type="range" id="cfg-music-vol" min="0" max="1" step="0.05" value="0.3">
-                </label>
-                <label style="display:flex; justify-content:space-between; align-items:center;">
-                    <span>🔊 Volume de Efeitos (SFX):</span>
-                    <input type="range" id="cfg-sfx-vol" min="0" max="1" step="0.05" value="0.8">
-                </label>
-                <label style="display:flex; flex-direction:column; gap:4px;">
-                    <span>🎨 Qualidade Gráfica:</span>
-                    <select id="cfg-graphics" style="background:#1f2937; color:#fff; padding:6px; border-radius:8px; border:1px solid #10b981;">
-                        <option value="EXCELENTE" selected>Excelente (Sombras & Partículas)</option>
-                        <option value="MEDIO">Médio (Padrão)</option>
-                        <option value="BASICO">Básico (Para Celular Fraco)</option>
-                    </select>
-                </label>
-                <label style="display:flex; justify-content:space-between; align-items:center;">
-                    <span>🎛️ Sensibilidade do Joystick:</span>
-                    <input type="range" id="cfg-sens" min="0.5" max="2.0" step="0.1" value="1.0">
-                </label>
+            <div class="adm-grupo">
+                <div class="ajustes-rotulo">RECURSOS</div>
+                <label class="adm-campo"><span>Valor</span><input type="number" id="adm-valor" value="10000" min="0" step="1000" inputmode="numeric"></label>
+                <div class="adm-grade">
+                    <button class="adm-btn" data-adm="ouro+">+🪙 Ouro</button>
+                    <button class="adm-btn" data-adm="diamantes+">+💎 Diamantes</button>
+                    <button class="adm-btn" data-adm="ouro=">🪙 Definir ouro</button>
+                    <button class="adm-btn" data-adm="diamantes=">💎 Definir diamantes</button>
+                    <button class="adm-btn" data-adm="pontos=">🏆 Definir pontos</button>
+                    <button class="adm-btn" data-adm="ronda=">🏁 Definir ronda</button>
+                </div>
             </div>
 
-            <button id="btn-surrender" class="btn btn-secondary w-full mb-1 py-2 text-xs hidden" style="background:#ef4444; border:none; color:white;">🏳️ Desistir e Voltar ao Lobby</button>
-            <button id="btn-settings-fullscreen" class="btn btn-secondary w-full mb-1 py-2 text-xs">🔲 Expandir Tela Cheia</button>
-            <button id="btn-close-settings" class="btn w-full py-2 text-xs">✓ Salvar e Continuar</button>
+            <div class="adm-grupo">
+                <div class="ajustes-rotulo">GARAGEM</div>
+                <label class="adm-campo"><span>Nível do tanque</span><input type="number" id="adm-nivel" value="10" min="1" max="999" inputmode="numeric"></label>
+                <div class="adm-grade">
+                    <button class="adm-btn" data-adm="tanque+">➕ Adicionar tanque</button>
+                    <button class="adm-btn" data-adm="encher">🏭 Encher garagem</button>
+                    <button class="adm-btn" data-adm="melhoria">⬆️ Melhoria máxima</button>
+                    <button class="adm-btn adm-perigo" data-adm="garagemPadrao">♻️ Garagem padrão</button>
+                </div>
+            </div>
+
+            <div id="adm-partida" class="adm-grupo hidden">
+                <div class="ajustes-rotulo">PARTIDA EM ANDAMENTO</div>
+                <div class="adm-grade">
+                    <button id="adm-deus-txt" class="adm-btn" data-adm="deus">🛡️ Modo Deus</button>
+                    <label class="adm-btn adm-sel">⏩ Velocidade
+                        <select id="adm-vel">
+                            <option value="0.5">×0,5</option>
+                            <option value="1" selected>×1</option>
+                            <option value="2">×2</option>
+                            <option value="3">×3</option>
+                            <option value="5">×5</option>
+                        </select></label>
+                    <button class="adm-btn" data-adm="curar">❤️ Curar tudo</button>
+                    <button class="adm-btn" data-adm="matarTodos">💀 Eliminar inimigos</button>
+                    <button class="adm-btn" data-adm="chefao">👹 Invocar chefão</button>
+                    <button class="adm-btn" data-adm="nivel">⬆️ +1 nível</button>
+                    <button class="adm-btn" data-adm="ouroPartida">+🪙 na partida</button>
+                    <button class="adm-btn adm-ok" data-adm="vencer">🏆 Vencer partida</button>
+                </div>
+            </div>
+
+            <div class="adm-grupo">
+                <div class="ajustes-rotulo">CONTA E SAVE</div>
+                <div class="adm-grade">
+                    <button class="adm-btn" data-adm="loginLiberar">📅 Liberar login diário</button>
+                    <button class="adm-btn" data-adm="recordes">🏅 Zerar recordes</button>
+                    <button class="adm-btn" data-adm="exportar">📋 Exportar save</button>
+                    <button class="adm-btn adm-perigo" data-adm="importar">📥 Importar save</button>
+                    <button class="adm-btn adm-perigo" data-adm="zerar">🧹 Zerar progresso</button>
+                </div>
+                <textarea id="adm-save" class="adm-texto" rows="3" placeholder="Save em JSON (Exportar gera aqui; cole e toque em Importar)" spellcheck="false"></textarea>
+            </div>
+
+            <button id="btn-adm-fechar" class="pausa-btn pausa-primario">✓ Fechar painel</button>
         </div>
     </div>
+
+    <!-- MENU DE PAUSA (na partida) E AJUSTES (em todas as telas) -->
+    <div id="settings-overlay" class="overlay hidden">
+        <div class="panel pausa-panel">
+
+            <!-- vista: PAUSA -->
+            <div id="pausa-vista" class="hidden">
+                <div class="pausa-topo">
+                    <div class="pausa-faixa"></div>
+                    <div class="pausa-ico">⏸</div>
+                    <h1 class="pausa-titulo">PAUSADO</h1>
+                    <div id="pausa-modo" class="pausa-chip">🛡️ Sobrevivência</div>
+                    <div class="pausa-jogador">🪖 <b id="pausa-nick"></b> · ID <span id="pausa-id"></span><span class="adm-tag adm-so hidden">ADM</span></div>
+                </div>
+                <div class="pausa-corpo">
+                    <div class="pausa-grid">
+                        <div class="pausa-esq">
+                            <div class="pausa-stats">
+                                <div class="ps"><span class="ps-ico">⏱️</span><b id="ps-tempo">00:00</b><small>Tempo</small></div>
+                                <div class="ps"><span class="ps-ico">💀</span><b id="ps-abates">0</b><small>Abates</small></div>
+                                <div class="ps"><span class="ps-ico">🪙</span><b id="ps-ouro">0</b><small>Ouro</small></div>
+                                <div class="ps"><span class="ps-ico">💥</span><b id="ps-dano">0</b><small>Dano</small></div>
+                                <div class="ps"><span class="ps-ico">⬆️</span><b id="ps-nivel">1</b><small>Nível</small></div>
+                                <div class="ps"><span class="ps-ico">❤️</span><b id="ps-vida">100%</b><small>Vida</small></div>
+                            </div>
+                            <div class="pausa-meta">
+                                <div id="pausa-meta-txt" class="pausa-meta-txt"></div>
+                                <div class="pausa-barra"><div id="pausa-meta-fill"></div></div>
+                            </div>
+                        </div>
+                        <div class="pausa-dir">
+                            <button id="btn-pausa-continuar" class="pausa-btn pausa-primario">▶ CONTINUAR</button>
+                            <div class="pausa-linha">
+                                <button id="btn-pausa-ajustes" class="pausa-btn">⚙️ Ajustes</button>
+                                <button id="btn-pausa-tela-cheia" class="pausa-btn">🔲 Expandir Tela Cheia</button>
+                            </div>
+                            <button class="pausa-btn adm-abrir adm-so hidden">🛠️ Ferramentas ADM</button>
+                            <button id="btn-surrender" class="pausa-btn pausa-perigo">🏳️ Desistir</button>
+                            <div id="pausa-confirma" class="pausa-confirma hidden">
+                                <p id="pausa-confirma-txt"></p>
+                                <div class="pausa-linha">
+                                    <button id="btn-surrender-nao" class="pausa-btn">Voltar</button>
+                                    <button id="btn-surrender-sim" class="pausa-btn pausa-perigo">Sim, desistir</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <p id="pausa-dica" class="pausa-dica"></p>
+                </div>
+            </div>
+
+            <!-- vista: AJUSTES -->
+            <div id="ajustes-vista" class="pausa-corpo">
+                <h1 class="ajustes-titulo">⚙️ Ajustes</h1>
+
+                <div class="ajustes-grupo">
+                    <div class="ajustes-rotulo">ÁUDIO</div>
+                    <label class="ajuste"><span>🎵 Música</span>
+                        <input type="range" id="cfg-music-vol" min="0" max="1" step="0.05" value="0.3"></label>
+                    <label class="ajuste"><span>🔊 Efeitos (SFX)</span>
+                        <input type="range" id="cfg-sfx-vol" min="0" max="1" step="0.05" value="0.8"></label>
+                </div>
+
+                <div class="ajustes-grupo">
+                    <div class="ajustes-rotulo">GRÁFICOS E CONTROLES</div>
+                    <label class="ajuste"><span>🎨 Qualidade</span>
+                        <select id="cfg-graphics">
+                            <option value="EXCELENTE" selected>Excelente</option>
+                            <option value="MEDIO">Médio</option>
+                            <option value="BASICO">Básico (celular fraco)</option>
+                        </select></label>
+                    <label class="ajuste"><span>🎛️ Sensibilidade do joystick</span>
+                        <input type="range" id="cfg-sens" min="0.5" max="2.0" step="0.1" value="1.0"></label>
+                </div>
+
+                <div class="ajustes-grupo">
+                    <div class="ajustes-rotulo">JOGABILIDADE</div>
+                    <label class="ajuste"><span>📳 Vibração (dano, chefão)</span>
+                        <span class="chave"><input type="checkbox" id="cfg-vibracao" checked><span class="chave-trilho"></span></span></label>
+                    <label class="ajuste"><span>💥 Números de dano</span>
+                        <span class="chave"><input type="checkbox" id="cfg-numeros" checked><span class="chave-trilho"></span></span></label>
+                    <label class="ajuste"><span>📈 Mostrar FPS</span>
+                        <span class="chave"><input type="checkbox" id="cfg-fps"><span class="chave-trilho"></span></span></label>
+                </div>
+
+                <div class="ajustes-botoes">
+                    <button id="btn-settings-fullscreen" class="pausa-btn">🔲 Expandir Tela Cheia</button>
+                    <button id="btn-close-settings" class="pausa-btn pausa-primario">✓ Salvar e fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTAGEM 3-2-1 AO RETOMAR A PARTIDA -->
+    <div id="retomar-overlay" class="hidden">
+        <div class="retomar-txt">VOLTANDO À BATALHA</div>
+        <div id="retomar-num">3</div>
+    </div>
+
+    <!-- CONTADOR DE FPS (opcional) -->
+    <div id="fps-badge" class="fps-badge hidden">-- FPS</div>
 
     <!-- TELA DE FIM DE RONDA -->
     <div id="stats-overlay" class="overlay hidden">
@@ -866,7 +1270,9 @@
             <p id="stats-subtitle" class="text-xs text-gray-300 mb-3">Estatísticas da Batalha:</p>
 
             <div class="bg-gray-900/80 p-3 rounded-xl border border-cyan-500/30 text-left mb-3 space-y-1 text-xs">
+                <div class="flex justify-between"><span>⏱️ Tempo de Batalha:</span> <strong id="st-tempo" class="text-cyan-400">00:00</strong></div>
                 <div class="flex justify-between"><span>💀 Inimigos Derrotados:</span> <strong id="st-kills" class="text-cyan-400">0</strong></div>
+                <div id="st-linha-chefoes" class="flex justify-between"><span>👹 Chefões Derrotados:</span> <strong id="st-chefoes" class="text-red-400">0</strong></div>
                 <div class="flex justify-between"><span>💥 Dano Total Causado:</span> <strong id="st-damage" class="text-purple-400">0</strong></div>
                 <div class="flex justify-between"><span>🪙 Ouro Coletado:</span> <strong id="st-gold" class="text-yellow-400">0</strong></div>
                 <div class="flex justify-between"><span>💰 Ouro Recebido (<span id="st-pct">10</span>%):</span> <strong id="st-gold-recebido" class="text-yellow-300">0</strong></div>
@@ -875,16 +1281,18 @@
                 <div class="flex justify-between"><span>🏠 Enviados à Garagem:</span> <strong id="st-garage" class="text-green-400">0</strong></div>
             </div>
 
+            <p id="st-recorde" class="st-recorde hidden"></p>
+
             <div class="flex gap-2">
                 <button id="btn-return-menu" class="btn btn-secondary w-1/2 text-xs py-2">🏠 Garagem</button>
-                <button id="btn-next-round" class="btn w-1/2 text-xs py-2">⚔️ Próxima Ronda</button>
+                <button id="btn-next-round" class="btn w-1/2 text-xs py-2">🔁 Jogar de novo</button>
             </div>
         </div>
     </div>
 
     <script>
         /* =========================================================
-           ESQUADRÃO DE TANQUES  (v0.010)
+           ESQUADRÃO DE TANQUES  (v0.012)
            ========================================================= */
 
         /* --- BALANCEAMENTO (ajuste aqui sem mexer no resto) --- */
@@ -949,12 +1357,119 @@
             return Math.pow(statsTanque(n).hp / statsTanque(1).hp, BALANCE.escalaDanoInimigoPorNivel);
         }
 
+        /* --- MODOS DE JOGO (cada um muda duração, ritmo, chefões e recompensas) --- */
+        const MODOS_JOGO = {
+            sobrevivencia: {
+                nome: 'Sobrevivência', curto: 'Ronda', icone: '🛡️', cor: '#10b981',
+                desc: '10 minutos contra 1000 inimigos. Chefão a cada 5 rondas. Vencer sobe a ronda.',
+                duracao: BALANCE.duracaoRonda, alvoAbates: BALANCE.inimigosPorRonda, spawnMult: 1,
+                maxSim: BALANCE.maxInimigosSimultaneos, xpMult: 1, ouroPct: BALANCE.percentualOuroPartida,
+                bossHp: 1, bossOuro: 1, dificuldadePorMin: 0
+            },
+            infinito: {
+                nome: 'Horda Infinita', curto: 'Horda', icone: '♾️', cor: '#a855f7',
+                desc: 'Sem tempo limite: a horda só cresce a cada minuto. Chefão a cada 3 minutos. Aguente o máximo que puder!',
+                duracao: Infinity, alvoAbates: Infinity, spawnMult: 0.8, maxSim: 170, xpMult: 1.2, ouroPct: 0.12,
+                bossHp: 0.8, bossOuro: 1, dificuldadePorMin: 0.7, bossACada: 180, bossPrimeiro: 180, bossMaxSim: 1
+            },
+            relampago: {
+                nome: 'Ataque Relâmpago', curto: 'Relâmpago', icone: '⚡', cor: '#eab308',
+                desc: '3 minutos de caos: o dobro de inimigos, XP em dobro e mais ouro. Chefão aos 90 segundos.',
+                duracao: 180, alvoAbates: Infinity, spawnMult: 2.2, maxSim: 200, xpMult: 2, ouroPct: 0.15,
+                bossHp: 0.25, bossOuro: 1, dificuldadePorMin: 0, bossEm: 90
+            },
+            cacada: {
+                nome: 'Caçada aos Chefões', curto: 'Caçada', icone: '👹', cor: '#ef4444',
+                desc: 'Poucos inimigos, mas um chefão a cada 40 segundos. Derrube 5 chefões em até 8 minutos.',
+                duracao: 480, alvoAbates: Infinity, spawnMult: 0.25, maxSim: 40, xpMult: 1.5, ouroPct: 0.12,
+                bossHp: 0.2, bossOuro: 1.5, dificuldadePorMin: 0, bossACada: 40, bossPrimeiro: 4, bossMeta: 5, bossMaxSim: 2
+            }
+        };
+        const ORDEM_MODOS = ['sobrevivencia', 'infinito', 'relampago', 'cacada'];
+
+        // "Ronda" efetiva dos inimigos: a ronda do jogador + o avanço do tempo nos modos que escalam sozinhos
+        function rondaDif() {
+            const m = typeof modoPartida !== 'undefined' ? modoPartida : MODOS_JOGO.sobrevivencia;
+            return dadosGaragem.rondaAtual + Math.floor((tempoDecorrido / 60) * (m.dificuldadePorMin || 0));
+        }
+
+        function fmtTempo(seg) {
+            seg = Math.max(0, Math.floor(seg || 0));
+            return `${String(Math.floor(seg / 60)).padStart(2, '0')}:${String(seg % 60).padStart(2, '0')}`;
+        }
+
+        let ultimaRondaHud = -1;
+        let ultimaVibracao = 0;
+        function vibrar(padrao) {
+            if (!configJogo.vibracao || !navigator.vibrate) return;
+            const agora = performance.now();
+            if (agora - ultimaVibracao < 250) return;
+            ultimaVibracao = agora;
+            try { navigator.vibrate(padrao); } catch (e) { /* aparelho sem vibração */ }
+        }
+
+        // Contador de FPS (opção dos ajustes) e ícone do botão do canto: ⏸ na partida, ⚙️ nos menus
+        let fpsAcum = 0, fpsQuadros = 0, iconeEmJogo = null;
+        function atualizarMetricas(brutoMs) {
+            if (configJogo.mostrarFps && brutoMs > 0 && brutoMs < 1000) {
+                fpsAcum += brutoMs;
+                fpsQuadros++;
+                if (fpsAcum >= 500) {
+                    document.getElementById('fps-badge').innerText = `${Math.round(fpsQuadros * 1000 / fpsAcum)} FPS`;
+                    fpsAcum = 0;
+                    fpsQuadros = 0;
+                }
+            }
+            const emJogo = estadoJogo === 'JOGANDO' || estadoJogo === 'PAUSADO';
+            if (emJogo !== iconeEmJogo) {
+                iconeEmJogo = emJogo;
+                document.getElementById('btn-global-settings').innerText = emJogo ? '⏸' : '⚙️';
+            }
+        }
+
+        function textoRecorde(chave) {
+            const rc = dadosGaragem.recordes;
+            if (chave === 'sobrevivencia') return `🏁 Ronda atual: ${dadosGaragem.rondaAtual}`;
+            if (chave === 'infinito') return rc.infinito > 0 ? `🏅 Recorde: ${fmtTempo(rc.infinito)}` : '🏅 Sem recorde ainda';
+            if (chave === 'relampago') return rc.relampago > 0 ? `🏅 Recorde: ${fmtNum(rc.relampago)} abates` : '🏅 Sem recorde ainda';
+            return rc.cacada > 0 ? `🏅 Melhor tempo: ${fmtTempo(rc.cacada)}` : '🏅 Sem recorde ainda';
+        }
+
+        // Seletor de modos da garagem
+        function renderizarModos() {
+            const box = document.getElementById('modo-chips');
+            if (!box) return;
+            const sel = MODOS_JOGO[dadosGaragem.modoSelecionado] ? dadosGaragem.modoSelecionado : 'sobrevivencia';
+            box.innerHTML = '';
+            ORDEM_MODOS.forEach(chave => {
+                const m = MODOS_JOGO[chave];
+                const b = document.createElement('button');
+                b.className = 'modo-chip' + (chave === sel ? ' ativo' : '');
+                b.dataset.modo = chave;
+                b.style.setProperty('--cor', m.cor);
+                b.innerHTML = `<span class="ico">${m.icone}</span><span class="nm">${m.nome}</span>`;
+                b.onclick = () => {
+                    dadosGaragem.modoSelecionado = chave;
+                    salvarJogo();
+                    renderizarModos();
+                };
+                box.appendChild(b);
+            });
+            const m = MODOS_JOGO[sel];
+            const det = document.getElementById('modo-detalhe');
+            det.style.setProperty('--cor', m.cor);
+            det.innerHTML = `<div class="modo-desc">${m.desc}</div>` +
+                `<div class="modo-meta"><span>${textoRecorde(sel)}</span><span>🪙 ${Math.round(m.ouroPct * 100)}% do ouro</span><span>⭐ XP x${m.xpMult}</span></div>`;
+            document.getElementById('btn-start-battle').innerText =
+                sel === 'sobrevivencia' ? '🔥 INICIAR RONDA 🔥' : `${m.icone} INICIAR ${m.nome.toUpperCase()} ${m.icone}`;
+        }
+
         /* --- ESTADO GLOBAL & DADOS DE SAVE --- */
 
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
-        let configJogo = { sensibilidade: 1.0, qualidade: 'EXCELENTE', musicVol: 0.3, sfxVol: 0.8 };
+        let configJogo = { sensibilidade: 1.0, qualidade: 'EXCELENTE', musicVol: 0.3, sfxVol: 0.8, vibracao: true, numerosDano: true, mostrarFps: false };
         const QUALIDADE_DPR = { EXCELENTE: 2, MEDIO: 1.5, BASICO: 1 };
 
         let viewW = window.innerWidth;
@@ -975,7 +1490,6 @@
         let partidaAtiva = false;
         let biomaSelecionado = 'gramado';
         let nomeJogador = 'Comandante';
-        let nickConfirmado = false;  // o nick só é pedido na primeira vez
 
         const MAP_SIZE = { width: 3000, height: 3000 };
 
@@ -996,7 +1510,9 @@
             pontosRank: 0,
             partidasJogadas: 0,
             sequenciaLogin: 0,
-            dataUltimoLogin: null
+            dataUltimoLogin: null,
+            modoSelecionado: 'sobrevivencia',
+            recordes: { infinito: 0, relampago: 0, cacada: 0 }   // tempo (s) / abates / melhor tempo (s)
         };
 
         /* --- SAVE / LOAD (localStorage) --- */
@@ -1008,7 +1524,7 @@
                 // mantém campos de outros jogos gravados na mesma chave (ex.: o progresso antigo do Tanque Defence)
                 let antigo = {};
                 try { antigo = JSON.parse(localStorage.getItem(SAVE_KEY)) || {}; } catch (e) { antigo = {}; }
-                localStorage.setItem(SAVE_KEY, JSON.stringify({ ...antigo, dadosGaragem, nomeJogador, nickConfirmado, configJogo }));
+                localStorage.setItem(SAVE_KEY, JSON.stringify({ ...antigo, dadosGaragem, nomeJogador, playerId: player.id, configJogo }));
             } catch (e) { /* modo privado ou storage cheio: ignora */ }
         }
 
@@ -1036,18 +1552,23 @@
                     dadosGaragem.partidasJogadas = Math.max(0, num(g.partidasJogadas, 0) | 0);
                     dadosGaragem.sequenciaLogin = Math.max(0, Math.min(9999, num(g.sequenciaLogin, 0) | 0));
                     dadosGaragem.dataUltimoLogin = typeof g.dataUltimoLogin === 'string' ? g.dataUltimoLogin : null;
+                    dadosGaragem.modoSelecionado = MODOS_JOGO[g.modoSelecionado] ? g.modoSelecionado : 'sobrevivencia';
+                    const rc = g.recordes && typeof g.recordes === 'object' ? g.recordes : {};
+                    dadosGaragem.recordes = {
+                        infinito: Math.max(0, Math.floor(num(rc.infinito, 0))),
+                        relampago: Math.max(0, Math.floor(num(rc.relampago, 0))),
+                        cacada: Math.max(0, Math.floor(num(rc.cacada, 0)))
+                    };
                 }
-                if (typeof s.nomeJogador === 'string' && s.nomeJogador.trim()) {
-                    nomeJogador = s.nomeJogador.trim().slice(0, 15);
-                }
-                // Saves antigos não têm a confirmação: o nick é pedido uma única vez
-                nickConfirmado = s.nickConfirmado === true && nomeJogador.length > 0;
                 if (s.configJogo) {
                     const c = s.configJogo;
                     configJogo.sensibilidade = Math.max(0.5, Math.min(2.0, num(c.sensibilidade, 1.0)));
                     configJogo.musicVol = Math.max(0, Math.min(1, num(c.musicVol, 0.3)));
                     configJogo.sfxVol = Math.max(0, Math.min(1, num(c.sfxVol, 0.8)));
                     if (QUALIDADE_DPR[c.qualidade]) configJogo.qualidade = c.qualidade;
+                    if (typeof c.vibracao === 'boolean') configJogo.vibracao = c.vibracao;
+                    if (typeof c.numerosDano === 'boolean') configJogo.numerosDano = c.numerosDano;
+                    if (typeof c.mostrarFps === 'boolean') configJogo.mostrarFps = c.mostrarFps;
                 }
             } catch (e) { /* save corrompido: começa do zero */ }
         }
@@ -1064,21 +1585,225 @@
             return (n < 0 ? '-' : '') + txt + unidades[i];
         }
 
-        // Tela inicial: o campo de nick só aparece enquanto o nick não foi confirmado
+        // Tela inicial: mostra o jogador (nick + ID do Hub) e o aviso do login diário
         function atualizarTelaInicio() {
-            const nickBox = document.getElementById('nick-box');
-            const welcome = document.getElementById('welcome-box');
-            const input = document.getElementById('player-name-input');
-            if (nickConfirmado) {
-                nickBox.classList.add('hidden');
-                welcome.classList.remove('hidden');
-                document.getElementById('welcome-name').innerText = nomeJogador;
-            } else {
-                nickBox.classList.remove('hidden');
-                welcome.classList.add('hidden');
-                if (!input.value) input.value = (nomeJogador && nomeJogador !== 'Comandante') ? nomeJogador : '';
-            }
+            aplicarIdentidadeNaInterface();
             atualizarBotaoDiario();
+        }
+
+        /* =========================================================
+           IDENTIDADE DO JOGADOR (WaveCombat Hub) E CONTA ADM
+           Nick e ID vêm do localStorage do navegador. Se o jogo for aberto direto
+           (sem passar pelo site), eles são criados sozinhos. Não existe tela de login/senha.
+           ========================================================= */
+        const ADM_CONTA = { nick: 'capudo7', id: '162028398' };
+        const player = { name: 'Comandante', id: '', adm: false };
+
+        function lerLS(chave) { try { return localStorage.getItem(chave); } catch (e) { return null; } }
+        function gravarLS(chave, valor) { try { localStorage.setItem(chave, valor); } catch (e) { /* storage bloqueado: vale só nesta sessão */ } }
+
+        function identificarJogador() {
+            const playerNick = lerLS('wavecombat_nick');
+            const playerId = lerLS('wavecombat_id');
+            let id = (playerId || '').trim() || player.id;
+            let nick = (playerNick || '').trim() || (player.name !== 'Comandante' ? player.name : '');
+
+            if (!id) {   // aberto direto: gera um ID de 9 dígitos
+                id = String(Math.floor(100000000 + Math.random() * 900000000));
+                gravarLS('wavecombat_id', id);
+            }
+            if (!nick) {
+                nick = 'Player_' + id.substring(0, 4);
+                gravarLS('wavecombat_nick', nick);
+            }
+            player.name = nick.slice(0, 16);
+            player.id = id.slice(0, 32);
+            player.adm = player.name.toLowerCase() === ADM_CONTA.nick && player.id === ADM_CONTA.id;
+            nomeJogador = player.name;
+            if (jogadorTanquePrincipal) {
+                jogadorTanquePrincipal.name = player.name;
+                jogadorTanquePrincipal.id = player.id;
+            }
+            aplicarIdentidadeNaInterface();
+        }
+
+        // Mostra nick e ID na tela inicial, garagem, HUD da partida, pausa e painel ADM
+        function aplicarIdentidadeNaInterface() {
+            const txt = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+            ['welcome-name', 'menu-jogador-nick', 'hud-nick', 'pausa-nick', 'adm-nick'].forEach(id => txt(id, player.name));
+            ['welcome-id', 'menu-jogador-id', 'hud-id', 'pausa-id', 'adm-id'].forEach(id => txt(id, player.id));
+            document.querySelectorAll('.adm-so').forEach(el => el.classList.toggle('hidden', !player.adm));
+            if (!player.adm) { admDeus = false; admVelocidade = 1; }
+        }
+
+        /* --- PAINEL ADM (só abre para o nick + ID da conta administradora) --- */
+
+        let admDeus = false;
+        let admVelocidade = 1;
+
+        function admAbrir() {
+            if (!player.adm) return;
+            atualizarPainelAdm();
+            document.getElementById('adm-overlay').classList.remove('hidden');
+        }
+
+        function admFechar() {
+            document.getElementById('adm-overlay').classList.add('hidden');
+        }
+
+        function atualizarPainelAdm() {
+            const g = dadosGaragem;
+            const emPartida = partidaAtiva && !!jogadorTanquePrincipal;
+            document.getElementById('adm-partida').classList.toggle('hidden', !emPartida);
+            document.getElementById('adm-resumo').textContent =
+                `🪙 ${fmtNum(g.ouro)} · 💎 ${fmtNum(g.diamantes)} · 🏆 ${g.pontosRank} pts · 🏁 ronda ${g.rondaAtual} · 🚜 ${g.slots.filter(n => n > 0).length}/${g.slots.length}`;
+            document.getElementById('adm-deus-txt').textContent = admDeus ? '🛡️ Modo Deus: LIGADO' : '🛡️ Modo Deus: desligado';
+            document.getElementById('adm-vel').value = String(admVelocidade);
+            const tag = document.getElementById('hud-adm-estado');
+            if (tag) tag.textContent = (admDeus ? ' 🛡️' : '') + (admVelocidade !== 1 ? ` ×${admVelocidade}` : '');
+        }
+
+        // Ações perigosas pedem um segundo toque para confirmar
+        function admConfirmar(btn) {
+            if (btn.dataset.pronto === '1') {
+                btn.dataset.pronto = '';
+                btn.textContent = btn.dataset.rotulo;
+                return true;
+            }
+            btn.dataset.rotulo = btn.textContent;
+            btn.dataset.pronto = '1';
+            btn.textContent = '⚠️ Toque de novo para confirmar';
+            clearTimeout(btn._t);
+            btn._t = setTimeout(() => { btn.dataset.pronto = ''; btn.textContent = btn.dataset.rotulo; }, 3000);
+            return false;
+        }
+
+        function admExecutar(acao, btn) {
+            if (!player.adm) return;
+            if (['garagemPadrao', 'zerar', 'importar'].includes(acao) && !admConfirmar(btn)) return;
+
+            const g = dadosGaragem;
+            const lerNum = (id, min, max, padrao) => {
+                const n = Math.floor(Number(document.getElementById(id).value));
+                return Number.isFinite(n) ? Math.max(min, Math.min(max, n)) : padrao;
+            };
+            const valor = lerNum('adm-valor', 0, 1e12, 0);
+            const nivel = lerNum('adm-nivel', 1, 999, 1);
+            const LIM = 1e15;
+            const j = jogadorTanquePrincipal;
+            const emPartida = partidaAtiva && !!j;
+            let msg = '';
+
+            switch (acao) {
+                case 'ouro+': g.ouro = Math.min(LIM, g.ouro + valor); msg = `+🪙 ${fmtNum(valor)}`; break;
+                case 'ouro=': g.ouro = valor; msg = `🪙 Ouro = ${fmtNum(valor)}`; break;
+                case 'diamantes+': g.diamantes = Math.min(LIM, g.diamantes + valor); msg = `+💎 ${fmtNum(valor)}`; break;
+                case 'diamantes=': g.diamantes = valor; msg = `💎 Diamantes = ${fmtNum(valor)}`; break;
+                case 'pontos=': g.pontosRank = Math.min(10000, valor); msg = `🏆 Pontos = ${g.pontosRank}`; break;
+                case 'ronda=': g.rondaAtual = Math.max(1, Math.min(9999, valor)); msg = `🏁 Ronda = ${g.rondaAtual}`; break;
+
+                case 'tanque+': {
+                    const i = g.slots.indexOf(0);
+                    if (i < 0) { msg = 'Garagem cheia'; break; }
+                    g.slots[i] = nivel; g.melhorias[i] = 0;
+                    msg = `🚜 Tanque nível ${nivel} adicionado`;
+                    break;
+                }
+                case 'encher':
+                    g.slots.forEach((n, i) => { if (n === 0) { g.slots[i] = nivel; g.melhorias[i] = 0; } });
+                    msg = `🏭 Garagem cheia de tanques nível ${nivel}`;
+                    break;
+                case 'melhoria':
+                    g.slots.forEach((n, i) => { if (n > 0) g.melhorias[i] = BALANCE.melhoriaMax; });
+                    msg = '⬆️ Melhoria máxima em todos os tanques';
+                    break;
+                case 'garagemPadrao':
+                    g.slots = [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                    g.melhorias = g.slots.map(() => 0);
+                    g.precoCompra = 1000;
+                    msg = '♻️ Garagem reiniciada';
+                    break;
+
+                case 'loginLiberar': g.dataUltimoLogin = dataOntemString(); msg = '📅 Login diário liberado'; break;
+                case 'recordes': g.recordes = { infinito: 0, relampago: 0, cacada: 0 }; msg = '🏅 Recordes zerados'; break;
+                case 'zerar':
+                    Object.assign(g, {
+                        ouro: 200, diamantes: 0, precoCompra: 1000, rondaAtual: 1,
+                        slots: [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], melhorias: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        pontosRank: 0, partidasJogadas: 0, sequenciaLogin: 0, dataUltimoLogin: null,
+                        modoSelecionado: 'sobrevivencia', recordes: { infinito: 0, relampago: 0, cacada: 0 }
+                    });
+                    msg = '🧹 Progresso zerado';
+                    break;
+
+                case 'exportar': {
+                    const dados = JSON.stringify({ dadosGaragem: g, configJogo });
+                    document.getElementById('adm-save').value = dados;
+                    try { navigator.clipboard.writeText(dados).catch(() => {}); } catch (e) { /* sem permissão: o texto fica na caixa */ }
+                    msg = '📋 Save exportado (copie da caixa)';
+                    break;
+                }
+                case 'importar': {
+                    let obj = null;
+                    try { obj = JSON.parse(document.getElementById('adm-save').value); } catch (e) { /* inválido */ }
+                    if (!obj || typeof obj !== 'object' || !obj.dadosGaragem) { mostrarAviso('Save inválido'); return; }
+                    let antigo = {};
+                    try { antigo = JSON.parse(localStorage.getItem(SAVE_KEY)) || {}; } catch (e) { antigo = {}; }
+                    try {
+                        localStorage.setItem(SAVE_KEY, JSON.stringify({ ...antigo, dadosGaragem: obj.dadosGaragem, configJogo: obj.configJogo || antigo.configJogo }));
+                    } catch (e) { mostrarAviso('Não foi possível gravar o save'); return; }
+                    carregarJogo();
+                    sincronizarCamposConfig();
+                    msg = '📥 Save importado';
+                    break;
+                }
+
+                /* ---- ferramentas de partida ---- */
+                case 'deus': admDeus = !admDeus; msg = admDeus ? '🛡️ Modo Deus LIGADO' : 'Modo Deus desligado'; break;
+                case 'curar':
+                    if (!emPartida) return;
+                    j.hp = j.hpMax;
+                    esquadrao.forEach(a => { a.hp = a.hpMax; });
+                    msg = '❤️ Vida restaurada';
+                    break;
+                case 'matarTodos':
+                    if (!emPartida) return;
+                    inimigos.filter(e => !e.morto).forEach(e => matarInimigo(e));
+                    msg = '💀 Inimigos eliminados';
+                    break;
+                case 'chefao': {
+                    if (!emPartida) return;
+                    const p = posicaoSpawn();
+                    bossJaNasceu = true;
+                    chefoesNascidos++;
+                    bossAtivo = new Inimigo(p.x, p.y, true);
+                    inimigos.push(bossAtivo);
+                    msg = '👹 Chefão invocado';
+                    break;
+                }
+                case 'nivel':
+                    if (!emPartida) return;
+                    ganharXP(evolucaoPartida.xpProximo - evolucaoPartida.xp);
+                    msg = '⬆️ +1 nível (a escolha abre ao continuar)';
+                    break;
+                case 'ouroPartida':
+                    if (!emPartida) return;
+                    ouroGanhoNaRonda += valor;
+                    msg = `+🪙 ${fmtNum(valor)} na partida`;
+                    break;
+                case 'vencer':
+                    if (!emPartida) return;
+                    admFechar();
+                    encerrarRonda(true, 'kills');
+                    return;
+            }
+
+            if (msg) mostrarAviso(msg);
+            salvarJogo();
+            renderizarGaragem();
+            atualizarTelaInicio();
+            atualizarPainelAdm();
+            if (partidaAtiva && settingsPausouPartida) atualizarPainelPausa();
         }
 
         function escaparHTML(txt) {
@@ -1223,6 +1948,11 @@
         let slotMinasDisponiveis = 5;
         let temposRecargaMina = [];
 
+        let modoPartida = MODOS_JOGO.sobrevivencia;   // modo da partida em andamento
+        let tempoDecorrido = 0;       // segundos de batalha (cresce em todos os modos)
+        let chefoesNascidos = 0;
+        let chefoesMortos = 0;
+        let proximoChefao = 0;
         let bossAtivo = null;
         let bossJaNasceu = false;
         let bonusPowerupMapa = null;
@@ -1717,7 +2447,7 @@
 
         class Inimigo {
             constructor(x, y, eBoss = false) {
-                const r = dadosGaragem.rondaAtual;
+                const r = rondaDif();
                 // Vida e dano crescem com a ronda E com o nível atual do tanque principal do jogador
                 const nivelJogador = jogadorTanquePrincipal ? jogadorTanquePrincipal.nivel : 1;
                 const multVida = multVidaInimigo(r) * multVidaInimigoPorNivel(nivelJogador);
@@ -1730,7 +2460,7 @@
                 this.nivel = eBoss ? 6 : 1 + Math.floor(Math.random() * nivelMaxInimigo(r));
                 const base = statsTanque(this.nivel);
                 this.raio = eBoss ? 45 : base.raio * (0.8 + Math.random() * 0.4);
-                this.hpMax = Math.round(eBoss ? BALANCE.bossHpBase * multVida : base.hp * BALANCE.inimigoHpFator * multVida);
+                this.hpMax = Math.round(eBoss ? BALANCE.bossHpBase * multVida * modoPartida.bossHp : base.hp * BALANCE.inimigoHpFator * multVida);
                 this.hp = this.hpMax;
                 this.dano = eBoss ? 80 * multDano : base.dano * BALANCE.inimigoDanoFator * multDano;
                 this.velocidade = eBoss ? 110 : base.velocidade * BALANCE.inimigoVelFator;
@@ -1744,6 +2474,7 @@
                 if (alvo.hp <= 0) return;
                 if (Math.hypot(alvo.x - this.x, alvo.y - this.y) < this.raio + alvo.stats.raio) {
                     alvo.hp -= this.dano * dt;
+                    if (alvo === jogadorTanquePrincipal) vibrar(25);
                 }
             }
 
@@ -1798,14 +2529,16 @@
             if (e.morto) return;
             e.morto = true;
 
-            const valorOuro = e.eBoss ? 500 + dadosGaragem.rondaAtual * 100 : e.nivel * 12;
-            const valorXP = e.eBoss ? BALANCE.xpChefao : e.nivel * BALANCE.xpPorNivelInimigo;
+            const valorOuro = e.eBoss ? Math.round((500 + rondaDif() * 100) * modoPartida.bossOuro) : e.nivel * 12;
+            const valorXP = Math.round((e.eBoss ? BALANCE.xpChefao : e.nivel * BALANCE.xpPorNivelInimigo) * modoPartida.xpMult);
             ouroGanhoNaRonda += valorOuro;
             itensChao.push(new ItemChao(e.x, e.y, 'ouro', valorOuro));
             itensChao.push(new ItemChao(e.x + Math.random() * 10, e.y + Math.random() * 10, 'xp', valorXP));
 
             if (e.eBoss) {
-                bossAtivo = null;
+                chefoesMortos++;
+                bossAtivo = inimigos.find(o => o !== e && o.eBoss && !o.morto) || null;
+                vibrar([40, 30, 80]);
                 criarTextoFlutuante(e.x, e.y, '🏆 CHEFÃO DERROTADO!', '#facc15');
                 criarExplosao(e.x, e.y, '#ef4444', 30);
             } else {
@@ -1820,7 +2553,7 @@
             if (e.morto) return;
             e.hp -= dano;
             danoTotalCausado += dano;
-            criarTextoFlutuante(e.x, e.y, `-${fmtNum(dano)}`, cor);
+            if (configJogo.numerosDano) criarTextoFlutuante(e.x, e.y, `-${fmtNum(dano)}`, cor);
             if (e.hp <= 0) matarInimigo(e);
         }
 
@@ -2127,16 +2860,16 @@
 
         window.addEventListener('keydown', e => {
             const k = e.key.toLowerCase();
+            if (k === 'escape' && !document.getElementById('adm-overlay').classList.contains('hidden')) { admFechar(); return; }
+            if (e.target && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;   // digitando em um campo
             teclas[k] = true;
 
             if (estadoJogo === 'JOGANDO') {
                 if ([' ', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(k)) e.preventDefault();
                 if (!e.repeat && (k === 'e' || k === ' ')) plantarMina();
             }
-            if (k === 'escape' && !e.repeat) {
-                const aberto = !document.getElementById('settings-overlay').classList.contains('hidden');
-                if (aberto) fecharConfiguracoes();
-                else abrirConfiguracoes();
+            if ((k === 'escape' || (k === 'p' && (estadoJogo === 'JOGANDO' || (estadoJogo === 'PAUSADO' && settingsPausouPartida)))) && !e.repeat) {
+                alternarPausa();
             }
         });
         window.addEventListener('keyup', e => { teclas[e.key.toLowerCase()] = false; });
@@ -2315,7 +3048,7 @@
 
         // Só uma parte do ouro recolhido na partida vai para o jogador
         function ouroRecebidoDaRonda(coletado) {
-            return Math.floor(coletado * BALANCE.percentualOuroPartida);
+            return Math.floor(coletado * modoPartida.ouroPct);
         }
 
         function venderMenorTanque() {
@@ -2413,6 +3146,7 @@
             });
 
             renderizarPainelTanque();
+            renderizarModos();
         }
 
         // Painel do tanque selecionado: vida/dano antes e depois da próxima melhoria
@@ -2632,25 +3366,39 @@
                 return false;
             });
 
-            // Chefão a cada 5 rondas: nasce UMA vez por partida
-            const temBoss = dadosGaragem.rondaAtual % 5 === 0;
-            if (temBoss && !bossJaNasceu &&
-                (tempoRestanteRonda < BALANCE.duracaoRonda - 60 || inimigosParaGerar <= 0)) {
+            // Chefões: cada modo tem a sua regra
+            const m = modoPartida;
+            let nascerChefao = false;
+            if (m === MODOS_JOGO.sobrevivencia) {
+                // a cada 5 rondas: nasce UMA vez por partida
+                nascerChefao = dadosGaragem.rondaAtual % 5 === 0 && !bossJaNasceu &&
+                    (tempoRestanteRonda < m.duracao - 60 || inimigosParaGerar <= 0);
+            } else if (m.bossEm) {
+                nascerChefao = !bossJaNasceu && tempoDecorrido >= m.bossEm;
+            } else if (m.bossACada) {
+                const vivos = inimigos.filter(e => e.eBoss && !e.morto).length;
+                nascerChefao = tempoDecorrido >= proximoChefao && vivos < (m.bossMaxSim || 1) &&
+                    (!m.bossMeta || chefoesNascidos < m.bossMeta);
+            }
+            if (nascerChefao) {
                 bossJaNasceu = true;
+                chefoesNascidos++;
+                if (m.bossACada) proximoChefao = tempoDecorrido + m.bossACada;
                 const p = posicaoSpawn();
                 bossAtivo = new Inimigo(p.x, p.y, true);
                 inimigos.push(bossAtivo);
                 audio.play('explosion');
+                vibrar(200);
                 criarTextoFlutuante(j.x, j.y - 40, '👹 CHEFÃO APARECEU!', '#ef4444');
             }
             document.getElementById('boss-hud-badge').classList.toggle('hidden', !bossAtivo);
 
-            // Geração por tempo (independe do FPS) e para quando chega em 1000
-            const taxa = Math.min(BALANCE.taxaSpawnMax, BALANCE.taxaSpawnBase + BALANCE.taxaSpawnPorRonda * (dadosGaragem.rondaAtual - 1));
+            // Geração por tempo (independe do FPS); o ritmo e o limite dependem do modo
+            const taxa = Math.min(BALANCE.taxaSpawnMax, BALANCE.taxaSpawnBase + BALANCE.taxaSpawnPorRonda * (rondaDif() - 1)) * m.spawnMult;
             acumuladorSpawn += dt * taxa;
             while (acumuladorSpawn >= 1) {
                 acumuladorSpawn -= 1;
-                if (inimigos.length < BALANCE.maxInimigosSimultaneos && inimigosParaGerar > 0) {
+                if (inimigos.length < m.maxSim && inimigosParaGerar > 0) {
                     const p = posicaoSpawn();
                     inimigos.push(new Inimigo(p.x, p.y));
                     inimigosParaGerar--;
@@ -2754,6 +3502,7 @@
 
         function abrirModalLevelUp() {
             if (!partidaAtiva) return;
+            vibrar(40);
             estadoJogo = 'PAUSADO';
             const modal = document.getElementById('levelup-overlay');
             const container = document.getElementById('levelup-options');
@@ -2808,23 +3557,35 @@
             dadosGaragem.ouro += ouroRecebido;
             dadosGaragem.partidasJogadas++;
 
-            const tempoSobrevivido = BALANCE.duracaoRonda - tempoRestanteRonda;
+            const modo = modoPartida;
+            const tempoSobrevivido = tempoDecorrido;
             let pontosGanhos = 0;
 
-            if (vitoria) {
-                pontosGanhos = 10;
-            } else if (tempoSobrevivido < 60) {
-                pontosGanhos = -10; // perde 10 pontos se morrer em menos de 1 minuto
+            if (modo === MODOS_JOGO.sobrevivencia) {
+                if (vitoria) {
+                    pontosGanhos = 10;
+                } else if (tempoSobrevivido < 60) {
+                    pontosGanhos = -10; // perde 10 pontos se morrer em menos de 1 minuto
+                } else {
+                    pontosGanhos = Math.floor((tempoSobrevivido / modo.duracao) * 10) - 5;
+                }
+            } else if (modo === MODOS_JOGO.infinito) {
+                pontosGanhos = Math.min(15, Math.floor(tempoSobrevivido / 60));   // 1 ponto por minuto aguentado
+            } else if (modo === MODOS_JOGO.relampago) {
+                pontosGanhos = vitoria ? 6 : Math.max(-3, Math.floor((tempoSobrevivido / modo.duracao) * 6) - 3);
             } else {
-                pontosGanhos = Math.floor((tempoSobrevivido / BALANCE.duracaoRonda) * 10) - 5;
+                pontosGanhos = vitoria ? 12 : Math.max(-4, chefoesMortos * 2 - 4);
             }
             dadosGaragem.pontosRank = Math.max(0, Math.min(10000, dadosGaragem.pontosRank + pontosGanhos));
+
+            // Na horda os aliados voltam à garagem se você aguentou 5 minutos; nos outros modos, só vencendo
+            const salvaAliados = modo === MODOS_JOGO.infinito ? tempoSobrevivido >= 300 : vitoria;
 
             // Aliados resgatados que sobreviveram vão para a garagem (só se o jogador venceu)
             let enviadosGaragem = 0;
             let ouroDeVenda = 0;
             let vendidosGaragemCheia = 0;
-            if (vitoria) {
+            if (salvaAliados) {
                 for (const a of esquadrao) {
                     if (a.hp <= 0) continue;
                     const livre = dadosGaragem.slots.indexOf(0);
@@ -2842,25 +3603,61 @@
             }
             esquadrao = [];
 
-            if (vitoria) dadosGaragem.rondaAtual++;
+            if (vitoria && modo === MODOS_JOGO.sobrevivencia) dadosGaragem.rondaAtual++;
+
+            // Recordes de cada modo
+            const rc = dadosGaragem.recordes;
+            let recordeTxt = '';
+            if (modo === MODOS_JOGO.infinito && Math.floor(tempoSobrevivido) > rc.infinito) {
+                rc.infinito = Math.floor(tempoSobrevivido);
+                recordeTxt = `🏅 Novo recorde: ${fmtTempo(rc.infinito)} de sobrevivência!`;
+            } else if (modo === MODOS_JOGO.relampago && inimigosMortos > rc.relampago) {
+                rc.relampago = inimigosMortos;
+                recordeTxt = `🏅 Novo recorde: ${fmtNum(rc.relampago)} abates!`;
+            } else if (modo === MODOS_JOGO.cacada && vitoria && (rc.cacada === 0 || Math.floor(tempoSobrevivido) < rc.cacada)) {
+                rc.cacada = Math.max(1, Math.floor(tempoSobrevivido));
+                recordeTxt = `🏅 Novo recorde: ${fmtTempo(rc.cacada)} para os ${modo.bossMeta} chefões!`;
+            }
+            vibrar(vitoria ? [60, 40, 60] : 300);
             salvarJogo();
+
 
             document.getElementById('hud').classList.add('hidden');
             const stats = document.getElementById('stats-overlay');
 
-            const titulo = vitoria ? 'RONDA CONCLUÍDA!' : 'ESQUADRÃO DESTRUÍDO!';
-            document.getElementById('stats-title').innerText = titulo;
-            document.getElementById('stats-title').className = `text-2xl font-black mb-1 ${vitoria ? 'text-yellow-400' : 'text-red-500'}`;
-            document.getElementById('stats-subtitle').innerText =
-                motivo === 'kills' ? 'Todos os inimigos foram destruídos!' :
-                motivo === 'tempo' ? 'Você sobreviveu até o fim do tempo!' :
-                'Seu tanque foi destruído. Estatísticas da Batalha:';
+            let titulo, sub;
+            if (modo === MODOS_JOGO.infinito) {
+                titulo = 'HORDA ENCERRADA';
+                sub = motivo === 'retirada' ? 'Você se retirou da horda a tempo.' : 'Seu tanque foi destruído pela horda.';
+            } else if (modo === MODOS_JOGO.relampago) {
+                titulo = vitoria ? '⚡ RELÂMPAGO CONCLUÍDO!' : 'ESQUADRÃO DESTRUÍDO!';
+                sub = vitoria ? 'Você sobreviveu aos 3 minutos de caos!' : 'Seu tanque foi destruído. Estatísticas da Batalha:';
+            } else if (modo === MODOS_JOGO.cacada) {
+                titulo = vitoria ? '🏆 CAÇADA CONCLUÍDA!' : (motivo === 'tempo' ? 'TEMPO ESGOTADO!' : 'ESQUADRÃO DESTRUÍDO!');
+                sub = vitoria ? `Os ${modo.bossMeta} chefões foram derrubados!` :
+                    (motivo === 'tempo' ? `Chefões derrotados: ${chefoesMortos}/${modo.bossMeta}.` : 'Seu tanque foi destruído. Estatísticas da Batalha:');
+            } else {
+                titulo = vitoria ? 'RONDA CONCLUÍDA!' : 'ESQUADRÃO DESTRUÍDO!';
+                sub = motivo === 'kills' ? 'Todos os inimigos foram destruídos!' :
+                    motivo === 'tempo' ? 'Você sobreviveu até o fim do tempo!' :
+                    'Seu tanque foi destruído. Estatísticas da Batalha:';
+            }
+            const tit = document.getElementById('stats-title');
+            tit.innerText = titulo;
+            tit.className = `text-2xl font-black mb-1 ${(vitoria || modo === MODOS_JOGO.infinito) ? 'text-yellow-400' : 'text-red-500'}`;
+            document.getElementById('stats-subtitle').innerText = sub;
 
+            document.getElementById('st-tempo').innerText = fmtTempo(tempoSobrevivido);
+            document.getElementById('st-chefoes').innerText = chefoesMortos;
+            document.getElementById('st-linha-chefoes').classList.toggle('hidden', !(modo.bossMeta || chefoesNascidos > 0));
+            const recEl = document.getElementById('st-recorde');
+            recEl.innerText = recordeTxt;
+            recEl.classList.toggle('hidden', !recordeTxt);
             document.getElementById('st-kills').innerText = inimigosMortos;
             document.getElementById('st-damage').innerText = fmtNum(danoTotalCausado);
             document.getElementById('st-gold').innerText = fmtNum(ouroGanhoNaRonda);
             document.getElementById('st-gold-recebido').innerText = fmtNum(ouroRecebido);
-            document.getElementById('st-pct').innerText = Math.round(BALANCE.percentualOuroPartida * 100);
+            document.getElementById('st-pct').innerText = Math.round(modo.ouroPct * 100);
             document.getElementById('st-rank').innerText = `${pontosGanhos >= 0 ? '+' : ''}${pontosGanhos}`;
             document.getElementById('st-rescued').innerText = tanquesResgatadosRonda;
             document.getElementById('st-garage').innerText = vendidosGaragemCheia > 0
@@ -3040,12 +3837,20 @@
             document.getElementById('cfg-sfx-vol').value = configJogo.sfxVol;
             document.getElementById('cfg-sens').value = configJogo.sensibilidade;
             document.getElementById('cfg-graphics').value = configJogo.qualidade;
+            document.getElementById('cfg-vibracao').checked = configJogo.vibracao;
+            document.getElementById('cfg-numeros').checked = configJogo.numerosDano;
+            document.getElementById('cfg-fps').checked = configJogo.mostrarFps;
+            document.getElementById('fps-badge').classList.toggle('hidden', !configJogo.mostrarFps);
         }
 
         function aplicarCamposConfig() {
             configJogo.musicVol = parseFloat(document.getElementById('cfg-music-vol').value);
             configJogo.sfxVol = parseFloat(document.getElementById('cfg-sfx-vol').value);
             configJogo.sensibilidade = parseFloat(document.getElementById('cfg-sens').value);
+            configJogo.vibracao = document.getElementById('cfg-vibracao').checked;
+            configJogo.numerosDano = document.getElementById('cfg-numeros').checked;
+            configJogo.mostrarFps = document.getElementById('cfg-fps').checked;
+            document.getElementById('fps-badge').classList.toggle('hidden', !configJogo.mostrarFps);
             const q = document.getElementById('cfg-graphics').value;
             if (q !== configJogo.qualidade) {
                 configJogo.qualidade = q;
@@ -3053,31 +3858,153 @@
             }
         }
 
+        /* --- MENU DE PAUSA (durante a partida) E AJUSTES (em qualquer tela) --- */
+        const DICAS_PAUSA = [
+            '💣 Plante minas no caminho da horda antes de ser cercado.',
+            '⭐ A estrela de bônus dá dano em dobro por 30 segundos.',
+            '🛡️ Tanques neutros no mapa viram aliados se você chegar perto.',
+            '⬆️ Cada level up oferece melhorias: escolha combinando com o seu estilo.',
+            '👑 O tanque de maior nível da garagem lidera a batalha.',
+            '🔀 Funda dois tanques iguais na garagem para subir de nível.',
+            '🎯 Mantenha-se em movimento: os inimigos sempre perseguem você.',
+            '👹 Chefões dão muito ouro e XP: vale caçar cada um.'
+        ];
+        let pausaVista = 'ajustes';   // 'pausa' | 'ajustes'
+        let retomarTimer = null;
+
+        function mostrarVistaPausa(v) {
+            pausaVista = v;
+            document.getElementById('pausa-vista').classList.toggle('hidden', v !== 'pausa');
+            document.getElementById('ajustes-vista').classList.toggle('hidden', v !== 'ajustes');
+            document.getElementById('pausa-confirma').classList.add('hidden');
+            const naPartida = settingsPausouPartida && partidaAtiva;
+            document.getElementById('btn-close-settings').innerText = naPartida ? '⬅️ Voltar' : '✓ Salvar e fechar';
+        }
+
+        function atualizarPainelPausa() {
+            const m = modoPartida, j = jogadorTanquePrincipal, rc = dadosGaragem.recordes;
+            const set = (id, v) => { document.getElementById(id).innerText = v; };
+            set('pausa-modo', `${m.icone} ${m.nome} · ${m === MODOS_JOGO.sobrevivencia ? 'Ronda' : 'Dificuldade'} ${rondaDif()}`);
+            set('ps-tempo', fmtTempo(tempoDecorrido));
+            set('ps-abates', fmtNum(inimigosMortos));
+            set('ps-ouro', fmtNum(ouroGanhoNaRonda));
+            set('ps-dano', fmtNum(danoTotalCausado));
+            set('ps-nivel', evolucaoPartida.nivel);
+            set('ps-vida', j ? Math.max(0, Math.round((j.hp / j.hpMax) * 100)) + '%' : '0%');
+
+            let txt, prog;
+            if (m === MODOS_JOGO.sobrevivencia) {
+                txt = `Objetivo: ${fmtNum(inimigosMortos)}/${fmtNum(m.alvoAbates)} abates ou resistir ${fmtTempo(tempoRestanteRonda)}`;
+                prog = Math.max(inimigosMortos / m.alvoAbates, tempoDecorrido / m.duracao);
+            } else if (m === MODOS_JOGO.infinito) {
+                txt = rc.infinito > 0 ? `Recorde a bater: ${fmtTempo(rc.infinito)} (agora ${fmtTempo(tempoDecorrido)})` : 'Aguente o máximo que puder: o primeiro recorde é seu!';
+                prog = rc.infinito > 0 ? tempoDecorrido / rc.infinito : 0;
+            } else if (m === MODOS_JOGO.relampago) {
+                txt = `Resista por mais ${fmtTempo(tempoRestanteRonda)} · ${fmtNum(inimigosMortos)} abates`;
+                prog = tempoDecorrido / m.duracao;
+            } else {
+                txt = `Chefões derrotados: ${chefoesMortos}/${m.bossMeta} · tempo restante ${fmtTempo(tempoRestanteRonda)}`;
+                prog = chefoesMortos / m.bossMeta;
+            }
+            set('pausa-meta-txt', txt);
+            document.getElementById('pausa-meta-fill').style.width = Math.round(Math.max(0, Math.min(1, prog)) * 100) + '%';
+
+            const horda = m === MODOS_JOGO.infinito;
+            set('btn-surrender', horda ? '🏁 Encerrar horda' : '🏳️ Desistir');
+            set('btn-surrender-sim', horda ? 'Sim, encerrar' : 'Sim, desistir');
+            set('pausa-confirma-txt', horda
+                ? 'Encerrar a horda agora? O tempo conta para o recorde e você recebe ouro e pontos.'
+                : `Desistir da partida? Você recebe só ${Math.round(m.ouroPct * 100)}% do ouro (🪙 ${fmtNum(ouroRecebidoDaRonda(ouroGanhoNaRonda))}) e nenhum ponto.`);
+            set('pausa-dica', DICAS_PAUSA[Math.floor(Math.random() * DICAS_PAUSA.length)]);
+        }
+
         function abrirConfiguracoes() {
+            cancelarRetomada();
             if (estadoJogo === 'JOGANDO') {
                 estadoJogo = 'PAUSADO';
                 settingsPausouPartida = true;
             }
             sincronizarCamposConfig();
-            document.getElementById('btn-surrender').classList.toggle('hidden', !partidaAtiva);
             document.getElementById('settings-overlay').classList.remove('hidden');
+            if (settingsPausouPartida && partidaAtiva) {
+                atualizarPainelPausa();
+                mostrarVistaPausa('pausa');
+            } else {
+                mostrarVistaPausa('ajustes');
+            }
+        }
+
+        // Botão do fim dos ajustes: na partida volta ao menu de pausa; fora dela fecha
+        function voltarDosAjustes() {
+            aplicarCamposConfig();
+            salvarJogo();
+            if (settingsPausouPartida && partidaAtiva) {
+                atualizarPainelPausa();
+                mostrarVistaPausa('pausa');
+            } else {
+                fecharConfiguracoes();
+            }
         }
 
         function fecharConfiguracoes() {
             aplicarCamposConfig();
             salvarJogo();
             document.getElementById('settings-overlay').classList.add('hidden');
-            if (settingsPausouPartida) {
-                settingsPausouPartida = false;
-                if (partidaAtiva) {
-                    estadoJogo = 'JOGANDO';
-                    ultimoTempo = performance.now();
+            if (settingsPausouPartida && partidaAtiva) iniciarRetomada();
+            else settingsPausouPartida = false;
+        }
+
+        // Esc / P / botão ⏸: abre a pausa, volta do submenu ou retoma
+        function alternarPausa() {
+            const aberto = !document.getElementById('settings-overlay').classList.contains('hidden');
+            if (!aberto) { abrirConfiguracoes(); return; }
+            if (settingsPausouPartida && partidaAtiva && pausaVista === 'ajustes') { voltarDosAjustes(); return; }
+            fecharConfiguracoes();
+        }
+
+        // Contagem 3-2-1 antes de voltar para a batalha (o jogo continua parado até o fim)
+        function iniciarRetomada() {
+            cancelarRetomada();
+            let n = 3;
+            const caixa = document.getElementById('retomar-overlay');
+            const num = document.getElementById('retomar-num');
+            caixa.classList.remove('hidden');
+            const passo = () => {
+                if (n <= 0) {
+                    cancelarRetomada();
+                    settingsPausouPartida = false;
+                    if (partidaAtiva) {
+                        estadoJogo = 'JOGANDO';
+                        ultimoTempo = performance.now();
+                        if (pendentesLevelUp > 0) abrirModalLevelUp();
+                    }
+                    return;
                 }
-            }
+                num.innerText = n;
+                num.classList.remove('pop');
+                void num.offsetWidth;   // reinicia a animação
+                num.classList.add('pop');
+                n--;
+                retomarTimer = setTimeout(passo, 700);
+            };
+            passo();
+        }
+
+        function cancelarRetomada() {
+            clearTimeout(retomarTimer);
+            retomarTimer = null;
+            const caixa = document.getElementById('retomar-overlay');
+            if (caixa) caixa.classList.add('hidden');
         }
 
         function desistirDaPartida() {
             if (!partidaAtiva) return;   // só vale durante uma partida (evita duplicar ouro no lobby)
+            cancelarRetomada();
+            if (modoPartida === MODOS_JOGO.infinito) {   // na horda a retirada conta o tempo, o recorde e os pontos
+                document.getElementById('settings-overlay').classList.add('hidden');
+                encerrarRonda(false, 'retirada');
+                return;
+            }
             partidaAtiva = false;
             settingsPausouPartida = false;
             pendentesLevelUp = 0;
@@ -3091,7 +4018,7 @@
             esquadrao = [];
             salvarJogo();
             if (coletado > 0) {
-                mostrarAviso(`Você recebeu 🪙 ${fmtNum(ouroRecebido)} (${Math.round(BALANCE.percentualOuroPartida * 100)}% de ${fmtNum(coletado)})`);
+                mostrarAviso(`Você recebeu 🪙 ${fmtNum(ouroRecebido)} (${Math.round(modoPartida.ouroPct * 100)}% de ${fmtNum(coletado)})`);
             }
 
             document.getElementById('settings-overlay').classList.add('hidden');
@@ -3105,6 +4032,8 @@
         /* --- INÍCIO DE PARTIDA --- */
 
         function iniciarPartida() {
+            modoPartida = MODOS_JOGO[dadosGaragem.modoSelecionado] || MODOS_JOGO.sobrevivencia;
+            cancelarRetomada();
             evolucaoPartida = novaEvolucao();
             pendentesLevelUp = 0;
             settingsPausouPartida = false;
@@ -3127,6 +4056,8 @@
             const centroY = MAP_SIZE.height / 2;
 
             jogadorTanquePrincipal = new TanqueAliado(centroX, centroY, maiorNivel, true, melhoriaLider);
+            jogadorTanquePrincipal.name = player.name;
+            jogadorTanquePrincipal.id = player.id;
             camera.x = centroX;
             camera.y = centroY;
             camera.zoom = camera.targetZoom;
@@ -3146,9 +4077,14 @@
             timerSpawnBonus = 120;
             tempoBuffAtivo = 0;
 
-            tempoRestanteRonda = BALANCE.duracaoRonda;
-            inimigosTotaisRonda = BALANCE.inimigosPorRonda;
-            inimigosParaGerar = BALANCE.inimigosPorRonda;
+            tempoRestanteRonda = modoPartida.duracao;
+            inimigosTotaisRonda = modoPartida.alvoAbates;
+            inimigosParaGerar = modoPartida.alvoAbates;
+            tempoDecorrido = 0;
+            chefoesNascidos = 0;
+            chefoesMortos = 0;
+            proximoChefao = modoPartida.bossPrimeiro || 0;
+            ultimaRondaHud = -1;
             inimigosMortos = 0;
             danoTotalCausado = 0;
             ouroGanhoNaRonda = 0;
@@ -3166,7 +4102,12 @@
             document.getElementById('buff-indicator').classList.add('hidden');
             document.getElementById('star-alert').classList.add('hidden');
             document.getElementById('hud').classList.remove('hidden');
-            document.getElementById('hud-round').innerText = dadosGaragem.rondaAtual;
+            document.getElementById('hud-round').innerText = rondaDif();
+            document.getElementById('hud-modo-ico').innerText = modoPartida.icone;
+            document.getElementById('hud-modo-nome').innerText = modoPartida.curto;
+            document.getElementById('hud-kills-total').innerText = Number.isFinite(modoPartida.alvoAbates) ? '/' + modoPartida.alvoAbates : '';
+            document.getElementById('hud-bosses-badge').classList.toggle('hidden', !modoPartida.bossMeta);
+            document.getElementById('hud-bosses-meta').innerText = modoPartida.bossMeta || 0;
             atualizarBarraXP();
 
             partidaAtiva = true;
@@ -3179,6 +4120,7 @@
         function atualizarJogo(dt) {
             const jogador = jogadorTanquePrincipal;
             tempoRestanteRonda -= dt;
+            tempoDecorrido += dt;
 
             // Estrela de bônus
             timerSpawnBonus -= dt;
@@ -3244,28 +4186,44 @@
             particulas = particulas.filter(p => p.atualizar(dt));
             atualizarSpawns(dt);
 
+            if (admDeus && player.adm) {   // ferramenta ADM: invulnerável
+                jogador.hp = jogador.hpMax;
+                esquadrao.forEach(a => { a.hp = a.hpMax; });
+            }
+
             // Condições de fim de partida (derrota tem prioridade)
             if (jogador.hp <= 0) {
                 encerrarRonda(false, 'derrota');
                 return;
             }
-            const temBoss = dadosGaragem.rondaAtual % 5 === 0;
-            const chefaoPendente = temBoss && (!bossJaNasceu || bossAtivo);
-            if (inimigosMortos >= inimigosTotaisRonda && !chefaoPendente) {
-                encerrarRonda(true, 'kills');
+            const modo = modoPartida;
+            if (modo === MODOS_JOGO.sobrevivencia) {
+                const temBoss = dadosGaragem.rondaAtual % 5 === 0;
+                const chefaoPendente = temBoss && (!bossJaNasceu || bossAtivo);
+                if (inimigosMortos >= inimigosTotaisRonda && !chefaoPendente) {
+                    encerrarRonda(true, 'kills');
+                    return;
+                }
+            }
+            if (modo.bossMeta && chefoesMortos >= modo.bossMeta) {
+                encerrarRonda(true, 'chefoes');
                 return;
             }
             if (tempoRestanteRonda <= 0) {
-                encerrarRonda(true, 'tempo');   // sobreviveu até o fim do tempo
+                encerrarRonda(!modo.bossMeta, 'tempo');   // na Caçada, acabar o tempo sem derrubar os chefões é derrota
                 return;
             }
 
             // HUD
-            const tempoVisivel = Math.max(0, tempoRestanteRonda);
-            const m = Math.floor(tempoVisivel / 60).toString().padStart(2, '0');
-            const s = Math.floor(tempoVisivel % 60).toString().padStart(2, '0');
-            document.getElementById('hud-timer').innerText = `${m}:${s}`;
+            const semLimite = !Number.isFinite(tempoRestanteRonda);
+            document.getElementById('hud-timer').innerText = (semLimite ? '+' : '') + fmtTempo(semLimite ? tempoDecorrido : tempoRestanteRonda);
             document.getElementById('hud-kills').innerText = inimigosMortos;
+            if (modo.bossMeta) document.getElementById('hud-bosses').innerText = chefoesMortos;
+            const rd = rondaDif();
+            if (rd !== ultimaRondaHud) {
+                ultimaRondaHud = rd;
+                document.getElementById('hud-round').innerText = rd;
+            }
             document.getElementById('hud-gold-session').innerText = fmtNum(ouroGanhoNaRonda);
             document.getElementById('hud-gold-recebe').innerText = fmtNum(ouroRecebidoDaRonda(ouroGanhoNaRonda));
             document.getElementById('hud-hp').innerText = fmtNum(Math.max(0, Math.ceil(jogador.hp)));
@@ -3274,10 +4232,15 @@
         function loopJogo(agora) {
             requestAnimationFrame(loopJogo);   // agenda primeiro: um erro isolado não congela o jogo
             const dt = Math.min((agora - ultimoTempo) / 1000, 0.1);
+            atualizarMetricas(agora - ultimoTempo);
             ultimoTempo = agora;
 
             try {
-                if (estadoJogo === 'JOGANDO') atualizarJogo(dt);
+                if (estadoJogo === 'JOGANDO') {
+                    const vel = player.adm ? admVelocidade : 1;   // ferramenta ADM: câmera lenta / acelerar
+                    const passos = Math.max(1, Math.round(vel));
+                    for (let i = 0; i < passos && estadoJogo === 'JOGANDO'; i++) atualizarJogo(vel < 1 ? dt * vel : dt);
+                }
                 GL.atualizarEfeitos(estadoJogo === 'JOGANDO' || estadoJogo === 'FIM_JOGO' ? dt : 0);
                 renderizar();
             } catch (err) {
@@ -4051,8 +5014,8 @@
                 for (const tn of tanquesNeutrosMapa) {
                     rotulo(tn.x, tn.y, tn.stats.raio * 1.6 + 22, `➕ RESGATAR (Niv ${tn.nivel})`, '#10b981', 12);
                 }
-                if (typeof bossAtivo !== 'undefined' && bossAtivo && !bossAtivo.morto) {
-                    rotulo(bossAtivo.x, bossAtivo.y, bossAtivo.raio * 1.6 + 26, '👹 CHEFÃO', '#ef4444', 14);
+                for (const b of inimigos) {
+                    if (b.eBoss && !b.morto) rotulo(b.x, b.y, b.raio * 1.6 + 26, '👹 CHEFÃO', '#ef4444', 14);
                 }
 
                 for (const tx of textosFlutuantes) {
@@ -4281,6 +5244,7 @@
         /* --- INICIALIZAÇÃO E EVENTOS --- */
 
         function inicializar() {
+            identificarJogador();   // nick + ID do Hub (ou criados sozinhos)
             carregarJogo();
             atualizarTelaInicio();
             sincronizarCamposConfig();
@@ -4329,6 +5293,7 @@
                 const txt = emTelaCheia() ? '🔲 Sair da Tela Cheia' : '🔲 Expandir Tela Cheia';
                 document.getElementById('btn-start-fullscreen').innerText = txt;
                 document.getElementById('btn-settings-fullscreen').innerText = txt;
+                document.getElementById('btn-pausa-tela-cheia').innerText = txt;
             };
             document.addEventListener('fullscreenchange', atualizarRotuloTelaCheia);
             document.addEventListener('webkitfullscreenchange', atualizarRotuloTelaCheia);
@@ -4336,26 +5301,8 @@
             document.getElementById('btn-global-settings').onclick = abrirConfiguracoes;
             document.getElementById('btn-plant-mine').onclick = plantarMina;
 
-            const inputNick = document.getElementById('player-name-input');
-            inputNick.addEventListener('keydown', e => {
-                if (e.key === 'Enter') document.getElementById('btn-start-to-lobby').click();
-            });
-
             document.getElementById('btn-start-to-lobby').onclick = () => {
-                // Primeira vez: o nick precisa ser digitado e confirmado; depois fica salvo
-                if (!nickConfirmado) {
-                    const nick = inputNick.value.trim().slice(0, 15);
-                    if (!nick) {
-                        mostrarAviso('Digite seu nick para continuar.');
-                        inputNick.focus();
-                        return;
-                    }
-                    nomeJogador = nick;
-                    nickConfirmado = true;
-                    atualizarTelaInicio();
-                }
                 salvarJogo();
-
                 abrirGaragemTanques();
             };
 
@@ -4364,21 +5311,28 @@
 
             document.getElementById('btn-back-to-start').onclick = abrirTelaInicio;
 
-            // Login de 7 dias e Ranking agora ficam na tela inicial (precisam do nick confirmado)
-            const exigirNick = fn => () => {
-                if (!nickConfirmado) {
-                    mostrarAviso('Confirme seu nick primeiro.');
-                    const campo = document.getElementById('player-name-input');
-                    if (campo) campo.focus();
-                    return;
-                }
-                fn();
+            // Painel ADM (os botões só aparecem para a conta administradora)
+            document.querySelectorAll('.adm-abrir').forEach(b => { b.onclick = admAbrir; });
+            document.getElementById('btn-adm-fechar').onclick = admFechar;
+            document.querySelectorAll('[data-adm]').forEach(b => { b.onclick = () => admExecutar(b.dataset.adm, b); });
+            document.getElementById('adm-vel').onchange = e => {
+                if (player.adm) { admVelocidade = Number(e.target.value) || 1; atualizarPainelAdm(); }
             };
-            document.getElementById('btn-open-daily').onclick = exigirNick(abrirDailyLogin);
+
+            // O Hub pode trocar nick/ID em outra aba: o jogo acompanha
+            window.addEventListener('storage', e => {
+                if (e.key === 'wavecombat_nick' || e.key === 'wavecombat_id') {
+                    identificarJogador();
+                    if (!player.adm) admFechar();
+                }
+            });
+
+            // Login diário (recompensa) e Ranking ficam na tela inicial
+            document.getElementById('btn-open-daily').onclick = abrirDailyLogin;
             document.getElementById('btn-claim-daily').onclick = resgatarDaily;
             document.getElementById('btn-close-daily').onclick = () => document.getElementById('daily-overlay').classList.add('hidden');
 
-            document.getElementById('btn-open-ranking').onclick = exigirNick(abrirRanking);
+            document.getElementById('btn-open-ranking').onclick = abrirRanking;
             document.getElementById('btn-close-ranking').onclick = () => document.getElementById('ranking-overlay').classList.add('hidden');
             document.getElementById('ranking-list').addEventListener('scroll', aoRolarRanking, { passive: true });
 
@@ -4386,13 +5340,20 @@
             document.getElementById('btn-upgrade-tank').onclick = melhorarSelecionado;
             document.getElementById('btn-merge-selected').onclick = fundirSelecionado;
 
-            document.getElementById('btn-surrender').onclick = desistirDaPartida;
-            document.getElementById('btn-close-settings').onclick = fecharConfiguracoes;
+            document.getElementById('btn-pausa-continuar').onclick = fecharConfiguracoes;
+            document.getElementById('btn-pausa-ajustes').onclick = () => mostrarVistaPausa('ajustes');
+            document.getElementById('btn-pausa-tela-cheia').onclick = toggleFullscreen;
+            document.getElementById('btn-surrender').onclick = () => document.getElementById('pausa-confirma').classList.toggle('hidden');
+            document.getElementById('btn-surrender-nao').onclick = () => document.getElementById('pausa-confirma').classList.add('hidden');
+            document.getElementById('btn-surrender-sim').onclick = desistirDaPartida;
+            document.getElementById('btn-close-settings').onclick = voltarDosAjustes;
 
             // Volume e sensibilidade valem na hora; qualidade ao trocar
             ['cfg-music-vol', 'cfg-sfx-vol', 'cfg-sens'].forEach(id =>
                 document.getElementById(id).addEventListener('input', aplicarCamposConfig));
             document.getElementById('cfg-graphics').addEventListener('change', aplicarCamposConfig);
+            ['cfg-vibracao', 'cfg-numeros', 'cfg-fps'].forEach(id =>
+                document.getElementById(id).addEventListener('change', aplicarCamposConfig));
 
             document.getElementById('btn-buy-tank').onclick = comprarTanque;
             document.getElementById('btn-auto-merge').onclick = fusaoAutomatica;
@@ -4409,7 +5370,8 @@
             requestAnimationFrame(loopJogo);
         }
 
-        window.onload = inicializar;
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', inicializar);
+        else inicializar();
     </script>
 </body>
 </html>
