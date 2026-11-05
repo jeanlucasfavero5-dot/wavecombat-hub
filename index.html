@@ -330,7 +330,7 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.300 (Supabase Cloud Integrated)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.301 (Supabase Cloud Sync Fix)</strong>
     </footer>
 
     <script>
@@ -340,18 +340,17 @@
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         const jogosIniciaisFallback = [
-            { id: 101, nome: "Riverbed Warfare", categoria: "Estratégia", desc: "Combate veicular em tempo real, extração de recursos e defesa contra hordas.", arquivo: "riverbed-warfare.html", img: "", publicado: true, destaque_manual: true, acessos: 154 },
-            { id: 102, nome: "tanque defence", categoria: "Estratégia", desc: "Combate veicular em tempo real, extração de recursos e defesa contra hordas.", arquivo: "tanque-defence.html", img: "", publicado: true, destaque_manual: false, acessos: 154 },
-            { id: 103, nome: "Esquadrão de Tanques", categoria: "Arcade", desc: "Jogo de sobrevivência de tanques combate intenso.", arquivo: "esquadrao-de-tanques.html", img: "", publicado: true, destaque_manual: false, acessos: 93 },
-            { id: 104, nome: "Gravitas Arena", categoria: "Estratégia", desc: "Jogo de guerra de tanques e estratégia tática.", arquivo: "Gravitas-Arena.html", img: "", publicado: true, destaque_manual: false, acessos: 64 },
-            { id: 105, nome: "Zombie House", categoria: "Multiplayer", desc: "Sobreviva ao apocalipse zumbi na casa florestal.", arquivo: "Zombie_House.html", img: "", publicado: true, destaque_manual: false, acessos: 120 }
+            { nome: "Riverbed Warfare", categoria: "Estratégia", desc: "Combate veicular em tempo real, extração de recursos e defesa contra hordas.", arquivo: "riverbed-warfare.html", img: "", publicado: true, destaque_manual: true, acessos: 154 },
+            { nome: "tanque defence", categoria: "Estratégia", desc: "Combate veicular em tempo real, extração de recursos e defesa contra hordas.", arquivo: "tanque-defence.html", img: "", publicado: true, destaque_manual: false, acessos: 154 },
+            { nome: "Esquadrão de Tanques", categoria: "Arcade", desc: "Jogo de sobrevivência de tanques combate intenso.", arquivo: "esquadrao-de-tanques.html", img: "", publicado: true, destaque_manual: false, acessos: 93 },
+            { nome: "Gravitas Arena", categoria: "Estratégia", desc: "Jogo de guerra de tanques e estratégia tática.", arquivo: "Gravitas-Arena.html", img: "", publicado: true, destaque_manual: false, acessos: 64 },
+            { nome: "Zombie House", categoria: "Multiplayer", desc: "Sobreviva ao apocalipse zumbi na casa florestal.", arquivo: "Zombie_House.html", img: "", publicado: true, destaque_manual: false, acessos: 120 }
         ];
 
         let listaJogosCache = [];
         let usuarioLogado = null;
         let painelAdmAberto = false;
 
-        // CARREGAR SESSÃO PERSISTENTE
         function carregarSessaoSalva() {
             try {
                 const sessaoSalva = localStorage.getItem('wavecombat_sessao_ativa');
@@ -437,7 +436,7 @@
                 fecharModalAuth();
                 atualizarPerfilUI();
             } else {
-                alert('Usuário ou senha incorretos! Se não tem conta, vá na aba "Criar Conta".');
+                alert('Usuário ou senha incorretos!');
             }
         }
 
@@ -466,21 +465,19 @@
             atualizarPerfilUI();
         }
 
-        // INTEGRAÇÃO DE JOGOS COM O SUPABASE DATABASE
         async function buscarJogosNuvem() {
             try {
                 const { data, error } = await supabaseClient.from('jogos').select('*');
                 if (error || !data || data.length === 0) {
-                    console.log("Banco de dados inicializando ou vazio, inserindo fallback...");
                     for(let j of jogosIniciaisFallback) {
                         await supabaseClient.from('jogos').insert([j]);
                     }
-                    listaJogosCache = jogosIniciaisFallback;
+                    const { data: newData } = await supabaseClient.from('jogos').select('*');
+                    listaJogosCache = newData || jogosIniciaisFallback;
                 } else {
                     listaJogosCache = data;
                 }
             } catch(e) {
-                console.error(e);
                 listaJogosCache = jogosIniciaisFallback;
             }
             atualizarPlataforma();
@@ -491,8 +488,6 @@
                 abrirModalAuth(true);
                 return;
             }
-            
-            // Incrementa acessos no Supabase
             try {
                 await supabaseClient.from('jogos').update({ acessos: (jogo.acessos || 0) + 1 }).eq('id', jogo.id);
             } catch(e){}
@@ -627,7 +622,7 @@
             const f = document.getElementById('admLogoFile').files[0];
             if(f) {
                 const fileName = `logo_${Date.now()}_${f.name}`;
-                const { data, error } = await supabaseClient.storage.from('capas').upload(fileName, f);
+                const { error } = await supabaseClient.storage.from('capas').upload(fileName, f);
                 if(!error) {
                     const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/capas/${fileName}`;
                     localStorage.setItem('wavecombat_logo', publicUrl);
@@ -763,7 +758,7 @@
                 const imgInput = document.getElementById(`editImgFile_${id}`)?.files[0];
                 if(imgInput) {
                     const fileName = `capa_${id}_${Date.now()}_${imgInput.name}`;
-                    const { data, error } = await supabaseClient.storage.from('capas').upload(fileName, imgInput);
+                    const { error } = await supabaseClient.storage.from('capas').upload(fileName, imgInput);
                     if(!error) {
                         imgUrl = `${SUPABASE_URL}/storage/v1/object/public/capas/${fileName}`;
                     } else {
@@ -784,14 +779,12 @@
             }
         }
 
-        // ESCUTAR ALTERAÇÕES EM TEMPO REAL NO SUPABASE
         supabaseClient.channel('jogos_realtime')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'jogos' }, () => {
                 buscarJogosNuvem();
             })
             .subscribe();
 
-        // INICIALIZAÇÃO
         carregarSessaoSalva();
         carregarLogoEConfig();
         buscarJogosNuvem();
