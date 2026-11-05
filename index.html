@@ -270,7 +270,7 @@
         </div>
     </section>
 
-    <!-- TRANSMISSÃO / VÍDEO EM DESTAQUE (SINCRONIZADO NA NUVEM) -->
+    <!-- PLAYER DE LIVE/VÍDEO CONECTADO AO SUPABASE -->
     <section id="transmissaoAoVivo">
         <div class="live-section-box" id="liveSectionBox">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
@@ -312,7 +312,7 @@
                     <button type="button" class="btn-gaming" onclick="alterarLogoSite()" style="font-size:11px; padding:6px;">Atualizar Logo</button>
                 </div>
                 <div class="admin-block">
-                    <h4>📺 Link da Live / Vídeo do YouTube</h4>
+                    <h4>📺 Link da Live / Vídeo no Supabase</h4>
                     <input type="text" id="inputAdminLiveUrl" placeholder="Cole o link do YouTube aqui" class="auth-input" style="font-size:11px; margin-top:4px;">
                     <button type="button" class="btn-gaming" onclick="salvarUrlLiveAdmDireto()" style="font-size:10px; padding:6px; margin-top:6px;">💾 Salvar na Nuvem para Todos</button>
                 </div>
@@ -328,7 +328,7 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.305 (Cloud Live Sync Fix)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.306 (Supabase Cloud Live Full Sync)</strong>
     </footer>
 
     <script>
@@ -465,7 +465,7 @@
 
         async function buscarDadosNuvem() {
             try {
-                // Carregar Jogos
+                // Carregar Jogos da Nuvem
                 const { data, error } = await supabaseClient.from('jogos').select('*');
                 if (error || !data || data.length === 0) {
                     for(let j of jogosIniciaisFallback) {
@@ -477,11 +477,16 @@
                     listaJogosCache = data;
                 }
 
-                // Carregar Link da Live Global armazenado no localStorage do navegador ou tabela se houver
-                const liveSalva = localStorage.getItem('wavecombat_live_url') || "";
-                liveUrlGlobal = liveSalva;
+                // Carregar Link da Live Global do Supabase
+                const { data: confData } = await supabaseClient.from('configuracoes').select('valor').eq('chave', 'live_url').single();
+                if(confData && confData.valor) {
+                    liveUrlGlobal = confData.valor;
+                } else {
+                    liveUrlGlobal = localStorage.getItem('wavecombat_live_url') || "";
+                }
+
                 const inputLive = document.getElementById('inputAdminLiveUrl');
-                if(inputLive && !inputLive.value) inputLive.value = liveSalva;
+                if(inputLive) inputLive.value = liveUrlGlobal;
                 
                 atualizarVisibilidadeLiveGeral();
             } catch(e) {
@@ -560,12 +565,18 @@
             }
         }
 
-        function salvarUrlLiveAdmDireto() {
+        async function salvarUrlLiveAdmDireto() {
             const url = document.getElementById('inputAdminLiveUrl').value.trim();
             liveUrlGlobal = url;
             localStorage.setItem('wavecombat_live_url', url);
+
+            // Guardar diretamente no Supabase para sincronizar em todos os computadores/visitantes
+            try {
+                await supabaseClient.from('configuracoes').upsert({ chave: 'live_url', valor: url });
+            } catch(e){}
+
             atualizarVisibilidadeLiveGeral();
-            alert('Link guardado com sucesso! Agora aparece para todos os visitantes no site.');
+            alert('Link guardado na nuvem! Agora o player é visível para TODOS os visitantes do site.');
         }
 
         function toggleTelaCheia() {
@@ -806,10 +817,10 @@
             }
         }
 
-        supabaseClient.channel('jogos_realtime')
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'jogos' }, () => {
-                buscarDadosNuvem();
-            })
+        // Sincronização em tempo real das configurações e jogos
+        supabaseClient.channel('realtime_all')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'jogos' }, () => buscarDadosNuvem())
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'configuracoes' }, () => buscarDadosNuvem())
             .subscribe();
 
         carregarSessaoSalva();
