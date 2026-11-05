@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>WaveCombat | Modern Gaming Hub</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Orbitron:wght@600;800;900&display=swap" rel="stylesheet">
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             --bg-dark: #0b0f17;
@@ -287,7 +289,7 @@
                 <h3>🌐 Redes Sociais</h3>
                 <div class="social-buttons-flex">
                     <a href="https://discord.gg/FaeYug6XBx" target="_blank" class="social-btn-item btn-discord-net">🎮 Discord Oficial</a>
-                    <a href="https://youtube.com/@capudooficial7" target="_blank" class="social-btn-item btn-youtube-net">▶ YouTube (@capudooficial7)</a>
+                    <a href="https://youtube.com/@capudooficial7" target="_blank" class="social-btn-item btn-youtube-net">▶ siga o criador do jogo aqui</a>
                     <a href="https://www.instagram.com/capudooficial.7/" target="_blank" class="social-btn-item btn-instagram-net">📸 Instagram Oficial</a>
                 </div>
             </div>
@@ -318,7 +320,7 @@
                 </div>
             </div>
 
-            <h4 style="color:#fff; margin-bottom:10px; font-family:'Orbitron'; font-size:14px;">🎮 Gestão de Games</h4>
+            <h4 style="color:#fff; margin-bottom:10px; font-family:'Orbitron'; font-size:14px;">🎮 Gestão de Games na Nuvem</h4>
             <div id="adminListaJogos" style="display:flex; flex-direction:column; gap:10px;"></div>
 
             <div style="text-align:center; margin-top:15px;">
@@ -328,22 +330,28 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.201 (Persistent Session Fix)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.300 (Supabase Cloud Integrated)</strong>
     </footer>
 
     <script>
-        const jogosIniciais = [
-            { id: 101, nome: "Riverbed Warfare", categoria: "Estratégia", desc: "Combate veicular em tempo real, extração de recursos e defesa contra hordas.", arquivo: "riverbed-warfare.html", img: "", extras: [], publicado: true, destaqueManual: true, acessos: 154 },
-            { id: 102, nome: "tanque defence", categoria: "Estratégia", desc: "Combate veicular em tempo real, extração de recursos e defesa contra hordas.", arquivo: "tanque-defence.html", img: "", extras: [], publicado: true, destaqueManual: false, acessos: 154 },
-            { id: 103, nome: "Esquadrão de Tanques", categoria: "Arcade", desc: "Jogo de sobrevivência de tanques combate intenso.", arquivo: "esquadrao-de-tanques.html", img: "", extras: [], publicado: true, destaqueManual: false, acessos: 93 },
-            { id: 104, nome: "Gravitas Arena", categoria: "Estratégia", desc: "Jogo de guerra de tanques e estratégia tática.", arquivo: "Gravitas-Arena.html", img: "", extras: [], publicado: true, destaqueManual: false, acessos: 64 },
-            { id: 105, nome: "Zombie House", categoria: "Multiplayer", desc: "Sobreviva ao apocalipse zumbi na casa florestal.", arquivo: "Zombie_House.html", img: "", extras: [], publicado: true, destaqueManual: false, acessos: 120 }
+        // CONEXÃO AO SUPABASE
+        const SUPABASE_URL = "https://ipqjeacdfiomcxfuixdj.supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable_EWW84q_43YbOvMwB_Rua-A_X465PbLP";
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        const jogosIniciaisFallback = [
+            { id: 101, nome: "Riverbed Warfare", categoria: "Estratégia", desc: "Combate veicular em tempo real, extração de recursos e defesa contra hordas.", arquivo: "riverbed-warfare.html", img: "", publicado: true, destaque_manual: true, acessos: 154 },
+            { id: 102, nome: "tanque defence", categoria: "Estratégia", desc: "Combate veicular em tempo real, extração de recursos e defesa contra hordas.", arquivo: "tanque-defence.html", img: "", publicado: true, destaque_manual: false, acessos: 154 },
+            { id: 103, nome: "Esquadrão de Tanques", categoria: "Arcade", desc: "Jogo de sobrevivência de tanques combate intenso.", arquivo: "esquadrao-de-tanques.html", img: "", publicado: true, destaque_manual: false, acessos: 93 },
+            { id: 104, nome: "Gravitas Arena", categoria: "Estratégia", desc: "Jogo de guerra de tanques e estratégia tática.", arquivo: "Gravitas-Arena.html", img: "", publicado: true, destaque_manual: false, acessos: 64 },
+            { id: 105, nome: "Zombie House", categoria: "Multiplayer", desc: "Sobreviva ao apocalipse zumbi na casa florestal.", arquivo: "Zombie_House.html", img: "", publicado: true, destaque_manual: false, acessos: 120 }
         ];
 
+        let listaJogosCache = [];
         let usuarioLogado = null;
         let painelAdmAberto = false;
 
-        // PERSISTÊNCIA DE SESSÃO: Recupera o login automaticamente ao carregar a página
+        // CARREGAR SESSÃO PERSISTENTE
         function carregarSessaoSalva() {
             try {
                 const sessaoSalva = localStorage.getItem('wavecombat_sessao_ativa');
@@ -395,7 +403,7 @@
             localStorage.setItem('wavecombat_users', JSON.stringify(users));
             
             usuarioLogado = { nick: u, isAdm: false };
-            localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado)); // Salva sessão permanente
+            localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
             
             alert("Conta criada com sucesso! Você já está logado.");
             document.getElementById('btnAuthNav').textContent = u;
@@ -410,7 +418,7 @@
             
             if (u.toLowerCase() === 'capudo7' && p === '262026') {
                 usuarioLogado = { nick: 'capudo7', isAdm: true };
-                localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado)); // Salva sessão ADM
+                localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
                 alert('Acesso ADM Concedido!');
                 document.getElementById('btnToggleAdmNav').style.display = 'inline-block';
                 document.getElementById('btnAuthNav').textContent = 'capudo7';
@@ -423,7 +431,7 @@
             let achou = users.find(x => x.nick.toLowerCase() === u.toLowerCase() && x.pass === p);
             if(achou) {
                 usuarioLogado = { nick: achou.nick, isAdm: false };
-                localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado)); // Salva sessão utilizador
+                localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
                 alert(`Bem-vindo de volta, ${achou.nick}!`);
                 document.getElementById('btnAuthNav').textContent = achou.nick;
                 fecharModalAuth();
@@ -450,7 +458,7 @@
 
         function fazerLogout() {
             usuarioLogado = null;
-            localStorage.removeItem('wavecombat_sessao_ativa'); // Remove sessão guardada
+            localStorage.removeItem('wavecombat_sessao_ativa');
             document.getElementById('btnAuthNav').textContent = 'Entrar';
             document.getElementById('btnToggleAdmNav').style.display = 'none';
             document.getElementById('adminSection').style.display = 'none';
@@ -458,17 +466,37 @@
             atualizarPerfilUI();
         }
 
-        function tentarExecutarJogo(jogo) {
+        // INTEGRAÇÃO DE JOGOS COM O SUPABASE DATABASE
+        async function buscarJogosNuvem() {
+            try {
+                const { data, error } = await supabaseClient.from('jogos').select('*');
+                if (error || !data || data.length === 0) {
+                    console.log("Banco de dados inicializando ou vazio, inserindo fallback...");
+                    for(let j of jogosIniciaisFallback) {
+                        await supabaseClient.from('jogos').insert([j]);
+                    }
+                    listaJogosCache = jogosIniciaisFallback;
+                } else {
+                    listaJogosCache = data;
+                }
+            } catch(e) {
+                console.error(e);
+                listaJogosCache = jogosIniciaisFallback;
+            }
+            atualizarPlataforma();
+        }
+
+        async function tentarExecutarJogo(jogo) {
             if(!usuarioLogado) {
                 abrirModalAuth(true);
                 return;
             }
-            let jogos = obterJogos();
-            let idx = jogos.findIndex(j => j.id === jogo.id);
-            if(idx !== -1) { 
-                jogos[idx].acessos = (jogos[idx].acessos || 0) + 1; 
-                salvarJogos(jogos); 
-            }
+            
+            // Incrementa acessos no Supabase
+            try {
+                await supabaseClient.from('jogos').update({ acessos: (jogo.acessos || 0) + 1 }).eq('id', jogo.id);
+            } catch(e){}
+
             document.getElementById('gameIframe').src = jogo.arquivo;
             document.getElementById('player').style.display = 'block';
             document.getElementById('playerControlsBar').style.display = 'flex';
@@ -476,28 +504,9 @@
         }
 
         function tentarExecutarJogoDestaque() {
-            const jogos = obterJogos().filter(j => j.publicado);
+            const jogos = listaJogosCache.filter(j => j.publicado);
             const destaque = obterJogoDestaque(jogos);
             if(destaque) tentarExecutarJogo(destaque);
-        }
-
-        function obterJogos() {
-            try {
-                let salvos = localStorage.getItem('wavecombat_jogos_v15');
-                if(!salvos) {
-                    localStorage.setItem('wavecombat_jogos_v15', JSON.stringify(jogosIniciais));
-                    return jogosIniciais;
-                }
-                return JSON.parse(salvos);
-            } catch(err) { return jogosIniciais; }
-        }
-
-        function salvarJogos(jogos) {
-            try {
-                localStorage.setItem('wavecombat_jogos_v15', JSON.stringify(jogos));
-                atualizarPlataforma();
-                return true;
-            } catch(err) { return false; }
         }
 
         function obterFavoritos() { 
@@ -592,7 +601,7 @@
         }
 
         function obterJogoDestaque(jogosPublicados) {
-            const manual = jogosPublicados.find(j => j.destaqueManual);
+            const manual = jogosPublicados.find(j => j.destaque_manual);
             if(manual) return manual;
             return [...jogosPublicados].sort((a,b) => (b.acessos || 0) - (a.acessos || 0))[0] || null;
         }
@@ -617,19 +626,21 @@
         async function alterarLogoSite() {
             const f = document.getElementById('admLogoFile').files[0];
             if(f) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    localStorage.setItem('wavecombat_logo', e.target.result);
+                const fileName = `logo_${Date.now()}_${f.name}`;
+                const { data, error } = await supabaseClient.storage.from('capas').upload(fileName, f);
+                if(!error) {
+                    const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/capas/${fileName}`;
+                    localStorage.setItem('wavecombat_logo', publicUrl);
                     carregarLogoEConfig();
-                    alert('Logo atualizada!');
-                };
-                reader.readAsDataURL(f);
+                    alert('Logo atualizada na nuvem!');
+                } else {
+                    alert('Erro ao enviar imagem do logo para o Supabase Storage.');
+                }
             }
         }
 
         function atualizarPlataforma() {
-            let todosJogos = obterJogos();
-            let jogosPublicados = todosJogos.filter(j => j.publicado);
+            let jogosPublicados = listaJogosCache.filter(j => j.publicado);
 
             const busca = (document.getElementById('inputSearchGames')?.value || '').toLowerCase();
             const cat = document.getElementById('selectCategoryFilter')?.value || 'todos';
@@ -651,7 +662,7 @@
                 const isFav = favs.includes(destaque.id);
                 featuredContainer.innerHTML = `
                     <div class="featured-game-box">
-                        <div class="featured-badge">${destaque.destaqueManual ? '★ DESTAQUE' : '🔥 DESTAQUE'}</div>
+                        <div class="featured-badge">${destaque.destaque_manual ? '★ DESTAQUE' : '🔥 DESTAQUE'}</div>
                         <img src="${capaDestaque}" class="featured-img" alt="${destaque.nome}" onclick="tentarExecutarJogo(${JSON.stringify(destaque).replace(/"/g, '&quot;')})">
                         <h3 style="font-size:16px; font-family:'Orbitron';">${destaque.nome}</h3>
                         <p style="font-size:12px; color:#94a3b8;">${destaque.desc}</p>
@@ -688,11 +699,10 @@
 
         function renderizarJogosAdmin() {
             const container = document.getElementById('adminListaJogos');
-            const jogos = obterJogos();
             if(!container) return;
             container.innerHTML = '';
             
-            jogos.forEach((jogo) => {
+            listaJogosCache.forEach((jogo) => {
                 const item = document.createElement('div');
                 item.className = 'admin-game-item';
                 item.innerHTML = `
@@ -703,8 +713,8 @@
                             <button type="button" class="btn-gaming ${jogo.publicado ? 'btn-danger' : 'btn-success'}" onclick="togglePublicarJogo(${jogo.id})" style="font-size:9px; padding:3px 6px;">
                                 ${jogo.publicado ? '👁️ Ocultar' : '🚀 Publicar'}
                             </button>
-                            <button type="button" class="btn-gaming" onclick="fixarDestaqueAdm(${jogo.id})" style="font-size:9px; padding:3px 6px; background:${jogo.destaqueManual?'var(--gold-warning)':'var(--steel-bright)'}; color:${jogo.destaqueManual?'#000':'#fff'};">
-                                ${jogo.destaqueManual ? '★ Fixado' : '☆ Destaque'}
+                            <button type="button" class="btn-gaming" onclick="fixarDestaqueAdm(${jogo.id})" style="font-size:9px; padding:3px 6px; background:${jogo.destaque_manual?'var(--gold-warning)':'var(--steel-bright)'}; color:${jogo.destaque_manual?'#000':'#fff'};">
+                                ${jogo.destaque_manual ? '★ Fixado' : '☆ Destaque'}
                             </button>
                         </div>
                     </div>
@@ -718,57 +728,73 @@
                     </label>
                     <label class="file-upload-label">Descrição: <textarea id="editDesc_${jogo.id}" class="auth-input" style="height:35px;">${jogo.desc}</textarea></label>
                     <label class="file-upload-label">Caminho do Ficheiro: <input type="text" value="${jogo.arquivo}" id="editArq_${jogo.id}" class="auth-input"></label>
-                    <label class="file-upload-label">🖼️ Alterar Capa: <input type="file" id="editImgFile_${jogo.id}" accept="image/*"></label>
-                    <button type="button" class="btn-gaming" onclick="salvarEdicaoJogoAdm(${jogo.id})" style="font-size:10px; padding:5px; margin-top:3px;">💾 Guardar Alterações</button>
+                    <label class="file-upload-label">🖼️ Alterar Capa (Upload Supabase): <input type="file" id="editImgFile_${jogo.id}" accept="image/*"></label>
+                    <button type="button" class="btn-gaming" onclick="salvarEdicaoJogoAdm(${jogo.id})" style="font-size:10px; padding:5px; margin-top:3px;">💾 Guardar na Nuvem</button>
                 `;
                 container.appendChild(item);
             });
         }
 
-        function togglePublicarJogo(id) {
-            let jogos = obterJogos();
-            let j = jogos.find(x => x.id === id);
+        async function togglePublicarJogo(id) {
+            let j = listaJogosCache.find(x => x.id === id);
             if(j) {
-                j.publicado = !j.publicado;
-                if(salvarJogos(jogos)) renderizarJogosAdmin();
+                const novoEstado = !j.publicado;
+                await supabaseClient.from('jogos').update({ publicado: novoEstado }).eq('id', id);
+                await buscarJogosNuvem();
             }
         }
 
-        function fixarDestaqueAdm(id) {
-            let jogos = obterJogos();
-            jogos.forEach(j => j.destaqueManual = (j.id === id));
-            if(salvarJogos(jogos)) renderizarJogosAdmin();
+        async function fixarDestaqueAdm(id) {
+            for(let j of listaJogosCache) {
+                await supabaseClient.from('jogos').update({ destaque_manual: (j.id === id) }).eq('id', j.id);
+            }
+            await buscarJogosNuvem();
         }
 
         async function salvarEdicaoJogoAdm(id) {
-            let jogos = obterJogos();
-            let idx = jogos.findIndex(j => j.id === id);
+            let idx = listaJogosCache.findIndex(j => j.id === id);
             if (idx !== -1) {
-                jogos[idx].nome = document.getElementById(`editNome_${id}`).value;
-                jogos[idx].categoria = document.getElementById(`editCat_${id}`).value;
-                jogos[idx].desc = document.getElementById(`editDesc_${id}`).value;
-                jogos[idx].arquivo = document.getElementById(`editArq_${id}`).value;
-                
+                const nome = document.getElementById(`editNome_${id}`).value;
+                const categoria = document.getElementById(`editCat_${id}`).value;
+                const desc = document.getElementById(`editDesc_${id}`).value;
+                const arquivo = document.getElementById(`editArq_${id}`).value;
+                let imgUrl = listaJogosCache[idx].img;
+
                 const imgInput = document.getElementById(`editImgFile_${id}`)?.files[0];
                 if(imgInput) {
-                    const reader = new FileReader();
-                    reader.onload = async function(e) {
-                        jogos[idx].img = e.target.result;
-                        if(salvarJogos(jogos)) alert("Alterações salvas!");
-                        renderizarJogosAdmin();
-                    };
-                    reader.readAsDataURL(imgInput);
-                    return;
+                    const fileName = `capa_${id}_${Date.now()}_${imgInput.name}`;
+                    const { data, error } = await supabaseClient.storage.from('capas').upload(fileName, imgInput);
+                    if(!error) {
+                        imgUrl = `${SUPABASE_URL}/storage/v1/object/public/capas/${fileName}`;
+                    } else {
+                        alert("Erro no upload da imagem para o Supabase Storage.");
+                    }
                 }
 
-                if(salvarJogos(jogos)) alert("Alterações salvas!");
+                const { error } = await supabaseClient.from('jogos').update({
+                    nome, categoria, desc, arquivo, img: imgUrl
+                }).eq('id', id);
+
+                if(!error) {
+                    alert("Jogo atualizado com sucesso na nuvem!");
+                    await buscarJogosNuvem();
+                } else {
+                    alert("Erro ao atualizar jogo na nuvem.");
+                }
             }
         }
 
-        // INICIALIZAÇÃO DA SESSÃO E DA PLATAFORMA
+        // ESCUTAR ALTERAÇÕES EM TEMPO REAL NO SUPABASE
+        supabaseClient.channel('jogos_realtime')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'jogos' }, () => {
+                buscarJogosNuvem();
+            })
+            .subscribe();
+
+        // INICIALIZAÇÃO
         carregarSessaoSalva();
         carregarLogoEConfig();
-        atualizarPlataforma();
+        buscarJogosNuvem();
     </script>
 </body>
 </html>
