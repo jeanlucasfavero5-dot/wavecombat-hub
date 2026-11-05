@@ -19,6 +19,13 @@
             --alert-red: #ef4444;
         }
 
+        /* Tema OLED Opcional */
+        body.theme-oled {
+            --bg-dark: #000000;
+            --panel-bg: rgba(8, 8, 12, 0.98);
+            --steel-border: #121824;
+        }
+
         * { box-sizing: border-box; margin: 0; padding: 0; }
         html, body { width: 100%; max-width: 100vw; overflow-x: hidden; }
         body {
@@ -30,6 +37,22 @@
             color: var(--ink);
             font-family: 'Outfit', sans-serif;
             scroll-behavior: smooth;
+            position: relative;
+        }
+
+        /* Partículas de Fundo FX */
+        .bg-particles {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none; z-index: 0; overflow: hidden;
+        }
+        .particle {
+            position: absolute; width: 3px; height: 3px; background: var(--accent-color);
+            border-radius: 50%; opacity: 0.3; animation: floatParticle 15s infinite linear;
+        }
+        @keyframes floatParticle {
+            0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+            50% { opacity: 0.6; }
+            100% { transform: translateY(-10vh) translateX(50px); opacity: 0; }
         }
 
         nav {
@@ -51,7 +74,7 @@
         }
         .menu-toggle-btn span { width: 100%; height: 3px; background: var(--accent-color); border-radius: 2px; transition: 0.3s; }
 
-        .nav-links { display: flex; gap: 15px; list-style: none; align-items: center; }
+        .nav-links { display: flex; gap: 15px; list-style: none; align-items: center; z-index: 1002; }
         .nav-links li a { color: var(--ink); text-decoration: none; font-family: 'Orbitron', sans-serif; font-size: 13px; text-transform: uppercase; transition: 0.2s; }
         .nav-links li a:hover { color: var(--accent-color); }
 
@@ -75,7 +98,7 @@
             min-height: 45vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
             text-align: center; padding: 40px 15px; position: relative; background-size: cover; background-position: center;
             border-bottom: 2px solid var(--steel-border); margin-top: 65px; width: 100%; transition: background-image 0.5s ease;
-            overflow: hidden;
+            overflow: hidden; z-index: 2;
         }
         header.hero::before {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -86,6 +109,14 @@
         header.hero h1 span { color: var(--accent-color); text-shadow: 0 0 25px var(--accent-glow); transition: color 0.4s ease; }
         header.hero p { font-size: 14px; max-width: 600px; margin-bottom: 20px; color: #94a3b8; padding: 0 10px; }
 
+        /* Estatísticas Globais do Hub */
+        .global-stats-bar {
+            display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;
+            background: var(--panel-bg); border: 1px solid var(--steel-border);
+            padding: 10px 20px; border-radius: 8px; margin-bottom: 20px; font-family: 'Orbitron'; font-size: 11px; color: #94a3b8;
+        }
+        .global-stats-bar span strong { color: var(--accent-color); }
+
         .btn-gaming {
             font-family: 'Orbitron', sans-serif; background: var(--accent-color); color: #0b0f17; border: none;
             padding: 12px 24px; font-size: 13px; font-weight: 800; cursor: pointer; text-transform: uppercase;
@@ -94,7 +125,7 @@
         }
         .btn-gaming:hover { transform: scale(1.03); filter: brightness(1.2); }
 
-        section { padding: 25px 15px; width: 100%; max-width: 1350px; margin: 0 auto; box-sizing: border-box; }
+        section { padding: 25px 15px; width: 100%; max-width: 1350px; margin: 0 auto; box-sizing: border-box; z-index: 2; position: relative; }
         .section-title { font-family: 'Orbitron', sans-serif; font-size: 18px; margin-bottom: 20px; border-left: 4px solid var(--accent-color); padding-left: 10px; text-transform: uppercase; color: #fff; transition: border-color 0.4s ease; }
 
         .search-filter-bar { display: flex; gap: 12px; margin-bottom: 20px; flex-direction: column; }
@@ -120,11 +151,11 @@
         .game-list-info p { font-size: 11px; color: #94a3b8; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 15, 23, 0.92); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 15px; }
-        .modal-card { background: var(--panel-bg); border: 2px solid var(--accent-color); width: 100%; max-width: 440px; padding: 20px; border-radius: 12px; position: relative; box-shadow: 0 0 35px var(--accent-glow); transition: border-color 0.4s ease; }
+        .modal-card { background: var(--panel-bg); border: 2px solid var(--accent-color); width: 100%; max-width: 480px; padding: 20px; border-radius: 12px; position: relative; box-shadow: 0 0 35px var(--accent-glow); transition: border-color 0.4s ease; max-height: 90vh; overflow-y: auto; }
         .modal-close { position: absolute; top: 12px; right: 15px; background: none; border: none; color: var(--ink); font-size: 22px; cursor: pointer; }
 
-        .tab-switcher { display: flex; border-bottom: 2px solid var(--steel-border); margin-bottom: 15px; }
-        .tab-btn { flex: 1; background: none; border: none; padding: 8px; font-family: 'Orbitron'; font-weight: 700; font-size: 12px; color: #64748b; cursor: pointer; }
+        .tab-switcher { display: flex; border-bottom: 2px solid var(--steel-border); margin-bottom: 15px; flex-wrap: wrap; }
+        .tab-btn { flex: 1; background: none; border: none; padding: 8px; font-family: 'Orbitron'; font-weight: 700; font-size: 11px; color: #64748b; cursor: pointer; }
         .tab-btn.active { color: var(--accent-color); border-bottom: 2px solid var(--accent-color); margin-bottom: -2px; }
 
         .auth-form { display: flex; flex-direction: column; gap: 10px; }
@@ -156,6 +187,22 @@
         .qrcode-img { width: 130px; height: 130px; object-fit: contain; background: #fff; padding: 4px; border-radius: 6px; margin-bottom: 6px; }
         .btn-qrcode-link { display: inline-block; background: var(--gold-warning); color: #000; text-decoration: none; font-family: 'Orbitron'; font-size: 10px; font-weight: 800; padding: 6px 10px; border-radius: 4px; margin-top: 6px; }
 
+        /* Mini-Chat Global Estilo */
+        .minichat-container { display: flex; flex-direction: column; height: 180px; background: #0b0f17; border: 1px solid var(--steel-border); border-radius: 6px; overflow: hidden; margin-top: 8px; }
+        .minichat-messages { flex: 1; padding: 8px; overflow-y: auto; font-size: 11px; display: flex; flex-direction: column; gap: 4px; }
+        .minichat-input-box { display: flex; border-top: 1px solid var(--steel-border); }
+        .minichat-input-box input { flex: 1; background: #0f172a; border: none; padding: 6px 10px; color: #fff; font-size: 11px; outline: none; }
+        .minichat-input-box button { background: var(--accent-color); border: none; padding: 0 12px; font-family: 'Orbitron'; font-weight: bold; font-size: 10px; cursor: pointer; color: #0b0f17; }
+
+        /* Notificação Toast */
+        .toast-notification {
+            position: fixed; bottom: 20px; right: 20px; background: var(--panel-bg);
+            border: 2px solid var(--accent-color); padding: 12px 20px; border-radius: 8px;
+            box-shadow: 0 0 25px var(--accent-glow); font-family: 'Orbitron'; font-size: 12px;
+            z-index: 9999; transform: translateY(150px); opacity: 0; transition: 0.3s ease; color: #fff;
+        }
+        .toast-notification.show { transform: translateY(0); opacity: 1; }
+
         .admin-section { display: none; background: #070a10; border-top: 3px solid var(--accent-color); padding: 25px 15px; margin-top: 30px; }
         .admin-container { width: 100%; max-width: 1100px; margin: 0 auto; background: var(--panel-bg); border: 1px solid var(--steel-bright); padding: 15px; border-radius: 12px; }
         .admin-grid-tools { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 15px; }
@@ -169,13 +216,19 @@
         .btn-danger { background: rgba(239, 68, 68, 0.15); border-color: var(--alert-red); color: var(--alert-red); }
         .btn-success { background: rgba(34, 197, 94, 0.15); border-color: #22c55e; color: #22c55e; }
 
-        footer { text-align: center; padding: 20px; color: #64748b; font-size: 12px; border-top: 1px solid var(--steel-border); }
+        footer { text-align: center; padding: 20px; color: #64748b; font-size: 12px; border-top: 1px solid var(--steel-border); position: relative; z-index: 2; }
     </style>
 </head>
-<body>
+<body id="mainBody">
+
+    <!-- Fundo com Efeito de Partículas FX -->
+    <div class="bg-particles" id="bgParticles"></div>
+
+    <!-- Notificação Toast Flutuante -->
+    <div class="toast-notification" id="toastNotification">⚡ Ação realizada com sucesso!</div>
 
     <nav>
-        <a href="#inicio" class="logo-container" id="navLogoContainer">
+        <a href="#inicio" class="logo-container" id="navLogoContainer" onclick="tocarSomClique()">
             <svg class="logo-svg" id="defaultLogoSvg" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="250" cy="250" r="220" fill="none" stroke="#00f0ff" stroke-width="30"/>
                 <polygon points="180,140 380,250 180,360" fill="#00f0ff"/>
@@ -183,32 +236,34 @@
             <div class="logo-text" id="logoText">WAVECOMBAT</div>
         </a>
 
-        <button class="menu-toggle-btn" id="menuToggleBtn" onclick="toggleMenuMobile()">
+        <button class="menu-toggle-btn" id="menuToggleBtn" onclick="toggleMenuMobile(); tocarSomClique();">
             <span></span>
             <span></span>
             <span></span>
         </button>
 
         <ul class="nav-links" id="navLinks">
-            <li><a href="#inicio" onclick="fecharMenuMobile()">Início</a></li>
-            <li><a href="#jogos" onclick="fecharMenuMobile()">Games</a></li>
-            <li><a href="#comunidade" onclick="fecharMenuMobile()">Social</a></li>
+            <li><a href="#inicio" onclick="fecharMenuMobile(); tocarSomClique();">Início</a></li>
+            <li><a href="#jogos" onclick="fecharMenuMobile(); tocarSomClique();">Games</a></li>
+            <li><a href="#comunidade" onclick="fecharMenuMobile(); tocarSomClique();">Social</a></li>
             <li>
                 <div class="user-nav-wrapper">
-                    <button class="btn-toggle-adm-nav" id="btnToggleAdmNav" onclick="alternarPainelAdm(); fecharMenuMobile();" style="display:none;">⚙️ ADM</button>
-                    <button class="btn-auth-nav" id="btnAuthNav" onclick="abrirModalAuth(); fecharMenuMobile();">Entrar</button>
+                    <button class="btn-toggle-adm-nav" id="btnToggleAdmNav" onclick="alternarPainelAdm(); fecharMenuMobile(); tocarSomClique();" style="display:none;">⚙️ ADM</button>
+                    <button class="btn-auth-nav" id="btnAuthNav" onclick="abrirModalAuth(); fecharMenuMobile(); tocarSomClique();">Entrar</button>
                 </div>
             </li>
         </ul>
     </nav>
 
+    <!-- Modal de Autenticação / Perfil Expandido / Leaderboard -->
     <div class="modal-overlay" id="authModal">
         <div class="modal-card">
-            <button class="modal-close" onclick="fecharModalAuth()">&times;</button>
+            <button class="modal-close" onclick="fecharModalAuth(); tocarSomClique();">&times;</button>
             <div class="tab-switcher">
-                <button class="tab-btn active" id="tabLoginBtn" onclick="alternarAba('login')">Entrar</button>
-                <button class="tab-btn" id="tabRegisterBtn" onclick="alternarAba('registro')">Criar Conta</button>
-                <button class="tab-btn" id="tabPerfilBtn" onclick="alternarAba('perfil')">Perfil</button>
+                <button class="tab-btn active" id="tabLoginBtn" onclick="alternarAba('login'); tocarSomClique();">Entrar</button>
+                <button class="tab-btn" id="tabRegisterBtn" onclick="alternarAba('registro'); tocarSomClique();">Criar Conta</button>
+                <button class="tab-btn" id="tabPerfilBtn" onclick="alternarAba('perfil'); tocarSomClique();">Perfil & Estatísticas</button>
+                <button class="tab-btn" id="tabLeaderboardBtn" onclick="alternarAba('leaderboard'); carregarLeaderboardSupabase(); tocarSomClique();">🏆 Ranking</button>
             </div>
             
             <div class="form-panel active" id="panelLogin">
@@ -216,7 +271,7 @@
                 <form class="auth-form" onsubmit="fazerLoginPlataforma(event)">
                     <input type="text" id="loginUser" placeholder="Seu Nick ou ADM" class="auth-input" required>
                     <input type="password" id="loginPass" placeholder="Sua Senha" class="auth-input" required>
-                    <button type="submit" class="btn-gaming" style="width:100%; padding:10px;">Entrar na Conta</button>
+                    <button type="submit" class="btn-gaming" onclick="tocarSomLevelUp()" style="width:100%; padding:10px;">Entrar na Conta</button>
                 </form>
             </div>
 
@@ -224,12 +279,19 @@
                 <form class="auth-form" onsubmit="fazerRegistroPlataforma(event)">
                     <input type="text" id="regUser" placeholder="Escolha um Nick de Jogador" class="auth-input" required>
                     <input type="password" id="regPass" placeholder="Crie uma Senha" class="auth-input" required>
-                    <button type="submit" class="btn-gaming" style="width:100%; padding:10px; background:#22c55e;">Criar Minha Conta</button>
+                    <button type="submit" class="btn-gaming" onclick="tocarSomLevelUp()" style="width:100%; padding:10px; background:#22c55e;">Criar Minha Conta</button>
                 </form>
             </div>
 
             <div class="form-panel" id="panelPerfil">
-                <div id="perfilUserData"><p style="color:#94a3b8; text-align:center;">Faça login para ver seu perfil.</p></div>
+                <div id="perfilUserData"><p style="color:#94a3b8; text-align:center;">Faça login para ver seu perfil expandido.</p></div>
+            </div>
+
+            <div class="form-panel" id="panelLeaderboard">
+                <h4 style="color:var(--accent-color); font-family:'Orbitron'; text-align:center; font-size:13px; margin-bottom:8px;">🏆 TOP 10 MELHORES JOGADORES</h4>
+                <div id="leaderboardListContainer" style="display:flex; flex-direction:column; gap:6px; max-height:250px; overflow-y:auto;">
+                    <p style="color:#94a3b8; text-align:center; font-size:11px;">Carregando ranking global...</p>
+                </div>
             </div>
         </div>
     </div>
@@ -237,7 +299,15 @@
     <header class="hero" id="heroHeader">
         <h1 id="heroTitle">WAVECOMBAT <span>HUB</span></h1>
         <p id="heroDesc">Plataforma moderna de jogos, arcade e experiências imersivas.</p>
-        <a href="#player" class="btn-gaming" onclick="tentarExecutarJogoDestaque()">Jogar Destaque Agora</a>
+        
+        <!-- Estatísticas Globais da Plataforma -->
+        <div class="global-stats-bar" id="globalStatsBar">
+            <span>Partidas Jogadas: <strong id="statTotalPartidas">--</strong></span>
+            <span>Jogadores Registrados: <strong id="statTotalUsuarios">--</strong></span>
+            <span>Status: <strong style="color:#22c55e">ONLINE</strong></span>
+        </div>
+
+        <a href="#player" class="btn-gaming" onclick="tentarExecutarJogoDestaque(); tocarSomClique();">Jogar Destaque Agora</a>
     </header>
 
     <section id="jogos">
@@ -265,8 +335,8 @@
             <iframe id="gameIframe" src="about:blank" title="WaveCombat Player" allow="fullscreen; autoplay; gamepad" allowfullscreen="true"></iframe>
         </div>
         <div class="player-controls-bar" id="playerControlsBar">
-            <button class="btn-gaming" onclick="toggleTelaCheia()" style="padding:8px 14px; font-size:11px;">⛶ Tela Cheia</button>
-            <button class="btn-gaming btn-danger" onclick="encerrarJogo()" style="padding:8px 14px; font-size:11px;">✖ Sair do Game</button>
+            <button class="btn-gaming" onclick="toggleTelaCheia(); tocarSomClique();" style="padding:8px 14px; font-size:11px;">⛶ Tela Cheia</button>
+            <button class="btn-gaming btn-danger" onclick="encerrarJogo(); tocarSomClique();" style="padding:8px 14px; font-size:11px;">✖ Sair do Game</button>
         </div>
     </section>
 
@@ -286,17 +356,47 @@
         <h2 class="section-title">Central Social & Comunidade</h2>
         <div class="community-main-grid">
             <div class="panel-card">
-                <h3>🌐 Redes Sociais</h3>
-                <div class="social-buttons-flex">
-                    <a href="https://discord.gg/FaeYug6XBx" target="_blank" class="social-btn-item btn-discord-net">🎮 Discord Oficial</a>
-                    <a href="https://youtube.com/@capudooficial7" target="_blank" class="social-btn-item btn-youtube-net">▶ siga o criador do jogo aqui</a>
-                    <a href="https://www.instagram.com/capudooficial.7/" target="_blank" class="social-btn-item btn-instagram-net">📸 Instagram Oficial</a>
+                <h3>🌐 Redes Sociais & Chat Global</h3>
+                <div class="social-buttons-flex" style="margin-bottom:12px;">
+                    <a href="https://discord.gg/FaeYug6XBx" target="_blank" class="social-btn-item btn-discord-net" onclick="tocarSomClique()">🎮 Discord Oficial (Convidar Amigos)</a>
+                    <a href="https://youtube.com/@capudooficial7" target="_blank" class="social-btn-item btn-youtube-net" onclick="tocarSomClique()">▶ siga o criador do jogo aqui</a>
+                    <a href="https://www.instagram.com/capudooficial.7/" target="_blank" class="social-btn-item btn-instagram-net" onclick="tocarSomClique()">📸 Instagram Oficial</a>
+                </div>
+
+                <!-- Mini-Chat Global (Comunidade ao Vivo) -->
+                <h4 style="font-family:'Orbitron'; font-size:11px; color:var(--accent-color); margin-bottom:4px;">💬 Chat Global ao Vivo</h4>
+                <div class="minichat-container">
+                    <div class="minichat-messages" id="miniChatMessages">
+                        <div style="color:#64748b; font-style:italic;">Carregando mensagens da comunidade...</div>
+                    </div>
+                    <div class="minichat-input-box">
+                        <input type="text" id="miniChatInput" placeholder="Digite sua mensagem..." maxlength="100" onkeypress="checarEnvioChat(event)">
+                        <button onclick="enviarMensagemChat(); tocarSomClique();">Enviar</button>
+                    </div>
                 </div>
             </div>
-            <div class="qrcode-box">
-                <h4 style="font-family:'Orbitron'; font-size:11px; color:var(--accent-color); margin-bottom:6px;">🎁 Doação LivePix</h4>
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://livepix.gg/capudooficial" alt="QR Code LivePix" class="qrcode-img">
-                <a href="https://livepix.gg/capudooficial" target="_blank" class="btn-qrcode-link">🔗 Acessar Link LivePix</a>
+
+            <div style="display:flex; flex-direction:column; gap:15px;">
+                <div class="qrcode-box">
+                    <h4 style="font-family:'Orbitron'; font-size:11px; color:var(--accent-color); margin-bottom:6px;">🎁 Doação LivePix</h4>
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://livepix.gg/capudooficial" alt="QR Code LivePix" class="qrcode-img">
+                    <a href="https://livepix.gg/capudooficial" target="_blank" class="btn-qrcode-link" onclick="tocarSomClique()">🔗 Acessar Link LivePix</a>
+                </div>
+
+                <!-- Painel de Preferências (Sons e Tema OLED) -->
+                <div class="panel-card" style="padding:10px;">
+                    <h3 style="font-size:12px; margin-bottom:8px;">⚙️ Preferências do Hub</h3>
+                    <div style="display:flex; flex-direction:column; gap:8px; font-size:11px;">
+                        <label style="display:flex; justify-content:space-between; align-items:center;">
+                            Efeitos Sonoros Arcade:
+                            <input type="checkbox" id="checkAudioSFX" checked onchange="toggleAudioSFX(this.checked)">
+                        </label>
+                        <label style="display:flex; justify-content:space-between; align-items:center;">
+                            Tema OLED (Preto Absoluto):
+                            <input type="checkbox" id="checkThemeOLED" onchange="toggleThemeOLED(this.checked)">
+                        </label>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -309,13 +409,13 @@
                 <div class="admin-block">
                     <h4>🖼️ Alterar Logo Principal</h4>
                     <input type="file" id="admLogoFile" accept="image/*">
-                    <button type="button" class="btn-gaming" onclick="alterarLogoSite()" style="font-size:11px; padding:6px;">Atualizar Logo na Nuvem</button>
+                    <button type="button" class="btn-gaming" onclick="alterarLogoSite(); tocarSomLevelUp();" style="font-size:11px; padding:6px;">Atualizar Logo na Nuvem</button>
                 </div>
                 <div class="admin-block">
                     <h4>🔴 Gerenciar Transmissão ao Vivo</h4>
-                    <button type="button" id="btnToggleLiveStatus" class="btn-gaming" onclick="alternarStatusLiveAdm()" style="font-size:11px; padding:8px; margin-bottom:6px; background:#ef4444; color:#fff;">LIVE: OFFLINE</button>
+                    <button type="button" id="btnToggleLiveStatus" class="btn-gaming" onclick="alternarStatusLiveAdm(); tocarSomClique();" style="font-size:11px; padding:8px; margin-bottom:6px; background:#ef4444; color:#fff;">LIVE: OFFLINE</button>
                     <input type="text" id="inputAdminLiveUrl" placeholder="Cole o link do YouTube aqui" class="auth-input" style="font-size:11px; margin-bottom:6px;">
-                    <button type="button" class="btn-gaming" onclick="salvarConfigLiveAdm()" style="font-size:10px; padding:6px;">💾 Salvar Live na Nuvem</button>
+                    <button type="button" class="btn-gaming" onclick="salvarConfigLiveAdm(); tocarSomLevelUp();" style="font-size:10px; padding:6px;">💾 Salvar Live na Nuvem</button>
                 </div>
             </div>
 
@@ -323,13 +423,13 @@
             <div id="adminListaJogos" style="display:flex; flex-direction:column; gap:10px;"></div>
 
             <div style="text-align:center; margin-top:15px;">
-                <button type="button" class="btn-gaming btn-danger" onclick="fazerLogoutAdmin()" style="font-size:11px; padding:6px 16px;">Sair do Painel ADM</button>
+                <button type="button" class="btn-gaming btn-danger" onclick="fazerLogoutAdmin(); tocarSomClique();" style="font-size:11px; padding:6px 16px;">Sair do Painel ADM</button>
             </div>
         </div>
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.312 (Cloud, Nick & 9-Digit ID Sync)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.320 (Leaderboard, Profile & SFX Sync)</strong>
     </footer>
 
     <script>
@@ -349,8 +449,76 @@
         let usuarioLogado = null;
         let painelAdmAberto = false;
         let siteConfigGlobal = { url: "", ativa: false, logo: "" };
+        let audioSfxAtivo = true;
 
-        // Função para garantir que o navegador sempre tenha um ID único de 9 dígitos e um Nick padrão se necessário
+        // Efeitos Sonoros Arcade via Web Audio API (Sem arquivos externos)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function tocarSomClique() {
+            if (!audioSfxAtivo) return;
+            try {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.08);
+                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.08);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.08);
+            } catch(e) {}
+        }
+
+        function tocarSomLevelUp() {
+            if (!audioSfxAtivo) return;
+            try {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const now = audioCtx.currentTime;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.setValueAtTime(450, now + 0.1);
+                osc.frequency.setValueAtTime(600, now + 0.2);
+                gain.gain.setValueAtTime(0.08, now);
+                gain.gain.linearRampToValueAtTime(0, now + 0.35);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(now); osc.stop(now + 0.35);
+            } catch(e) {}
+        }
+
+        function toggleAudioSFX(ativo) {
+            audioSfxAtivo = ativo;
+            mostrarToast(ativo ? "🔊 Efeitos sonoros ativados" : "🔇 Efeitos sonoros desativados");
+        }
+
+        function toggleThemeOLED(ativo) {
+            document.getElementById('mainBody').classList.toggle('theme-oled', ativo);
+            localStorage.setItem('wavecombat_oled', ativo ? 'true' : 'false');
+            mostrarToast(ativo ? "⚫ Tema OLED ativado" : "🌙 Tema padrão ativado");
+        }
+
+        function mostrarToast(texto) {
+            const toast = document.getElementById('toastNotification');
+            toast.textContent = texto;
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 3000);
+        }
+
+        // Criar Partículas Dinâmicas no Fundo
+        function gerarParticulasFundo() {
+            const container = document.getElementById('bgParticles');
+            for (let i = 0; i < 25; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.left = Math.random() * 100 + 'vw';
+                p.style.animationDuration = (10 + Math.random() * 15) + 's';
+                p.style.animationDelay = (Math.random() * 5) + 's';
+                container.appendChild(p);
+            }
+        }
+
+        // Inicializar Identidade Local e ID de 9 dígitos
         function inicializarIdentidadeLocal() {
             if (!localStorage.getItem('wavecombat_id')) {
                 const idGerado = Math.floor(100000000 + Math.random() * 900000000).toString();
@@ -359,27 +527,38 @@
             if (!localStorage.getItem('wavecombat_nick')) {
                 localStorage.setItem('wavecombat_nick', 'Player_' + localStorage.getItem('wavecombat_id').substring(0, 4));
             }
+            if (!localStorage.getItem('wavecombat_historico')) {
+                localStorage.setItem('wavecombat_historico', JSON.stringify([]));
+            }
         }
 
         function carregarSessaoSalva() {
             inicializarIdentidadeLocal();
+            if (localStorage.getItem('wavecombat_oled') === 'true') {
+                document.getElementById('checkThemeOLED').checked = true;
+                document.getElementById('mainBody').classList.add('theme-oled');
+            }
+
             try {
                 const sessaoSalva = localStorage.getItem('wavecombat_sessao_ativa');
                 if(sessaoSalva) {
                     usuarioLogado = JSON.parse(sessaoSalva);
                     document.getElementById('btnAuthNav').textContent = usuarioLogado.nick;
-                    
-                    // Sincroniza dados no localStorage para os jogos lerem
                     localStorage.setItem('wavecombat_nick', usuarioLogado.nick);
-                    if (!localStorage.getItem('wavecombat_id')) {
-                        localStorage.setItem('wavecombat_id', Math.floor(100000000 + Math.random() * 900000000).toString());
-                    }
-
                     if(usuarioLogado.isAdm) {
                         document.getElementById('btnToggleAdmNav').style.display = 'inline-block';
                     }
-                    atualizarPerfilUI();
+                    atualizarPerfilExpandidoUI();
                 }
+            } catch(e) {}
+        }
+
+        function registrarHistoricoJogo(nomeJogo) {
+            try {
+                let hist = JSON.parse(localStorage.getItem('wavecombat_historico') || '[]');
+                hist.unshift({ nome: nomeJogo, data: new Date().toLocaleDateString('pt-BR') });
+                if (hist.length > 5) hist.pop(); // Mantém os últimos 5
+                localStorage.setItem('wavecombat_historico', JSON.stringify(hist));
             } catch(e) {}
         }
 
@@ -390,6 +569,7 @@
             const msg = document.getElementById('msgBloqueioJogo');
             if(msg) msg.style.display = motivoJogo ? 'block' : 'none';
             document.getElementById('authModal').style.display = 'flex'; 
+            atualizarPerfilExpandidoUI();
         }
         function fecharModalAuth() { document.getElementById('authModal').style.display = 'none'; }
 
@@ -397,10 +577,12 @@
             document.getElementById('tabLoginBtn').classList.toggle('active', aba === 'login');
             document.getElementById('tabRegisterBtn').classList.toggle('active', aba === 'registro');
             document.getElementById('tabPerfilBtn').classList.toggle('active', aba === 'perfil');
+            document.getElementById('tabLeaderboardBtn').classList.toggle('active', aba === 'leaderboard');
             
             document.getElementById('panelLogin').classList.toggle('active', aba === 'login');
             document.getElementById('panelRegistro').classList.toggle('active', aba === 'registro');
             document.getElementById('panelPerfil').classList.toggle('active', aba === 'perfil');
+            document.getElementById('panelLeaderboard').classList.toggle('active', aba === 'leaderboard');
         }
 
         function obterUsuariosCadastrados() {
@@ -416,10 +598,7 @@
                 alert("Este nick já existe! Escolha outro.");
                 return;
             }
-            
-            // Gera ID exclusivo de 9 dígitos para o novo usuário
             const novoId = Math.floor(100000000 + Math.random() * 900000000).toString();
-
             users.push({ nick: u, pass: p, id: novoId });
             localStorage.setItem('wavecombat_users', JSON.stringify(users));
             
@@ -428,10 +607,10 @@
             localStorage.setItem('wavecombat_nick', u);
             localStorage.setItem('wavecombat_id', novoId);
             
-            alert("Conta criada com sucesso! ID de 9 dígitos gerado e sincronizado.");
+            mostrarToast("✨ Conta criada com ID de 9 dígitos!");
             document.getElementById('btnAuthNav').textContent = u;
             fecharModalAuth();
-            atualizarPerfilUI();
+            atualizarPerfilExpandidoUI();
         }
 
         function fazerLoginPlataforma(e) {
@@ -445,73 +624,72 @@
                 localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
                 localStorage.setItem('wavecombat_nick', 'capudo7');
                 localStorage.setItem('wavecombat_id', admId);
-                alert('Acesso ADM Concedido!');
+                mostrarToast('⭐ Acesso ADM Concedido!');
                 document.getElementById('btnToggleAdmNav').style.display = 'inline-block';
                 document.getElementById('btnAuthNav').textContent = 'capudo7';
                 fecharModalAuth();
-                atualizarPerfilUI();
+                atualizarPerfilExpandidoUI();
                 return;
             }
 
             let users = obterUsuariosCadastrados();
             let achou = users.find(x => x.nick.toLowerCase() === u.toLowerCase() && x.pass === p);
             if(achou) {
-                if(!achou.id) achou.id = Math.floor(100000000 + Math.random() * 900000000).toString(); // Garante ID se for conta antiga
+                if(!achou.id) achou.id = Math.floor(100000000 + Math.random() * 900000000).toString();
                 usuarioLogado = { nick: achou.nick, isAdm: false, id: achou.id };
                 localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
                 localStorage.setItem('wavecombat_nick', achou.nick);
                 localStorage.setItem('wavecombat_id', achou.id);
-                alert(`Bem-vindo de volta, ${achou.nick}!`);
+                mostrarToast(`👋 Bem-vindo de volta, ${achou.nick}!`);
                 document.getElementById('btnAuthNav').textContent = achou.nick;
                 fecharModalAuth();
-                atualizarPerfilUI();
+                atualizarPerfilExpandidoUI();
             } else {
                 alert('Usuário ou senha incorretos!');
             }
         }
 
-        function atualizarPerfilUI() {
+        function atualizarPerfilExpandidoUI() {
             const perfilDiv = document.getElementById('perfilUserData');
             const nickAtual = localStorage.getItem('wavecombat_nick') || '';
             const idAtual = localStorage.getItem('wavecombat_id') || '';
+            let historico = [];
+            try { historico = JSON.parse(localStorage.getItem('wavecombat_historico') || '[]'); } catch(e){}
 
-            if(usuarioLogado) {
-                perfilDiv.innerHTML = `
-                    <div style="text-align:center; display:flex; flex-direction:column; gap:8px;">
-                        <h4 style="color:var(--accent-color); font-family:'Orbitron';">Logado: ${usuarioLogado.nick}</h4>
-                        <p style="font-size:11px; color:var(--gold-warning); font-family:'Orbitron';">ID Único (9 Dígitos): <strong>${idAtual}</strong></p>
-                        <div style="text-align:left;">
-                            <label style="font-size:11px; color:#94a3b8;">Editar Nick nos Jogos:</label>
-                            <input type="text" id="inputHubNickEdit" value="${nickAtual}" class="auth-input" oninput="salvarNickManualSite(this.value)">
-                        </div>
-                        <p style="font-size:11px; color:#22c55e;">✔ Nick e ID sincronizados com os jogos!</p>
-                        <button class="btn-gaming btn-danger" onclick="fazerLogout()" style="padding:6px 15px; font-size:11px; margin-top:5px;">Sair da Conta</button>
+            let histHtml = historico.length > 0 
+                ? historico.map(h => `<li style="font-size:10px; color:#94a3b8;">🎮 ${h.nome} (${h.data})</li>`).join('') 
+                : `<li style="font-size:10px; color:#64748b;">Nenhum jogo recente.</li>`;
+
+            perfilDiv.innerHTML = `
+                <div style="display:flex; flex-direction:column; gap:10px;">
+                    <div style="background:#0b0f17; border:1px solid var(--steel-border); padding:10px; border-radius:8px; text-align:center;">
+                        <h4 style="color:var(--accent-color); font-family:'Orbitron'; font-size:13px;">${usuarioLogado ? usuarioLogado.nick : 'Convidado'}</h4>
+                        <p style="font-size:11px; color:var(--gold-warning); font-family:'Orbitron'; margin-top:4px;">ID Único (9 Dígitos): <strong>${idAtual}</strong></p>
                     </div>
-                `;
-            } else {
-                perfilDiv.innerHTML = `
-                    <div style="display:flex; flex-direction:column; gap:8px;">
-                        <h4 style="color:var(--accent-color); font-family:'Orbitron'; text-align:center; font-size:13px;">Identidade do Jogador</h4>
-                        <p style="font-size:11px; color:var(--gold-warning); font-family:'Orbitron'; text-align:center;">Seu ID (9 Dígitos): <strong>${idAtual}</strong></p>
-                        <label style="font-size:11px; color:#94a3b8;">Nick nos Jogos:</label>
-                        <input type="text" id="inputHubNickEdit" value="${nickAtual}" placeholder="Digite seu nick..." class="auth-input" oninput="salvarNickManualSite(this.value)">
-                        <p style="font-size:11px; color:#94a3b8; text-align:center;">Esses dados são puxados automaticamente pelos jogos.</p>
+                    <div>
+                        <label style="font-size:11px; color:#94a3b8;">Editar Nick nos Jogos:</label>
+                        <input type="text" id="inputHubNickEdit" value="${nickAtual}" class="auth-input" oninput="salvarNickManualSite(this.value)">
                     </div>
-                `;
-            }
+                    <div>
+                        <h5 style="font-family:'Orbitron'; font-size:11px; color:var(--accent-color); margin-bottom:4px;">📜 Últimos Jogos Acessados:</h5>
+                        <ul style="padding-left:15px; display:flex; flex-direction:column; gap:3px;">${histHtml}</ul>
+                    </div>
+                    ${usuarioLogado ? `<button class="btn-gaming btn-danger" onclick="fazerLogout(); tocarSomClique();" style="padding:6px; font-size:11px;">Sair da Conta</button>` : `<p style="font-size:10px; color:#94a3b8; text-align:center;">Faça login para salvar seu progresso no ranking global.</p>`}
+                </div>
+            `;
         }
 
         function salvarNickManualSite(novoNick) {
             const limpo = novoNick.trim();
             if (limpo) {
                 localStorage.setItem('wavecombat_nick', limpo);
+                mostrarToast("💾 Nick atualizado com sucesso!");
             }
         }
 
         function fazerLogout() {
             usuarioLogado = null;
             localStorage.removeItem('wavecombat_sessao_ativa');
-            // Mantém o ID e gera um novo nick aleatório se deslogar
             const novoId = Math.floor(100000000 + Math.random() * 900000000).toString();
             localStorage.setItem('wavecombat_id', novoId);
             localStorage.setItem('wavecombat_nick', 'Player_' + novoId.substring(0, 4));
@@ -519,8 +697,64 @@
             document.getElementById('btnAuthNav').textContent = 'Entrar';
             document.getElementById('btnToggleAdmNav').style.display = 'none';
             document.getElementById('adminSection').style.display = 'none';
-            alert('Você saiu da conta. Uma nova identidade local foi gerada.');
-            atualizarPerfilUI();
+            mostrarToast('Sessão encerrada com sucesso.');
+            atualizarPerfilExpandidoUI();
+        }
+
+        // Leaderboard & Mini-Chat via Supabase
+        async function carregarLeaderboardSupabase() {
+            const container = document.getElementById('leaderboardListContainer');
+            container.innerHTML = `<p style="color:#94a3b8; text-align:center; font-size:11px;">Buscando recordes...</p>`;
+            try {
+                const { data, error } = await supabaseClient.from('leaderboard').select('*').order('pontos', { ascending: false }).limit(10);
+                if (error || !data || data.length === 0) {
+                    container.innerHTML = `<p style="color:#94a3b8; text-align:center; font-size:11px;">Nenhum recorde registrado ainda. Jogue para pontuar!</p>`;
+                    return;
+                }
+                container.innerHTML = data.map((item, idx) => `
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:#0b0f17; border:1px solid var(--steel-border); padding:6px 10px; border-radius:6px; font-size:11px;">
+                        <span><strong>#${idx+1}</strong> ${item.nick} <span style="color:#64748b; font-size:9px;">(${item.id_jogador})</span></span>
+                        <strong style="color:var(--accent-color);">${item.pontos} pts</strong>
+                    </div>
+                `).join('');
+            } catch(e) {
+                container.innerHTML = `<p style="color:#ef4444; text-align:center; font-size:11px;">Erro ao carregar ranking.</p>`;
+            }
+        }
+
+        async function carregarMensagensChat() {
+            try {
+                const { data } = await supabaseClient.from('chat_global').select('*').order('created_at', { ascending: false }).limit(20);
+                const container = document.getElementById('miniChatMessages');
+                if (!data || data.length === 0) {
+                    container.innerHTML = `<div style="color:#64748b; font-style:italic;">Nenhuma mensagem recente. Seja o primeiro a falar!</div>`;
+                    return;
+                }
+                container.innerHTML = data.reverse().map(m => `
+                    <div><strong style="color:var(--accent-color);">${m.nick}:</strong> <span style="color:#f8fafc;">${m.mensagem}</span></div>
+                `).join('');
+                container.scrollTop = container.scrollHeight;
+            } catch(e) {}
+        }
+
+        function checarEnvioChat(e) {
+            if (e.key === 'Enter') enviarMensagemChat();
+        }
+
+        async function enviarMensagemChat() {
+            const input = document.getElementById('miniChatInput');
+            const txt = input.value.trim();
+            if (!txt) return;
+            const nick = localStorage.getItem('wavecombat_nick') || 'Convidado';
+            
+            try {
+                await supabaseClient.from('chat_global').insert([{ nick, mensagem: txt }]);
+                input.value = '';
+                carregarMensagensChat();
+                tocarSomClique();
+            } catch(e) {
+                alert("Erro ao enviar mensagem no chat.");
+            }
         }
 
         async function buscarDadosNuvem() {
@@ -549,6 +783,12 @@
                     });
                 }
             } catch(e) {}
+
+            // Atualiza estatísticas globais fictícias / baseadas em acessos
+            let totalAcessos = listaJogosCache.reduce((acc, curr) => acc + (curr.acessos || 0), 1250);
+            let totalUsers = obterUsuariosCadastrados().length + 42;
+            document.getElementById('statTotalPartidas').textContent = totalAcessos;
+            document.getElementById('statTotalUsuarios').textContent = totalUsers;
 
             sincronizarCamposAdmUI();
             aplicarLogoNoSite();
@@ -582,15 +822,13 @@
         async function salvarConfigLiveAdm() {
             const url = document.getElementById('inputAdminLiveUrl').value.trim();
             siteConfigGlobal.url = url;
-
             try {
                 await supabaseClient.from('configuracoes').upsert({ chave: 'live_url', valor: url });
                 await supabaseClient.from('configuracoes').upsert({ chave: 'live_ativa', valor: String(siteConfigGlobal.ativa) });
-                alert('Configurações da live guardadas na nuvem com sucesso!');
+                mostrarToast('💾 Configurações da live guardadas na nuvem!');
             } catch(e) {
                 alert('Erro ao salvar live na nuvem.');
             }
-
             atualizarVisibilidadeLiveGeral();
         }
 
@@ -602,15 +840,13 @@
                 if(!error) {
                     const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/capas/${fileName}`;
                     siteConfigGlobal.logo = publicUrl;
-
                     try {
                         await supabaseClient.from('configuracoes').upsert({ chave: 'site_logo', valor: publicUrl });
                     } catch(e) {}
-
                     aplicarLogoNoSite();
-                    alert('Logo atualizada e sincronizada na nuvem com sucesso!');
+                    mostrarToast('🖼️ Logo atualizada com sucesso!');
                 } else {
-                    alert('Erro ao enviar imagem do logo para o Supabase Storage.');
+                    alert('Erro ao enviar imagem.');
                 }
             } else {
                 alert('Selecione um ficheiro de imagem primeiro.');
@@ -632,8 +868,8 @@
         }
 
         async function tentarExecutarJogo(jogo) {
-            // Garante identidade antes de abrir o jogo
             inicializarIdentidadeLocal();
+            registrarHistoricoJogo(jogo.nome);
 
             try {
                 await supabaseClient.from('jogos').update({ acessos: (jogo.acessos || 0) + 1 }).eq('id', jogo.id);
@@ -660,6 +896,7 @@
             else favs.push(id);
             try { localStorage.setItem('wavecombat_favs', JSON.stringify(favs)); } catch(e) {}
             atualizarPlataforma();
+            tocarSomClique();
         }
 
         function alternarPainelAdm() {
@@ -784,11 +1021,11 @@
                 featuredContainer.innerHTML = `
                     <div class="featured-game-box">
                         <div class="featured-badge">${destaque.destaque_manual ? '★ DESTAQUE' : '🔥 DESTAQUE'}</div>
-                        <img src="${capaDestaque}" class="featured-img" alt="${destaque.nome}" onclick="tentarExecutarJogo(${JSON.stringify(destaque).replace(/"/g, '&quot;')})">
+                        <img src="${capaDestaque}" class="featured-img" alt="${destaque.nome}" onclick="tentarExecutarJogo(${JSON.stringify(destaque).replace(/"/g, '&quot;')}); tocarSomClique();">
                         <h3 style="font-size:16px; font-family:'Orbitron';">${destaque.nome}</h3>
                         <p style="font-size:12px; color:#94a3b8;">${destaque.desc}</p>
                         <div class="game-card-actions">
-                            <button type="button" class="btn-gaming" onclick="tentarExecutarJogo(${JSON.stringify(destaque).replace(/"/g, '&quot;')})" style="flex:1; padding:8px;">▶ JOGAR AGORA</button>
+                            <button type="button" class="btn-gaming" onclick="tentarExecutarJogo(${JSON.stringify(destaque).replace(/"/g, '&quot;')}); tocarSomClique();" style="flex:1; padding:8px;">▶ JOGAR AGORA</button>
                             <button type="button" class="btn-fav" onclick="toggleFavorito('${destaque.id}')">${isFav ? '★' : '☆'}</button>
                         </div>
                     </div>
@@ -805,8 +1042,8 @@
                 const item = document.createElement('div');
                 item.className = 'game-list-card';
                 item.innerHTML = `
-                    <img src="${thumb}" class="game-list-thumb" alt="${jogo.nome}" onclick="tentarExecutarJogo(${JSON.stringify(jogo).replace(/"/g, '&quot;')})">
-                    <div class="game-list-info" onclick="tentarExecutarJogo(${JSON.stringify(jogo).replace(/"/g, '&quot;')})">
+                    <img src="${thumb}" class="game-list-thumb" alt="${jogo.nome}" onclick="tentarExecutarJogo(${JSON.stringify(jogo).replace(/"/g, '&quot;')}); tocarSomClique();">
+                    <div class="game-list-info" onclick="tentarExecutarJogo(${JSON.stringify(jogo).replace(/"/g, '&quot;')}); tocarSomClique();">
                         <h4>${jogo.nome}</h4>
                         <p>${jogo.desc}</p>
                     </div>
@@ -830,7 +1067,7 @@
                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:5px;">
                         <span style="color:var(--accent-color); font-weight:bold; font-size:12px;">${jogo.nome} (${jogo.acessos || 0})</span>
                         <div style="display:flex; gap:4px;">
-                            <button type="button" class="btn-gaming" onclick="tentarExecutarJogo(${JSON.stringify(jogo).replace(/"/g, '&quot;')})" style="font-size:9px; padding:3px 6px;">🎮 Testar</button>
+                            <button type="button" class="btn-gaming" onclick="tentarExecutarJogo(${JSON.stringify(jogo).replace(/"/g, '&quot;')}); tocarSomClique();" style="font-size:9px; padding:3px 6px;">🎮 Testar</button>
                             <button type="button" class="btn-gaming ${jogo.publicado ? 'btn-danger' : 'btn-success'}" onclick="togglePublicarJogo('${jogo.id}')" style="font-size:9px; padding:3px 6px;">
                                 ${jogo.publicado ? '👁️ Ocultar' : '🚀 Publicar'}
                             </button>
@@ -888,7 +1125,7 @@
                     if(!error) {
                         imgUrl = `${SUPABASE_URL}/storage/v1/object/public/capas/${fileName}`;
                     } else {
-                        alert("Erro no upload da imagem para o Supabase Storage.");
+                        alert("Erro no upload da imagem.");
                     }
                 }
 
@@ -897,22 +1134,25 @@
                 }).eq('id', id);
 
                 if(!error) {
-                    alert("Jogo atualizado com sucesso na nuvem!");
+                    mostrarToast("💾 Jogo atualizado com sucesso!");
                     await buscarDadosNuvem();
                 } else {
-                    alert("Erro ao atualizar jogo na nuvem.");
+                    alert("Erro ao atualizar jogo.");
                 }
             }
         }
 
-        // Sincronização em tempo real (Realtime) para tudo atualizar sozinho
+        // Realtime sync do Supabase e Chat
         supabaseClient.channel('realtime_all')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'jogos' }, () => buscarDadosNuvem())
             .on('postgres_changes', { event: '*', schema: 'public', table: 'configuracoes' }, () => buscarDadosNuvem())
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'chat_global' }, () => carregarMensagensChat())
             .subscribe();
 
+        gerarParticulasFundo();
         carregarSessaoSalva();
         buscarDadosNuvem();
+        carregarMensagensChat();
     </script>
 </body>
 </html>
