@@ -1,0 +1,22 @@
+{
+  "name": "WaveCombat Hub",
+  "short_name": "WaveCombat",
+  "description": "Plataforma moderna de jogos, arcade e experiências imersivas.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0b0f17",
+  "theme_color": "#00f0ff",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "https://api.qrserver.com/v1/create-qr-code/?size=192x192&data=WaveCombat",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://api.qrserver.com/v1/create-qr-code/?size=512x512&data=WaveCombat",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
