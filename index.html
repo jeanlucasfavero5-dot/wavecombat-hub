@@ -130,7 +130,6 @@
         }
         .btn-gaming:hover { transform: scale(1.03); filter: brightness(1.2); }
 
-        /* Botão para Instalar App Mobile */
         .btn-pwa-install {
             display: none; background: #22c55e; color: #000; border: none; padding: 8px 14px;
             font-family: 'Orbitron'; font-size: 11px; font-weight: bold; border-radius: 6px;
@@ -260,6 +259,7 @@
         <ul class="nav-links" id="navLinks">
             <li><a href="#inicio" onclick="fecharMenuMobile(); tocarSomClique();">Início</a></li>
             <li><a href="#jogos" onclick="fecharMenuMobile(); tocarSomClique();">Games</a></li>
+            <li><a href="#lojaDiamantes" onclick="fecharMenuMobile(); tocarSomClique();">Loja 💎</a></li>
             <li><a href="#comunidade" onclick="fecharMenuMobile(); tocarSomClique();">Social</a></li>
             <li>
                 <div class="user-nav-wrapper">
@@ -302,6 +302,22 @@
         </div>
     </div>
 
+    <!-- MODAL PARA EXIBIR O QR CODE PIX -->
+    <div class="modal-overlay" id="pixModal">
+        <div class="modal-card" style="text-align: center;">
+            <button class="modal-close" onclick="fecharModalPix()">&times;</button>
+            <h3 style="font-family:'Orbitron'; color:var(--accent-color); margin-bottom:10px;">Pagamento via Pix</h3>
+            <p style="font-size:12px; color:#94a3b8; margin-bottom:12px;">Escaneie o QR Code abaixo ou copie o código Pix para pagar no app do seu banco:</p>
+            
+            <div id="pixQrContainer" style="margin: 15px 0; display: flex; justify-content: center;"></div>
+            
+            <input type="text" id="pixCopiaColaInput" class="auth-input" readonly style="font-size:10px; margin-bottom:10px;">
+            <button class="btn-gaming" onclick="copiarPixCopiaCola()" style="width:100%; padding:8px; font-size:11px;">📋 Copiar Código Pix</button>
+            
+            <p style="font-size:10px; color:var(--gold-warning); margin-top:12px;">⚡ Assim que o pagamento for confirmado, os diamantes caem na sua conta automaticamente!</p>
+        </div>
+    </div>
+
     <header class="hero" id="heroHeader">
         <h1 id="heroTitle">WAVECOMBAT <span>HUB</span></h1>
         <p id="heroDesc">Plataforma moderna de jogos, arcade e experiências imersivas.</p>
@@ -314,7 +330,6 @@
 
         <a href="#player" class="btn-gaming" onclick="tentarExecutarJogoDestaque(); tocarSomClique();">Jogar Destaque Agora</a>
         
-        <!-- Botão de Instalação Mobile PWA -->
         <button class="btn-pwa-install" id="btnPwaInstall" onclick="instalarAppMobile()">📲 INSTALAR APLICATIVO DO SITE</button>
     </header>
 
@@ -351,6 +366,56 @@
             <h3 style="color:var(--accent-color); font-family:'Orbitron'; font-size:14px; text-align:center;">🏆 RANKING GLOBAL DE JOGADORES</h3>
             <div class="site-leaderboard-list" id="siteLeaderboardListContainer">
                 <p style="color:#94a3b8; text-align:center; font-size:11px;">Carregando ranking global...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEÇÃO DA LOJA DE DIAMANTES (PIX MERCADO PAGO) -->
+    <section id="lojaDiamantes">
+        <h2 class="section-title">💎 Loja de Diamantes (Pix Automático)</h2>
+        
+        <div style="background: var(--panel-bg); border: 2px solid var(--accent-color); padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <div>
+                <span style="font-size: 12px; color: #94a3b8;">Seu Saldo Atual:</span>
+                <h3 style="font-family: 'Orbitron'; color: #fff; font-size: 20px;">💎 <span id="userDiamondBalance">0</span> Diamantes</h3>
+            </div>
+            <button class="btn-gaming" onclick="carregarSaldoDiamantesSite()" style="font-size: 11px; padding: 6px 12px;">🔄 Atualizar Saldo</button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px;">
+            <div class="panel-card" style="text-align: center; border: 1px solid var(--steel-border);">
+                <h4 style="font-family: 'Orbitron'; color: var(--accent-color);">110 💎</h4>
+                <p style="font-size: 10px; color: #22c55e;">+10% Bônus Incluído</p>
+                <p style="font-size: 14px; color: var(--gold-warning); font-weight: bold; margin: 8px 0;">R$ 3,00</p>
+                <button class="btn-gaming" onclick="gerarPixMercadoPago(3.00, 110)" style="width: 100%; font-size: 11px; padding: 8px;">Comprar Pix</button>
+            </div>
+
+            <div class="panel-card" style="text-align: center; border: 1px solid var(--steel-border);">
+                <h4 style="font-family: 'Orbitron'; color: var(--accent-color);">330 💎</h4>
+                <p style="font-size: 10px; color: #22c55e;">+10% Bônus Incluído</p>
+                <p style="font-size: 14px; color: var(--gold-warning); font-weight: bold; margin: 8px 0;">R$ 6,00</p>
+                <button class="btn-gaming" onclick="gerarPixMercadoPago(6.00, 330)" style="width: 100%; font-size: 11px; padding: 8px;">Comprar Pix</button>
+            </div>
+
+            <div class="panel-card" style="text-align: center; border: 1px solid var(--steel-border);">
+                <h4 style="font-family: 'Orbitron'; color: var(--accent-color);">660 💎</h4>
+                <p style="font-size: 10px; color: #22c55e;">+10% Bônus Incluído</p>
+                <p style="font-size: 14px; color: var(--gold-warning); font-weight: bold; margin: 8px 0;">R$ 9,00</p>
+                <button class="btn-gaming" onclick="gerarPixMercadoPago(9.00, 660)" style="width: 100%; font-size: 11px; padding: 8px;">Comprar Pix</button>
+            </div>
+
+            <div class="panel-card" style="text-align: center; border: 1px solid var(--steel-border);">
+                <h4 style="font-family: 'Orbitron'; color: var(--accent-color);">1.320 💎</h4>
+                <p style="font-size: 10px; color: #22c55e;">+10% Bônus Incluído</p>
+                <p style="font-size: 14px; color: var(--gold-warning); font-weight: bold; margin: 8px 0;">R$ 18,00</p>
+                <button class="btn-gaming" onclick="gerarPixMercadoPago(18.00, 1320)" style="width: 100%; font-size: 11px; padding: 8px;">Comprar Pix</button>
+            </div>
+
+            <div class="panel-card" style="text-align: center; border: 1px solid var(--steel-border);">
+                <h4 style="font-family: 'Orbitron'; color: var(--accent-color);">3.960 💎</h4>
+                <p style="font-size: 10px; color: #22c55e;">+10% Bônus Incluído</p>
+                <p style="font-size: 14px; color: var(--gold-warning); font-weight: bold; margin: 8px 0;">R$ 32,00</p>
+                <button class="btn-gaming" onclick="gerarPixMercadoPago(32.00, 3960)" style="width: 100%; font-size: 11px; padding: 8px;">Comprar Pix</button>
             </div>
         </div>
     </section>
@@ -442,7 +507,7 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.330 (PWA Mobile Ready)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.340 (Pix Mercado Pago & PWA)</strong>
     </footer>
 
     <script>
@@ -464,7 +529,6 @@
         let siteConfigGlobal = { url: "", ativa: false, logo: "" };
         let audioSfxAtivo = true;
 
-        // Lógica do PWA para Instalação no Celular
         let deferredPrompt = null;
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
@@ -583,6 +647,7 @@
                 }
             } catch(e) {}
             atualizarAbasPerfilUI();
+            carregarSaldoDiamantesSite();
         }
 
         function atualizarAbasPerfilUI() {
@@ -624,6 +689,74 @@
             atualizarAbasPerfilUI();
         }
         function fecharModalAuth() { document.getElementById('authModal').style.display = 'none'; }
+        function fecharModalPix() { document.getElementById('pixModal').style.display = 'none'; }
+
+        function copiarPixCopiaCola() {
+            const input = document.getElementById('pixCopiaColaInput');
+            input.select();
+            document.execCommand('copy');
+            mostrarToast("📋 Código Pix copiado!");
+        }
+
+        async function carregarSaldoDiamantesSite() {
+            const idJogador = localStorage.getItem('wavecombat_id');
+            if (!idJogador) return;
+
+            try {
+                const { data } = await supabaseClient
+                    .from('carteira_diamantes')
+                    .select('diamantes')
+                    .eq('id_jogador', idJogador)
+                    .single();
+
+                if (data) {
+                    document.getElementById('userDiamondBalance').textContent = data.diamantes || 0;
+                } else {
+                    const nick = localStorage.getItem('wavecombat_nick') || 'Jogador';
+                    await supabaseClient.from('carteira_diamantes').insert([{ id_jogador: idJogador, nick: nick, diamantes: 0 }]);
+                    document.getElementById('userDiamondBalance').textContent = 0;
+                }
+            } catch (e) {}
+        }
+
+        async function gerarPixMercadoPago(valor, quantDiamantes) {
+            const idJogador = localStorage.getItem('wavecombat_id');
+            const nick = localStorage.getItem('wavecombat_nick') || 'Jogador';
+
+            if (!idJogador) {
+                alert("Crie uma conta ou faça login para comprar diamantes!");
+                abrirModalAuth();
+                return;
+            }
+
+            mostrarToast("⏳ Gerando cobrança Pix no Mercado Pago...");
+
+            try {
+                const res = await fetch(`${SUPABASE_URL}/functions/v1/gerar-pix`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
+                    body: JSON.stringify({
+                        valor: valor,
+                        diamantes: quantDiamantes,
+                        id_jogador: idJogador,
+                        nick: nick
+                    })
+                });
+
+                const data = await res.json();
+
+                if (data.qr_code_base64 && data.qr_code) {
+                    document.getElementById('pixQrContainer').innerHTML = `<img src="data:image/png;base64,${data.qr_code_base64}" style="width:180px; height:180px; border-radius:8px; border:2px solid var(--accent-color);">`;
+                    document.getElementById('pixCopiaColaInput').value = data.qr_code;
+                    document.getElementById('pixModal').style.display = 'flex';
+                    mostrarToast("✅ Pix gerado com sucesso!");
+                } else {
+                    alert("Erro ao gerar o Pix. Verifique os dados.");
+                }
+            } catch (e) {
+                alert("Erro na conexão com a Edge Function de pagamento.");
+            }
+        }
 
         function alternarAba(aba) {
             document.getElementById('tabLoginBtn')?.classList.toggle('active', aba === 'login');
@@ -660,6 +793,7 @@
             mostrarToast("✨ Conta criada com ID de 9 dígitos!");
             document.getElementById('btnAuthNav').textContent = u;
             atualizarAbasPerfilUI();
+            carregarSaldoDiamantesSite();
         }
 
         function fazerLoginPlataforma(e) {
@@ -677,6 +811,7 @@
                 document.getElementById('btnToggleAdmNav').style.display = 'inline-block';
                 document.getElementById('btnAuthNav').textContent = 'capudo7';
                 atualizarAbasPerfilUI();
+                carregarSaldoDiamantesSite();
                 return;
             }
 
@@ -691,6 +826,7 @@
                 mostrarToast(`👋 Bem-vindo de volta, ${achou.nick}!`);
                 document.getElementById('btnAuthNav').textContent = achou.nick;
                 atualizarAbasPerfilUI();
+                carregarSaldoDiamantesSite();
             } else {
                 alert('Usuário ou senha incorretos!');
             }
@@ -745,6 +881,7 @@
             document.getElementById('adminSection').style.display = 'none';
             mostrarToast('Sessão encerrada com sucesso.');
             atualizarAbasPerfilUI();
+            carregarSaldoDiamantesSite();
         }
 
         async function carregarLeaderboardSite() {
@@ -1196,6 +1333,7 @@
             .on('postgres_changes', { event: '*', schema: 'public', table: 'configuracoes' }, () => buscarDadosNuvem())
             .on('postgres_changes', { event: '*', schema: 'public', table: 'chat_global' }, () => carregarMensagensChat())
             .on('postgres_changes', { event: '*', schema: 'public', table: 'leaderboard' }, () => carregarLeaderboardSite())
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'carteira_diamantes' }, () => carregarSaldoDiamantesSite())
             .subscribe();
 
         gerarParticulasFundo();
