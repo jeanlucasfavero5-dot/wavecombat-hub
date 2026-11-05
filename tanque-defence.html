@@ -643,6 +643,19 @@
             display: none !important;
         }
 
+        #adm-overlay { z-index: 130; }
+        .td-id { font: 600 0.7rem monospace; color: #94a3b8; }
+        .td-adm { font-size: 0.65rem; font-weight: 900; color: #1f1300; background: linear-gradient(180deg, #fde68a, #f59e0b); padding: 1px 6px; border-radius: 8px; }
+        .td-jogador { position: absolute; top: 46px; left: 10px; font-size: 10px; font-weight: 700; color: #fde68a; text-shadow: 0 1px 3px #000; pointer-events: none; opacity: 0.9; }
+        .td-jogador-q { font-size: 10px; color: #cbd5e1; margin: 4px 0 0; }
+        .adm-sec { font: 800 0.65rem 'Cinzel', Georgia, serif; color: #fbbf24; text-align: left; margin: 8px 0 4px; letter-spacing: 0.08em; }
+        .adm-grade { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+        .adm-b { background: rgba(31, 41, 55, 0.9); color: #fff; border: 1px solid #f59e0b; border-radius: 10px; padding: 7px 4px; font-size: 11px; font-weight: 800; cursor: pointer; font-family: inherit; }
+        .adm-b:active { transform: scale(0.95); }
+        .adm-b.on { background: linear-gradient(180deg, #fbbf24, #d97706); color: #1f1300; }
+        .adm-b.perigo { border-color: #ef4444; }
+        .adm-spawn { display: flex; gap: 5px; margin-top: 5px; }
+        .adm-spawn select { flex: 1; background: #1f2937; color: #fff; border: 1px solid #f59e0b; border-radius: 10px; padding: 6px; font-size: 11px; }
         /* ---- v0.011: polimento de UI (elixir, cartas, Quartel General) ---- */
         .td-elx-barra { box-shadow: 0 0 10px rgba(192, 38, 211, 0.45), inset 0 2px 4px rgba(0, 0, 0, 0.6); }
         #td-elixir-fill { background: linear-gradient(180deg, rgba(255, 255, 255, 0.35) 0, transparent 45%), linear-gradient(90deg, #a21caf, #e879f9); box-shadow: 0 0 10px #e879f9; transition: width 0.12s ease-out; }
@@ -745,12 +758,9 @@
         </div>
 
         <div class="inicio-base">
-            <!-- NICK: só aparece na primeira vez; depois de confirmado fica salvo -->
-            <div id="nick-box" class="td-nick">
-                <label for="player-name-input">🛡️ Escolha seu nick (só na primeira vez):</label>
-                <input type="text" id="player-name-input" value="" maxlength="15" placeholder="Digite seu nick" autocomplete="off">
-            </div>
-            <div id="welcome-box" class="td-boasvindas hidden">🛡️ Bem-vindo, <strong id="welcome-name"></strong>!</div>
+            <!-- JOGADOR: identidade vem do WaveCombat Hub (localStorage), sem login -->
+            <div id="player-box" class="td-boasvindas">🛡️ <strong id="player-nick"></strong> <span id="player-id" class="td-id"></span> <span id="player-adm" class="td-adm hidden">👑 ADM</span></div>
+            <button id="btn-adm-inicio" class="td-mini hidden">👑 Painel ADM</button>
 
             <div class="inicio-cta inicio-cta-td piscar">
                 <button id="btn-start-to-lobby" class="td-iniciar"><span>⚔️ INICIAR ⚔️</span></button>
@@ -760,7 +770,7 @@
                 <button id="btn-start-fullscreen" class="td-mini">🔲 Expandir Tela Cheia</button>
                 <a href="https://youtube.com/@capudooficial7?si=0pe1kJfQaeM4orgV" target="_blank" rel="noopener" class="td-mini td-yt">▶️ Siga o Criador</a>
             </div>
-            <div class="inicio-versao">Versão: <b>v0.011</b></div>
+            <div class="inicio-versao">Versão: <b>v0.012</b></div>
         </div>
     </div>
 
@@ -788,9 +798,45 @@
                 </label>
             </div>
 
+            <button id="btn-adm-config" class="btn btn-secondary w-full mb-1 py-2 text-xs hidden">👑 Painel ADM</button>
             <button id="btn-surrender" class="btn btn-secondary w-full mb-1 py-2 text-xs hidden" style="background:#ef4444; border:none; color:white;">🏳️ Desistir e Voltar ao Quartel</button>
             <button id="btn-settings-fullscreen" class="btn btn-secondary w-full mb-1 py-2 text-xs">🔲 Expandir Tela Cheia</button>
             <button id="btn-close-settings" class="btn w-full py-2 text-xs">✓ Salvar e Continuar</button>
+        </div>
+    </div>
+
+    <!-- PAINEL ADM (só a conta administradora vê e usa) -->
+    <div id="adm-overlay" class="overlay hidden">
+        <div class="panel">
+            <h1 class="text-xl font-black mb-1" style="color:#fcd34d">👑 PAINEL ADM</h1>
+            <p id="adm-quem" class="text-[10px] text-gray-300 mb-2"></p>
+            <div class="adm-sec">PROGRESSO (salvo na hora)</div>
+            <div class="adm-grade">
+                <button class="adm-b" data-adm="moedas:1000">+1K 🪙</button>
+                <button class="adm-b" data-adm="moedas:100000">+100K 🪙</button>
+                <button class="adm-b" data-adm="moedas:10000000">+10M 🪙</button>
+                <button class="adm-b" data-adm="desbloquear">🔓 Desbloquear tudo</button>
+                <button class="adm-b" data-adm="maximizar">⬆️ Maximizar tudo</button>
+                <button class="adm-b perigo" data-adm="resetar">♻️ Resetar progresso</button>
+            </div>
+            <div class="adm-sec">PARTIDA (ao vivo)</div>
+            <div class="adm-grade">
+                <button class="adm-b" data-adm="ouro:5000">+5K ouro</button>
+                <button class="adm-b" data-adm="curar">❤️ Curar base</button>
+                <button class="adm-b" data-adm="elixir">💧 Elixir cheio</button>
+                <button class="adm-b" data-adm="elixirInf">💧 Elixir infinito</button>
+                <button class="adm-b" data-adm="deus">🛡️ Base invencível</button>
+                <button class="adm-b" data-adm="onda">▶️ Chamar onda</button>
+                <button class="adm-b" data-adm="matar">☠️ Matar inimigos</button>
+                <button class="adm-b" data-adm="vencer">🏆 Vencer partida</button>
+            </div>
+            <div class="adm-spawn">
+                <select id="adm-spawn"></select>
+                <button class="adm-b" data-adm="spawn">👹 Invocar</button>
+            </div>
+            <p id="adm-msg" class="text-[10px] text-amber-200 mt-2" style="min-height:14px"></p>
+            <p class="text-[9px] text-gray-400">Evoluções (base, torres, generais) valem a partir da próxima partida.</p>
+            <button id="btn-adm-fechar" class="btn w-full py-2 text-xs mt-2">✓ Fechar</button>
         </div>
     </div>
 
@@ -807,6 +853,8 @@
                 <span>🌊 Melhor onda: <strong id="td-melhor" class="text-cyan-400">0</strong>/30</span>
             </div>
 
+            <div class="td-jogador-q">👤 <b id="td-jogador-nick"></b> · <span id="td-jogador-id"></span> <span id="td-jogador-adm" class="td-adm hidden">👑 ADM</span></div>
+
             <div class="td-abas">
                 <button class="td-aba ativa" data-aba="base">🏰 Base</button>
                 <button class="td-aba" data-aba="equip">🛡️ Equip.</button>
@@ -818,6 +866,7 @@
 
             <div class="flex flex-wrap justify-center gap-1">
                 <button id="btn-td-voltar" class="btn btn-secondary text-xs">⬅️ Início</button>
+                <button id="btn-adm-quartel" class="btn btn-secondary text-xs hidden">👑 ADM</button>
                 <button id="btn-td-iniciar" class="btn text-sm font-black w-full mt-1 py-3">🔥 INICIAR DEFESA 🔥</button>
             </div>
         </div>
@@ -825,6 +874,7 @@
 
     <!-- TORRE E DEFESA: HUD DA PARTIDA -->
     <div id="td-hud" class="hidden">
+        <div id="td-hud-jogador" class="td-jogador"></div>
         <div class="td-topo">
             <div class="hud-badge">🌊 <span id="td-hud-onda">0/30</span></div>
             <div class="hud-badge td-hp">❤️ <div class="td-barra"><div id="td-hp-fill"></div></div> <span id="td-hud-hp">100</span></div>
@@ -868,7 +918,7 @@
 
     <script>
         /* =========================================================
-           TANQUE DEFENCE  (v0.011)
+           TANQUE DEFENCE  (v0.012)
            ========================================================= */
 
         /* --- ESTADO GLOBAL & DADOS DE SAVE --- */
@@ -926,10 +976,6 @@
                 const num = (v, padrao) => Number.isFinite(v) ? v : padrao;
 
                 dadosTD = tdSanitizarSave(s.dadosTD);   // save vazio/antigo: começa do zero
-                if (typeof s.nomeJogador === 'string' && s.nomeJogador.trim()) {
-                    nomeJogador = s.nomeJogador.trim().slice(0, 15);
-                }
-                nickConfirmado = s.nickConfirmado === true && nomeJogador.length > 0;
                 if (s.configJogo) {
                     const c = s.configJogo;
                     configJogo.sensibilidade = Math.max(0.5, Math.min(2.0, num(c.sensibilidade, 1.0)));
@@ -952,20 +998,14 @@
             return (n < 0 ? '-' : '') + txt + unidades[i];
         }
 
-        // Tela inicial: o campo de nick só aparece enquanto o nick não foi confirmado
+        // Mostra nick/ID (vindos do WaveCombat Hub) na tela inicial, no Quartel e no HUD da partida
         function atualizarTelaInicio() {
-            const nickBox = document.getElementById('nick-box');
-            const welcome = document.getElementById('welcome-box');
-            const input = document.getElementById('player-name-input');
-            if (nickConfirmado) {
-                nickBox.classList.add('hidden');
-                welcome.classList.remove('hidden');
-                document.getElementById('welcome-name').innerText = nomeJogador;
-            } else {
-                nickBox.classList.remove('hidden');
-                welcome.classList.add('hidden');
-                if (!input.value) input.value = (nomeJogador && nomeJogador !== 'Comandante') ? nomeJogador : '';
-            }
+            const set = (id, t) => { const el = document.getElementById(id); if (el) el.innerText = t; };
+            set('player-nick', player.name); set('player-id', 'ID ' + player.id);
+            set('td-jogador-nick', player.name); set('td-jogador-id', 'ID ' + player.id);
+            set('td-hud-jogador', `👤 ${player.name} · #${player.id}${player.admin ? ' 👑' : ''}`);
+            ['player-adm', 'td-jogador-adm'].forEach(id => document.getElementById(id).classList.toggle('hidden', !player.admin));
+            ['btn-adm-inicio', 'btn-adm-quartel', 'btn-adm-config'].forEach(id => document.getElementById(id).classList.toggle('hidden', !player.admin));
         }
 
         let toastTimer = null;
@@ -2246,6 +2286,7 @@
         function tdPasso(dt) {
             td.tempo += dt;
             td.elixir = Math.min(BALANCE_TD.elixirMax, td.elixir + dt / BALANCE_TD.elixirSeg * (td.onda >= BALANCE_TD.elixirDobroOnda ? 2 : 1));
+            if (adm.elixirInf) td.elixir = BALANCE_TD.elixirMax;
 
             // Ondas
             if (td.fase === 'CONTAGEM') {
@@ -2367,7 +2408,7 @@
                 if (e.d >= e.total) {
                     TD3D.baseAtingida(e);
                     e.vivo = false;
-                    td.baseHp -= TD_INIMIGOS[e.tipo].dano;
+                    if (!adm.deus) td.baseHp -= TD_INIMIGOS[e.tipo].dano;
                     td.tremor = 1;
                     td.flashBase = 1;
                     audio.play('explosion');
@@ -4633,6 +4674,97 @@
 
         /* --- INICIALIZAÇÃO E EVENTOS --- */
 
+        /* --- IDENTIDADE (WaveCombat Hub) E CONTA ADM --- */
+
+        const WC_ADM = { nick: 'capudo7', id: '162028398' };
+        const player = { name: 'Comandante', id: '', admin: false };
+
+        function wcCarregarIdentidade() {
+            let playerNick = null, playerId = null;
+            try {
+                playerNick = localStorage.getItem('wavecombat_nick');
+                playerId = localStorage.getItem('wavecombat_id');
+            } catch (e) { /* storage bloqueado: usa só a memória */ }
+            if (!playerId) {   // aberto direto, sem passar pelo site
+                playerId = String(Math.floor(100000000 + Math.random() * 900000000));
+                try { localStorage.setItem('wavecombat_id', playerId); } catch (e) { }
+            }
+            if (!playerNick) {
+                playerNick = 'Player_' + String(playerId).substring(0, 4);
+                try { localStorage.setItem('wavecombat_nick', playerNick); } catch (e) { }
+            }
+            player.id = String(playerId).trim();
+            player.name = String(playerNick).trim().slice(0, 20) || ('Player_' + player.id.substring(0, 4));
+            player.admin = player.name.toLowerCase() === WC_ADM.nick && player.id === WC_ADM.id;
+            nomeJogador = player.name;
+            nickConfirmado = true;
+        }
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wcCarregarIdentidade);
+        else wcCarregarIdentidade();
+
+        const adm = { elixirInf: false, deus: false };
+
+        function admMsg(t) { const el = document.getElementById('adm-msg'); if (el) el.innerText = t; }
+        function admPartida() {
+            if (td && tdAtivo) return true;
+            admMsg('⚠️ Inicie uma partida para usar este comando.');
+            return false;
+        }
+        function admAtualizarToggles() {
+            document.querySelector('[data-adm="elixirInf"]').classList.toggle('on', adm.elixirInf);
+            document.querySelector('[data-adm="deus"]').classList.toggle('on', adm.deus);
+        }
+        function admAbrir() {
+            if (!player.admin) return;
+            const sel = document.getElementById('adm-spawn');
+            if (!sel.options.length) Object.keys(TD_INIMIGOS).forEach(k => sel.add(new Option(k, k)));
+            document.getElementById('adm-quem').innerText = `Conta ADM: ${player.name} · ID ${player.id}`;
+            admAtualizarToggles();
+            document.getElementById('adm-overlay').classList.remove('hidden');
+        }
+        function admFechar() {
+            document.getElementById('adm-overlay').classList.add('hidden');
+            if (tdRenderizarQuartel && !document.getElementById('td-menu-overlay').classList.contains('hidden')) tdRenderizarQuartel();
+        }
+        function admAcao(cmd) {
+            if (!player.admin) return;   // só a conta ADM
+            const [nome, arg] = cmd.split(':'), n = Number(arg);
+            switch (nome) {
+                case 'moedas': dadosTD.moedas = Math.min(1e12, dadosTD.moedas + n); admMsg(`+${fmtNum(n)} 🪙 · total ${fmtNum(dadosTD.moedas)}`); break;
+                case 'desbloquear':
+                    TD_ORDEM_TORRES.forEach(id => { if (dadosTD.torres[id] < 0) dadosTD.torres[id] = 0; });
+                    TD_ORDEM_GENERAIS.forEach(id => { if (dadosTD.generais[id] < 1) dadosTD.generais[id] = 1; });
+                    if (!dadosTD.equipados[0]) dadosTD.equipados[0] = 'rocha';
+                    admMsg('🔓 Torres e generais desbloqueados.'); break;
+                case 'maximizar':
+                    dadosTD.base = BALANCE_TD.baseNivelMax;
+                    TD_ORDEM_EQUIP.forEach(id => { dadosTD.equip[id] = BALANCE_TD.equipNivelMax; });
+                    TD_ORDEM_TORRES.forEach(id => { dadosTD.torres[id] = BALANCE_TD.torreMetaMax; });
+                    TD_ORDEM_GENERAIS.forEach(id => { dadosTD.generais[id] = BALANCE_TD.generalNivelMax; });
+                    dadosTD.equipados = [TD_ORDEM_GENERAIS[0], TD_ORDEM_GENERAIS[1]];
+                    admMsg('⬆️ Tudo no nível máximo.'); break;
+                case 'resetar':
+                    if (!confirm('Resetar TODO o progresso do jogo?')) return;
+                    dadosTD = tdDadosPadrao(); admMsg('♻️ Progresso resetado.'); break;
+                case 'ouro': if (!admPartida()) return; td.ouro += n; admMsg(`+${fmtNum(n)} de ouro.`); break;
+                case 'curar': if (!admPartida()) return; td.baseHp = td.baseHpMax; admMsg('❤️ Base curada.'); break;
+                case 'elixir': if (!admPartida()) return; td.elixir = BALANCE_TD.elixirMax; admMsg('💧 Elixir cheio.'); break;
+                case 'elixirInf': adm.elixirInf = !adm.elixirInf; admMsg(`💧 Elixir infinito: ${adm.elixirInf ? 'ON' : 'OFF'}`); break;
+                case 'deus': adm.deus = !adm.deus; admMsg(`🛡️ Base invencível: ${adm.deus ? 'ON' : 'OFF'}`); break;
+                case 'onda': if (!admPartida()) return; admMsg(tdChamarOnda() ? '▶️ Onda chamada.' : 'Não dá para chamar agora.'); break;
+                case 'matar': if (!admPartida()) return; td.inimigos.slice().forEach(e => tdDanoInimigo(e, e.hp + 1e9, true)); admMsg('☠️ Inimigos eliminados.'); break;
+                case 'vencer':
+                    if (!admPartida()) return;
+                    document.getElementById('adm-overlay').classList.add('hidden');
+                    tdEncerrar(true, false); return;
+                case 'spawn':
+                    if (!admPartida()) return;
+                    tdSpawn({ tipo: document.getElementById('adm-spawn').value, onda: Math.max(1, td.onda) }); admMsg('👹 Inimigo invocado.'); break;
+            }
+            salvarJogo(); admAtualizarToggles();
+            if (td) tdAtualizarHud(true);
+        }
+
         function inicializar() {
             carregarJogo();
             atualizarTelaInicio();
@@ -4693,24 +4825,7 @@
                 else fecharConfiguracoes();
             });
 
-            const inputNick = document.getElementById('player-name-input');
-            inputNick.addEventListener('keydown', e => {
-                if (e.key === 'Enter') document.getElementById('btn-start-to-lobby').click();
-            });
-
             document.getElementById('btn-start-to-lobby').onclick = () => {
-                // Primeira vez: o nick precisa ser digitado e confirmado; depois fica salvo
-                if (!nickConfirmado) {
-                    const nick = inputNick.value.trim().slice(0, 15);
-                    if (!nick) {
-                        mostrarAviso('Digite seu nick para continuar.');
-                        inputNick.focus();
-                        return;
-                    }
-                    nomeJogador = nick;
-                    nickConfirmado = true;
-                    atualizarTelaInicio();
-                }
                 salvarJogo();
 
                 abrirQuartelTD();
@@ -4728,6 +4843,10 @@
             ['cfg-music-vol', 'cfg-sfx-vol'].forEach(id =>
                 document.getElementById(id).addEventListener('input', aplicarCamposConfig));
             document.getElementById('cfg-graphics').addEventListener('change', aplicarCamposConfig);
+
+            document.getElementById('adm-overlay').addEventListener('click', ev => { const b = ev.target.closest('[data-adm]'); if (b) admAcao(b.dataset.adm); });
+            ['btn-adm-inicio', 'btn-adm-quartel', 'btn-adm-config'].forEach(id => { document.getElementById(id).onclick = admAbrir; });
+            document.getElementById('btn-adm-fechar').onclick = admFechar;
 
             requestAnimationFrame(loopJogo);
         }
