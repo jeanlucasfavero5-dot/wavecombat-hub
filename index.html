@@ -329,7 +329,7 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.311 (Cloud & Nick Sync)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.312 (Cloud, Nick & 9-Digit ID Sync)</strong>
     </footer>
 
     <script>
@@ -350,15 +350,30 @@
         let painelAdmAberto = false;
         let siteConfigGlobal = { url: "", ativa: false, logo: "" };
 
+        // Função para garantir que o navegador sempre tenha um ID único de 9 dígitos e um Nick padrão se necessário
+        function inicializarIdentidadeLocal() {
+            if (!localStorage.getItem('wavecombat_id')) {
+                const idGerado = Math.floor(100000000 + Math.random() * 900000000).toString();
+                localStorage.setItem('wavecombat_id', idGerado);
+            }
+            if (!localStorage.getItem('wavecombat_nick')) {
+                localStorage.setItem('wavecombat_nick', 'Player_' + localStorage.getItem('wavecombat_id').substring(0, 4));
+            }
+        }
+
         function carregarSessaoSalva() {
+            inicializarIdentidadeLocal();
             try {
                 const sessaoSalva = localStorage.getItem('wavecombat_sessao_ativa');
                 if(sessaoSalva) {
                     usuarioLogado = JSON.parse(sessaoSalva);
                     document.getElementById('btnAuthNav').textContent = usuarioLogado.nick;
                     
-                    // Sincroniza o nick automaticamente no localStorage para os jogos lerem
+                    // Sincroniza dados no localStorage para os jogos lerem
                     localStorage.setItem('wavecombat_nick', usuarioLogado.nick);
+                    if (!localStorage.getItem('wavecombat_id')) {
+                        localStorage.setItem('wavecombat_id', Math.floor(100000000 + Math.random() * 900000000).toString());
+                    }
 
                     if(usuarioLogado.isAdm) {
                         document.getElementById('btnToggleAdmNav').style.display = 'inline-block';
@@ -401,14 +416,19 @@
                 alert("Este nick já existe! Escolha outro.");
                 return;
             }
-            users.push({ nick: u, pass: p });
+            
+            // Gera ID exclusivo de 9 dígitos para o novo usuário
+            const novoId = Math.floor(100000000 + Math.random() * 900000000).toString();
+
+            users.push({ nick: u, pass: p, id: novoId });
             localStorage.setItem('wavecombat_users', JSON.stringify(users));
             
-            usuarioLogado = { nick: u, isAdm: false };
+            usuarioLogado = { nick: u, isAdm: false, id: novoId };
             localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
-            localStorage.setItem('wavecombat_nick', u); // Sincroniza para os jogos
+            localStorage.setItem('wavecombat_nick', u);
+            localStorage.setItem('wavecombat_id', novoId);
             
-            alert("Conta criada com sucesso! Você já está logado.");
+            alert("Conta criada com sucesso! ID de 9 dígitos gerado e sincronizado.");
             document.getElementById('btnAuthNav').textContent = u;
             fecharModalAuth();
             atualizarPerfilUI();
@@ -420,9 +440,11 @@
             const p = document.getElementById('loginPass').value;
             
             if (u.toLowerCase() === 'capudo7' && p === '262026') {
-                usuarioLogado = { nick: 'capudo7', isAdm: true };
+                const admId = '999999999';
+                usuarioLogado = { nick: 'capudo7', isAdm: true, id: admId };
                 localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
-                localStorage.setItem('wavecombat_nick', 'capudo7'); // Sincroniza para os jogos
+                localStorage.setItem('wavecombat_nick', 'capudo7');
+                localStorage.setItem('wavecombat_id', admId);
                 alert('Acesso ADM Concedido!');
                 document.getElementById('btnToggleAdmNav').style.display = 'inline-block';
                 document.getElementById('btnAuthNav').textContent = 'capudo7';
@@ -434,9 +456,11 @@
             let users = obterUsuariosCadastrados();
             let achou = users.find(x => x.nick.toLowerCase() === u.toLowerCase() && x.pass === p);
             if(achou) {
-                usuarioLogado = { nick: achou.nick, isAdm: false };
+                if(!achou.id) achou.id = Math.floor(100000000 + Math.random() * 900000000).toString(); // Garante ID se for conta antiga
+                usuarioLogado = { nick: achou.nick, isAdm: false, id: achou.id };
                 localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
-                localStorage.setItem('wavecombat_nick', achou.nick); // Sincroniza para os jogos
+                localStorage.setItem('wavecombat_nick', achou.nick);
+                localStorage.setItem('wavecombat_id', achou.id);
                 alert(`Bem-vindo de volta, ${achou.nick}!`);
                 document.getElementById('btnAuthNav').textContent = achou.nick;
                 fecharModalAuth();
@@ -448,26 +472,30 @@
 
         function atualizarPerfilUI() {
             const perfilDiv = document.getElementById('perfilUserData');
-            const nickAtual = localStorage.getItem('wavecombat_nick') || (usuarioLogado ? usuarioLogado.nick : '');
+            const nickAtual = localStorage.getItem('wavecombat_nick') || '';
+            const idAtual = localStorage.getItem('wavecombat_id') || '';
 
             if(usuarioLogado) {
                 perfilDiv.innerHTML = `
-                    <div style="text-align:center; display:flex; flex-direction:column; gap:10px;">
-                        <h4 style="color:var(--accent-color); font-family:'Orbitron';">Logado como: ${usuarioLogado.nick}</h4>
+                    <div style="text-align:center; display:flex; flex-direction:column; gap:8px;">
+                        <h4 style="color:var(--accent-color); font-family:'Orbitron';">Logado: ${usuarioLogado.nick}</h4>
+                        <p style="font-size:11px; color:var(--gold-warning); font-family:'Orbitron';">ID Único (9 Dígitos): <strong>${idAtual}</strong></p>
                         <div style="text-align:left;">
-                            <label style="font-size:11px; color:#94a3b8;">Seu Nick Atual nos Jogos:</label>
+                            <label style="font-size:11px; color:#94a3b8;">Editar Nick nos Jogos:</label>
                             <input type="text" id="inputHubNickEdit" value="${nickAtual}" class="auth-input" oninput="salvarNickManualSite(this.value)">
                         </div>
-                        <p style="font-size:11px; color:#22c55e;">✔ Sincronizado automaticamente com os jogos!</p>
+                        <p style="font-size:11px; color:#22c55e;">✔ Nick e ID sincronizados com os jogos!</p>
                         <button class="btn-gaming btn-danger" onclick="fazerLogout()" style="padding:6px 15px; font-size:11px; margin-top:5px;">Sair da Conta</button>
                     </div>
                 `;
             } else {
                 perfilDiv.innerHTML = `
-                    <div style="display:flex; flex-direction:column; gap:10px;">
-                        <h4 style="color:var(--accent-color); font-family:'Orbitron'; text-align:center; font-size:13px;">Definir Nick para os Jogos</h4>
+                    <div style="display:flex; flex-direction:column; gap:8px;">
+                        <h4 style="color:var(--accent-color); font-family:'Orbitron'; text-align:center; font-size:13px;">Identidade do Jogador</h4>
+                        <p style="font-size:11px; color:var(--gold-warning); font-family:'Orbitron'; text-align:center;">Seu ID (9 Dígitos): <strong>${idAtual}</strong></p>
+                        <label style="font-size:11px; color:#94a3b8;">Nick nos Jogos:</label>
                         <input type="text" id="inputHubNickEdit" value="${nickAtual}" placeholder="Digite seu nick..." class="auth-input" oninput="salvarNickManualSite(this.value)">
-                        <p style="font-size:11px; color:#94a3b8; text-align:center;">Faça login ou digite o nick acima para os jogos puxarem sozinhos.</p>
+                        <p style="font-size:11px; color:#94a3b8; text-align:center;">Esses dados são puxados automaticamente pelos jogos.</p>
                     </div>
                 `;
             }
@@ -483,10 +511,15 @@
         function fazerLogout() {
             usuarioLogado = null;
             localStorage.removeItem('wavecombat_sessao_ativa');
+            // Mantém o ID e gera um novo nick aleatório se deslogar
+            const novoId = Math.floor(100000000 + Math.random() * 900000000).toString();
+            localStorage.setItem('wavecombat_id', novoId);
+            localStorage.setItem('wavecombat_nick', 'Player_' + novoId.substring(0, 4));
+
             document.getElementById('btnAuthNav').textContent = 'Entrar';
             document.getElementById('btnToggleAdmNav').style.display = 'none';
             document.getElementById('adminSection').style.display = 'none';
-            alert('Você saiu da conta.');
+            alert('Você saiu da conta. Uma nova identidade local foi gerada.');
             atualizarPerfilUI();
         }
 
@@ -599,10 +632,9 @@
         }
 
         async function tentarExecutarJogo(jogo) {
-            if(!usuarioLogado) {
-                abrirModalAuth(true);
-                return;
-            }
+            // Garante identidade antes de abrir o jogo
+            inicializarIdentidadeLocal();
+
             try {
                 await supabaseClient.from('jogos').update({ acessos: (jogo.acessos || 0) + 1 }).eq('id', jogo.id);
             } catch(e){}
