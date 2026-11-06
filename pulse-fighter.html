@@ -122,6 +122,55 @@ select.df{width:100%;padding:7px;border-radius:8px;background:#1b0b3a;color:#fff
   .accw{padding:5px 10px 5px 5px}.avatar{width:38px;height:38px;font-size:18px}.modes{top:68px}
   .mc{padding:12px}.mc p{display:none}.logo{animation:none}
 }
+/* ===== ARENA ===== */
+#stage{background:#000}
+#arena{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+.hud{position:absolute;left:0;right:0;top:0;display:flex;justify-content:center;align-items:flex-start;gap:10px;padding:10px 70px 0 14px;pointer-events:none;z-index:3}
+.hs{flex:1;max-width:520px;min-width:0}
+.hs .nm{font:900 clamp(13px,2.6vmin,20px) Impact,'Arial Black',sans-serif;letter-spacing:.1em;text-shadow:0 2px 0 #000;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hs.r .nm{text-align:right}
+.hpbar{position:relative;height:clamp(16px,3.4vmin,28px);background:#14061f;border:2px solid #fff;transform:skewX(-18deg);overflow:hidden;box-shadow:0 0 12px rgba(0,0,0,.7)}
+.hs.r .hpbar{transform:skewX(18deg)}
+.hpfill,.hpghost{position:absolute;top:0;bottom:0;width:100%}
+.hs.l .hpfill,.hs.l .hpghost{right:0}
+.hs.r .hpfill,.hs.r .hpghost{left:0}
+.hpghost{background:#ffcf3a;transition:width .6s ease .35s}
+.hpfill{background:linear-gradient(180deg,#8dff6a,#1fbf3a 55%,#0a7a2a);transition:width .1s}
+.hpfill.mid{background:linear-gradient(180deg,#fff27a,#ffb300 55%,#b36b00)}
+.hpfill.low{background:linear-gradient(180deg,#ff8a8a,#ff2d3a 55%,#8a0a14);animation:lowp .35s infinite alternate}
+@keyframes lowp{to{filter:brightness(1.6)}}
+.spbar{height:9px;margin-top:5px;background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.6);transform:skewX(-18deg);overflow:hidden}
+.hs.r .spbar{transform:skewX(18deg)}
+.spfill{height:100%;width:0;background:linear-gradient(90deg,#19e3ff,#7a5cff)}
+.hs.r .spfill{margin-left:auto}
+.spbar.full .spfill{background:linear-gradient(90deg,#ffcf3a,#ff2d7a);animation:lowp .25s infinite alternate}
+.rd{display:flex;gap:5px;margin-top:5px;height:14px}
+.hs.r .rd{justify-content:flex-end}
+.rd i{width:12px;height:12px;border-radius:50%;border:2px solid #fff;background:rgba(0,0,0,.4)}
+.rd i.w{background:var(--gd);box-shadow:0 0 8px var(--gd)}
+.tmr{width:clamp(70px,14vmin,110px);text-align:center;flex:none}
+#timer{font:900 clamp(30px,8vmin,56px) Impact,'Arial Black',sans-serif;text-shadow:0 0 14px #ff2d7a,0 3px 0 #000;line-height:1}
+#rnd{font-size:11px;font-weight:800;letter-spacing:.2em;opacity:.85}
+.pbtn{position:absolute;right:12px;top:12px;width:44px;height:44px;border-radius:12px;background:rgba(20,8,48,.8);border:1px solid var(--cy);font-size:18px;z-index:5}
+.banner{position:absolute;left:0;right:0;top:30%;text-align:center;font:900 clamp(44px,14vmin,130px) Impact,'Arial Black',sans-serif;font-style:italic;letter-spacing:.06em;color:#fff;text-shadow:0 0 30px var(--pk),0 6px 0 #5b0a2e;pointer-events:none;opacity:0;z-index:4}
+.banner.show{animation:bn 1.1s ease both}
+.banner.stay{animation:bn2 .3s ease both}
+@keyframes bn{0%{opacity:0;transform:scale(2.6)}20%{opacity:1;transform:scale(1)}80%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.9)}}
+@keyframes bn2{0%{opacity:0;transform:scale(2.6)}100%{opacity:1;transform:scale(1)}}
+.touch{position:absolute;left:0;right:0;bottom:0;height:50%;display:none;pointer-events:none;z-index:4}
+.touch.on{display:block}
+.tb{position:absolute;pointer-events:auto;width:64px;height:64px;border-radius:50%;background:rgba(20,8,48,.55);border:2px solid rgba(255,255,255,.5);display:grid;place-items:center;font-size:24px;touch-action:none;backdrop-filter:blur(3px)}
+.tb.big{width:78px;height:78px;font-size:30px}
+.tb.dn{background:rgba(255,45,122,.65);transform:scale(.92)}
+.dpad{position:absolute;left:14px;bottom:14px;width:204px;height:204px;transform-origin:left bottom}
+.dpad .tb{width:68px;height:68px}
+.acts{position:absolute;right:14px;bottom:14px;width:240px;height:200px;transform-origin:right bottom}
+.ov{position:absolute;inset:0;z-index:10;display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px;background:rgba(3,1,10,.72);backdrop-filter:blur(4px)}
+.ov.on{display:flex}
+.ov h2{font:900 clamp(28px,8vmin,60px) Impact,'Arial Black',sans-serif;letter-spacing:.08em;text-shadow:0 0 20px var(--pk)}
+.ov .btn{min-width:230px}
+.keys{position:absolute;left:0;right:0;bottom:6px;text-align:center;font-size:11px;opacity:.7;letter-spacing:.06em;text-shadow:0 0 4px #000;pointer-events:none;z-index:3}
+@media (max-height:520px){.dpad,.acts{transform:scale(.76)}.hud{padding-top:6px}}
 </style>
 </head>
 <body>
@@ -209,6 +258,36 @@ select.df{width:100%;padding:7px;border-radius:8px;background:#1b0b3a;color:#fff
     <div id="adm" class="adm" hidden></div>
     <button class="btn" onclick="closeSettings()">◀ VOLTAR</button>
   </div>
+</div>
+
+<!-- ARENA DE COMBATE -->
+<div id="stage" class="screen">
+  <canvas id="arena"></canvas>
+  <div class="hud">
+    <div class="hs l"><div class="nm" id="hn1"></div><div class="hpbar"><div class="hpghost" id="hg1"></div><div class="hpfill" id="hp1"></div></div><div class="spbar" id="spb1"><div class="spfill" id="sp1"></div></div><div class="rd" id="rd1"></div></div>
+    <div class="tmr"><div id="timer">99</div><div id="rnd">ROUND 1</div></div>
+    <div class="hs r"><div class="nm" id="hn2"></div><div class="hpbar"><div class="hpghost" id="hg2"></div><div class="hpfill" id="hp2"></div></div><div class="spbar" id="spb2"><div class="spfill" id="sp2"></div></div><div class="rd" id="rd2"></div></div>
+  </div>
+  <button class="pbtn" onclick="arenaPause(true)">⏸</button>
+  <div class="banner" id="banner"></div>
+  <div class="touch" id="touch">
+    <div class="dpad">
+      <button class="tb" data-k="u" style="left:68px;top:0">▲</button>
+      <button class="tb" data-k="l" style="left:0;top:68px">◀</button>
+      <button class="tb" data-k="r" style="left:136px;top:68px">▶</button>
+      <button class="tb" data-k="d" style="left:68px;top:136px">▼</button>
+    </div>
+    <div class="acts">
+      <button class="tb" data-k="dash" style="left:6px;top:14px">⚡</button>
+      <button class="tb" data-k="roll" style="left:84px;top:0">🌀</button>
+      <button class="tb" data-k="guard" style="left:162px;top:14px">🛡️</button>
+      <button class="tb big" data-k="kick" style="left:36px;top:104px">🦶</button>
+      <button class="tb big" data-k="punch" style="left:126px;top:96px">👊</button>
+    </div>
+  </div>
+  <div class="keys" id="keys">A/D mover · W pular (2x) · S agachar · J soco · K chute · L/Shift dash · Espaço rolar · G defesa · P pausa · toque duplo ◀▶ = dash</div>
+  <div class="ov" id="pause"><h2>PAUSADO</h2><button class="btn" onclick="arenaPause(false)">▶ CONTINUAR</button><button class="btn alt" onclick="arenaRestart()">↻ REINICIAR</button><button class="btn" onclick="arenaExit()">⌂ LOBBY</button></div>
+  <div class="ov" id="endm"><h2 id="endt"></h2><button class="btn" onclick="arenaRestart()">↻ REVANCHE</button><button class="btn alt" onclick="arenaExit()">⌂ LOBBY</button></div>
 </div>
 
 <!-- PAINEL GENÉRICO -->
@@ -317,7 +396,8 @@ function playMode(m){
   sfx('confirm');
   if(m==='online') toast('🌐 Batalha Online — disponível na Etapa 5');
   else if(m==='camp') toast('🥋 Campanha Offline — disponível na Etapa 4');
-  else toast(`⚔️ Batalha ${sel.fmt} (${sel.diff}) — arena na Etapa 2`);
+  else if(sel.fmt==='2v2') toast('⚔️ 2v2 — disponível na Etapa 4');
+  else startBattle();
 }
 
 /* ================= LOJA / PASSE / CLÃ / PERFIL ================= */
@@ -461,8 +541,13 @@ function playStep(t,n){
   if(s%2===0) noiseHit(t,.05,7000,.1,'highpass');
   if([0,3,6,8,11,14].includes(s)) tone(t,root*((s===6||s===14)?2:1),.2,'sawtooth',.2,muG,420);
   if(s%2===0) tone(t,root*8*CH[bar][(s/2)%4],.18,'square',.045,muG,2400);
+  if(window.BTL){
+    if(s%4===2) noiseHit(t,.05,9000,.12,'highpass');
+    if(s%2===1) tone(t,root*16*CH[bar][(s>>1)%4],.1,'square',.025,muG,3000);
+    if(s===15&&bar%2===1) noiseHit(t,.2,2500,.3,'highpass');
+  }
 }
-function schedMusic(){ while(nextT<AC.currentTime+.25){ playStep(nextT,stepN); nextT+=60/120/4; stepN=(stepN+1)%64; } }
+function schedMusic(){ while(nextT<AC.currentTime+.25){ playStep(nextT,stepN); nextT+=60/(window.BPM||120)/4; stepN=(stepN+1)%64; } }
 function playMenuFightTheme(){
   initAudio(); if(musicOn) return;
   musicOn=true; nextT=AC.currentTime+.1; musicStart=nextT; stepN=0;
@@ -475,6 +560,11 @@ function sfx(n){
   else if(n==='confirm'){ tone(t,520,.1,'square',.14,sfG); tone(t+.08,780,.16,'square',.14,sfG); }
   else if(n==='err') tone(t,160,.22,'sawtooth',.2,sfG,800);
   else if(n==='hit'){ noiseHit(t,.15,900,.5,'lowpass',sfG); tone(t,90,.15,'sine',.4,sfG); }
+  else if(n==='whoosh') noiseHit(t,.12,1800,.14,'bandpass',sfG);
+  else if(n==='dash'){ noiseHit(t,.18,1200,.18,'bandpass',sfG); tone(t,200,.12,'sawtooth',.06,sfG,900); }
+  else if(n==='jump') tone(t,300,.12,'triangle',.12,sfG);
+  else if(n==='block'){ tone(t,240,.08,'square',.16,sfG,1200); noiseHit(t,.08,3000,.3,'highpass',sfG); }
+  else if(n==='ko'){ noiseHit(t,.5,500,.6,'lowpass',sfG); tone(t,70,.5,'sine',.6,sfG); }
 }
 document.addEventListener('visibilitychange',()=>{ if(!AC) return; document.hidden?AC.suspend():AC.resume(); });
 
@@ -550,6 +640,7 @@ function fighter(x,y,s,dir,t,col,ph,refl){
 let last=0,tt=1;
 function frame(ts){
   requestAnimationFrame(frame);
+  if(sceneMode==='stage') return;
   const t=ts/1000,dt=Math.min(.05,(t-last)||.016);last=t;
   const hy=H*.66,sx=W/2;
   tt+=((sceneMode==='title'?1:0)-tt)*.08;
