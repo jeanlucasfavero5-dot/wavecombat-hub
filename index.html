@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>WaveCombat | Modern Gaming Hub</title>
+    <title>WaveCombat Hub</title>
     
-    <!-- Meta Tags para PWA (Manifesto Físico para Instalação Correta) -->
+    <!-- Meta Tags para PWA -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#00f0ff">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -386,35 +386,35 @@
             <div class="panel-card" style="text-align: center; border: 1px solid var(--steel-border);">
                 <h4 style="font-family: 'Orbitron'; color: var(--accent-color);">110 💎</h4>
                 <p style="font-size: 10px; color: #22c55e;">+10% Bônus Incluído</p>
-                <p style="font-size: 14px; color: var(--gold-warning); font-weight: bold; margin: 8px 0;">R$ 3,00</p>
+                <p style="font-size: 14px; color: var(--gold-warning); font-weight: bold; margin: 8px 0;">R\$ 3,00</p>
                 <button class="btn-gaming" onclick="gerarPixMercadoPago(3.00, 110)" style="width: 100%; font-size: 11px; padding: 8px;">Comprar Pix</button>
             </div>
 
             <div class="panel-card" style="text-align: center; border: 1px solid var(--steel-border);">
                 <h4 style="font-family: 'Orbitron'; color: var(--accent-color);">330 💎</h4>
                 <p style="font-size: 10px; color: #22c55e;">+10% Bônus Incluído</p>
-                <p style="font-size: 14px; color: var(--gold-warning); font-weight: bold; margin: 8px 0;">R$ 6,00</p>
+                <p style="font-size: 14px; color: var(--gold-warning); font-weight: bold; margin: 8px 0;">R\$ 6,00</p>
                 <button class="btn-gaming" onclick="gerarPixMercadoPago(6.00, 330)" style="width: 100%; font-size: 11px; padding: 8px;">Comprar Pix</button>
             </div>
 
             <div class="panel-card" style="text-align: center; border: 1px solid var(--steel-border);">
                 <h4 style="font-family: 'Orbitron'; color: var(--accent-color);">660 💎</h4>
                 <p style="font-size: 10px; color: #22c55e;">+10% Bônus Incluído</p>
-                <p style="font-size: 14px; color: var(--gold-warning); font-weight: bold; margin: 8px 0;">R$ 9,00</p>
+                <p style="font-size: 14px; color: var(--gold-warning); font-weight: bold; margin: 8px 0;">R\$ 9,00</p>
                 <button class="btn-gaming" onclick="gerarPixMercadoPago(9.00, 660)" style="width: 100%; font-size: 11px; padding: 8px;">Comprar Pix</button>
             </div>
 
             <div class="panel-card" style="text-align: center; border: 1px solid var(--steel-border);">
                 <h4 style="font-family: 'Orbitron'; color: var(--accent-color);">1.320 💎</h4>
                 <p style="font-size: 10px; color: #22c55e;">+10% Bônus Incluído</p>
-                <p style="font-size: 14px; color: var(--gold-warning); font-weight: bold; margin: 8px 0;">R$ 18,00</p>
+                <p style="font-size: 14px; color: var(--gold-warning); font-weight: bold; margin: 8px 0;">R\$ 18,00</p>
                 <button class="btn-gaming" onclick="gerarPixMercadoPago(18.00, 1320)" style="width: 100%; font-size: 11px; padding: 8px;">Comprar Pix</button>
             </div>
 
             <div class="panel-card" style="text-align: center; border: 1px solid var(--steel-border);">
                 <h4 style="font-family: 'Orbitron'; color: var(--accent-color);">3.960 💎</h4>
                 <p style="font-size: 10px; color: #22c55e;">+10% Bônus Incluído</p>
-                <p style="font-size: 14px; color: var(--gold-warning); font-weight: bold; margin: 8px 0;">R$ 32,00</p>
+                <p style="font-size: 14px; color: var(--gold-warning); font-weight: bold; margin: 8px 0;">R\$ 32,00</p>
                 <button class="btn-gaming" onclick="gerarPixMercadoPago(32.00, 3960)" style="width: 100%; font-size: 11px; padding: 8px;">Comprar Pix</button>
             </div>
         </div>
@@ -525,7 +525,7 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.347 (PWA Manifest Fix & Auto-Pause)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.349 (Complete & Fixed)</strong>
     </footer>
 
     <script>
@@ -1380,8 +1380,8 @@
                 const item = document.createElement('div');
                 item.className = 'game-list-card';
                 item.innerHTML = `
-                    <img src="${thumb}" class="game-list-thumb" alt="${jogo.nome}" onclick="tentarExecutarJogo(${JSON.stringify(jogo).replace(/"/g, '&quot;')}); tocarSomClique();">
-                    <div class="game-list-info" onclick="tentarExecutarJogo(${JSON.stringify(jogo).replace(/"/g, '&quot;')}); tocarSomClique();">
+                    <img src="${thumb}" class="game-list-thumb" alt="${jogo.nome}" onclick="tentarExecutarJogo(${JSON.stringify(destaque).replace(/"/g, '&quot;')}); tocarSomClique();">
+                    <div class="game-list-info" onclick="tentarExecutarJogo(${JSON.stringify(destaque).replace(/"/g, '&quot;')}); tocarSomClique();">
                         <h4>${jogo.nome}</h4>
                         <p>${jogo.desc}</p>
                     </div>
@@ -1390,100 +1390,4 @@
                 listContainer.appendChild(item);
             });
 
-            if(painelAdmAberto) renderizarJogosAdmin();
-        }
-
-        function renderizarJogosAdmin() {
-            const container = document.getElementById('adminListaJogos');
-            if(!container) return;
-            container.innerHTML = '';
-            
-            listaJogosCache.forEach((jogo) => {
-                const item = document.createElement('div');
-                item.className = 'admin-game-item';
-                item.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:5px;">
-                        <span style="color:var(--accent-color); font-weight:bold; font-size:12px;">${jogo.nome} (${jogo.acessos || 0})</span>
-                        <div style="display:flex; gap:4px;">
-                            <button type="button" class="btn-gaming" onclick="tentarExecutarJogo(${JSON.stringify(jogo).replace(/"/g, '&quot;')}); tocarSomClique();" style="font-size:9px; padding:3px 6px;">🎮 Testar</button>
-                            <button type="button" class="btn-gaming ${jogo.publicado ? 'btn-danger' : 'btn-success'}" onclick="togglePublicarJogo('${jogo.id}')" style="font-size:9px; padding:3px 6px;">
-                                ${jogo.publicado ? '👁️ Ocultar' : '🚀 Publicar'}
-                            </button>
-                            <button type="button" class="btn-gaming" onclick="fixarDestaqueAdm('${jogo.id}')" style="font-size:9px; padding:3px 6px; background:${jogo.destaque_manual?'var(--gold-warning)':'var(--steel-bright)'}; color:${jogo.destaque_manual?'#000':'#fff'};">
-                                ${jogo.destaque_manual ? '★ Fixado' : '☆ Destaque'}
-                            </button>
-                        </div>
-                    </div>
-                    <label class="file-upload-label">Título: <input type="text" value="${jogo.nome}" id="editNome_${jogo.id}" class="auth-input"></label>
-                    <label class="file-upload-label">Gênero: 
-                        <select id="editCat_${jogo.id}" class="auth-input">
-                            <option value="Arcade" ${jogo.categoria==='Arcade'?'selected':''}>Arcade</option>
-                            <option value="Estratégia" ${jogo.categoria==='Estratégia'?'selected':''}>Estratégia</option>
-                            <option value="Multiplayer" ${jogo.categoria==='Multiplayer'?'selected':''}>Multiplayer</option>
-                        </select>
-                    </label>
-                    <label class="file-upload-label">Descrição: <textarea id="editDesc_${jogo.id}" class="auth-input" style="height:35px;">${jogo.desc}</textarea></label>
-                    <label class="file-upload-label">Caminho do Ficheiro: <input type="text" value="${jogo.arquivo}" id="editArq_${jogo.id}" class="auth-input"></label>
-                    <label class="file-upload-label">🖼️ Alterar Capa (Upload Supabase): <input type="file" id="editImgFile_${jogo.id}" accept="image/*"></label>
-                    <button type="button" class="btn-gaming" onclick="salvarEdicaoJogoAdm('${jogo.id}')" style="font-size:10px; padding:5px; margin-top:3px;">💾 Guardar na Nuvem</button>
-                `;
-                container.appendChild(item);
-            });
-        }
-
-        async function togglePublicarJogo(id) {
-            let j = listaJogosCache.find(x => x.id === id);
-            if(j) {
-                const novoEstado = !j.publicado;
-                await supabaseClient.from('jogos').update({ publicado: novoEstado }).eq('id', id);
-                await buscarDadosNuvem();
-            }
-        }
-
-        async function fixarDestaqueAdm(id) {
-            for(let j of listaJogosCache) {
-                await supabaseClient.from('jogos').update({ destaque_manual: (j.id === id) }).eq('id', j.id);
-            }
-            await buscarDadosNuvem();
-        }
-
-        async function salvarEdicaoJogoAdm(id) {
-            let idx = listaJogosCache.findIndex(j => j.id === id);
-            if (idx !== -1) {
-                const nome = document.getElementById(`editNome_${id}`).value;
-                const categoria = document.getElementById(`editCat_${id}`).value;
-                const desc = document.getElementById(`editDesc_${id}`).value;
-                const arquivo = document.getElementById(`editArq_${id}`).value;
-                let imgUrl = listaJogosCache[idx].img;
-
-                const imgInput = document.getElementById(`editImgFile_${id}`)?.files[0];
-                if(imgInput) {
-                    const fileName = `capa_${Date.now()}_${imgInput.name}`;
-                    const { error } = await supabaseClient.storage.from('capas').upload(fileName, imgInput);
-                    if(!error) {
-                        imgUrl = `${SUPABASE_URL}/storage/v1/object/public/capas/${fileName}`;
-                    } else {
-                        alert("Erro no upload da imagem.");
-                    }
-                }
-
-                const { error } = await supabaseClient.from('jogos').update({
-                    nome, categoria, desc, arquivo, img: imgUrl
-                }).eq('id', id);
-
-                if(!error) {
-                    mostrarToast("💾 Jogo atualizado com sucesso!");
-                    await buscarDadosNuvem();
-                } else {
-                    alert("Erro ao atualizar jogo.");
-                }
-            }
-        }
-
-        gerarParticulasFundo();
-        carregarSessaoSalva();
-        buscarDadosNuvem();
-        carregarMensagensChat();
-    </script>
-</body>
-</html>
+            if(painelAdmAberto) renderizarJog
