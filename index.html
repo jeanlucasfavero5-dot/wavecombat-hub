@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>WaveCombat | Modern Gaming Hub</title>
     
-    <!-- Meta Tags para PWA (Aplicativo Mobile com Ícone e Rotação Corrigidos) -->
-    <link rel="manifest" id="manifest-placeholder">
+    <!-- Meta Tags para PWA (Manifesto Físico para Instalação Correta) -->
+    <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#00f0ff">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -525,35 +525,10 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.346 (Arcade BGM, PWA Icon & Auto-Pause)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.347 (PWA Manifest Fix & Auto-Pause)</strong>
     </footer>
 
     <script>
-        // CONFIGURAÇÃO DO MANIFEST PWA DINÂMICO (ÍCONE CONTROLADOR E ORIENTAÇÃO ANY)
-        const manifestData = {
-            "name": "WaveCombat Hub",
-            "short_name": "WaveCombat",
-            "start_url": "./",
-            "display": "standalone",
-            "orientation": "any",
-            "background_color": "#0b0f17",
-            "theme_color": "#00f0ff",
-            "icons": [
-                {
-                    "src": "https://img.icons8.com/game-controller/192/00f0ff/controller.png",
-                    "sizes": "192x192",
-                    "type": "image/png"
-                },
-                {
-                    "src": "https://img.icons8.com/game-controller/512/00f0ff/controller.png",
-                    "sizes": "512x512",
-                    "type": "image/png"
-                }
-            ]
-        };
-        const manifestBlob = new Blob([JSON.stringify(manifestData)], { type: 'application/json' });
-        document.getElementById('manifest-placeholder').setAttribute('href', URL.createObjectURL(manifestBlob));
-
         const SUPABASE_URL = "https://ipqjeacdfiomcxfuixdj.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_EWW84q_43YbOvMwB_Rua-A_X465PbLP";
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -638,7 +613,7 @@
                     deferredPrompt = null;
                 });
             } else {
-                alert("Para instalar no telemóvel:\n\nNo Android: Toque nos 3 pontos do navegador e selecione 'Adicionar ao ecrã principal' ou 'Instalar aplicação'.\n\nNo iPhone (Safari): Toque no botão de Partilha e selecione 'Adicionar ao ecrã principal'.");
+                alert("Para instalar no telemóvel:\n\n1. Toque nos 3 pontos do navegador (canto superior direito).\n2. Selecione 'Adicionar ao ecrã principal' ou 'Instalar aplicação'.");
             }
         }
 
@@ -1216,7 +1191,6 @@
             inicializarIdentidadeLocal();
             registrarHistoricoJogo(jogo.nome);
 
-            // Pausar música BGM automaticamente ao abrir o jogo
             if (bgmActive) {
                 if (bgmInterval) clearInterval(bgmInterval);
                 bgmActive = false;
@@ -1224,7 +1198,6 @@
                 if(checkBGM) checkBGM.checked = false;
             }
 
-            // Destravar orientação de tela para mobile
             if (screen.orientation && screen.orientation.unlock) {
                 try { screen.orientation.unlock(); } catch(e) {}
             }
@@ -1289,7 +1262,6 @@
                 box.style.display = 'block';
                 iframe.src = converterUrlYoutubeParaEmbed(siteConfigGlobal.url);
                 
-                // Pausar BGM se a live estiver ativa/visível para evitar conflito de áudio
                 if (bgmActive) {
                     if (bgmInterval) clearInterval(bgmInterval);
                     bgmActive = false;
