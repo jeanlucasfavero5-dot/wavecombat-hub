@@ -470,6 +470,14 @@
                             <input type="checkbox" id="checkAudioSFX" checked onchange="toggleAudioSFX(this.checked)">
                         </label>
                         <label style="display:flex; justify-content:space-between; align-items:center;">
+                            Música Tema Arcade (BGM):
+                            <input type="checkbox" id="checkBGM" onchange="toggleBGM(this.checked)">
+                        </label>
+                        <label style="display:flex; flex-direction:column; gap:4px;">
+                            Volume da Música:
+                            <input type="range" id="rangeBGMVolume" min="0" max="100" value="30" oninput="setBGMVolume(this.value)">
+                        </label>
+                        <label style="display:flex; justify-content:space-between; align-items:center;">
                             Tema OLED (Preto Absoluto):
                             <input type="checkbox" id="checkThemeOLED" onchange="toggleThemeOLED(this.checked)">
                         </label>
@@ -517,7 +525,7 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.344 (Polling Pix & PWA Mobile Fix)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.345 (Arcade BGM Synthesizer & Polling Pix)</strong>
     </footer>
 
     <script>
@@ -540,6 +548,52 @@
         let painelAdmAberto = false;
         let siteConfigGlobal = { url: "", ativa: false, logo: "" };
         let audioSfxAtivo = true;
+
+        // GERADOR DE MÚSICA TEMA ARCADE (BGM)
+        let bgmInterval = null;
+        let bgmActive = false;
+        let bgmVolumeValue = 0.3;
+        const arcadeNotes = [261.63, 329.63, 392.00, 523.25, 493.88, 392.00, 329.63, 293.66, 349.23, 440.00]; // Melodia retro em loop
+        let noteIndex = 0;
+
+        function playBGMNote() {
+            if (!bgmActive) return;
+            try {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'square'; // Som clássico chiptune de arcade
+                osc.frequency.setValueAtTime(arcadeNotes[noteIndex], audioCtx.currentTime);
+                
+                gain.gain.setValueAtTime(bgmVolumeValue * 0.04, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.16);
+                
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.16);
+                
+                noteIndex = (noteIndex + 1) % arcadeNotes.length;
+            } catch(e) {}
+        }
+
+        function toggleBGM(ativo) {
+            bgmActive = ativo;
+            if (bgmActive) {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                if (bgmInterval) clearInterval(bgmInterval);
+                bgmInterval = setInterval(playBGMNote, 180); // Ritmo constante estilo jogo arcade antigo
+                mostrarToast("🎵 Música tema arcade ativada!");
+            } else {
+                if (bgmInterval) clearInterval(bgmInterval);
+                mostrarToast("🔇 Música tema arcade desativada.");
+            }
+        }
+
+        function setBGMVolume(val) {
+            bgmVolumeValue = val / 100;
+        }
 
         let deferredPrompt = null;
         window.addEventListener('beforeinstallprompt', (e) => {
@@ -776,7 +830,6 @@
                     document.getElementById('pixModal').style.display = 'flex';
                     mostrarToast("✅ Pix gerado com sucesso! Aguardando pagamento...");
 
-                    // SISTEMA DE POLLING: Verifica a cada 3 segundos se o saldo aumentou
                     if (pixIntervalCheck) clearInterval(pixIntervalCheck);
                     pixIntervalCheck = setInterval(async () => {
                         const { data: carteira } = await supabaseClient
