@@ -6,7 +6,7 @@
     <title>WaveCombat | Modern Gaming Hub</title>
     
     <!-- Meta Tags para PWA -->
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#00f0ff">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -75,7 +75,7 @@
         .logo-text { font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 16px; color: var(--accent-color); letter-spacing: 1px; transition: color 0.4s ease; }
 
         .menu-toggle-btn {
-            display: flex; flex-direction: column; justify-content: space-around;
+            display: flex; flex-direction: column; justify-around;
             width: 30px; height: 25px; background: transparent; border: none; cursor: pointer; z-index: 1002;
         }
         .menu-toggle-btn span { width: 100%; height: 3px; background: var(--accent-color); border-radius: 2px; transition: 0.3s; }
@@ -525,7 +525,7 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.350 (Full Complete PWA)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.352 (PWA Install Fixed)</strong>
     </footer>
 
     <script>
@@ -612,7 +612,7 @@
                     deferredPrompt = null;
                 });
             } else {
-                alert("Para instalar no telemóvel:\n\n1. Toque nos 3 pontos do navegador (canto superior direito).\n2. Selecione 'Adicionar ao ecrã principal' ou 'Instalar aplicação'.");
+                alert("Para instalar: Toque nos 3 pontos do navegador (canto superior direito) e selecione 'Adicionar ao ecrã principal' ou 'Criar atalho'.");
             }
         }
 
@@ -1479,7 +1479,6 @@
             }
         }
 
-        // REGISTO AUTOMÁTICO DO SERVICE WORKER (CORREÇÃO DO ERRO DE INSTALAÇÃO DO PWA)
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
