@@ -593,25 +593,21 @@
                 </div>
             </div>
 
-            <!-- FERRAMENTAS ADM: DIAMANTES E NOTIFICAÇÃO DE VERIFICADO -->
+            <!-- FERRAMENTAS ADM: DIAMANTES LIBRES -->
             <div class="admin-grid-tools" style="margin-top: 15px;">
-                <div class="admin-block">
+                <div class="admin-block" style="grid-column: 1 / -1;">
                     <h4>💎 Envio Manual de Diamantes (ADM)</h4>
-                    <input type="text" id="admTargetId" placeholder="ID do Jogador (ex: 577082415)" class="auth-input" style="font-size:11px; margin-bottom:6px;">
-                    <input type="number" id="admTargetQtd" placeholder="Quantidade de Diamantes" class="auth-input" style="font-size:11px; margin-bottom:6px;">
-                    <button type="button" class="btn-gaming" onclick="admEnviarDiamantesLivre()" style="font-size:10px; padding:6px; background:#22c55e; color:#000;">⚡ Enviar Diamantes sem Limites</button>
-                </div>
-
-                <div class="admin-block">
-                    <h4>⭐ Enviar Convite de Verificado (Correio)</h4>
-                    <input type="text" id="admVerificadoTarget" placeholder="Nick ou ID do Jogador" class="auth-input" style="font-size:11px; margin-bottom:6px;">
-                    <button type="button" class="btn-gaming" onclick="admAtivarVerificadoUser()" style="font-size:10px; padding:6px; background:#FFD700; color:#000;">📩 Enviar Carta de Verificado com Prêmios</button>
+                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                        <input type="text" id="admTargetId" placeholder="ID do Jogador (ex: 577082415)" class="auth-input" style="font-size:11px; flex:1;">
+                        <input type="number" id="admTargetQtd" placeholder="Quantidade de Diamantes" class="auth-input" style="font-size:11px; flex:1;">
+                        <button type="button" class="btn-gaming" onclick="admEnviarDiamantesLivre()" style="font-size:10px; padding:8px 12px; background:#22c55e; color:#000;">⚡ Enviar Diamantes</button>
+                    </div>
                 </div>
             </div>
 
-            <!-- ÁREA DE GESTÃO DE USUÁRIOS & BANIMENTOS -->
+            <!-- ÁREA DE GESTÃO DE USUÁRIOS & BANIMENTOS (ORDENAÇÃO ALFABÉTICA) -->
             <div class="admin-block" style="margin-top: 15px;">
-                <h4 style="color:var(--accent-color);">👥 Lista e Gestão de Usuários Cadastrados</h4>
+                <h4 style="color:var(--accent-color);">👥 Lista e Gestão de Usuários Cadastrados (Ordem Alfabética)</h4>
                 <div style="display:flex; gap:10px; margin-bottom:10px;">
                     <input type="text" id="inputBuscaAdminUser" placeholder="Pesquisar por Nick ou ID..." class="auth-input" oninput="renderizarTabelaUsuariosAdmin()" style="font-size:11px;">
                 </div>
@@ -620,17 +616,20 @@
                 </div>
             </div>
 
-            <!-- CAIXA ÚNICA CONSOLIDADA DE INFLUENCIADORES & CUPONS -->
+            <!-- CAIXA ÚNICA TOTALMENTE UNIFICADA DE INFLUENCIADORES, VERIFICADOS & CUPONS -->
             <div class="admin-block" style="margin-top: 15px; border: 2px solid var(--gold-warning); background: rgba(245, 158, 11, 0.05);">
-                <h4 style="color:var(--gold-warning); font-family:'Orbitron';">🌟 CAIXA ÚNICA: GESTÃO DE INFLUENCIADORES & CUPONS</h4>
-                <p style="font-size:11px; color:#94a3b8; margin-bottom:8px;">Defina o cargo de influenciador, vincule cupons de desconto, monitore acessos e comissões de 30% nesta central única.</p>
+                <h4 style="color:var(--gold-warning); font-family:'Orbitron';">🌟 PAINEL ÚNICO: INFLUENCIADORES, VERIFICADOS & PARCERIAS</h4>
+                <p style="font-size:11px; color:#94a3b8; margin-bottom:8px;">Adicione influenciadores, envie cartas de verificado para o correio e controle comissões de 30% e cupons nesta central consolidada.</p>
+                
                 <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
                     <input type="text" id="infTargetNick" placeholder="Nick ou ID do Jogador" class="auth-input" style="font-size:11px; flex:1;">
                     <input type="text" id="infTargetCodigo" placeholder="Cupom Personalizado (Ex: CAPUDO7)" class="auth-input" style="font-size:11px; flex:1;">
-                    <button type="button" class="btn-gaming" onclick="adicionarInfluenciadorAdmin()" style="font-size:10px; background:var(--gold-warning); color:#000;">Promover / Salvar Cupom</button>
+                    <button type="button" class="btn-gaming" onclick="adicionarInfluenciadorAdmin()" style="font-size:10px; background:var(--gold-warning); color:#000;">🌟 Salvar Influenciador & Cupom</button>
+                    <button type="button" class="btn-gaming" onclick="admAtivarVerificadoUser()" style="font-size:10px; background:#FFD700; color:#000;">📩 Enviar Convite Verificado (Correio)</button>
                 </div>
+                
                 <div id="adminListaInfluenciadoresContainer" style="max-height:220px; overflow-y:auto; display:flex; flex-direction:column; gap:6px;">
-                    <!-- Preenchido dinamicamente -->
+                    <!-- Preenchido dinamicamente com Nick (ID) -->
                 </div>
             </div>
 
@@ -644,7 +643,7 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.390 (Verified Mail Flow & Unified Influencer Box)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.400 (Unified Partnership Hub & Alphabetical List)</strong>
     </footer>
 
     <script>
@@ -709,7 +708,7 @@
             return false;
         }
 
-        // RENDERIZAR NICK COM V DOURADO À FRENTE DO NICK E ESTRELA APENAS PARA STAFF
+        // RENDERIZAR NICK COM SELO V DOURADO À FRENTE DO NICK & ESTRELA APENAS PARA STAFF
         function obterHtmlNickVerificado(nick, id) {
             if (!nick) return '';
             let verificados = {};
@@ -1116,9 +1115,9 @@
 
         // ENVIAR MENSAGEM NO CORREIO PARA ATIVAR O VERIFICADO E SEUS PRÊMIOS
         async function admAtivarVerificadoUser() {
-            const termo = document.getElementById('admVerificadoTarget').value.trim();
+            const termo = document.getElementById('infTargetNick').value.trim();
             if (!termo) {
-                alert("Digite o Nick ou ID do jogador.");
+                alert("Digite o Nick ou ID do jogador no campo.");
                 return;
             }
 
@@ -1130,14 +1129,13 @@
             try {
                 let codigoCupom = `V_${nickAlvo.toUpperCase().slice(0,6)}`;
 
-                // Enviar carta de convite no Correio do usuário
                 let correios = {};
                 try { correios = JSON.parse(localStorage.getItem('wavecombat_correios') || '{}'); } catch(e){}
                 if (!correios[idAlvo]) correios[idAlvo] = [];
                 
                 correios[idAlvo].unshift({
                     tipo: 'verificado_invite',
-                    titulo: "🎉 Parabéns pelo Verificado! ⭐",
+                    titulo: "🎉 Convite Especial de Verificado! ⭐",
                     mensagem: `Sua conta foi selecionada para receber o selo oficial de verificado! Clique no botão abaixo para resgatar o Selo V Dourado, Moldura Exclusiva, Fundo Animado, 5.000 Diamantes e seu Cupom de Influenciador: ${codigoCupom}`,
                     codigoCupom: codigoCupom,
                     data: new Date().toLocaleDateString('pt-BR'),
@@ -1145,14 +1143,13 @@
                 });
                 localStorage.setItem('wavecombat_correios', JSON.stringify(correios));
 
-                mostrarToast(`📩 Convite de Verificado enviado para o correio de ${nickAlvo}!`);
-                document.getElementById('admVerificadoTarget').value = '';
+                mostrarToast(`📩 Carta de Verificado enviada para o correio de ${nickAlvo}!`);
             } catch(e) {
                 alert("Erro ao enviar carta de verificação.");
             }
         }
 
-        // CARREGAR E LISTAR TODOS OS USUÁRIOS NO ADM
+        // CARREGAR E LISTAR TODOS OS USUÁRIOS NO ADM (ORDENAÇÃO ALFABÉTICA)
         async function renderizarTabelaUsuariosAdmin() {
             let container = document.getElementById('adminListaUsuariosContainer');
             if (!container) return;
@@ -1168,15 +1165,17 @@
                 return;
             }
 
+            // Ordenação Alfabética A-Z por Nick
+            usuarios.sort((a, b) => a.nick.localeCompare(b.nick, 'pt-BR', { sensitivity: 'base' }));
+
             let filtrados = usuarios.filter(u => (u.nick && u.nick.toLowerCase().includes(filtro)) || (u.id && u.id.includes(filtro)));
             
             container.innerHTML = filtrados.map(u => {
                 let isBan = banidos[u.id] && Date.now() < banidos[u.id].expiraEm;
-                let isVerif = verificados[u.id];
                 return `
                     <div style="display:flex; justify-content:space-between; align-items:center; background:#070a10; border:1px solid var(--steel-border); padding:8px; border-radius:6px; font-size:11px; flex-wrap:wrap; gap:6px;">
-                        <div>
-                            <strong>${obterHtmlNickVerificado(u.nick, u.id)}</strong> <span style="color:#64748b;">(ID: ${u.id})</span>
+                        <div style="display:flex; align-items:center;">
+                            <strong>${obterHtmlNickVerificado(u.nick, u.id)}</strong>&nbsp;<span style="color:#64748b;">(ID: ${u.id})</span>
                             ${isBan ? '<span style="color:var(--alert-red); margin-left:6px;">[BANIDO]</span>' : ''}
                         </div>
                         <div style="display:flex; gap:4px; align-items:center;">
@@ -1216,7 +1215,7 @@
             renderizarTabelaUsuariosAdmin();
         }
 
-        // CAIXA ÚNICA CONSOLIDADA DE INFLUENCIADORES NO ADM
+        // CAIXA ÚNICA CONSOLIDADA DE INFLUENCIADORES NO ADM (NICK + ID)
         function adicionarInfluenciadorAdmin() {
             let termo = document.getElementById('infTargetNick').value.trim();
             let codigo = document.getElementById('infTargetCodigo').value.trim().toUpperCase();
@@ -1236,13 +1235,14 @@
 
             influenciadores[idAlvo] = {
                 nick: nickAlvo,
+                id: idAlvo,
                 codigo: codigo,
                 saldoReceber: influenciadores[idAlvo] ? influenciadores[idAlvo].saldoReceber : 0,
                 usosCupom: influenciadores[idAlvo] ? influenciadores[idAlvo].usosCupom : 0
             };
 
             localStorage.setItem('wavecombat_influenciadores', JSON.stringify(influenciadores));
-            mostrarToast(`🌟 Influenciador ${nickAlvo} configurado com o cupom ${codigo}!`);
+            mostrarToast(`🌟 Influenciador ${nickAlvo} (${idAlvo}) configurado com o cupom ${codigo}!`);
             document.getElementById('infTargetNick').value = '';
             document.getElementById('infTargetCodigo').value = '';
             renderizarTabelaInfluenciadoresAdmin();
@@ -1260,12 +1260,15 @@
                 return;
             }
 
+            // Ordenação Alfabética dos Influenciadores
+            chaves.sort((a, b) => (influenciadores[a].nick || '').localeCompare(influenciadores[b].nick || '', 'pt-BR', { sensitivity: 'base' }));
+
             container.innerHTML = chaves.map(k => {
                 let inf = influenciadores[k];
                 return `
                     <div style="display:flex; justify-content:space-between; align-items:center; background:#070a10; border:1px solid var(--steel-border); padding:8px; border-radius:6px; font-size:11px; flex-wrap:wrap; gap:6px;">
                         <div>
-                            <strong>${inf.nick}</strong> | Cupom: <strong style="color:var(--gold-warning);">${inf.codigo}</strong>
+                            <strong style="color:var(--accent-color);">${inf.nick}</strong> <span style="color:#64748b;">(ID: ${inf.id || k})</span> | Cupom: <strong style="color:var(--gold-warning);">${inf.codigo}</strong>
                             <br><span style="color:#22c55e;">Usos: ${inf.usosCupom || 0}</span> | Comissões (30%): <strong style="color:#fff;">R$ ${(inf.saldoReceber || 0).toFixed(2)}</strong>
                         </div>
                         <div style="display:flex; gap:4px;">
@@ -1334,23 +1337,20 @@
                 localStorage.setItem('wavecombat_correios', JSON.stringify(correios));
 
                 if (msgData.tipo === 'verificado_invite') {
-                    // ATIVAR OFICIALMENTE O VERIFICADO E BENEFÍCIOS APENAS AGORA
                     let verificados = {};
                     try { verificados = JSON.parse(localStorage.getItem('wavecombat_verificados') || '{}'); } catch(e){}
                     verificados[idUser] = true;
                     localStorage.setItem('wavecombat_verificados', JSON.stringify(verificados));
 
-                    // Atribuir cupom de influenciador se houver
                     if (msgData.codigoCupom) {
                         let influenciadores = {};
                         try { influenciadores = JSON.parse(localStorage.getItem('wavecombat_influenciadores') || '{}'); } catch(e){}
                         if (!influenciadores[idUser]) {
-                            influenciadores[idUser] = { nick: nickUser, codigo: msgData.codigoCupom, saldoReceber: 0, usosCupom: 0 };
+                            influenciadores[idUser] = { nick: nickUser, id: idUser, codigo: msgData.codigoCupom, saldoReceber: 0, usosCupom: 0 };
                             localStorage.setItem('wavecombat_influenciadores', JSON.stringify(influenciadores));
                         }
                     }
 
-                    // Adicionar os 5k de diamantes na conta
                     try {
                         const { data: carteira } = await supabaseClient.from('carteira_diamantes').select('diamantes').eq('id_jogador', idUser).single();
                         let saldoAtual = carteira ? (carteira.diamantes || 0) : 0;
@@ -1581,7 +1581,7 @@
             }
         }
 
-        // CARREGAR E EXIBIR CHAT GLOBAL AO VIVO
+        // CARREGAR CHAT GLOBAL COM POLLING AUTOMÁTICO
         async function carregarMensagensChat() {
             try {
                 const { data, error } = await supabaseClient.from('chat_global').select('*').order('created_at', { ascending: false }).limit(20);
@@ -1911,6 +1911,9 @@
             if (cat === 'favoritos') jogosPublicados = jogosPublicados.filter(j => favs.includes(j.id));
             else if (cat !== 'todos') jogosPublicados = jogosPublicados.filter(j => j.categoria === cat);
 
+            // Ordenação Alfabética das Listas de Jogos
+            jogosPublicados.sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR', { sensitivity: 'base' }));
+
             const destaque = obterJogoDestaque(jogosPublicados);
             const capaDestaque = destaque ? (destaque.img || gerarPrintAutoCapa(destaque.nome)) : "";
 
@@ -2061,7 +2064,7 @@
         carregarSessaoSalva();
         buscarDadosNuvem();
         carregarMensagensChat();
-        setInterval(carregarMensagensChat, 4000); // Polling automático do Chat a cada 4 segundos
+        setInterval(carregarMensagensChat, 3000); // Atualização automática do chat a cada 3s
     </script>
 </body>
 </html>
