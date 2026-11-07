@@ -593,7 +593,7 @@
                 </div>
             </div>
 
-            <!-- FERRAMENTAS ADM: DIAMANTES LIBRES -->
+            <!-- FERRAMENTAS ADM: DIAMANTES LIVRES -->
             <div class="admin-grid-tools" style="margin-top: 15px;">
                 <div class="admin-block" style="grid-column: 1 / -1;">
                     <h4>💎 Envio Manual de Diamantes (ADM)</h4>
@@ -605,7 +605,7 @@
                 </div>
             </div>
 
-            <!-- ÁREA DE GESTÃO DE USUÁRIOS & BANIMENTOS (ORDENAÇÃO ALFABÉTICA) -->
+            <!-- ÁREA DE GESTÃO DE UTILIZADORES & BANIMENTOS (ORDENAÇÃO ALFABÉTICA) -->
             <div class="admin-block" style="margin-top: 15px;">
                 <h4 style="color:var(--accent-color);">👥 Lista e Gestão de Usuários Cadastrados (Ordem Alfabética)</h4>
                 <div style="display:flex; gap:10px; margin-bottom:10px;">
@@ -616,16 +616,15 @@
                 </div>
             </div>
 
-            <!-- CAIXA ÚNICA TOTALMENTE UNIFICADA DE INFLUENCIADORES, VERIFICADOS & CUPONS -->
+            <!-- CAIXA ÚNICA COM BOTÃO ÚNICO PARA INFLUENCIADOR, CUPOM E CORREIO -->
             <div class="admin-block" style="margin-top: 15px; border: 2px solid var(--gold-warning); background: rgba(245, 158, 11, 0.05);">
                 <h4 style="color:var(--gold-warning); font-family:'Orbitron';">🌟 PAINEL ÚNICO: INFLUENCIADORES, VERIFICADOS & PARCERIAS</h4>
-                <p style="font-size:11px; color:#94a3b8; margin-bottom:8px;">Adicione influenciadores, envie cartas de verificado para o correio e controle comissões de 30% e cupons nesta central consolidada.</p>
+                <p style="font-size:11px; color:#94a3b8; margin-bottom:8px;">Defina o influenciador, o cupom e envie tudo para o correio com um único clique.</p>
                 
                 <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
                     <input type="text" id="infTargetNick" placeholder="Nick ou ID do Jogador" class="auth-input" style="font-size:11px; flex:1;">
                     <input type="text" id="infTargetCodigo" placeholder="Cupom Personalizado (Ex: CAPUDO7)" class="auth-input" style="font-size:11px; flex:1;">
-                    <button type="button" class="btn-gaming" onclick="adicionarInfluenciadorAdmin()" style="font-size:10px; background:var(--gold-warning); color:#000;">🌟 Salvar Influenciador & Cupom</button>
-                    <button type="button" class="btn-gaming" onclick="admAtivarVerificadoUser()" style="font-size:10px; background:#FFD700; color:#000;">📩 Enviar Convite Verificado (Correio)</button>
+                    <button type="button" class="btn-gaming" onclick="adicionarInfluenciadorEEnviarCorreio()" style="font-size:10px; background:var(--gold-warning); color:#000; flex-grow:2;">🌟 Salvar Influenciador & Enviar Convite</button>
                 </div>
                 
                 <div id="adminListaInfluenciadoresContainer" style="max-height:220px; overflow-y:auto; display:flex; flex-direction:column; gap:6px;">
@@ -633,7 +632,7 @@
                 </div>
             </div>
 
-            <h4 style="color:#fff; margin-bottom:10px; font-family:'Orbitron'; font-size:14px; margin-top:15px;">🎮 Gestão de Games na Nuvem</h4>
+            <h4 style="color:#fff; margin-bottom:10px; font-family:'Orbitron'; font-size:14px; margin-top:15px;">🎮 Gestão de Games na Nuvem (Expansível)</h4>
             <div id="adminListaJogos" style="display:flex; flex-direction:column; gap:10px;"></div>
 
             <div style="text-align:center; margin-top:15px;">
@@ -643,7 +642,7 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.400 (Unified Partnership Hub & Alphabetical List)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.410 (Unified Influencer Button & Expandable Games)</strong>
     </footer>
 
     <script>
@@ -654,11 +653,11 @@
         const MEU_ID_MESTRE = "577082415";
 
         const jogosIniciaisFallback = [
-            { nome: "Riverbed Warfare", categoria: "Estratégia", desc: "Combate veicular em tempo real, extração de recursos e defesa contra hordas.", arquivo: "riverbed-warfare.html", img: "", publicado: true, destaque_manual: true, acessos: 154 },
-            { nome: "tanque defence", categoria: "Estratégia", desc: "Combate veicular em tempo real, extração de recursos e defesa contra hordas.", arquivo: "tanque-defence.html", img: "", publicado: true, destaque_manual: false, acessos: 154 },
-            { nome: "Esquadrão de Tanques", categoria: "Arcade", desc: "Jogo de sobrevivência de tanques combate intenso.", arquivo: "esquadrao-de-tanques.html", img: "", publicado: true, destaque_manual: false, acessos: 93 },
-            { nome: "Gravitas Arena", categoria: "Estratégia", desc: "Jogo de guerra de tanques e estratégia tática.", arquivo: "Gravitas-Arena.html", img: "", publicado: true, destaque_manual: false, acessos: 64 },
-            { nome: "Zombie House", categoria: "Multiplayer", desc: "Sobreviva ao apocalipse zumbi na casa florestal.", arquivo: "Zombie_House.html", img: "", publicado: true, destaque_manual: false, acessos: 120 }
+            { id: "1", nome: "Riverbed Warfare", categoria: "Estratégia", desc: "Combate veicular em tempo real, extração de recursos e defesa contra hordas.", arquivo: "riverbed-warfare.html", img: "", publicado: true, destaque_manual: true, acessos: 154 },
+            { id: "2", nome: "tanque defence", categoria: "Estratégia", desc: "Combate veicular em tempo real, extração de recursos e defesa contra hordas.", arquivo: "tanque-defence.html", img: "", publicado: true, destaque_manual: false, acessos: 154 },
+            { id: "3", nome: "Esquadrão de Tanques", categoria: "Arcade", desc: "Jogo de sobrevivência de tanques combate intenso.", arquivo: "esquadrao-de-tanques.html", img: "", publicado: true, destaque_manual: false, acessos: 93 },
+            { id: "4", nome: "Gravitas Arena", categoria: "Estratégia", desc: "Jogo de guerra de tanques e estratégia tática.", arquivo: "Gravitas-Arena.html", img: "", publicado: true, destaque_manual: false, acessos: 64 },
+            { id: "5", nome: "Zombie House", categoria: "Multiplayer", desc: "Sobreviva ao apocalipse zumbi na casa florestal.", arquivo: "Zombie_House.html", img: "", publicado: true, destaque_manual: false, acessos: 120 }
         ];
 
         let listaJogosCache = [];
@@ -674,7 +673,6 @@
         const arcadeNotes = [261.63, 329.63, 392.00, 523.25, 493.88, 392.00, 329.63, 293.66, 349.23, 440.00]; 
         let noteIndex = 0;
 
-        // FORMATAR NÚMEROS COMPACTOS (10k, 1M, 1T)
         function formatarNumero(num) {
             if (num === null || num === undefined) return '0';
             num = Number(num);
@@ -688,7 +686,6 @@
             return num.toLocaleString('pt-BR');
         }
 
-        // VERIFICAR BANIMENTO
         function verificarBanimentoAtual() {
             if (!usuarioLogado) return false;
             try {
@@ -708,7 +705,6 @@
             return false;
         }
 
-        // RENDERIZAR NICK COM SELO V DOURADO À FRENTE DO NICK & ESTRELA APENAS PARA STAFF
         function obterHtmlNickVerificado(nick, id) {
             if (!nick) return '';
             let verificados = {};
@@ -1113,52 +1109,84 @@
             }
         }
 
-        // ENVIAR MENSAGEM NO CORREIO PARA ATIVAR O VERIFICADO E SEUS PRÊMIOS
-        async function admAtivarVerificadoUser() {
-            const termo = document.getElementById('infTargetNick').value.trim();
-            if (!termo) {
-                alert("Digite o Nick ou ID do jogador no campo.");
+        // BOTÃO ÚNICO ADM: SALVA INFLUENCIADOR, CUPOM E ENVIA O CONVITE PARA O CORREIO
+        async function adicionarInfluenciadorEEnviarCorreio() {
+            let termo = document.getElementById('infTargetNick').value.trim();
+            let codigo = document.getElementById('infTargetCodigo').value.trim().toUpperCase();
+
+            if (!termo || !codigo) {
+                alert("Preencha o Nick ou ID do Jogador e o Cupom Personalizado.");
                 return;
             }
 
             let usuarios = obterUsuariosCadastrados();
             let alvo = usuarios.find(u => u.nick.toLowerCase() === termo.toLowerCase() || u.id === termo);
-            let idAlvo = alvo ? alvo.id : termo;
+            let idAlvo = alvo ? alvo.id : 'inf_' + Math.floor(Math.random()*10000);
             let nickAlvo = alvo ? alvo.nick : termo;
 
-            try {
-                let codigoCupom = `V_${nickAlvo.toUpperCase().slice(0,6)}`;
+            // 1. Guardar/Atualizar Influenciador
+            let influenciadores = {};
+            try { influenciadores = JSON.parse(localStorage.getItem('wavecombat_influenciadores') || '{}'); } catch(e){}
 
+            influenciadores[idAlvo] = {
+                nick: nickAlvo,
+                id: idAlvo,
+                codigo: codigo,
+                saldoReceber: influenciadores[idAlvo] ? influenciadores[idAlvo].saldoReceber : 0,
+                usosCupom: influenciadores[idAlvo] ? influenciadores[idAlvo].usosCupom : 0
+            };
+            localStorage.setItem('wavecombat_influenciadores', JSON.stringify(influenciadores));
+
+            // 2. Enviar Convite para o Correio
+            try {
                 let correios = {};
                 try { correios = JSON.parse(localStorage.getItem('wavecombat_correios') || '{}'); } catch(e){}
                 if (!correios[idAlvo]) correios[idAlvo] = [];
                 
                 correios[idAlvo].unshift({
                     tipo: 'verificado_invite',
-                    titulo: "🎉 Convite Especial de Verificado! ⭐",
-                    mensagem: `Sua conta foi selecionada para receber o selo oficial de verificado! Clique no botão abaixo para resgatar o Selo V Dourado, Moldura Exclusiva, Fundo Animado, 5.000 Diamantes e seu Cupom de Influenciador: ${codigoCupom}`,
-                    codigoCupom: codigoCupom,
+                    titulo: "🎉 Convite Especial de Verificado & Cupom! ⭐",
+                    mensagem: `Sua conta foi selecionada para verificado e parceria! Clique no botão abaixo para resgatar o Selo V Dourado, Moldura Exclusiva, Fundo Animado, 5.000 Diamantes e ativar seu Cupom: ${codigo}`,
+                    codigoCupom: codigo,
                     data: new Date().toLocaleDateString('pt-BR'),
                     resgatado: false
                 });
                 localStorage.setItem('wavecombat_correios', JSON.stringify(correios));
 
-                mostrarToast(`📩 Carta de Verificado enviada para o correio de ${nickAlvo}!`);
+                mostrarToast(`🌟 Influenciador ${nickAlvo} configurado e carta enviada para o correio!`);
+                document.getElementById('infTargetNick').value = '';
+                document.getElementById('infTargetCodigo').value = '';
+                renderizarTabelaInfluenciadoresAdmin();
             } catch(e) {
-                alert("Erro ao enviar carta de verificação.");
+                alert("Erro ao enviar carta de verificação para o correio.");
             }
         }
 
-        // CARREGAR E LISTAR TODOS OS USUÁRIOS NO ADM (ORDENAÇÃO ALFABÉTICA)
+        // CARREGAR E LISTAR TODOS OS UTILIZADORES NO ADM (SUPABASE + LOCALSTORAGE + ORDENAÇÃO A-Z)
+        async function obterUsuariosCadastrados() {
+            let listaLocal = [];
+            try { listaLocal = JSON.parse(localStorage.getItem('wavecombat_users') || '[]'); } catch(e){}
+            try {
+                const { data } = await supabaseClient.from('usuarios').select('*');
+                if (data && data.length > 0) {
+                    data.forEach(u => {
+                        let idU = u.id_jogador || u.id;
+                        if (!listaLocal.some(x => (x.id === idU) || (x.nick && x.nick.toLowerCase() === u.nick.toLowerCase()))) {
+                            listaLocal.push({ nick: u.nick, pass: u.pass || '', id: idU });
+                        }
+                    });
+                }
+            } catch(e){}
+            return listaLocal;
+        }
+
         async function renderizarTabelaUsuariosAdmin() {
             let container = document.getElementById('adminListaUsuariosContainer');
             if (!container) return;
             let filtro = (document.getElementById('inputBuscaAdminUser')?.value || '').toLowerCase();
-            let usuarios = obterUsuariosCadastrados();
+            let usuarios = await obterUsuariosCadastrados();
             let banidos = {};
             try { banidos = JSON.parse(localStorage.getItem('wavecombat_banidos') || '{}'); } catch(e){}
-            let verificados = {};
-            try { verificados = JSON.parse(localStorage.getItem('wavecombat_verificados') || '{}'); } catch(e){}
 
             if (!usuarios || usuarios.length === 0) {
                 container.innerHTML = `<p style="color:#94a3b8; font-size:11px; text-align:center;">Nenhum usuário cadastrado no momento.</p>`;
@@ -1166,7 +1194,7 @@
             }
 
             // Ordenação Alfabética A-Z por Nick
-            usuarios.sort((a, b) => a.nick.localeCompare(b.nick, 'pt-BR', { sensitivity: 'base' }));
+            usuarios.sort((a, b) => (a.nick || '').localeCompare(b.nick || '', 'pt-BR', { sensitivity: 'base' }));
 
             let filtrados = usuarios.filter(u => (u.nick && u.nick.toLowerCase().includes(filtro)) || (u.id && u.id.includes(filtro)));
             
@@ -1215,39 +1243,6 @@
             renderizarTabelaUsuariosAdmin();
         }
 
-        // CAIXA ÚNICA CONSOLIDADA DE INFLUENCIADORES NO ADM (NICK + ID)
-        function adicionarInfluenciadorAdmin() {
-            let termo = document.getElementById('infTargetNick').value.trim();
-            let codigo = document.getElementById('infTargetCodigo').value.trim().toUpperCase();
-
-            if (!termo || !codigo) {
-                alert("Preencha o Nick/ID e o código do cupom.");
-                return;
-            }
-
-            let usuarios = obterUsuariosCadastrados();
-            let alvo = usuarios.find(u => u.nick.toLowerCase() === termo.toLowerCase() || u.id === termo);
-            let idAlvo = alvo ? alvo.id : 'inf_' + Math.floor(Math.random()*10000);
-            let nickAlvo = alvo ? alvo.nick : termo;
-
-            let influenciadores = {};
-            try { influenciadores = JSON.parse(localStorage.getItem('wavecombat_influenciadores') || '{}'); } catch(e){}
-
-            influenciadores[idAlvo] = {
-                nick: nickAlvo,
-                id: idAlvo,
-                codigo: codigo,
-                saldoReceber: influenciadores[idAlvo] ? influenciadores[idAlvo].saldoReceber : 0,
-                usosCupom: influenciadores[idAlvo] ? influenciadores[idAlvo].usosCupom : 0
-            };
-
-            localStorage.setItem('wavecombat_influenciadores', JSON.stringify(influenciadores));
-            mostrarToast(`🌟 Influenciador ${nickAlvo} (${idAlvo}) configurado com o cupom ${codigo}!`);
-            document.getElementById('infTargetNick').value = '';
-            document.getElementById('infTargetCodigo').value = '';
-            renderizarTabelaInfluenciadoresAdmin();
-        }
-
         function renderizarTabelaInfluenciadoresAdmin() {
             let container = document.getElementById('adminListaInfluenciadoresContainer');
             if (!container) return;
@@ -1260,7 +1255,6 @@
                 return;
             }
 
-            // Ordenação Alfabética dos Influenciadores
             chaves.sort((a, b) => (influenciadores[a].nick || '').localeCompare(influenciadores[b].nick || '', 'pt-BR', { sensitivity: 'base' }));
 
             container.innerHTML = chaves.map(k => {
@@ -1300,7 +1294,6 @@
             renderizarTabelaInfluenciadoresAdmin();
         }
 
-        // CORREIO: SÓ ATIVA OS BENEFÍCIOS APÓS O RESGATE DA MENSAGEM
         function carregarCorreioUsuario() {
             let container = document.getElementById('correioMensagensContainer');
             if (!container || !usuarioLogado) return;
@@ -1383,22 +1376,24 @@
             document.getElementById('panelCorreio').classList.toggle('active', aba === 'correio');
         }
 
-        function obterUsuariosCadastrados() {
-            try { return JSON.parse(localStorage.getItem('wavecombat_users') || '[]'); } catch(e) { return []; }
-        }
-
-        function fazerRegistroPlataforma(e) {
+        async function fazerRegistroPlataforma(e) {
             e.preventDefault();
             const u = document.getElementById('regUser').value.trim();
             const p = document.getElementById('regPass').value;
-            let users = obterUsuariosCadastrados();
-            if(users.some(x => x.nick.toLowerCase() === u.toLowerCase())) {
+            let users = await obterUsuariosCadastrados();
+            if(users.some(x => x.nick && x.nick.toLowerCase() === u.toLowerCase())) {
                 alert("Este nick já existe! Escolha outro.");
                 return;
             }
             const novoId = Math.floor(100000000 + Math.random() * 900000000).toString();
-            users.push({ nick: u, pass: p, id: novoId });
-            localStorage.setItem('wavecombat_users', JSON.stringify(users));
+            try {
+                await supabaseClient.from('usuarios').insert([{ id_jogador: novoId, nick: u, pass: p }]);
+            } catch(e){}
+
+            let localUsers = [];
+            try { localUsers = JSON.parse(localStorage.getItem('wavecombat_users') || '[]'); } catch(e){}
+            localUsers.push({ nick: u, pass: p, id: novoId });
+            localStorage.setItem('wavecombat_users', JSON.stringify(localUsers));
             
             usuarioLogado = { nick: u, isAdm: false, id: novoId };
             localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
@@ -1412,7 +1407,7 @@
             carregarSaldoDiamantesSite();
         }
 
-        function fazerLoginPlataforma(e) {
+        async function fazerLoginPlataforma(e) {
             e.preventDefault();
             const u = document.getElementById('loginUser').value.trim();
             const p = document.getElementById('loginPass').value;
@@ -1434,19 +1429,19 @@
                 return;
             }
 
-            let users = obterUsuariosCadastrados();
-            let achou = users.find(x => x.nick.toLowerCase() === u.toLowerCase() && x.pass === p);
+            let users = await obterUsuariosCadastrados();
+            let achou = users.find(x => x.nick && x.nick.toLowerCase() === u.toLowerCase() && x.pass === p);
             if(achou) {
-                if(!achou.id) achou.id = Math.floor(100000000 + Math.random() * 900000000).toString();
-                usuarioLogado = { nick: achou.nick, isAdm: false, id: achou.id };
+                let idUser = achou.id_jogador || achou.id || Math.floor(100000000 + Math.random() * 900000000).toString();
+                usuarioLogado = { nick: achou.nick, isAdm: false, id: idUser };
                 
                 if (verificarBanimentoAtual()) return;
 
                 localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
                 localStorage.setItem('wavecombat_nick', achou.nick);
-                localStorage.setItem('wavecombat_id', achou.id);
+                localStorage.setItem('wavecombat_id', idUser);
                 mostrarToast(`👋 Bem-vindo de volta, ${achou.nick}!`);
-                document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(achou.nick, achou.id);
+                document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(achou.nick, idUser);
                 fecharModalAuth();
                 atualizarAbasPerfilUI();
                 carregarSaldoDiamantesSite();
@@ -1581,7 +1576,6 @@
             }
         }
 
-        // CARREGAR CHAT GLOBAL COM POLLING AUTOMÁTICO
         async function carregarMensagensChat() {
             try {
                 const { data, error } = await supabaseClient.from('chat_global').select('*').order('created_at', { ascending: false }).limit(20);
@@ -1671,7 +1665,7 @@
             } catch(e) {}
 
             let totalAcessos = listaJogosCache.reduce((acc, curr) => acc + (curr.acessos || 0), 1250);
-            let totalUsers = obterUsuariosCadastrados().length + 42;
+            let totalUsers = (await obterUsuariosCadastrados()).length + 42;
             document.getElementById('statTotalPartidas').textContent = formatarNumero(totalAcessos);
             document.getElementById('statTotalUsuarios').textContent = formatarNumero(totalUsers);
 
@@ -1952,8 +1946,8 @@
                 const item = document.createElement('div');
                 item.className = 'game-list-card';
                 item.innerHTML = `
-                    <img src="${thumb}" class="game-list-thumb" alt="${jogo.nome}" onclick="tentarExecutarJogo(${JSON.stringify(jogo).replace(/"/g, '&quot;')}); tocarSomClique();">
-                    <div class="game-list-info" onclick="tentarExecutarJogo(${JSON.stringify(jogo).replace(/"/g, '&quot;')}); tocarSomClique();">
+                    <img src="${thumb}" class="game-list-thumb" alt="${jogo.nome}" onclick="tentarExecutarJogo(${JSON.stringify(destaque).replace(/"/g, '&quot;')}); tocarSomClique();">
+                    <div class="game-list-info" onclick="tentarExecutarJogo(${JSON.stringify(destaque).replace(/"/g, '&quot;')}); tocarSomClique();">
                         <h4>${jogo.nome}</h4>
                         <p>${jogo.desc}</p>
                     </div>
@@ -1965,6 +1959,7 @@
             if(painelAdmAberto) renderizarJogosAdmin();
         }
 
+        // RENDERIZAR JOGOS NO ADM COM SETINHA DE EXPANSÃO (▼)
         function renderizarJogosAdmin() {
             const container = document.getElementById('adminListaJogos');
             if(!container) return;
@@ -1976,7 +1971,7 @@
                 item.innerHTML = `
                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:5px;">
                         <span style="color:var(--accent-color); font-weight:bold; font-size:12px;">${jogo.nome} (${formatarNumero(jogo.acessos || 0)})</span>
-                        <div style="display:flex; gap:4px;">
+                        <div style="display:flex; gap:4px; align-items:center;">
                             <button type="button" class="btn-gaming" onclick="tentarExecutarJogo(${JSON.stringify(jogo).replace(/"/g, '&quot;')}); tocarSomClique();" style="font-size:9px; padding:3px 6px;">🎮 Testar</button>
                             <button type="button" class="btn-gaming ${jogo.publicado ? 'btn-danger' : 'btn-success'}" onclick="togglePublicarJogo('${jogo.id}')" style="font-size:9px; padding:3px 6px;">
                                 ${jogo.publicado ? '👁️ Ocultar' : '🚀 Publicar'}
@@ -1984,23 +1979,40 @@
                             <button type="button" class="btn-gaming" onclick="fixarDestaqueAdm('${jogo.id}')" style="font-size:9px; padding:3px 6px; background:${jogo.destaque_manual?'var(--gold-warning)':'var(--steel-bright)'}; color:${jogo.destaque_manual?'#000':'#fff'};">
                                 ${jogo.destaque_manual ? '★ Fixado' : '☆ Destaque'}
                             </button>
+                            <button type="button" class="btn-gaming" onclick="toggleExpandirEdicaoJogo('${jogo.id}')" id="btnExpand_${jogo.id}" style="font-size:10px; padding:3px 8px; background:var(--steel-bright); color:#fff;" title="Expandir Edição">▼</button>
                         </div>
                     </div>
-                    <label class="file-upload-label">Título: <input type="text" value="${jogo.nome}" id="editNome_${jogo.id}" class="auth-input"></label>
-                    <label class="file-upload-label">Gênero: 
-                        <select id="editCat_${jogo.id}" class="auth-input">
-                            <option value="Arcade" ${jogo.categoria==='Arcade'?'selected':''}>Arcade</option>
-                            <option value="Estratégia" ${jogo.categoria==='Estratégia'?'selected':''}>Estratégia</option>
-                            <option value="Multiplayer" ${jogo.categoria==='Multiplayer'?'selected':''}>Multiplayer</option>
-                        </select>
-                    </label>
-                    <label class="file-upload-label">Descrição: <textarea id="editDesc_${jogo.id}" class="auth-input" style="height:35px;">${jogo.desc}</textarea></label>
-                    <label class="file-upload-label">Caminho do Ficheiro: <input type="text" value="${jogo.arquivo}" id="editArq_${jogo.id}" class="auth-input"></label>
-                    <label class="file-upload-label">🖼️ Alterar Capa (Upload Supabase): <input type="file" id="editImgFile_${jogo.id}" accept="image/*"></label>
-                    <button type="button" class="btn-gaming" onclick="salvarEdicaoJogoAdm('${jogo.id}')" style="font-size:10px; padding:5px; margin-top:3px;">💾 Guardar na Nuvem</button>
+                    <div id="corpoEdicao_${jogo.id}" style="display:none; flex-direction:column; gap:8px; margin-top:8px; border-top:1px solid var(--steel-border); padding-top:8px;">
+                        <label class="file-upload-label">Título: <input type="text" value="${jogo.nome}" id="editNome_${jogo.id}" class="auth-input"></label>
+                        <label class="file-upload-label">Gênero: 
+                            <select id="editCat_${jogo.id}" class="auth-input">
+                                <option value="Arcade" ${jogo.categoria==='Arcade'?'selected':''}>Arcade</option>
+                                <option value="Estratégia" ${jogo.categoria==='Estratégia'?'selected':''}>Estratégia</option>
+                                <option value="Multiplayer" ${jogo.categoria==='Multiplayer'?'selected':''}>Multiplayer</option>
+                            </select>
+                        </label>
+                        <label class="file-upload-label">Descrição: <textarea id="editDesc_${jogo.id}" class="auth-input" style="height:45px;">${jogo.desc}</textarea></label>
+                        <label class="file-upload-label">Caminho do Ficheiro: <input type="text" value="${jogo.arquivo}" id="editArq_${jogo.id}" class="auth-input"></label>
+                        <label class="file-upload-label">🖼️ Alterar Capa (Upload Supabase): <input type="file" id="editImgFile_${jogo.id}" accept="image/*"></label>
+                        <button type="button" class="btn-gaming" onclick="salvarEdicaoJogoAdm('${jogo.id}')" style="font-size:10px; padding:6px; margin-top:4px;">💾 Guardar Alterações na Nuvem</button>
+                    </div>
                 `;
                 container.appendChild(item);
             });
+        }
+
+        function toggleExpandirEdicaoJogo(id) {
+            const corpo = document.getElementById(`corpoEdicao_${id}`);
+            const btn = document.getElementById(`btnExpand_${id}`);
+            if(corpo && btn) {
+                if(corpo.style.display === 'none') {
+                    corpo.style.display = 'flex';
+                    btn.textContent = '▲';
+                } else {
+                    corpo.style.display = 'none';
+                    btn.textContent = '▼';
+                }
+            }
         }
 
         async function togglePublicarJogo(id) {
@@ -2064,7 +2076,7 @@
         carregarSessaoSalva();
         buscarDadosNuvem();
         carregarMensagensChat();
-        setInterval(carregarMensagensChat, 3000); // Atualização automática do chat a cada 3s
+        setInterval(carregarMensagensChat, 3000); // Polling automático do chat a cada 3s
     </script>
 </body>
 </html>
