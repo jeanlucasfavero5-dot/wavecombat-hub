@@ -1,5 +1,5 @@
 {
-  "name": "WaveCombat Hub",
+  "name": "Hub de WaveCombat",
   "short_name": "WaveCombat",
   "start_url": "./",
   "display": "standalone",
@@ -8,7 +8,7 @@
   "theme_color": "#00f0ff",
   "icons": [
     {
-      "src": "icon-512.png",
+      "src": "ícone-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
