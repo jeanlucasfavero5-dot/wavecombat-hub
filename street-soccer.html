@@ -4,6 +4,7 @@
 <title>Street Soccer</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
 :root{--n1:#c6ff00;--n2:#00e5ff;--n3:#ff2e93;--shirt:#00e5ff;--short:#2b2f6b;--shoe:#ff2e93;--cap:#c6ff00;--hair:#2b1b12;--ball:#fff;--lens:#111;--gb:#ffffff30}
@@ -89,8 +90,17 @@ pre{background:#0006;border-radius:14px;padding:12px;margin-top:10px;white-space
 #rot i{font-size:84px;font-style:normal;animation:rt 2.4s ease-in-out infinite}
 @keyframes rt{0%,25%{transform:rotate(0)}65%,100%{transform:rotate(-90deg)}}
 @media(orientation:portrait){#rot{display:flex}}
+#gl3d{position:fixed;inset:0;width:100%;height:100%;z-index:0;display:block}
+body.gl .bg{display:none}
+#splash{background:linear-gradient(#0b0620cc,#0b062040 55%,#0b0620cc)}
+#lobby{touch-action:none;background:linear-gradient(#0b0620b0,transparent 20%,transparent 72%,#0b0620b0)}
+#gear{position:fixed;top:calc(10px + env(safe-area-inset-top));right:14px;z-index:30;width:46px;height:46px;border-radius:50%;color:#fff;font-size:22px;cursor:pointer;display:grid;place-items:center;padding:0;transition:.3s}
+#gear:hover{transform:rotate(60deg)}
+.top{padding-right:72px}.hd{padding-right:70px}
+@media(max-width:700px){.bot .pill{padding:10px 12px!important;font-size:13px}.bot .btn{padding:12px 22px}}
 </style></head><body>
 
+<canvas id="gl3d"></canvas>
 <div id="splash" class="scr on"><div class="bg"><b class="tag">STREET KINGS</b></div>
 <h1 class="logo">Street Soccer<small>Futebol de rua 3v3</small></h1>
 <div class="ld" id="ld"><i></i></div>
@@ -102,63 +112,18 @@ pre{background:#0006;border-radius:14px;padding:12px;margin-top:10px;white-space
 <div id="lobby" class="scr"><div class="bg"><b class="tag">STREET KINGS</b></div>
 <div class="top"><div class="g chip" style="padding:6px 18px 6px 6px"><span class="pf" id="pi"></span><div><b id="pn"></b><i class="adm" id="pa" hidden>ADM</i><br><small id="pid"></small></div></div>
 <i class="dot" id="net"></i><span style="flex:1"></span>
-<div class="g chip">💎 <b id="dia">…</b></div><div class="g chip">🪙 <b>1.250</b></div></div>
+<div class="g chip">💎 <b id="dia">…</b></div><div class="g chip">🪙 <b id="gold">1.250</b></div></div>
 <div class="mid"><div class="side g" id="tabs"></div>
-<svg id="av" viewBox="0 0 260 540">
-<defs>
-<radialGradient id="hd" cx=".42" cy=".38" r=".8"><stop offset="0" stop-color="#e8b48a"/><stop offset=".7" stop-color="#c98a60"/><stop offset="1" stop-color="#9f6342"/></radialGradient>
-<linearGradient id="sk"><stop offset="0" stop-color="#e2a97e"/><stop offset=".55" stop-color="#c78b60"/><stop offset="1" stop-color="#9c6140"/></linearGradient>
-<linearGradient id="sh"><stop offset="0" stop-color="#fff" stop-opacity=".3"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".45"/></linearGradient>
-<radialGradient id="bs" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fff" stop-opacity=".9"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".55"/></radialGradient>
-<filter id="v" x="-10%" y="-5%" width="120%" height="110%"><feGaussianBlur in="SourceAlpha" stdDeviation="4" result="b"/><feDiffuseLighting in="b" surfaceScale="5" lighting-color="#fff" result="l"><feDistantLight azimuth="225" elevation="52"/></feDiffuseLighting><feComposite in="SourceGraphic" in2="l" operator="arithmetic" k1="1.25" k2="0" k3="0" k4="0"/></filter>
-<path id="jp" d="M84 124C98 112 116 108 120 106L140 106C144 108 162 112 176 124L196 172C186 180 176 178 170 172L168 226C150 234 110 234 92 226L90 172C84 178 74 180 64 172Z"/>
-<g id="arm"><path d="M72 146C62 186 54 228 52 266C51 275 58 281 64 277C72 250 82 212 94 166Z" fill="url(#sk)"/><path d="M50 270C46 290 50 306 58 308C68 308 71 290 67 272Z" fill="url(#sk)"/><path d="M55 292v10M60 293v12M65 291v10" stroke="#000" stroke-opacity=".2" stroke-width="1.5"/></g>
-<g id="leg"><path d="M94 290C91 322 95 350 98 374C93 402 94 436 103 478L125 478C131 440 130 408 128 374C131 342 133 316 132 290Z" fill="url(#sk)"/><path d="M99 408C98 430 100 456 104 478L125 478C129 456 130 430 129 408Z" fill="#fff"/><path d="M99 420H129" stroke="var(--shirt)" stroke-width="5"/><path d="M96 494C96 483 100 476 108 476H118C126 476 131 483 131 494C131 501 127 506 121 506H102C98 506 96 501 96 494Z" fill="var(--shoe)"/><path d="M96 499H131" stroke="#fff" stroke-width="5"/><path d="M109 481l9 3M108 486l10 3" stroke="#fff" stroke-width="2" stroke-linecap="round"/></g>
-</defs>
-<ellipse cx="130" cy="522" rx="104" ry="10" fill="#000" opacity=".45"/><ellipse cx="196" cy="535" rx="28" ry="4" fill="#000" opacity=".4"/>
-<g filter="url(#v)"><use href="#leg" transform="translate(-6 0)"/></g>
-<g filter="url(#v)"><use href="#leg" transform="matrix(-1 0 0 1 266 0)"/></g>
-<g filter="url(#v)"><path d="M88 214C106 224 154 224 172 214L180 294C168 302 148 304 136 298L130 258L124 298C112 304 92 302 80 294Z" fill="var(--short)"/><path d="M88 214C106 224 154 224 172 214" stroke="#fff" stroke-opacity=".8" stroke-width="4" fill="none"/><path d="M100 250q-4 22-2 40M160 250q4 22 2 40M130 262v30" stroke="#000" stroke-opacity=".2" stroke-width="3" fill="none" stroke-linecap="round"/></g>
-<g filter="url(#v)"><use href="#arm"/></g>
-<g filter="url(#v)"><use href="#arm" transform="matrix(-1 0 0 1 260 0)"/></g>
-<path d="M116 82V112C124 120 136 120 144 112V82Z" fill="url(#sk)"/>
-<path d="M116 84C124 102 136 102 144 84V98C136 110 124 110 116 98Z" fill="#000" opacity=".28"/>
-<g filter="url(#v)"><use href="#jp" fill="var(--shirt)"/><use href="#jp" fill="url(#sh)"/><path d="M100 196q8 14 4 34M158 190q-6 16-2 38M118 140q-8 12-6 28M146 142q8 10 6 26" stroke="#000" stroke-opacity=".16" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M118 106L130 128L142 106Z" fill="url(#sk)"/><path d="M118 106L130 128L142 106" stroke="#fff" stroke-width="3" fill="none" stroke-linejoin="round"/><text x="130" y="184" text-anchor="middle" font-family="Impact,'Arial Black',sans-serif" font-size="46" fill="#fff" opacity=".9">10</text></g>
-<g transform="translate(130 94) scale(.84) translate(-130 -94)">
-<ellipse cx="104" cy="54" rx="5" ry="9" fill="#b97d56"/><ellipse cx="156" cy="54" rx="5" ry="9" fill="#a56d4a"/>
-<path d="M104 46C104 24 116 14 130 14S156 24 156 46C156 64 150 80 142 88C138 92 134 94 130 94S122 92 118 88C110 80 104 64 104 46Z" fill="url(#hd)"/>
-<path d="M130 14S156 24 156 46C156 64 150 80 142 88C138 92 134 94 130 94Z" fill="url(#sh)"/>
-<path d="M105 58C107 82 118 94 130 94C142 94 153 82 155 58C150 76 142 82 130 82C118 82 110 76 105 58Z" fill="#2a1a10" opacity=".25"/>
-<path d="M103 48C98 22 114 6 132 6C150 6 163 22 157 48C154 38 151 30 147 27C139 22 121 22 113 27C109 30 105 38 103 48Z" fill="var(--hair)"/>
-<path d="M116 20C126 12 140 12 148 20" stroke="#fff" stroke-opacity=".18" stroke-width="3" fill="none"/>
-<path d="M113 42C117 38 124 38 127 40M133 40C136 38 143 38 147 42" stroke="var(--hair)" stroke-width="3" fill="none" stroke-linecap="round"/>
-<ellipse cx="120" cy="49" rx="9" ry="5.5" fill="#6b3a22" opacity=".18"/><ellipse cx="140" cy="49" rx="9" ry="5.5" fill="#6b3a22" opacity=".18"/>
-<ellipse cx="120" cy="50" rx="7" ry="3.8" fill="#f4efe8"/><ellipse cx="140" cy="50" rx="7" ry="3.8" fill="#f4efe8"/>
-<circle cx="120.5" cy="50" r="3.2" fill="#4a2c18"/><circle cx="139.5" cy="50" r="3.2" fill="#4a2c18"/>
-<circle cx="120.5" cy="50" r="1.5" fill="#0a0604"/><circle cx="139.5" cy="50" r="1.5" fill="#0a0604"/>
-<circle cx="121.6" cy="48.8" r=".9" fill="#fff"/><circle cx="140.6" cy="48.8" r=".9" fill="#fff"/>
-<path d="M113 49C117 45 124 45 127 49M133 49C136 45 143 45 147 49" stroke="#2a1a10" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-<path d="M130 48C128 58 126 64 123 68C127 71 133 71 137 68C134 64 132 58 130 48Z" fill="#9a5a3a" opacity=".35"/>
-<ellipse cx="126" cy="68" rx="1.6" ry="1" fill="#3a1d10" opacity=".6"/><ellipse cx="134" cy="68" rx="1.6" ry="1" fill="#3a1d10" opacity=".6"/>
-<path d="M121 78C126 76 128 77 130 77C132 77 134 76 139 78C134 82 126 82 121 78Z" fill="#a85a52"/>
-<path d="M121 78C127 80 133 80 139 78" stroke="#5a2a26" stroke-width="1.4" fill="none"/>
-<ellipse cx="130" cy="81" rx="4" ry="1" fill="#fff" opacity=".25"/>
-<g id="gl"><path d="M108 44H129V54C129 58 124 61 118.5 61S108 58 108 54ZM131 44H152V54C152 58 147 61 141.5 61S131 58 131 54Z" fill="var(--lens)" opacity=".92"/><path d="M129 46H131M104 45H108M152 45H156" stroke="#111" stroke-width="2"/><path d="M112 47L119 55" stroke="#fff" stroke-opacity=".35" stroke-width="2"/></g>
-<g id="cap"><path d="M102 30C100 4 160 4 158 30Z" fill="var(--cap)"/><path d="M102 30C100 4 160 4 158 30Z" fill="url(#sh)"/><path d="M96 32C110 42 150 42 164 32C158 26 102 26 96 32Z" fill="var(--cap)"/><path d="M96 32C110 42 150 42 164 32C158 36 102 36 96 32Z" fill="#000" opacity=".3"/></g>
-</g>
-<circle cx="196" cy="508" r="26" fill="var(--ball)" stroke="#1b1b2f" stroke-width="2"/>
-<path d="M204 492L216 501L211 515L197 515L192 501ZM196 483V492M216 501L226 497M211 515L218 524M197 515L190 524M192 501L182 497" transform="translate(-8 0)" fill="#1b1b2f" stroke="#1b1b2f" stroke-width="1.5" stroke-linejoin="round"/>
-<circle cx="196" cy="508" r="26" fill="url(#bs)"/>
-</svg>
 <div class="squad"><div class="slot me">⭐</div><button class="slot" onclick="abrir('soc')">+</button><button class="slot" onclick="abrir('soc')">+</button></div></div>
-<div class="bot"><button class="pill g" id="bm" style="padding:14px 22px"></button><button class="btn" id="play">⚽ JOGAR</button></div></div>
+<div class="bot"><button class="pill g" style="padding:14px 22px" onclick="abrirTime()">🛡️ Time</button><button class="pill g" id="bm" style="padding:14px 22px"></button><button class="btn" id="play">⚽ JOGAR</button><button class="pill g" style="padding:14px 22px" onclick="abrir('passe')">🎟️ Passe</button></div></div>
 
 <div id="modal"><div class="box g"><div class="hd"><span id="mt"></span><button class="x" onclick="fechar()">✕</button></div><div class="bd" id="mb"></div></div></div>
+<button id="gear" class="g" onclick="abrir('cfg')">⚙️</button>
 <div id="rot"><i>📱</i><b style="font:900 28px Impact,'Arial Black',sans-serif">Deite a tela</b><span>O jogo roda na horizontal em todos os aparelhos.<br>Gire o aparelho para continuar.</span></div>
 <div id="toast"></div>
 
 <script>
-const VERSAO='0.002',ADMIN_IDS=['162028398','577082415'];
+const VERSAO='0.004',ADMIN_IDS=['162028398','577082415'];
 // Hub: credenciais podem vir da página (window.SUPABASE_*); senão usa os padrões abaixo
 const SB_URL=window.SUPABASE_URL||'https://ipqjeacdfiomcxfuixdj.supabase.co';
 const SB_KEY=window.SUPABASE_KEY||window.SUPABASE_ANON_KEY||'sb_publishable_EWW84q_43YbOvMwB_Rua-A_X465PbLP';
@@ -214,10 +179,10 @@ async function carteira(){
   if(data)setDia(+data[CD]);else{const u=await sb.from(T).upsert({[CID]:player.id,[CD]:0},{onConflict:CID});if(u.error)throw u.error;setDia(0)}
   sync('Sincronizada ✔')}catch(e){console.error(e);sync('Erro de sincronização')}}
 async function gravar(n){if(!sb)return false;const u=await sb.from(T).upsert({[CID]:player.id,[CD]:n},{onConflict:CID});if(u.error){console.error(u.error);return false}setDia(n);return true}
-async function comprar(id){const i=ITENS.find(x=>x.id==id);if(!i||S.inv.includes(id))return;
+async function comprar(id,cb){const i=ITENS.find(x=>x.id==id);if(!i||S.inv.includes(id))return;
  await carteira();
  if(player.dia<i.p)return toast('💎 Diamantes insuficientes');
- if(await gravar(player.dia-i.p)){S.inv.push(id);salvar();toast('Comprado: '+i.n+' ✔');abrir('loja')}else toast('Falha ao acessar a carteira')}
+ if(await gravar(player.dia-i.p)){S.inv.push(id);salvar();toast('Comprado: '+i.n+' ✔');if(cb)cb();abrir(cur||'loja')}else toast('Falha ao acessar a carteira')}
 
 // ---- Servidor online (Socket.io) ----
 function conectar(){
@@ -228,7 +193,7 @@ function conectar(){
 
 // ---- Ranking global: chamar no fim da partida / Game Over (Etapa 5: apito final) ----
 async function enviarResultadoPartida(pontos){
- const idUsuario=player.id,nickJogador=player.name;
+ const idUsuario=player.id,nickJogador=player.full||player.name;
  if(window.supabaseClient){
   try{const{error}=await window.supabaseClient.rpc('atualizar_pontuacao',{p_id_jogador:idUsuario,p_nick:nickJogador,p_pontos:pontos});
    if(error){console.error('Erro ao enviar pontuação para o Leaderboard:',error);toast('Erro ao salvar pontuação')}
@@ -255,8 +220,8 @@ P.pers=()=>CAT.map(([n,v])=>`<div style="margin-bottom:12px"><b>${n}</b><div cla
 P.modos=()=>`<div class="grid">${[['🏟️','3v3 Jaula'],['🌆','4v4 Praça'],['🏙️','3v3 Telhado'],['🎨','3v3 Favela'],['🎯','Treino livre']].map(([e,n])=>`<div class="card ${S.modo==n?'sel':''}"><div class="e">${e}</div><b>${n}</b><button class="btn sm" onclick="modo('${n}')">Selecionar</button></div>`).join('')}</div>`;
 P.conq=()=>[['Primeiro drible','Faça 1 drible de efeito',0,1],['Humilhação total','Aplique 10 elásticos',0,10],['Rei da grade','5 tabelinhas na parede',0,5],['Gamebreaker','3 gols com a barra cheia',0,3],['A rua é minha','Vença 10 partidas',0,10]].map(([n,d,a,b])=>`<div class="card" style="flex-direction:row;text-align:left;margin-bottom:10px"><span style="font-size:34px">🏆</span><div style="flex:1"><b>${n}</b><br><small>${d}</small><div class="bar"><i style="width:${a/b*100}%"></i></div></div><small>${a}/${b}</small></div>`).join('');
 P.soc=()=>`<div class="card" style="margin-bottom:12px"><small>Seu ID</small><b style="font-size:26px;letter-spacing:.08em">${player.id}</b><button class="btn sm" onclick="copiar()">Copiar ID</button></div><p style="margin-bottom:10px">Servidor: <b id="ns">${nt}</b></p><div class="card" style="opacity:.8">👥 Nenhum amigo ainda. Convide pelo ID.</div>`;
-P.cfg=()=>`<p><b>Volume</b></p><input type="range" min="0" max="100" value="${S.vol*100}" oninput="S.vol=this.value/100;salvar()" style="margin:8px 0 16px"><p><b>Qualidade gráfica</b></p><div class="pills" style="margin-top:8px">${['Baixa','Média','Alta'].map(q=>`<button class="pill ${S.q==q?'on':''}" onclick="S.q='${q}';salvar();abrir('cfg')">${q}</button>`).join('')}</div><div class="card" style="align-items:flex-start;text-align:left;margin:10px 0 16px"><b>Conta WaveCombat</b><small>Nick: ${player.name}</small><small>ID: ${player.id}</small><small>Carteira: <span id="ns2">${st}</span></small><small>Street Soccer v${VERSAO}</small></div>${player.adm?`<button class="btn" onclick="abrir('adm')">🛡️ Painel admin</button>`:''}`;
-P.adm=()=>!player.adm?'Acesso negado':`<div class="card" style="align-items:stretch;text-align:left"><small>ID alvo (vazio = o seu)</small><input id="aid" placeholder="${player.id}"><small>Quantidade de diamantes</small><input id="aq" type="number" value="100"><div class="pills"><button class="pill on" onclick="adm('add')">+ Adicionar</button><button class="pill on" onclick="adm('sub')">− Remover</button><button class="pill on" onclick="adm('set')">Definir saldo</button><button class="pill on" onclick="adm('get')">Consultar</button></div></div><div class="card" style="align-items:stretch;text-align:left;margin-top:10px"><small>Ranking (RPC atualizar_pontuacao) usa a quantidade acima</small><div class="pills" style="margin:6px 0 0"><button class="pill on" onclick="enviarResultadoPartida(parseInt($('#aq').value)||10)">Enviar pontuação teste</button><button class="pill" onclick="localStorage.removeItem('sc_save');location.reload()">Limpar dados locais</button></div></div><pre id="al">Pronto.</pre>`;
+P.cfg=()=>`<p><b>Volume da música</b></p><input type="range" min="0" max="100" value="${S.vol*100}" oninput="S.vol=this.value/100;salvar();volume()" style="margin:8px 0 16px"><p><b>Qualidade gráfica</b></p><div class="pills" style="margin-top:8px">${['Baixa','Média','Alta'].map(q=>`<button class="pill ${S.q==q?'on':''}" onclick="S.q='${q}';salvar();qual();abrir('cfg')">${q}</button>`).join('')}</div><div class="card" style="align-items:flex-start;text-align:left;margin:10px 0 16px"><b>Conta WaveCombat</b><small>Nick: ${player.name}</small><small>ID: ${player.id}</small><small>Carteira: <span id="ns2">${st}</span></small><small>Street Soccer v${VERSAO}</small></div>${player.adm?`<button class="btn" onclick="abrir('adm')">🛡️ Painel admin</button>`:''}`;
+P.adm=()=>!player.adm?'Acesso negado':`<div class="card" style="align-items:stretch;text-align:left"><small>ID alvo (vazio = o seu)</small><input id="aid" placeholder="${player.id}"><small>Quantidade de diamantes</small><input id="aq" type="number" value="100"><div class="pills"><button class="pill on" onclick="adm('add')">+ Adicionar</button><button class="pill on" onclick="adm('sub')">− Remover</button><button class="pill on" onclick="adm('set')">Definir saldo</button><button class="pill on" onclick="adm('get')">Consultar</button></div></div><div class="card" style="align-items:stretch;text-align:left;margin-top:10px"><small>Ranking (RPC atualizar_pontuacao) usa a quantidade acima</small><div class="pills" style="margin:6px 0 0"><button class="pill on" onclick="enviarResultadoPartida(parseInt($('#aq').value)||10)">Enviar pontuação teste</button><button class="pill on" onclick="ganharXP(100);toast('+100 XP do passe')">+100 XP passe</button><button class="pill" onclick="localStorage.removeItem('sc_save');location.reload()">Limpar dados locais</button></div></div><pre id="al">Pronto.</pre>`;
 
 document.addEventListener('DOMContentLoaded',()=>{
  try{Object.assign(S,JSON.parse(localStorage.getItem('sc_save')||'{}'))}catch(e){}
@@ -264,14 +229,263 @@ document.addEventListener('DOMContentLoaded',()=>{
  sb=window.supabaseClient||(window.supabase&&supabase.createClient(SB_URL,SB_KEY))||null;
  if(sb)window.supabaseClient=sb;
  $('#ver').textContent='v'+VERSAO;$('#sn').textContent=player.name;$('#si').textContent='ID '+player.id;
- $('#tabs').innerHTML=[['loja','🛒','Loja'],['pers','👕','Visual'],['conq','🏆','Metas'],['soc','👥','Social'],['cfg','⚙️','Ajustes']].map(([k,e,n])=>`<button class="tab" onclick="abrir('${k}')"><b>${e}</b><span>${n}</span></button>`).join('');
+ $('#tabs').innerHTML=[['loja','🛒','Loja'],['pers','👕','Visual'],['conq','🏆','Metas'],['soc','👥','Social']].map(([k,e,n])=>`<button class="tab" onclick="abrir('${k}')"><b>${e}</b><span>${n}</span></button>`).join('');
  $('#pn').textContent=player.name;$('#pid').textContent='ID '+player.id;$('#pi').textContent=player.name[0].toUpperCase();$('#pa').hidden=!player.adm;$('#bm').textContent='🎮 '+S.modo;
  $('#modal').onclick=e=>{if(e.target.id=='modal')fechar()};
  $('#bm').onclick=()=>abrir('modos');
  $('#play').onclick=()=>toast('⚽ A quadra chega na Etapa 3');
- $('#go').onclick=()=>{beat();$('#splash').classList.remove('on');$('#lobby').classList.add('on')};
+ $('#go').onclick=()=>{musica();irLobby()};
  setTimeout(()=>{$('#ld').style.visibility='hidden';$('#go').classList.add('on')},1500);
  aplicar();conectar();carteira();setInterval(carteira,10000);
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)carteira()});
 });
+</script>
+<script>
+// ===== v0.003: 3D (Three.js), vestiário, música, customização (Etapa 2) =====
+function irLobby(){$('#splash').classList.remove('on');$('#lobby').classList.add('on');if(window.go3d)go3d()}
+function aplicar(){if(window.eng)eng.ap()}
+function qual(){if(window.eng)eng.q()}
+const eq=k=>(S.eq||{})[k]||0;
+const SL={
+pele:['Pele',[['Morena','#c98a60'],['Clara','#f1c9a5'],['Parda','#a8693f'],['Negra','#6b4226'],['Escura','#3f2616']]],
+cabelo:['Cabelo',[['Curto','#2b1b12','curto'],['Raspado','#1a1a1a','raspado'],['Loiro','#e6c35c','curto'],['Ruivo','#b5461e','curto'],['Moicano','#c6ff00','moicano','a3']]],
+camisa:['Camisa',[['Azul','#1565c0'],['Vermelha','#d32f2f'],['Branca','#f5f5f5'],['Preta','#17171c'],['Neon','#c6ff00','','c1'],['Moletom','#6a2cff','hood','c2']]],
+bermuda:['Bermuda',[['Marinho','#1b1f4a'],['Branca','#eeeeee'],['Preta','#111111'],['Street','#ff6d00','','c3']]],
+tenis:['Tênis',[['Rosa','#ff2e93'],['Preto','#151515'],['Branco','#f0f0f0'],['Wave X','#00e5ff','','c4']]],
+bone:['Boné',[['Nenhum',''],['Grafite','#3a3a44','','a1']]],
+oculos:['Óculos',[['Nenhum',''],['Cyber','#00e5ff','','a2']]],
+corrente:['Corrente',[['Nenhuma',''],['Gold','#ffd54f','','a4']]],
+bola:['Bola',[['Clássica','#ffffff|#111111'],['Neon','#c6ff00|#1b1b2f','','b1'],['Fogo','#ff6d00|#7a1200','','b2'],['Gelo','#b3e5fc|#0277bd','','b3'],['Ouro','#ffd54f|#6d4c00','','b4']]]};
+function vestir(k,i){const o=SL[k][1][i];S.eq=S.eq||{};const ok=()=>{S.eq[k]=i;salvar();aplicar()};
+ if(o[3]&&!S.inv.includes(o[3]))return(ITENS.find(x=>x.id==o[3])||{}).pas?toast('Item exclusivo do passe 🎟️'):comprar(o[3],ok);
+ ok();abrir('pers')}
+let pk='camisa';
+P.pers=()=>`<div class="pills">${Object.keys(SL).map(k=>`<button class="pill ${k==pk?'on':''}" onclick="pk='${k}';abrir('pers')">${SL[k][0]}</button>`).join('')}</div><div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(96px,1fr))">${SL[pk][1].map((o,i)=>{const it=ITENS.find(x=>x.id==o[3]),lk=it&&!S.inv.includes(o[3]),on=eq(pk)==i;return`<div class="card ${on?'sel':''}" style="cursor:pointer" onclick="vestir('${pk}',${i})"><span class="sw" style="background:${o[1]?o[1].split('|')[0]:'#333'}">${o[1]?'':'✕'}</span><b style="font-size:13px">${o[0]}</b><small>${on?'✔ Em uso':lk?(it.pas?'🎟️ Passe':'💎 '+it.p):'Livre'}</small></div>`}).join('')}</div>`;
+
+// ---- Motor 3D ----
+(()=>{
+if(!window.THREE)return;
+const T3=THREE,cv=$('#gl3d');let R;
+try{R=new T3.WebGLRenderer({canvas:cv,antialias:true})}catch(e){return}
+document.body.classList.add('gl');R.shadowMap.enabled=true;R.shadowMap.type=T3.PCFSoftShadowMap;
+const sc=new T3.Scene(),cam=new T3.PerspectiveCamera(32,1,.1,60);
+sc.background=new T3.Color(0x120a2e);sc.fog=new T3.Fog(0x120a2e,11,26);
+const mat=(c,r,o)=>new T3.MeshStandardMaterial(Object.assign({color:c,roughness:r==null?.6:r,side:T3.DoubleSide},o));
+const mesh=(g,m,x=0,y=0,z=0)=>{const o=new T3.Mesh(g,m);o.castShadow=o.receiveShadow=true;o.position.set(x,y,z);return o};
+const bx=(w,h,d,m,x,y,z)=>mesh(new T3.BoxGeometry(w,h,d),m,x,y,z);
+const sp=(r,m,x,y,z,a=1,b=1,c=1)=>{const o=mesh(new T3.SphereGeometry(r,20,14),m,x,y,z);o.scale.set(a,b,c);return o};
+const lat=(p,m)=>mesh(new T3.LatheGeometry(p.map(a=>new T3.Vector2(a[0],a[1])),22),m);
+const ctex=(w,h,f,rp)=>{const c=document.createElement('canvas');c.width=w;c.height=h;f(c.getContext('2d'),w,h);const t=new T3.CanvasTexture(c);if(rp){t.wrapS=t.wrapT=T3.RepeatWrapping;t.repeat.set(rp[0],rp[1])}t.anisotropy=4;return t};
+// luzes
+sc.add(new T3.HemisphereLight(0xcfd8ff,0x2a1a4a,.75));
+const dl=new T3.DirectionalLight(0xffffff,.8);dl.position.set(3,6,5);dl.castShadow=true;dl.shadow.mapSize.set(1024,1024);Object.assign(dl.shadow.camera,{left:-5,right:5,top:6,bottom:-3,far:20});dl.shadow.camera.updateProjectionMatrix();dl.shadow.bias=-.0006;sc.add(dl);
+[[0x00e5ff,-3.5],[0xff2e93,3.5]].forEach(([c,x])=>{const l=new T3.PointLight(c,.9,12);l.position.set(x,2.4,1.5);sc.add(l)});
+const spot=new T3.SpotLight(0xffffff,.9,12,.5,.7);spot.position.set(0,5,2.5);spot.target.position.set(0,.9,0);sc.add(spot,spot.target);
+// vestiário
+const ft=ctex(128,128,(x,w)=>{x.fillStyle='#2b2650';x.fillRect(0,0,w,w);x.strokeStyle='#15102e';x.lineWidth=5;x.strokeRect(0,0,w,w);x.fillStyle='rgba(255,255,255,.06)';x.fillRect(8,8,w/2,w/2)},[16,14]);
+const fl=mesh(new T3.PlaneGeometry(16,14),mat(0xffffff,.35,{map:ft,metalness:.15}),0,0,2);fl.rotation.x=-Math.PI/2;fl.castShadow=false;sc.add(fl);
+const wl=mat(0x16103a,.8),lm=mat(0xffffff,.3,{emissive:0xffffff,emissiveIntensity:1.4});
+sc.add(bx(16,4.4,.2,mat(0x1b1445,.8),0,2.2,-3.7),bx(.2,4.4,14,wl,-8,2.2,2),bx(.2,4.4,14,wl,8,2.2,2),bx(16,.2,14,mat(0x0f0a26,.9),0,4.4,2),bx(10,.06,.3,lm,0,4.25,-1.5),bx(10,.06,.3,lm,0,4.25,2));
+const dc=[0x00e5ff,0xc6ff00,0xff2e93,0xff9100,0x7c4dff];
+for(let i=0;i<9;i++){const g=new T3.Group();g.position.set((i-4)*1.12,1.3,-3.15);
+ g.add(bx(1,2.6,.7,mat(0x232a5c,.5,{metalness:.5})),bx(.92,2.48,.04,mat(dc[i%5],.45,{metalness:.3}),0,0,.36),bx(.05,.3,.05,mat(0xdddddd,.3,{metalness:.8}),.3,-.1,.4));
+ for(let j=0;j<3;j++)g.add(bx(.5,.03,.02,mat(0x0a0a14),0,.9-j*.1,.385));
+ const pn=new T3.Mesh(new T3.PlaneGeometry(.3,.3),new T3.MeshBasicMaterial({map:ctex(64,64,(x,w)=>{x.fillStyle='rgba(0,0,0,.55)';x.fillRect(0,0,w,w);x.fillStyle='#fff';x.font='900 44px Impact,sans-serif';x.textAlign='center';x.fillText(i+1,32,50)})}));pn.position.set(0,.55,.385);g.add(pn);sc.add(g)}
+const wd=mat(0x9a6a3a,.7),lg=mat(0x222233,.5);
+sc.add(bx(7.6,.1,.55,wd,0,.48,-2.2),bx(.12,.48,.45,lg,-3.5,.24,-2.2),bx(.12,.48,.45,lg,3.5,.24,-2.2));
+const sg=new T3.Mesh(new T3.PlaneGeometry(5,1),new T3.MeshBasicMaterial({transparent:true,map:ctex(1024,200,(x,w)=>{const g=x.createLinearGradient(0,0,w,0);g.addColorStop(0,'#c6ff00');g.addColorStop(.5,'#00e5ff');g.addColorStop(1,'#ff2e93');x.fillStyle=g;x.font='900 150px Impact,sans-serif';x.textAlign='center';x.shadowColor='#00e5ff';x.shadowBlur=30;x.fillText('STREET SOCCER',w/2,150)})}));sg.position.set(0,3.5,-3.57);sc.add(sg);
+const pad=mesh(new T3.CylinderGeometry(.75,.75,.04,40),mat(0x161033,.3,{metalness:.5}),0,.02,0);pad.castShadow=false;
+const ring=mesh(new T3.TorusGeometry(.76,.02,10,48),new T3.MeshBasicMaterial({color:0xc6ff00}),0,.045,0);ring.rotation.x=Math.PI/2;ring.castShadow=false;sc.add(pad,ring);
+// personagem
+const skin=mat(0xc98a60,.55),jers=mat(0x1565c0,.7),sh2=mat(0x1b1f4a,.75),shoe=mat(0xff2e93,.4),hairM=mat(0x2b1b12,.8),white=mat(0xf4f4f4,.8),capM=mat(0x3a3a44,.6),lens=mat(0x111111,.15,{metalness:.7,emissive:0x000000,emissiveIntensity:.5}),gold=mat(0xffd54f,.25,{metalness:.9}),dark=mat(0x14100e,.6),eyeW=mat(0xf6f1ea,.3),lip=mat(0x7a2e2e,.5);
+const ch=new T3.Group();sc.add(ch);
+const leg=s=>{const g=new T3.Group();g.position.x=s*.085;g.add(lat([[.045,.09],[.056,.2],[.062,.3],[.052,.5]],skin),lat([[.049,.09],[.059,.2],[.066,.3],[.062,.34]],white),lat([[.052,.5],[.07,.65],[.08,.85],[.082,.97]],skin),lat([[.09,.62],[.097,.78],[.1,.98]],sh2),sp(.075,shoe,0,.055,.04,.9,.7,1.9),bx(.115,.022,.25,white,0,.011,.045));return g};
+const torso=lat([[.14,1],[.17,1.12],[.2,1.3],[.2,1.42],[.12,1.5],[.06,1.53]],jers);torso.scale.set(1.15,1,.7);
+const num=ctex(64,64,x=>{x.fillStyle='#fff';x.font='900 52px Impact,sans-serif';x.textAlign='center';x.fillText('10',32,52)});
+const np=(z,r,w)=>{const p=new T3.Mesh(new T3.PlaneGeometry(w,w),new T3.MeshBasicMaterial({map:num,transparent:true}));p.position.set(0,1.28,z);p.rotation.y=r;return p};
+const arm=s=>{const g=new T3.Group(),f=new T3.Group(),fs=lat([[.036,-.26],[.047,-.1],[.054,0]],jers);g.position.set(s*.235,1.43,0);g.rotation.z=s*.08;f.position.y=-.27;f.rotation.x=-.2;fs.visible=false;f.add(lat([[.034,-.26],[.044,-.1],[.05,0]],skin),sp(.04,skin,0,-.3,0,.85,1.2,.7),fs);g.add(sp(.065,jers,0,0,0),lat([[.052,-.27],[.06,-.1],[.066,0]],jers),f);g.fs=fs;return g};
+const aL=arm(1),aR=arm(-1);
+const hd=new T3.Group();hd.position.y=1.68;
+const hc=new T3.Mesh(new T3.SphereGeometry(.112,22,12,0,Math.PI*2,0,Math.PI*.5),hairM);hc.rotation.x=-.6;hc.castShadow=true;
+const moh=bx(.03,.06,.2,hairM,0,.135,-.01);
+const capG=new T3.Group(),glG=new T3.Group(),chG=new T3.Group();
+const dome=new T3.Mesh(new T3.SphereGeometry(.12,22,12,0,Math.PI*2,0,Math.PI*.5),capM);dome.scale.set(.92,1.1,1.05);dome.position.y=.022;dome.castShadow=true;
+const vis=bx(.17,.01,.09,capM,0,.035,.115);vis.rotation.x=.2;capG.add(dome,vis);
+glG.add(bx(.055,.032,.008,lens,-.034,.022,.108),bx(.055,.032,.008,lens,.034,.022,.108),bx(.02,.006,.008,dark,0,.028,.108),bx(.004,.004,.1,dark,-.062,.026,.06),bx(.004,.004,.1,dark,.062,.026,.06));
+hd.add(sp(.105,skin,0,0,0,.88,1.12,1),sp(.07,skin,0,-.075,.025,1,.8,.95),sp(.012,skin,0,-.005,.108,1,1.4,1.2),sp(.015,eyeW,-.038,.022,.088),sp(.015,eyeW,.038,.022,.088),sp(.008,dark,-.038,.022,.1),sp(.008,dark,.038,.022,.1),bx(.04,.007,.01,dark,-.038,.048,.098),bx(.04,.007,.01,dark,.038,.048,.098),bx(.04,.006,.008,lip,0,-.052,.1),sp(.02,skin,-.098,0,0,.5,1.1,.8),sp(.02,skin,.098,0,0,.5,1.1,.8),hc,moh,capG,glG);
+const chain=new T3.Mesh(new T3.TorusGeometry(.09,.007,8,28),gold);chain.position.set(0,1.46,.02);chain.rotation.x=1.25;chain.castShadow=true;chG.add(chain,sp(.016,gold,0,1.38,.085));
+const hoodR=mesh(new T3.TorusGeometry(.1,.035,10,22),jers,0,1.5,-.02);hoodR.rotation.x=Math.PI/2;hoodR.scale.set(1.1,1.3,1);hoodR.visible=false;
+const ball=mesh(new T3.SphereGeometry(.11,24,18),mat(0xffffff,.45),.4,.11,.28);
+const bt={},bTex=v=>bt[v]||(bt[v]=ctex(256,128,(x,w,h)=>{const[a,b]=v.split('|');x.fillStyle=a;x.fillRect(0,0,w,h);x.fillStyle=b;for(let i=0;i<8;i++)for(let j=0;j<3;j++){const cx=(i+(j%2)*.5)*w/8+16,cy=(j+.5)*h/3;x.beginPath();for(let q=0;q<5;q++){const an=q*Math.PI*.4-Math.PI/2;x.lineTo(cx+Math.cos(an)*13,cy+Math.sin(an)*13)}x.fill()}}));
+ch.add(leg(1),leg(-1),sp(.17,sh2,0,.99,0,1.05,.7,.78),torso,np(.145,0,.09),np(-.145,Math.PI,.2),aL,aR,mesh(new T3.CylinderGeometry(.05,.055,.1,16),skin,0,1.55,0),hd,chG,hoodR,ball);
+// nick abaixo do personagem
+let nk=null;
+const nick=()=>{const n=player.full||player.name,tx=ctex(512,128,x=>{x.fillStyle='rgba(15,8,40,.72)';x.strokeStyle='#c6ff00';x.lineWidth=4;x.beginPath();(x.roundRect||x.rect).call(x,10,22,492,84,42);x.fill();x.stroke();x.fillStyle='#fff';x.textAlign='center';x.font='900 '+Math.min(58,Math.floor(760/n.length))+'px Impact,Arial Black,sans-serif';x.fillText(n,256,82)});
+ if(!nk){nk=new T3.Sprite(new T3.SpriteMaterial({map:tx,transparent:true,depthTest:false}));nk.scale.set(1.5,.375,1);nk.position.set(0,.02,1.05);nk.renderOrder=9;sc.add(nk)}else{nk.material.map=tx;nk.material.needsUpdate=true}nk.n=n};
+const rs=()=>{const w=innerWidth,h=innerHeight;R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()};
+const qlt=()=>{const q=S.q,d=devicePixelRatio||1;R.setPixelRatio(q=='Baixa'?1:q=='Média'?Math.min(d,1.5):Math.min(d,2));dl.castShadow=q!='Baixa';rs()};
+addEventListener('resize',rs);
+// equipamentos (salvos em S.eq)
+const ap=()=>{const g=k=>SL[k][1][eq(k)];let o=g('pele');skin.color.set(o[1]);
+ o=g('cabelo');hairM.color.set(o[1]);const f=o[2]=='curto'?1.07:1;hc.scale.set(.9*f,1.12*f,1.02*f);moh.visible=o[2]=='moicano';
+ o=g('camisa');jers.color.set(o[1]);hoodR.visible=aL.fs.visible=aR.fs.visible=o[2]=='hood';
+ o=g('bermuda');sh2.color.set(o[1]);o=g('tenis');shoe.color.set(o[1]);
+ o=g('bone');capG.visible=!!o[1];if(o[1])capM.color.set(o[1]);
+ o=g('oculos');glG.visible=!!o[1];if(o[1]){lens.color.set(o[1]);lens.emissive.set(o[1])}
+ o=g('corrente');chG.visible=!!o[1];if(o[1])gold.color.set(o[1]);
+ o=g('bola');ball.material.map=bTex(o[1]);ball.material.needsUpdate=true;
+ const nm=player.full||player.name;if(nm&&(!nk||nk.n!=nm))nick();if(!ap.f){ap.f=1;qlt()}};
+// arrastar para girar
+let k=0,tg=0,rot=0,vel=0,dr=0,lx=0;const t0=performance.now();
+$('#lobby').addEventListener('pointerdown',e=>{if(e.target.closest('button,.g,#modal'))return;dr=1;lx=e.clientX;vel=0});
+addEventListener('pointermove',e=>{if(!dr)return;vel=(e.clientX-lx)*.012;lx=e.clientX;rot+=vel});
+addEventListener('pointerup',()=>dr=0);addEventListener('pointercancel',()=>dr=0);
+const SP=[0,1.7,8.6,0,1.7,-3],LB=[0,1.15,5.8,0,.6,0];
+const loop=()=>{requestAnimationFrame(loop);const t=(performance.now()-t0)/1e3;k+=(tg-k)*.05;const e=k*k*(3-2*k),c=SP.map((v,i)=>v+(LB[i]-v)*e);
+ cam.position.set(c[0]+Math.sin(t*.3)*1.2*(1-e),c[1],c[2]);cam.lookAt(c[3],c[4],c[5]);
+ ch.visible=k>.25;ch.scale.setScalar(.85+.15*Math.min(1,k*1.3));if(nk)nk.visible=k>.5;
+ if(!dr){vel*=.94;rot+=vel}ch.rotation.y=rot;
+ torso.scale.y=1+Math.sin(t*1.8)*.006;aL.rotation.x=Math.sin(t*1.4)*.04;aR.rotation.x=-Math.sin(t*1.4)*.04;hd.rotation.y=Math.sin(t*.7)*.08;
+ R.render(sc,cam)};
+window.eng={ap,q:qlt};window.go3d=()=>{tg=1};rs();loop();
+})();
+
+// ---- Música dos menus (sintetizada) ----
+(()=>{
+let AC,MG,NB,n=0,nt=0,on=0;
+const K=[1,0,0,0,0,0,1,0,1,0,0,0,0,1,0,0],C=[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,1],H=[1,0,1,1,1,0,1,0,1,0,1,1,1,0,1,0],RT=[110,87.31,130.81,98],BS=[0,3,6,8,11,14],
+LD=[[[0,7,2],[3,7,1],[4,5,2],[6,3,2],[8,5,4]],[[0,3,2],[3,3,1],[4,5,2],[6,7,2],[8,10,4]],[[0,12,2],[3,10,1],[4,7,2],[6,5,2],[8,7,4]],[[0,5,2],[3,3,1],[4,0,2],[6,3,2],[8,5,2],[11,7,1],[12,10,3]]];
+const env=(g,t,a,d,v)=>{g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+a+d)};
+const osc=(t,f,d,v,ty,fc,f2)=>{const o=AC.createOscillator(),g=AC.createGain(),fl=AC.createBiquadFilter();o.type=ty;o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d*.5);fl.type='lowpass';fl.frequency.value=fc;env(g,t,.008,d,v);o.connect(fl);fl.connect(g);g.connect(MG);o.start(t);o.stop(t+d+.05)};
+const nz=(t,d,v,f,ty)=>{const s=AC.createBufferSource(),g=AC.createGain(),fl=AC.createBiquadFilter();s.buffer=NB;fl.type=ty;fl.frequency.value=f;env(g,t,.002,d,v);s.connect(fl);fl.connect(g);g.connect(MG);s.start(t);s.stop(t+d+.05)};
+const stp=(i,t)=>{const s=i%16,b=(i>>4)%4;
+ if(K[s])osc(t,150,.3,.9,'sine',400,42);
+ if(C[s])nz(t,.14,.5,1600,'bandpass');
+ if(H[s])nz(t,.05,.16,7000,'highpass');
+ if(s%2)nz(t,.03,.07,5000,'highpass');
+ if(BS.includes(s))osc(t,RT[b]*(s==3||s==11?2:1),.22,.5,'sawtooth',500);
+ LD[b].forEach(([a,m,l])=>{if(a==s)osc(t,440*2**(m/12),l*.14,.16,'sawtooth',2600)})};
+window.musica=()=>{if(on)return;on=1;AC=new(window.AudioContext||window.webkitAudioContext)();AC.resume();MG=AC.createGain();MG.gain.value=S.vol*.5;const cp=AC.createDynamicsCompressor();MG.connect(cp);cp.connect(AC.destination);NB=AC.createBuffer(1,AC.sampleRate,AC.sampleRate);const d=NB.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;nt=AC.currentTime+.1;setInterval(()=>{while(nt<AC.currentTime+.15){stp(n++,nt);nt+=.1442}},40)};
+window.volume=()=>{if(MG)MG.gain.setTargetAtTime(S.vol*.5,AC.currentTime,.05)};
+document.addEventListener('visibilitychange',()=>{if(AC)document.hidden?AC.suspend():AC.resume()});
+})();
+</script>
+<script>
+// ===== v0.004: ouro, nome com TAG, itens verdes, time (clã) e passe =====
+const ouro=()=>S.ouro==null?1250:S.ouro;
+function setOuro(n){S.ouro=n;salvar();const e=$('#gold');if(e)e.textContent=n.toLocaleString('pt-BR')}
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>'&#'+c.charCodeAt(0)+';');
+const san=v=>v.replace(/[<>&"']/g,'');
+function atualizaNome(){player.full=player.tag?'['+player.tag+'] '+player.name:player.name;$('#pn').textContent=player.full;$('#sn').textContent=player.full;$('#pi').textContent=player.name[0].toUpperCase();if(window.eng)eng.ap()}
+Object.assign(TIT,{timeb:'🛡️ Time',time:'🛡️ Meu time',timec:'🛡️ Criar time',passe:'🎟️ Passe do mês'});
+[['p1','Boné Verdão','🧢'],['p2','Tênis Verdão','👟'],['p3','Bola Verdão','⚽'],['q1','Óculos Verde','🕶️'],['q2','Boné Elite','🧢'],['q3','Tênis Dourado','👟'],['q4','Bermuda Elite','🩳'],['q5','Corrente Esmeralda','📿'],['q6','Cabelo Platinado','💈'],['q7','Bola Dourada','🏆'],['q8','Camisa Elite','👕'],['q9','Óculos Ouro','🕶️'],['q10','Bola Elite','⚽'],['q11','Camisa Lendária','👑'],['q12','Moletom Lendário','🧥']].forEach(([id,n,e])=>ITENS.push({id,n,e,p:0,pas:1}));
+SL.camisa[1].push(['Verdão','#006437'],['Elite','#00c853','','q8'],['Lendária','#ffd54f','','q11'],['Moletom Lendário','#00a550','hood','q12']);
+SL.bermuda[1].push(['Verdão','#006437'],['Elite','#00593a','','q4']);
+SL.tenis[1].push(['Verdão','#00a550','','p2'],['Dourado','#ffd54f','','q3']);
+SL.bone[1].push(['Verdão','#006437','','p1'],['Elite','#00c853','','q2']);
+SL.oculos[1].push(['Verde','#00e676','','q1'],['Ouro','#ffd54f','','q9']);
+SL.corrente[1].push(['Esmeralda','#00e676','','q5']);
+SL.cabelo[1].push(['Platinado','#e8e8f0','curto','q6']);
+SL.bola[1].push(['Verdão','#ffffff|#006437','','p3'],['Dourada','#ffd54f|#00593a','','q7'],['Elite','#006437|#ffffff','','q10']);
+
+// ---- Banco (Supabase; se as tabelas não existirem, cai para o armazenamento local) ----
+const DB={off:0,
+ loc:t=>{try{return JSON.parse(localStorage.getItem('sc_db_'+t)||'[]')}catch(e){return[]}},
+ sav:(t,a)=>localStorage.setItem('sc_db_'+t,JSON.stringify(a)),
+ m:(r,f)=>Object.keys(f).every(k=>r[k]==f[k]),
+ async run(op,t,f,p){
+  if(sb&&!DB.off)try{let q=sb.from(t);
+   q=op=='sel'?q.select('*'):op=='ins'?q.insert(f):op=='upd'?q.update(p):q.delete();
+   if(op!='ins')for(const k in f)q=q.eq(k,f[k]);
+   const r=await q;if(r.error)throw r.error;return r.data||[]}
+  catch(e){if(!/42P01|PGRST20|42501|fetch/i.test(JSON.stringify(e)+e))return[];DB.off=1}
+  const a=DB.loc(t);
+  if(op=='sel')return a.filter(r=>DB.m(r,f));
+  if(op=='ins')a.push(f);else if(op=='upd')a.forEach(r=>DB.m(r,f)&&Object.assign(r,p));
+  else{DB.sav(t,a.filter(r=>!DB.m(r,f)));return[]}
+  DB.sav(t,a);return[]},
+ sel:(t,f={})=>DB.run('sel',t,f),ins:(t,r)=>DB.run('ins',t,r),upd:(t,f,p)=>DB.run('upd',t,f,p),del:(t,f)=>DB.run('del',t,f)};
+
+// ---- Bandeira ----
+const FC=[['Verdão','#006437','#ffffff'],['Rubro-negro','#d50000','#111111'],['Alvinegro','#111111','#ffffff'],['Celeste','#7ec8f0','#ffffff'],['Azulgrana','#1d3f8f','#a50044'],['Canarinho','#f9d71c','#009c3b'],['Nerazzurri','#0a2a66','#111111'],['Colorado','#c62828','#ffffff'],['Tricolor','#1e3a8a','#c1121f'],['Merengue','#ffffff','#5b2c91'],['Neon','#6a2cff','#c6ff00'],['Dourado','#ffd54f','#006437']];
+const FG=['⚽','⭐','🛡️','⚡','👑','🏆','🐷','🦅','🦁','🐯','🐺','🦈','🐂','🔥','💀','🌴'];
+const XQ=(()=>{let d='';for(let r=0;r<6;r++)for(let c=0;c<4;c++)if((r+c)%2)d+='M'+c*25+' '+r*20+'h25v20h-25z';return d})();
+const FL=[['Vertical','M20 0h12v120H20zM68 0h12v120H68z'],['Horizontal','M0 30h100v14H0zM0 62h100v14H0z'],['Faixa','M0 -2L100 108V130L0 20z'],['Cruz','M42 0h16v120H42zM0 44h100v16H0z'],['Metade','M50 0h50v120H50z'],['Chevron','M0 30L50 70L100 30V52L50 92L0 52z'],['Xadrez',XQ],['Gola','M0 0h100v16H0z']];
+let fid=0;
+function flag(F,tag,w){const i='f'+(fid++),c=FC[F.c||0]||FC[0],d='M4 4H96V90L50 116L4 90Z';
+ return`<svg viewBox="0 0 100 120" width="${w||100}" style="filter:drop-shadow(0 6px 10px #0008)"><defs><clipPath id="${i}"><path d="${d}"/></clipPath></defs><g clip-path="url(#${i})"><rect width="100" height="120" fill="${c[1]}"/>${(F.l||[]).filter(k=>FL[k]).map(k=>`<path d="${FL[k][1]}" fill="${c[2]}"/>`).join('')}</g><path d="${d}" fill="none" stroke="${c[2]}" stroke-width="3"/><text x="50" y="62" font-size="42" text-anchor="middle">${FG[F.g||0]||''}</text><text x="50" y="102" font-size="24" text-anchor="middle" font-family="Impact,Arial Black,sans-serif" fill="#fff" stroke="#000" stroke-width="3" paint-order="stroke">${esc(tag||'TAG')}</text></svg>`}
+
+// ---- Time (clã) ----
+let TM=null,tb='m',bq='',ED={n:'',t:'',c:0,g:0,l:[],cat:'c'};
+const RED='style="background:#ff5252;box-shadow:0 4px 0 #8a1c1c;color:#fff"';
+async function timeSync(){
+ try{const m=await DB.sel('time_membros',{jogador_id:player.id});
+  if(m[0]){const t=(await DB.sel('times',{id:m[0].time_id}))[0];
+   if(t){TM=t;player.tag=t.tag;S.time=t.id;DB.del('time_pedidos',{jogador_id:player.id})}else{await DB.del('time_membros',{jogador_id:player.id});TM=null;player.tag=''}}
+  else{TM=null;player.tag=''}}catch(e){}
+ S.tag=player.tag;salvar();atualizaNome()}
+function abrirTime(){tb='m';abrir(TM?'time':'timeb')}
+const fp=()=>{const e=$('#fp');if(e)e.innerHTML=flag(ED,ED.t,150)};
+function tl(i){const k=ED.l.indexOf(i);k<0?ED.l.push(i):ED.l.splice(k,1);abrir('timec')}
+const edOpts=()=>{const c=ED.cat,a=c=='c'?FC.map((x,i)=>`<button class="sw ${ED.c==i?'on':''}" title="${x[0]}" style="background:linear-gradient(135deg,${x[1]} 50%,${x[2]} 50%)" onclick="ED.c=${i};abrir('timec')"></button>`):c=='g'?FG.map((x,i)=>`<button class="pill ${ED.g==i?'on':''}" style="font-size:22px" onclick="ED.g=${i};abrir('timec')">${x}</button>`):FL.map((x,i)=>`<button class="pill ${ED.l.includes(i)?'on':''}" onclick="tl(${i})">${x[0]}</button>`);return`<div class="pills">${a.join('')}</div>`};
+P.timec=()=>`<div style="display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start"><div id="fp" style="text-align:center">${flag(ED,ED.t,150)}</div><div style="flex:1;min-width:240px"><input maxlength="20" placeholder="Nome do time" value="${esc(ED.n)}" oninput="ED.n=san(this.value)"><input maxlength="3" placeholder="TAG de 3 caracteres" value="${ED.t}" oninput="ED.t=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'');this.value=ED.t;fp()"><div class="pills">${[['c','🎨 Fundo'],['g','⭐ Figura'],['l','➖ Linhas']].map(([k,n])=>`<button class="pill ${ED.cat==k?'on':''}" onclick="ED.cat='${k}';abrir('timec')">${n}</button>`).join('')}</div>${edOpts()}<button class="btn" onclick="criarTime()">Criar time 💎 100</button></div></div>`;
+async function criarTime(){
+ const n=ED.n.trim(),t=ED.t;
+ if(n.length<3)return toast('Nome com 3 ou mais letras');
+ if(t.length!=3)return toast('A TAG precisa ter 3 caracteres');
+ if(player.tag)return toast('Você já está em um time');
+ await carteira();
+ if(player.dia<100)return toast('💎 Diamantes insuficientes');
+ if(!await gravar(player.dia-100))return toast('Falha ao acessar a carteira');
+ const id=String(100000+Math.floor(Math.random()*900000));
+ await DB.ins('times',{id,nome:n,tag:t,capitao_id:player.id,bandeira:{c:ED.c,g:ED.g,l:ED.l.slice()}});
+ await DB.ins('time_membros',{time_id:id,jogador_id:player.id,nick:player.name});
+ if(DB.off)['Bot_Neymar','Bot_Pelé'].forEach((b,i)=>DB.ins('time_pedidos',{time_id:id,jogador_id:'9000'+i,nick:b}));
+ toast('Time criado! ID '+id);await timeSync();tb='m';abrir('time')}
+P.timeb=()=>{buscar(bq);return`<button class="btn sm" style="margin-bottom:12px" onclick="ED={n:'',t:'',c:0,g:0,l:[],cat:'c'};abrir('timec')">➕ Criar time 💎 100</button><input id="bq" placeholder="Buscar por ID, nome ou TAG" value="${esc(bq)}" onkeydown="if(event.key=='Enter')buscar(this.value)"><button class="pill on" onclick="buscar($('#bq').value)">Buscar</button><div id="bres" style="margin-top:10px">Carregando…</div>`};
+async function buscar(q){
+ bq=san(q||'').trim();let a=await DB.sel('times',{});
+ if(bq){const s=bq.toLowerCase();a=a.filter(t=>t.id==bq||String(t.nome).toLowerCase().includes(s)||String(t.tag).toLowerCase()==s)}
+ const ps=await DB.sel('time_pedidos',{jogador_id:player.id}),el=$('#bres');if(!el||cur!='timeb')return;
+ el.innerHTML=(DB.off?'<small style="opacity:.7">Modo local: crie as tabelas no Supabase para times online.</small>':'')+(a.length?a.slice(0,20).map(t=>`<div class="card" style="flex-direction:row;text-align:left;margin:8px 0">${flag(t.bandeira||{},t.tag,50)}<div style="flex:1"><b>${esc(t.nome)}</b> <i class="adm">${esc(t.tag)}</i><br><small>ID ${esc(t.id)}</small></div>${ps.some(p=>p.time_id==t.id)?'<small>Pedido enviado</small>':`<button class="btn sm" onclick="pedir('${esc(t.id)}')">Pedir para entrar</button>`}</div>`).join(''):'<div class="card">Nenhum time encontrado.</div>')}
+async function pedir(id){if(player.tag)return toast('Você já está em um time');await DB.ins('time_pedidos',{time_id:id,jogador_id:player.id,nick:player.name});toast('Pedido enviado!');buscar(bq)}
+P.time=()=>{tvRender();return'<div id="tv">Carregando…</div>'};
+async function tvRender(){
+ const t=TM;if(!t)return;
+ const[m,r]=await Promise.all([DB.sel('time_membros',{time_id:t.id}),DB.sel('time_pedidos',{time_id:t.id})]),cap=t.capitao_id==player.id,el=$('#tv');
+ if(!el||cur!='time')return;
+ const row=(x,b)=>`<div class="card" style="flex-direction:row;text-align:left;margin-bottom:8px"><span class="pf">${esc((x.nick||'?')[0]).toUpperCase()}</span><div style="flex:1"><b>${esc(x.nick)}</b>${x.jogador_id==t.capitao_id?'<i class="adm">CAPITÃO</i>':''}<br><small>ID ${esc(x.jogador_id)}</small></div>${b}</div>`;
+ const body=tb=='m'?m.map(x=>row(x,cap&&x.jogador_id!=player.id?`<button class="btn sm" ${RED} onclick="remover('${esc(x.jogador_id)}')">Remover</button>`:'')).join(''):tb=='p'?(cap?(r.length?r.map(x=>row(x,`<button class="btn sm" onclick="pedido('${esc(x.jogador_id)}',1)">Aceitar</button><button class="btn sm" ${RED} onclick="pedido('${esc(x.jogador_id)}',0)">Recusar</button>`)).join(''):'<div class="card">Nenhum pedido.</div>'):'<div class="card">Só o capitão vê os pedidos.</div>'):(cap?`<input id="rn" maxlength="20" placeholder="Novo nome do time"><button class="btn sm" onclick="renomear()">Renomear 💎 50</button><div style="height:18px"></div><button class="btn sm" ${RED} onclick="excluir(this)">Excluir time</button>`:`<button class="btn sm" ${RED} onclick="sair()">Sair do time</button>`);
+ el.innerHTML=`<div class="card" style="flex-direction:row;text-align:left;gap:16px;margin-bottom:12px">${flag(t.bandeira||{},t.tag,90)}<div style="flex:1"><b style="font-size:24px">${esc(t.nome)}</b> <i class="adm">${esc(t.tag)}</i><br><small>ID do time: <b>${esc(t.id)}</b> · ${m.length} membros</small></div></div><div class="pills">${[['m','Membros ('+m.length+')'],['p','Pedidos'+(cap?' ('+r.length+')':'')],['o','Opções']].map(([k,n])=>`<button class="pill ${tb==k?'on':''}" onclick="tb='${k}';abrir('time')">${n}</button>`).join('')}</div>${body}`}
+async function renomear(){const n=san($('#rn').value).trim();if(n.length<3)return toast('Nome com 3 ou mais letras');await carteira();if(player.dia<50)return toast('💎 Diamantes insuficientes');if(!await gravar(player.dia-50))return toast('Falha ao acessar a carteira');await DB.upd('times',{id:TM.id},{nome:n});toast('Time renomeado');await timeSync();abrir('time')}
+async function excluir(b){if(!b.dataset.c){b.dataset.c=1;b.textContent='Toque de novo para confirmar';return}const id=TM.id;await DB.del('time_pedidos',{time_id:id});await DB.del('time_membros',{time_id:id});await DB.del('times',{id});toast('Time excluído');await timeSync();abrir('timeb')}
+async function sair(){await DB.del('time_membros',{jogador_id:player.id});toast('Você saiu do time');await timeSync();abrir('timeb')}
+async function remover(id){await DB.del('time_membros',{jogador_id:id});toast('Jogador removido');abrir('time')}
+async function pedido(id,ok){const p=(await DB.sel('time_pedidos',{time_id:TM.id,jogador_id:id}))[0];if(!p)return abrir('time');
+ if(ok){const m=await DB.sel('time_membros',{time_id:TM.id});if(m.length>=30)return toast('Time cheio');await DB.ins('time_membros',{time_id:TM.id,jogador_id:id,nick:p.nick})}
+ await DB.del('time_pedidos',{time_id:TM.id,jogador_id:id});abrir('time')}
+
+// ---- Passe do mês ----
+const PF={5:'g150',10:'ip1',15:'g300',20:'ip2',25:'g500',30:'ip3'};
+const PP=['g300','iq1','d25','g400','iq2','g500','iq3','d25','g600','iq4','g700','iq5','d25','g800','iq6','g900','iq7','d25','g1000','iq8','g1200','iq9','d25','g1400','iq10','g1600','iq11','d25','g1800','iq12'];
+const ps=()=>{const m=new Date().toISOString().slice(0,7);if(!S.ps||S.ps.m!=m)S.ps={m,xp:0,pr:0,cf:[],cp:[]};return S.ps};
+const lvl=()=>Math.min(30,Math.floor(ps().xp/100));
+function ganharXP(n){ps().xp=Math.min(3000,ps().xp+n);salvar()}
+const rw=c=>{if(c[0]=='g')return['🪙',c.slice(1)+' ouro'];if(c[0]=='d')return['💎',c.slice(1)+' 💎'];const i=ITENS.find(x=>x.id==c.slice(1))||{};return[i.e||'🎁',i.n||'Item']};
+const cell=(c,lv,pr)=>{const p=ps(),done=(pr?p.cp:p.cf).includes(lv),open=lvl()>=lv&&(!pr||p.pr),r=rw(c);
+ return`<div class="card" style="width:92px;height:128px;padding:8px;justify-content:center;${open&&!done?'border-color:var(--n1);box-shadow:0 0 14px #c6ff0066;':''}${done?'opacity:.55':''}"><span style="font-size:30px">${r[0]}</span><small style="line-height:1.1">${r[1]}</small>${done?'<small>✔ Resgatado</small>':open?`<button class="btn sm" onclick="resgatar(${pr},${lv})">Resgatar</button>`:`<small>${pr&&!p.pr?'👑 Premium':'🔒 Nv '+lv}</small>`}</div>`};
+P.passe=()=>{const p=ps(),l=lvl(),n=new Date(),dias=Math.ceil((new Date(n.getFullYear(),n.getMonth()+1,1)-n)/864e5);
+ return`<div class="card" style="align-items:stretch;text-align:left;margin-bottom:12px"><b style="font-size:20px">Passe do mês ${p.pr?'👑 Premium':''}</b><small>Termina em ${dias} dias · Nível ${l}/30 · ${l>=30?'máximo':p.xp%100+'/100 XP'}</small><div class="bar"><i style="width:${l>=30?100:p.xp%100}%"></i></div><div class="pills" style="margin:10px 0 0">${p.pr?'':'<button class="btn sm" onclick="comprarPasse()">Comprar passe 💎 600</button>'}<button class="btn sm" onclick="comprarNiveis()">Comprar todos os níveis 💎 150</button><button class="btn sm" onclick="resgatarTudo()">Resgatar tudo</button></div></div><div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:8px"><div style="display:flex;flex-direction:column;gap:8px;padding-top:24px"><b style="height:128px;display:grid;place-items:center">Grátis</b><b style="height:128px;display:grid;place-items:center">👑 Premium</b></div>${PP.map((c,i)=>`<div style="display:flex;flex-direction:column;gap:8px;align-items:center"><b style="height:16px">Nv ${i+1}</b>${PF[i+1]?cell(PF[i+1],i+1,0):'<div style="width:92px;height:128px"></div>'}${cell(c,i+1,1)}</div>`).join('')}</div>`};
+async function aplicarPremios(lista){let g=0,d=0;const it=[];
+ lista.forEach(c=>{c[0]=='g'?g+=+c.slice(1):c[0]=='d'?d+=+c.slice(1):it.push(c.slice(1))});
+ if(d){await carteira();await gravar(player.dia+d)}
+ if(g)setOuro(ouro()+g);
+ it.forEach(i=>{if(!S.inv.includes(i))S.inv.push(i)});salvar();
+ toast('Recebido: '+[g&&'🪙 '+g,d&&'💎 '+d,it.length&&it.length+' item(ns)'].filter(Boolean).join('  '))}
+async function resgatar(pr,lv){const p=ps(),a=pr?p.cp:p.cf;if(a.includes(lv)||lvl()<lv||(pr&&!p.pr))return;a.push(lv);await aplicarPremios([pr?PP[lv-1]:PF[lv]]);abrir('passe')}
+async function resgatarTudo(){const p=ps(),l=[];for(let v=1;v<=lvl();v++){if(PF[v]&&!p.cf.includes(v)){p.cf.push(v);l.push(PF[v])}if(p.pr&&!p.cp.includes(v)){p.cp.push(v);l.push(PP[v-1])}}if(!l.length)return toast('Nada para resgatar');await aplicarPremios(l);abrir('passe')}
+async function comprarPasse(){await carteira();if(player.dia<600)return toast('💎 Diamantes insuficientes');if(await gravar(player.dia-600)){ps().pr=1;salvar();toast('Passe Premium ativado 👑');abrir('passe')}else toast('Falha ao acessar a carteira')}
+async function comprarNiveis(){if(lvl()>=30)return toast('Você já está no nível 30');await carteira();if(player.dia<150)return toast('💎 Diamantes insuficientes');if(await gravar(player.dia-150)){ps().xp=3000;salvar();toast('Todos os níveis liberados!');abrir('passe')}else toast('Falha ao acessar a carteira')}
+
+document.addEventListener('DOMContentLoaded',()=>{player.tag=S.tag||'';setOuro(ouro());atualizaNome();timeSync();setInterval(timeSync,15000)});
 </script></body></html>
