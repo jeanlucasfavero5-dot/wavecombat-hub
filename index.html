@@ -47,6 +47,39 @@
             position: relative;
         }
 
+        /* ANIMAÇÕES E ESTILOS DE VERIFICADO & MOLDURAS */
+        @keyframes goldShine {
+            0% { filter: drop-shadow(0 0 2px #FFD700); transform: rotate(0deg) scale(1); }
+            50% { filter: drop-shadow(0 0 10px #FFD700) brightness(1.4); transform: rotate(8deg) scale(1.1); }
+            100% { filter: drop-shadow(0 0 2px #FFD700); transform: rotate(0deg) scale(1); }
+        }
+        .verified-v {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFD700;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            animation: goldShine 2.5s infinite ease-in-out;
+            margin-left: 4px;
+            font-size: 0.9em;
+        }
+        .profile-frame-gold {
+            border: 3px solid #FFD700 !important;
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.7);
+            background: linear-gradient(135deg, rgba(255,215,0,0.12), rgba(11,15,23,0.95)) !important;
+            position: relative;
+        }
+        .profile-frame-gold::before {
+            content: ''; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px;
+            background: linear-gradient(45deg, #FFD700, transparent, #FFD700, transparent);
+            z-index: -1; border-radius: 12px; animation: borderRotate 4s linear infinite; opacity: 0.6;
+        }
+        @keyframes borderRotate {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+
         .bg-particles {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             pointer-events: none; z-index: 0; overflow: hidden;
@@ -279,12 +312,13 @@
     </nav>
 
     <div class="modal-overlay" id="authModal">
-        <div class="modal-card">
+        <div class="modal-card" id="authModalCard">
             <button class="modal-close" onclick="fecharModalAuth(); tocarSomClique();">&times;</button>
             <div class="tab-switcher" id="modalTabSwitcher">
                 <button class="tab-btn active" id="tabLoginBtn" onclick="alternarAba('login'); tocarSomClique();">Entrar</button>
                 <button class="tab-btn" id="tabRegisterBtn" onclick="alternarAba('registro'); tocarSomClique();">Criar Conta</button>
                 <button class="tab-btn" id="tabPerfilBtn" onclick="alternarAba('perfil'); tocarSomClique();">Perfil & Estatísticas</button>
+                <button class="tab-btn" id="tabCorreioBtn" onclick="alternarAba('correio'); tocarSomClique();">📬 Correio</button>
             </div>
             
             <div class="form-panel active" id="panelLogin">
@@ -307,6 +341,12 @@
             <div class="form-panel" id="panelPerfil">
                 <div id="perfilUserData"><p style="color:#94a3b8; text-align:center;">Faça login para ver seu perfil expandido.</p></div>
             </div>
+
+            <div class="form-panel" id="panelCorreio">
+                <div id="correioMensagensContainer">
+                    <p style="color:#94a3b8; text-align:center; font-size:11px;">Nenhuma mensagem no correio.</p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -317,12 +357,31 @@
             <h3 style="font-family:'Orbitron'; color:var(--accent-color); margin-bottom:10px;">Pagamento via Pix</h3>
             <p style="font-size:12px; color:#94a3b8; margin-bottom:12px;">Escaneie o QR Code abaixo ou copie o código Pix para pagar no app do seu banco:</p>
             
+            <div style="margin-bottom:10px;">
+                <input type="text" id="inputCupomRecarga" placeholder="Possui Cupom de Influenciador? Digite aqui" class="auth-input" style="font-size:11px; text-align:center; border-color:var(--gold-warning);">
+            </div>
+
             <div id="pixQrContainer" style="margin: 15px 0; display: flex; justify-content: center;"></div>
             
             <input type="text" id="pixCopiaColaInput" class="auth-input" readonly style="font-size:10px; margin-bottom:10px;">
             <button class="btn-gaming" onclick="copiarPixCopiaCola()" style="width:100%; padding:8px; font-size:11px;">📋 Copiar Código Pix</button>
             
             <p style="font-size:10px; color:var(--gold-warning); margin-top:12px;">⚡ Assim que o pagamento for confirmado, os diamantes caem na sua conta automaticamente!</p>
+        </div>
+    </div>
+
+    <!-- MODAL DE FESTA / RECOMPENSA DE VERIFICADO -->
+    <div class="modal-overlay" id="modalVerificadoPremio" style="z-index: 3000;">
+        <div class="modal-card" style="text-align: center; border-color: #FFD700; box-shadow: 0 0 50px rgba(255,215,0,0.8);">
+            <h2 style="font-family:'Orbitron'; color:#FFD700; margin-bottom:10px;">🎉 PARABÉNS! VOCÊ É VERIFICADO! ⭐</h2>
+            <p style="font-size:12px; color:#fff; margin-bottom:15px;">Sua conta recebeu o selo oficial de prestígio e recompensas exclusivas:</p>
+            <div style="background:#0b0f17; border:1px solid #FFD700; padding:15px; border-radius:8px; margin-bottom:15px; text-align:left; font-size:11px; display:flex; flex-direction:column; gap:6px;">
+                <div>✨ Símbolo <strong>V Dourado</strong> no seu Nick em todo o site</div>
+                <div>🖼️ Moldura Dourada & Fundo Animado Exclusivo para Perfil</div>
+                <div>💎 <strong>5.000 Diamantes</strong> adicionados à sua conta</div>
+                <div id="infoCupomGeradoPremio" style="color:var(--gold-warning); font-weight:bold;"></div>
+            </div>
+            <button class="btn-gaming" onclick="fecharModalVerificadoPremio()" style="background:#FFD700; color:#000; width:100%; padding:10px;">Resgatar & Curtir a Festa! 🥳</button>
         </div>
     </div>
 
@@ -510,6 +569,7 @@
         </div>
     </section>
 
+    <!-- PAINEL ADMINISTRATIVO EXPANDIDO -->
     <div class="admin-section" id="adminSection" style="display:none;">
         <div class="admin-container">
             <h3 style="color:var(--accent-color); font-family:'Orbitron'; text-align:center; margin-bottom:15px; font-size:16px;">⚙️ PAINEL ADMINISTRATIVO</h3>
@@ -536,6 +596,36 @@
                     <input type="number" id="admTargetQtd" placeholder="Quantidade de Diamantes" class="auth-input" style="font-size:11px; margin-bottom:6px;">
                     <button type="button" class="btn-gaming" onclick="admEnviarDiamantesLivre()" style="font-size:10px; padding:6px; background:#22c55e; color:#000;">⚡ Enviar Diamantes sem Limites</button>
                 </div>
+
+                <div class="admin-block">
+                    <h4>⭐ Ativar Verificado para Usuário</h4>
+                    <input type="text" id="admVerificadoTarget" placeholder="Nick ou ID do Jogador" class="auth-input" style="font-size:11px; margin-bottom:6px;">
+                    <button type="button" class="btn-gaming" onclick="admAtivarVerificadoUser()" style="font-size:10px; padding:6px; background:#FFD700; color:#000;">⭐ Conceder Selo V, Moldura & Prêmios</button>
+                </div>
+            </div>
+
+            <!-- ÁREA DE GESTÃO DE USUÁRIOS & BANIMENTOS -->
+            <div class="admin-block" style="margin-top: 15px;">
+                <h4 style="color:var(--accent-color);">👥 Lista e Gestão de Usuários Cadastrados</h4>
+                <div style="display:flex; gap:10px; margin-bottom:10px;">
+                    <input type="text" id="inputBuscaAdminUser" placeholder="Pesquisar por Nick ou ID..." class="auth-input" oninput="renderizarTabelaUsuariosAdmin()" style="font-size:11px;">
+                </div>
+                <div id="adminListaUsuariosContainer" style="max-height:220px; overflow-y:auto; display:flex; flex-direction:column; gap:6px;">
+                    <!-- Preenchido dinamicamente -->
+                </div>
+            </div>
+
+            <!-- ÁREA DE GESTÃO DE INFLUENCIADORES E CUPONS -->
+            <div class="admin-block" style="margin-top: 15px; border-color: var(--gold-warning);">
+                <h4 style="color:var(--gold-warning);">🌟 Gestão de Influenciadores & Cupons de Recarga</h4>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px;">
+                    <input type="text" id="infTargetNick" placeholder="Nick ou ID do Influenciador" class="auth-input" style="font-size:11px; flex:1;">
+                    <input type="text" id="infTargetCodigo" placeholder="Código Personalizado (Ex: CAPUDO7)" class="auth-input" style="font-size:11px; flex:1;">
+                    <button type="button" class="btn-gaming" onclick="adicionarInfluenciadorAdmin()" style="font-size:10px; background:var(--gold-warning); color:#000;">Promover / Criar Cupom</button>
+                </div>
+                <div id="adminListaInfluenciadoresContainer" style="max-height:200px; overflow-y:auto; display:flex; flex-direction:column; gap:6px;">
+                    <!-- Preenchido dinamicamente -->
+                </div>
             </div>
 
             <h4 style="color:#fff; margin-bottom:10px; font-family:'Orbitron'; font-size:14px; margin-top:15px;">🎮 Gestão de Games na Nuvem</h4>
@@ -548,7 +638,7 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.360 (Enhanced Features Integrated)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.380 (Enhanced Verified & Influencer System)</strong>
     </footer>
 
     <script>
@@ -571,13 +661,58 @@
         let painelAdmAberto = false;
         let siteConfigGlobal = { url: "", ativa: false, logo: "" };
         let audioSfxAtivo = true;
-        let ultimaMensagemChatTempo = 0; // Anti-spam variable
+        let ultimaMensagemChatTempo = 0;
 
         let bgmInterval = null;
         let bgmActive = false;
         let bgmVolumeValue = 0.3;
         const arcadeNotes = [261.63, 329.63, 392.00, 523.25, 493.88, 392.00, 329.63, 293.66, 349.23, 440.00]; 
         let noteIndex = 0;
+
+        // FUNÇÃO DE FORMATAÇÃO DE NÚMEROS COMPACTOS (10k, 1M, etc.)
+        function formatarNumero(num) {
+            if (num === null || num === undefined) return '0';
+            num = Number(num);
+            if (isNaN(num)) return '0';
+            if (num >= 1e12) return (num / 1e12).toFixed(1).replace('.0', '') + 'T';
+            if (num >= 1e9) return (num / 1e9).toFixed(1).replace('.0', '') + 'B';
+            if (num >= 1e6) return (num / 1e6).toFixed(1).replace('.0', '') + 'M';
+            if (num >= 1e3) {
+                return (num / 1000).toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + 'k';
+            }
+            return num.toLocaleString('pt-BR');
+        }
+
+        // VERIFICAR SE USUÁRIO ESTÁ BANIDO
+        function verificarBanimentoAtual() {
+            if (!usuarioLogado) return false;
+            try {
+                let banidos = JSON.parse(localStorage.getItem('wavecombat_banidos') || '{}');
+                let banInfo = banidos[usuarioLogado.id];
+                if (banInfo) {
+                    if (Date.now() < banInfo.expiraEm) {
+                        alert(`⚠️ Sua conta está banida até ${new Date(banInfo.expiraEm).toLocaleString('pt-BR')}.`);
+                        fazerLogout();
+                        return true;
+                    } else {
+                        delete banidos[usuarioLogado.id];
+                        localStorage.setItem('wavecombat_banidos', JSON.stringify(banidos));
+                    }
+                }
+            } catch(e){}
+            return false;
+        }
+
+        // RENDERIZAR NICK COM SELO V DOURADO SE VERIFICADO
+        function obterHtmlNickVerificado(nick, id) {
+            let verificados = {};
+            try { verificados = JSON.parse(localStorage.getItem('wavecombat_verificados') || '{}'); } catch(e){}
+            let isVerif = verificados[id] || (nick && nick.toLowerCase() === 'capudo7');
+            if (isVerif) {
+                return `${nick} <span class="verified-v" title="Usuário Verificado">⭐V</span>`;
+            }
+            return nick;
+        }
 
         function playBGMNote() {
             if (!bgmActive) return;
@@ -640,7 +775,6 @@
             }
         }
 
-        // Notificações PWA / Push
         function verificarEstadoNotificacao() {
             if ("Notification" in window) {
                 const btnPush = document.getElementById('btnPushNotif');
@@ -753,7 +887,9 @@
                         usuarioLogado.isAdm = true;
                     }
                     
-                    document.getElementById('btnAuthNav').textContent = usuarioLogado.nick;
+                    if (verificarBanimentoAtual()) return;
+
+                    document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(usuarioLogado.nick, usuarioLogado.id);
                     localStorage.setItem('wavecombat_nick', usuarioLogado.nick);
                     localStorage.setItem('wavecombat_id', usuarioLogado.id);
                     if(usuarioLogado.isAdm) {
@@ -784,6 +920,7 @@
                 alternarAba('login');
             }
             atualizarPerfilExpandidoUI();
+            carregarCorreioUsuario();
         }
 
         function registrarHistoricoJogo(nomeJogo) {
@@ -824,7 +961,7 @@
         async function carregarSaldoDiamantesSite() {
             const idJogador = localStorage.getItem('wavecombat_id');
             if (!idJogador) {
-                document.getElementById('userDiamondBalance').textContent = 0;
+                document.getElementById('userDiamondBalance').textContent = '0';
                 return;
             }
 
@@ -836,15 +973,16 @@
                     .single();
 
                 if (data) {
-                    document.getElementById('userDiamondBalance').textContent = data.diamantes || 0;
+                    document.getElementById('userDiamondBalance').textContent = formatarNumero(data.diamantes || 0);
                 } else {
                     const nick = localStorage.getItem('wavecombat_nick') || 'Jogador';
                     await supabaseClient.from('carteira_diamantes').insert([{ id_jogador: idJogador, nick: nick, diamantes: 0 }]);
-                    document.getElementById('userDiamondBalance').textContent = 0;
+                    document.getElementById('userDiamondBalance').textContent = '0';
                 }
             } catch (e) {}
         }
 
+        // SISTEMA DE RECARGA COM CUPOM DE INFLUENCIADOR
         async function gerarPixMercadoPago(valor, quantDiamantes) {
             const idJogador = localStorage.getItem('wavecombat_id');
             const nick = localStorage.getItem('wavecombat_nick') || 'Jogador';
@@ -855,8 +993,32 @@
                 return;
             }
 
+            const cupomDigitado = (document.getElementById('inputCupomRecarga')?.value || '').trim().toUpperCase();
+            let bonusDiamantes = 0;
+
+            if (cupomDigitado) {
+                try {
+                    let influenciadores = JSON.parse(localStorage.getItem('wavecombat_influenciadores') || '{}');
+                    let infEncontradoKey = Object.keys(influenciadores).find(k => influenciadores[k].codigo === cupomDigitado);
+                    if (infEncontradoKey) {
+                        // Cupom válido! +5% diamantes para o usuário
+                        bonusDiamantes = Math.round(quantDiamantes * 0.05);
+                        quantDiamantes += bonusDiamantes;
+                        
+                        // Computar 30% para o influenciador
+                        let comissao = valor * 0.30;
+                        influenciadores[infEncontradoKey].saldoReceber = (influenciadores[infEncontradoKey].saldoReceber || 0) + comissao;
+                        influenciadores[infEncontradoKey].usosCupom = (influenciadores[infEncontradoKey].usosCupom || 0) + 1;
+                        localStorage.setItem('wavecombat_influenciadores', JSON.stringify(influenciadores));
+                        mostrarToast(`⭐ Cupom "${cupomDigitado}" aplicado! +${bonusDiamantes} Diamantes bônus.`);
+                    } else {
+                        mostrarToast("⚠️ Cupom inválido, mas a compra prosseguirá normalmente.");
+                    }
+                } catch(e){}
+            }
+
             const saldoEl = document.getElementById('userDiamondBalance');
-            saldoAnteriorPix = parseInt(saldoEl ? saldoEl.textContent : '0', 10);
+            saldoAnteriorPix = parseInt(saldoEl ? saldoEl.textContent.replace(/\./g, '').replace('k','000') : '0', 10);
 
             mostrarToast("⏳ Gerando cobrança Pix no Mercado Pago...");
 
@@ -941,14 +1103,254 @@
             }
         }
 
+        // SISTEMA DE ATIVAÇÃO DE VERIFICADO
+        async function admAtivarVerificadoUser() {
+            const termo = document.getElementById('admVerificadoTarget').value.trim();
+            if (!termo) {
+                alert("Digite o Nick ou ID do jogador.");
+                return;
+            }
+
+            let usuarios = obterUsuariosCadastrados();
+            let alvo = usuarios.find(u => u.nick.toLowerCase() === termo.toLowerCase() || u.id === termo);
+            let idAlvo = alvo ? alvo.id : termo;
+            let nickAlvo = alvo ? alvo.nick : termo;
+
+            try {
+                let verificados = {};
+                try { verificados = JSON.parse(localStorage.getItem('wavecombat_verificados') || '{}'); } catch(e){}
+                verificados[idAlvo] = true;
+                localStorage.setItem('wavecombat_verificados', JSON.stringify(verificados));
+
+                // Gerar cupom padrão de influenciador para o verificado se quiser
+                let codigoCupom = `V_${nickAlvo.toUpperCase().slice(0,6)}`;
+                let influenciadores = {};
+                try { influenciadores = JSON.parse(localStorage.getItem('wavecombat_influenciadores') || '{}'); } catch(e){}
+                if (!influenciadores[idAlvo]) {
+                    influenciadores[idAlvo] = { nick: nickAlvo, codigo: codigoCupom, saldoReceber: 0, usosCupom: 0 };
+                    localStorage.setItem('wavecombat_influenciadores', JSON.stringify(influenciadores));
+                }
+
+                // Adicionar 5k de diamantes
+                const { data: carteira } = await supabaseClient.from('carteira_diamantes').select('diamantes').eq('id_jogador', idAlvo).single();
+                let saldoAtual = carteira ? (carteira.diamantes || 0) : 0;
+                await supabaseClient.from('carteira_diamantes').upsert({ id_jogador: idAlvo, nick: nickAlvo, diamantes: saldoAtual + 5000 }, { onConflict: 'id_jogador' });
+
+                // Enviar mensagem no correio do usuário
+                let correios = {};
+                try { correios = JSON.parse(localStorage.getItem('wavecombat_correios') || '{}'); } catch(e){}
+                if (!correios[idAlvo]) correios[idAlvo] = [];
+                correios[idAlvo].unshift({
+                    titulo: "Parabéns pelo Verificado! ⭐",
+                    mensagem: `Você recebeu o selo oficial de verificado! Ganhou moldura dourada, fundo animado, 5.000 diamantes e seu cupom de influenciador é: ${codigoCupom}`,
+                    data: new Date().toLocaleDateString('pt-BR'),
+                    resgatado: false
+                });
+                localStorage.setItem('wavecombat_correios', JSON.stringify(correios));
+
+                mostrarToast(`⭐ Usuário ${nickAlvo} verificado com sucesso! Prêmios enviados.`);
+                document.getElementById('admVerificadoTarget').value = '';
+                renderizarTabelaUsuariosAdmin();
+            } catch(e) {
+                alert("Erro ao conceder verificação.");
+            }
+        }
+
+        // GERENCIAR USUÁRIOS E BANIMENTOS NO ADM
+        async function renderizarTabelaUsuariosAdmin() {
+            let container = document.getElementById('adminListaUsuariosContainer');
+            let filtro = (document.getElementById('inputBuscaAdminUser')?.value || '').toLowerCase();
+            let usuarios = obterUsuariosCadastrados();
+            let banidos = {};
+            try { banidos = JSON.parse(localStorage.getItem('wavecombat_banidos') || '{}'); } catch(e){}
+            let verificados = {};
+            try { verificados = JSON.parse(localStorage.getItem('wavecombat_verificados') || '{}'); } catch(e){}
+
+            if (usuarios.length === 0) {
+                container.innerHTML = `<p style="color:#94a3b8; font-size:11px; text-align:center;">Nenhum usuário cadastrado localmente.</p>`;
+                return;
+            }
+
+            let filtrados = usuarios.filter(u => u.nick.toLowerCase().includes(filtro) || u.id.includes(filtro));
+            
+            container.innerHTML = filtrados.map(u => {
+                let isBan = banidos[u.id] && Date.now() < banidos[u.id].expiraEm;
+                let isVerif = verificados[u.id];
+                return `
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:#070a10; border:1px solid var(--steel-border); padding:8px; border-radius:6px; font-size:11px; flex-wrap:wrap; gap:6px;">
+                        <div>
+                            <strong>${u.nick}</strong> ${isVerif ? '⭐' : ''} <span style="color:#64748b;">(ID: ${u.id})</span>
+                            ${isBan ? '<span style="color:var(--alert-red); margin-left:6px;">[BANIDO]</span>' : ''}
+                        </div>
+                        <div style="display:flex; gap:4px; align-items:center;">
+                            <select id="selectBan_${u.id}" class="auth-input" style="padding:4px; font-size:10px; width:auto;">
+                                <option value="7d">Ban 7 Dias</option>
+                                <option value="1m">Ban 1 Mês</option>
+                                <option value="999a">Ban 999 Anos</option>
+                            </select>
+                            <button class="btn-gaming btn-danger" onclick="aplicarBanimentoUser('${u.id}')" style="padding:4px 8px; font-size:10px;">Banir</button>
+                            ${isBan ? `<button class="btn-gaming" onclick="removerBanimentoUser('${u.id}')" style="padding:4px 8px; font-size:10px; background:#22c55e; color:#000;">Desbanir</button>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function aplicarBanimentoUser(id) {
+            let duracao = document.getElementById(`selectBan_${id}`).value;
+            let tempoMs = 7 * 24 * 60 * 60 * 1000;
+            if (duracao === '1m') tempoMs = 30 * 24 * 60 * 60 * 1000;
+            if (duracao === '999a') tempoMs = 999 * 365 * 24 * 60 * 60 * 1000;
+
+            let banidos = {};
+            try { banidos = JSON.parse(localStorage.getItem('wavecombat_banidos') || '{}'); } catch(e){}
+            banidos[id] = { expiraEm: Date.now() + tempoMs };
+            localStorage.setItem('wavecombat_banidos', JSON.stringify(banidos));
+            mostrarToast("🔨 Usuário banido com sucesso!");
+            renderizarTabelaUsuariosAdmin();
+        }
+
+        function removerBanimentoUser(id) {
+            let banidos = {};
+            try { banidos = JSON.parse(localStorage.getItem('wavecombat_banidos') || '{}'); } catch(e){}
+            delete banidos[id];
+            localStorage.setItem('wavecombat_banidos', JSON.stringify(banidos));
+            mostrarToast("✨ Banimento removido!");
+            renderizarTabelaUsuariosAdmin();
+        }
+
+        // GESTÃO DE INFLUENCIADORES E CUPONS NO ADM
+        function adicionarInfluenciadorAdmin() {
+            let termo = document.getElementById('infTargetNick').value.trim();
+            let codigo = document.getElementById('infTargetCodigo').value.trim().toUpperCase();
+
+            if (!termo || !codigo) {
+                alert("Preencha o Nick/ID e o código do cupom.");
+                return;
+            }
+
+            let usuarios = obterUsuariosCadastrados();
+            let alvo = usuarios.find(u => u.nick.toLowerCase() === termo.toLowerCase() || u.id === termo);
+            let idAlvo = alvo ? alvo.id : 'inf_' + Math.floor(Math.random()*10000);
+            let nickAlvo = alvo ? alvo.nick : termo;
+
+            let influenciadores = {};
+            try { influenciadores = JSON.parse(localStorage.getItem('wavecombat_influenciadores') || '{}'); } catch(e){}
+
+            influenciadores[idAlvo] = {
+                nick: nickAlvo,
+                codigo: codigo,
+                saldoReceber: influenciadores[idAlvo] ? influenciadores[idAlvo].saldoReceber : 0,
+                usosCupom: influenciadores[idAlvo] ? influenciadores[idAlvo].usosCupom : 0
+            };
+
+            localStorage.setItem('wavecombat_influenciadores', JSON.stringify(influenciadores));
+            mostrarToast(`🌟 Influenciador ${nickAlvo} configurado com o cupom ${codigo}!`);
+            document.getElementById('infTargetNick').value = '';
+            document.getElementById('infTargetCodigo').value = '';
+            renderizarTabelaInfluenciadoresAdmin();
+        }
+
+        function renderizarTabelaInfluenciadoresAdmin() {
+            let container = document.getElementById('adminListaInfluenciadoresContainer');
+            if (!container) return;
+            let influenciadores = {};
+            try { influenciadores = JSON.parse(localStorage.getItem('wavecombat_influenciadores') || '{}'); } catch(e){}
+
+            let chaves = Object.keys(influenciadores);
+            if (chaves.length === 0) {
+                container.innerHTML = `<p style="color:#94a3b8; font-size:11px; text-align:center;">Nenhum influenciador cadastrado.</p>`;
+                return;
+            }
+
+            container.innerHTML = chaves.map(k => {
+                let inf = influenciadores[k];
+                return `
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:#070a10; border:1px solid var(--steel-border); padding:8px; border-radius:6px; font-size:11px; flex-wrap:wrap; gap:6px;">
+                        <div>
+                            <strong>${inf.nick}</strong> | Cupom: <strong style="color:var(--gold-warning);">${inf.codigo}</strong>
+                            <br><span style="color:#22c55e;">Usos: ${inf.usosCupom || 0}</span> | A Receber: <strong style="color:#fff;">R$ ${(inf.saldoReceber || 0).toFixed(2)}</strong>
+                        </div>
+                        <div style="display:flex; gap:4px;">
+                            <button class="btn-gaming" onclick="resetarSaldoInfluenciador('${k}')" style="padding:4px 8px; font-size:10px; background:var(--gold-warning); color:#000;">Resetar Saldo</button>
+                            <button class="btn-gaming btn-danger" onclick="removerInfluenciador('${k}')" style="padding:4px 8px; font-size:10px;">Remover Cargo</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function resetarSaldoInfluenciador(k) {
+            let influenciadores = {};
+            try { influenciadores = JSON.parse(localStorage.getItem('wavecombat_influenciadores') || '{}'); } catch(e){}
+            if (influenciadores[k]) {
+                influenciadores[k].saldoReceber = 0;
+                localStorage.setItem('wavecombat_influenciadores', JSON.stringify(influenciadores));
+                mostrarToast("🔄 Saldo do influenciador resetado para pagamento!");
+                renderizarTabelaInfluenciadoresAdmin();
+            }
+        }
+
+        function removerInfluenciador(k) {
+            let influenciadores = {};
+            try { influenciadores = JSON.parse(localStorage.getItem('wavecombat_influenciadores') || '{}'); } catch(e){}
+            delete influenciadores[k];
+            localStorage.setItem('wavecombat_influenciadores', JSON.stringify(influenciadores));
+            mostrarToast("❌ Cargo de influenciador removido (histórico de cupom preservado).");
+            renderizarTabelaInfluenciadoresAdmin();
+        }
+
+        // SISTEMA DE CORREIO & PRÊMIOS DO VERIFICADO
+        function carregarCorreioUsuario() {
+            let container = document.getElementById('correioMensagensContainer');
+            if (!container || !usuarioLogado) return;
+            let correios = {};
+            try { correios = JSON.parse(localStorage.getItem('wavecombat_correios') || '{}'); } catch(e){}
+            let minhasMsgs = correios[usuarioLogado.id] || [];
+
+            if (minhasMsgs.length === 0) {
+                container.innerHTML = `<p style="color:#94a3b8; text-align:center; font-size:11px;">Nenhuma mensagem no correio.</p>`;
+                return;
+            }
+
+            container.innerHTML = minhasMsgs.map((m, idx) => `
+                <div style="background:#0b0f17; border:1px solid ${m.resgatado ? 'var(--steel-border)' : '#FFD700'}; padding:10px; border-radius:8px; margin-bottom:8px; font-size:11px;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                        <strong style="color:var(--accent-color);">${m.titulo}</strong>
+                        <span style="color:#64748b; font-size:9px;">${m.data}</span>
+                    </div>
+                    <p style="color:#94a3b8; margin-bottom:8px;">${m.mensagem}</p>
+                    ${!m.resgatado ? `<button class="btn-gaming" onclick="resgatarPremioCorreio(${idx})" style="background:#FFD700; color:#000; width:100%; padding:6px; font-size:10px;">🎁 Resgatar Prêmios</button>` : `<span style="color:#22c55e; font-weight:bold;">✅ Prêmios Resgatados</span>`}
+                </div>
+            `).join('');
+        }
+
+        function resgatarPremioCorreio(idx) {
+            let correios = {};
+            try { correios = JSON.parse(localStorage.getItem('wavecombat_correios') || '{}'); } catch(e){}
+            if (correios[usuarioLogado.id] && correios[usuarioLogado.id][idx]) {
+                correios[usuarioLogado.id][idx].resgatado = true;
+                localStorage.setItem('wavecombat_correios', JSON.stringify(correios));
+                tocarSomLevelUp();
+                document.getElementById('modalVerificadoPremio').style.display = 'flex';
+                carregarCorreioUsuario();
+            }
+        }
+
+        function fecharModalVerificadoPremio() {
+            document.getElementById('modalVerificadoPremio').style.display = 'none';
+        }
+
         function alternarAba(aba) {
             document.getElementById('tabLoginBtn')?.classList.toggle('active', aba === 'login');
             document.getElementById('tabRegisterBtn')?.classList.toggle('active', aba === 'registro');
             document.getElementById('tabPerfilBtn')?.classList.toggle('active', aba === 'perfil');
+            document.getElementById('tabCorreioBtn')?.classList.toggle('active', aba === 'correio');
             
             document.getElementById('panelLogin').classList.toggle('active', aba === 'login');
             document.getElementById('panelRegistro').classList.toggle('active', aba === 'registro');
             document.getElementById('panelPerfil').classList.toggle('active', aba === 'perfil');
+            document.getElementById('panelCorreio').classList.toggle('active', aba === 'correio');
         }
 
         function obterUsuariosCadastrados() {
@@ -974,7 +1376,7 @@
             localStorage.setItem('wavecombat_id', novoId);
             
             mostrarToast("✨ Conta criada com sucesso!");
-            document.getElementById('btnAuthNav').textContent = u;
+            document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(u, novoId);
             fecharModalAuth();
             atualizarAbasPerfilUI();
             carregarSaldoDiamantesSite();
@@ -990,9 +1392,12 @@
                 localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
                 localStorage.setItem('wavecombat_nick', 'capudo7');
                 localStorage.setItem('wavecombat_id', MEU_ID_MESTRE);
+                
+                if (verificarBanimentoAtual()) return;
+
                 mostrarToast('⭐ Acesso ADM Concedido (ID 577082415)!');
                 document.getElementById('btnToggleAdmNav').style.display = 'inline-block';
-                document.getElementById('btnAuthNav').textContent = 'capudo7';
+                document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado('capudo7', MEU_ID_MESTRE);
                 fecharModalAuth();
                 atualizarAbasPerfilUI();
                 carregarSaldoDiamantesSite();
@@ -1004,11 +1409,14 @@
             if(achou) {
                 if(!achou.id) achou.id = Math.floor(100000000 + Math.random() * 900000000).toString();
                 usuarioLogado = { nick: achou.nick, isAdm: false, id: achou.id };
+                
+                if (verificarBanimentoAtual()) return;
+
                 localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
                 localStorage.setItem('wavecombat_nick', achou.nick);
                 localStorage.setItem('wavecombat_id', achou.id);
                 mostrarToast(`👋 Bem-vindo de volta, ${achou.nick}!`);
-                document.getElementById('btnAuthNav').textContent = achou.nick;
+                document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(achou.nick, achou.id);
                 fecharModalAuth();
                 atualizarAbasPerfilUI();
                 carregarSaldoDiamantesSite();
@@ -1025,11 +1433,14 @@
             let historico = [];
             try { historico = JSON.parse(localStorage.getItem('wavecombat_historico') || '[]'); } catch(e){}
 
+            let verificados = {};
+            try { verificados = JSON.parse(localStorage.getItem('wavecombat_verificados') || '{}'); } catch(e){}
+            let isVerif = verificados[idAtual] || (nickAtual.toLowerCase() === 'capudo7');
+
             let histHtml = historico.length > 0 
                 ? historico.map(h => `<li style="font-size:10px; color:#94a3b8;">🎮 ${h.nome} (${h.data})</li>`).join('') 
                 : `<li style="font-size:10px; color:#64748b;">Nenhum jogo recente.</li>`;
 
-            // Buscar nível e XP atual do Supabase se houver ID
             let nivelUser = 1;
             let xpUser = 0;
             if (idAtual) {
@@ -1042,13 +1453,37 @@
                 } catch(e){}
             }
 
+            // Área de influenciador (visível apenas para o próprio influenciador)
+            let influenciadorInfoHtml = '';
+            try {
+                let influenciadores = JSON.parse(localStorage.getItem('wavecombat_influenciadores') || '{}');
+                let meuInf = influenciadores[idAtual];
+                if (meuInf) {
+                    influenciadorInfoHtml = `
+                        <div style="background:rgba(245, 158, 11, 0.1); border:1px solid var(--gold-warning); padding:10px; border-radius:8px; margin-top:10px;">
+                            <h5 style="font-family:'Orbitron'; font-size:11px; color:var(--gold-warning); margin-bottom:4px;">🌟 Painel do Influenciador</h5>
+                            <p style="font-size:10px; color:#fff;">Seu Cupom: <strong>${meuInf.codigo}</strong></p>
+                            <p style="font-size:10px; color:#22c55e;">Usos do Cupom: ${meuInf.usosCupom || 0}</p>
+                            <p style="font-size:10px; color:var(--gold-warning);">Valor a Receber (30%): <strong>R$ ${(meuInf.saldoReceber || 0).toFixed(2)}</strong></p>
+                        </div>
+                    `;
+                }
+            } catch(e){}
+
+            // Se for verificado, adiciona classe de moldura dourada no card do perfil
+            let cardStyleClass = isVerif ? 'profile-frame-gold' : '';
+
             perfilDiv.innerHTML = `
                 <div style="display:flex; flex-direction:column; gap:10px;">
-                    <div style="background:#0b0f17; border:1px solid var(--steel-border); padding:10px; border-radius:8px; text-align:center;">
-                        <h4 style="color:var(--accent-color); font-family:'Orbitron'; font-size:13px;">${usuarioLogado ? usuarioLogado.nick : 'Convidado'}</h4>
+                    <div class="${cardStyleClass}" style="background:#0b0f17; border:1px solid var(--steel-border); padding:10px; border-radius:8px; text-align:center;">
+                        <h4 style="color:var(--accent-color); font-family:'Orbitron'; font-size:13px;">${usuarioLogado ? obterHtmlNickVerificado(usuarioLogado.nick, idAtual) : 'Convidado'}</h4>
                         <p style="font-size:11px; color:var(--gold-warning); font-family:'Orbitron'; margin-top:4px;">ID Único: <strong>${idAtual || 'Não Logado'}</strong></p>
                         <p style="font-size:10px; color:#22c55e; margin-top:2px;">⭐ Nível: ${nivelUser} | XP: ${xpUser}</p>
+                        ${isVerif ? '<p style="font-size:10px; color:#FFD700; margin-top:4px; font-weight:bold;">⭐ Conta Oficial Verificada</p>' : ''}
                     </div>
+                    
+                    ${influenciadorInfoHtml}
+
                     <div>
                         <label style="font-size:11px; color:#94a3b8;">Editar Nick nos Jogos:</label>
                         <input type="text" id="inputHubNickEdit" value="${nickAtual}" class="auth-input" oninput="salvarNickManualSite(this.value)">
@@ -1109,8 +1544,8 @@
                 }
                 container.innerHTML = data.map((item, idx) => `
                     <div style="display:flex; justify-content:space-between; align-items:center; background:#0b0f17; border:1px solid var(--steel-border); padding:6px 10px; border-radius:6px; font-size:11px;">
-                        <span><strong>#${idx+1}</strong> ${item.nick} <span style="color:#64748b; font-size:9px;">(Nível ${item.nivel || 1})</span></span>
-                        <strong style="color:var(--accent-color);">${item.pontos} pts</strong>
+                        <span><strong>#${idx+1}</strong> ${obterHtmlNickVerificado(item.nick, item.id_jogador)} <span style="color:#64748b; font-size:9px;">(Nível ${item.nivel || 1})</span></span>
+                        <strong style="color:var(--accent-color);">${formatarNumero(item.pontos)} pts</strong>
                     </div>
                 `).join('');
             } catch(e) {
@@ -1133,7 +1568,7 @@
                     const corNick = m.cor || '#00f0ff';
                     return `
                         <div class="chat-msg-item ${isMentioned ? 'mentioned' : ''}">
-                            <strong style="color:${corNick};">${m.nick}:</strong> <span style="color:#f8fafc;">${m.mensagem}</span>
+                            <strong style="color:${corNick};">${obterHtmlNickVerificado(m.nick, m.id_jogador || '')}:</strong> <span style="color:#f8fafc;">${m.mensagem}</span>
                         </div>
                     `;
                 }).join('');
@@ -1155,7 +1590,6 @@
 
         async function enviarMensagemChat() {
             const agora = Date.now();
-            // Anti-spam check: 2 segundos entre mensagens
             if (agora - ultimaMensagemChatTempo < 2000) {
                 mostrarToast("⏳ Aguarde 2 segundos para enviar outra mensagem (Anti-Spam).");
                 return;
@@ -1168,9 +1602,10 @@
             ultimaMensagemChatTempo = agora;
             const nick = localStorage.getItem('wavecombat_nick') || 'Convidado';
             const cor = localStorage.getItem('wavecombat_cor_nick') || '#00f0ff';
+            const idJogador = localStorage.getItem('wavecombat_id') || '';
             
             try {
-                await supabaseClient.from('chat_global').insert([{ nick, mensagem: txt, cor }]);
+                await supabaseClient.from('chat_global').insert([{ nick, mensagem: txt, cor, id_jogador: idJogador }]);
                 input.value = '';
                 carregarMensagensChat();
                 tocarSomClique();
@@ -1208,8 +1643,8 @@
 
             let totalAcessos = listaJogosCache.reduce((acc, curr) => acc + (curr.acessos || 0), 1250);
             let totalUsers = obterUsuariosCadastrados().length + 42;
-            document.getElementById('statTotalPartidas').textContent = totalAcessos;
-            document.getElementById('statTotalUsuarios').textContent = totalUsers;
+            document.getElementById('statTotalPartidas').textContent = formatarNumero(totalAcessos);
+            document.getElementById('statTotalUsuarios').textContent = formatarNumero(totalUsers);
 
             sincronizarCamposAdmUI();
             aplicarLogoNoSite();
@@ -1290,6 +1725,7 @@
         }
 
         async function tentarExecutarJogo(jogo) {
+            if (verificarBanimentoAtual()) return;
             inicializarIdentidadeLocal();
             registrarHistoricoJogo(jogo.nome);
 
@@ -1339,6 +1775,8 @@
             if(painelAdmAberto) {
                 painel.scrollIntoView({ behavior: 'smooth' });
                 renderizarJogosAdmin();
+                renderizarTabelaUsuariosAdmin();
+                renderizarTabelaInfluenciadoresAdmin();
                 sincronizarCamposAdmUI();
             }
         }
@@ -1505,7 +1943,7 @@
                 item.className = 'admin-game-item';
                 item.innerHTML = `
                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:5px;">
-                        <span style="color:var(--accent-color); font-weight:bold; font-size:12px;">${jogo.nome} (${jogo.acessos || 0})</span>
+                        <span style="color:var(--accent-color); font-weight:bold; font-size:12px;">${jogo.nome} (${formatarNumero(jogo.acessos || 0)})</span>
                         <div style="display:flex; gap:4px;">
                             <button type="button" class="btn-gaming" onclick="tentarExecutarJogo(${JSON.stringify(jogo).replace(/"/g, '&quot;')}); tocarSomClique();" style="font-size:9px; padding:3px 6px;">🎮 Testar</button>
                             <button type="button" class="btn-gaming ${jogo.publicado ? 'btn-danger' : 'btn-success'}" onclick="togglePublicarJogo('${jogo.id}')" style="font-size:9px; padding:3px 6px;">
