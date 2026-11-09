@@ -2,471 +2,2080 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WAVECOMBAT - Painel & Plataforma</title>
-    <!-- Supabase SDK -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>WaveCombat | Modern Gaming Hub</title>
+    
+    <!-- Meta Tags para PWA -->
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#00f0ff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="WaveCombat">
+
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Orbitron:wght@600;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
-            --bg-dark: #070913;
-            --panel-bg: rgba(18, 22, 41, 0.95);
-            --border-color: #1e2640;
-            --accent-green: #00e676;
-            --accent-gold: #ffb300;
-            --accent-danger: #ff5252;
-            --accent-blue: #00b0ff;
-            --text-main: #e0e6ed;
-            --text-muted: #8a99ad;
+            --bg-dark: #0b0f17;
+            --panel-bg: rgba(16, 22, 34, 0.95);
+            --accent-color: #00f0ff; 
+            --accent-glow: rgba(0, 240, 255, 0.3);
+            --steel-border: #1e293b;
+            --steel-bright: #334155;
+            --ink: #f8fafc;
+            --gold-warning: #f59e0b;
+            --alert-red: #ef4444;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        body.theme-oled {
+            --bg-dark: #000000;
+            --panel-bg: rgba(8, 8, 12, 0.98);
+            --steel-border: #121824;
         }
 
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { width: 100%; max-width: 100vw; overflow-x: hidden; }
         body {
             background-color: var(--bg-dark);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 15px;
-        }
-
-        header {
-            width: 100%;
-            max-width: 500px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0 20px 0;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: bold;
-            font-size: 1.2rem;
-            letter-spacing: 1.5px;
-            color: #fff;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 500px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .card {
-            background: var(--panel-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 18px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-        }
-
-        .card-gold {
-            border: 2px solid var(--accent-gold);
-            background: rgba(255, 179, 0, 0.03);
-        }
-
-        h3 {
-            margin-bottom: 12px;
-            font-size: 1rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-        }
-
-        .gold-title {
-            color: var(--accent-gold);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .subtitle {
-            font-size: 0.82rem;
-            color: var(--text-muted);
-            margin-bottom: 12px;
-            line-height: 1.4;
-        }
-
-        .form-group {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 10px;
-        }
-
-        input, select {
-            flex: 1;
-            background: #131729;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 10px 12px;
-            color: #fff;
-            font-size: 0.88rem;
-            outline: none;
-        }
-
-        input:focus {
-            border-color: var(--accent-blue);
-        }
-
-        .btn {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 6px;
-            font-weight: bold;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: 0.2s;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-green { background: var(--accent-green); color: #000; }
-        .btn-green:hover { background: #00c853; }
-
-        .btn-gold { background: var(--accent-gold); color: #000; }
-        .btn-gold:hover { background: #ffa000; }
-
-        .btn-danger { background: var(--accent-danger); color: #fff; padding: 6px 12px; font-size: 0.8rem; }
-        .btn-small-gold { background: var(--accent-gold); color: #000; padding: 6px 12px; font-size: 0.8rem; }
-        .btn-secondary { background: #1e2640; color: #fff; }
-
-        .influencer-item {
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 10px;
-            margin-top: 10px;
-            font-size: 0.85rem;
-        }
-
-        .influencer-header {
-            font-weight: bold;
-            color: var(--accent-blue);
-            margin-bottom: 4px;
-        }
-
-        .influencer-stats {
-            color: var(--text-muted);
-            margin-bottom: 8px;
-        }
-
-        .influencer-actions {
-            display: flex;
-            gap: 8px;
-        }
-
-        /* Modal Correio / Perfil */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .modal.active { display: flex; }
-
-        .modal-content {
-            background: var(--panel-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            width: 90%;
-            max-width: 420px;
-            padding: 20px;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+            background-size: 40px 40px;
+            color: var(--ink);
+            font-family: 'Outfit', sans-serif;
+            scroll-behavior: smooth;
             position: relative;
         }
 
-        .close-btn {
-            position: absolute;
-            top: 12px; right: 15px;
-            font-size: 1.2rem;
-            cursor: pointer;
-            color: var(--text-muted);
+        @keyframes goldShine {
+            0% { filter: drop-shadow(0 0 2px #FFD700); transform: rotate(0deg) scale(1); }
+            50% { filter: drop-shadow(0 0 10px #FFD700) brightness(1.4); transform: rotate(8deg) scale(1.15); }
+            100% { filter: drop-shadow(0 0 2px #FFD700); transform: rotate(0deg) scale(1); }
+        }
+        .verified-v {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFD700;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            animation: goldShine 2.5s infinite ease-in-out;
+            margin-right: 5px;
+            font-size: 1.1em;
+        }
+        .staff-star {
+            color: var(--gold-warning);
+            margin-right: 4px;
+            font-weight: bold;
+        }
+        .profile-frame-gold {
+            border: 3px solid #FFD700 !important;
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.7);
+            background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(11,15,23,0.95)) !important;
+            position: relative;
         }
 
-        .mail-list {
-            max-height: 300px;
-            overflow-y: auto;
-            margin-top: 10px;
+        .bg-particles {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none; z-index: 0; overflow: hidden;
+        }
+        .particle {
+            position: absolute; width: 3px; height: 3px; background: var(--accent-color);
+            border-radius: 50%; opacity: 0.3; animation: floatParticle 15s infinite linear;
+        }
+        @keyframes floatParticle {
+            0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+            50% { opacity: 0.6; }
+            100% { transform: translateY(-10vh) translateX(50px); opacity: 0; }
         }
 
-        .mail-item {
-            background: rgba(255,255,255,0.04);
-            border-left: 3px solid var(--accent-gold);
-            padding: 10px;
-            margin-bottom: 8px;
-            border-radius: 4px;
+        nav {
+            position: fixed; top: 0; left: 0; width: 100%; max-width: 100vw;
+            min-height: 65px; background: rgba(11, 15, 23, 0.98);
+            backdrop-filter: blur(10px); border-bottom: 2px solid var(--accent-color);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 15px; z-index: 1000; box-shadow: 0 4px 25px var(--accent-glow);
+        }
+        .logo-container { display: flex; align-items: center; gap: 8px; text-decoration: none; z-index: 1002; }
+        .logo-img-custom { height: 36px; max-width: 120px; object-fit: contain; filter: drop-shadow(0 0 10px var(--accent-color)); }
+        .logo-svg { width: 32px; height: 32px; filter: drop-shadow(0 0 10px var(--accent-color)); }
+        .logo-text { font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 16px; color: var(--accent-color); letter-spacing: 1px; }
+
+        .menu-toggle-btn {
+            display: flex; flex-direction: column; justify-around;
+            width: 30px; height: 25px; background: transparent; border: none; cursor: pointer; z-index: 1002;
+        }
+        .menu-toggle-btn span { width: 100%; height: 3px; background: var(--accent-color); border-radius: 2px; transition: 0.3s; }
+
+        .nav-links { display: flex; gap: 15px; list-style: none; align-items: center; z-index: 1002; }
+        .nav-links li a { color: var(--ink); text-decoration: none; font-family: 'Orbitron', sans-serif; font-size: 13px; text-transform: uppercase; transition: 0.2s; }
+        .nav-links li a:hover { color: var(--accent-color); }
+
+        @media (max-width: 768px) {
+            .menu-toggle-btn { display: flex; }
+            .nav-links {
+                position: fixed; top: 0; right: -100%; width: 250px; height: 100vh;
+                background: rgba(11, 15, 23, 0.98); border-left: 2px solid var(--accent-color);
+                flex-direction: column; justify-center; gap: 25px;
+                transition: 0.3s ease-in-out; z-index: 1001; padding: 20px;
+            }
+            .nav-links.active { right: 0; }
+        }
+        @media (min-width: 769px) { .menu-toggle-btn { display: none; } }
+
+        .user-nav-wrapper { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .btn-auth-nav { background: rgba(16, 22, 34, 0.8); color: var(--accent-color); border: 1px solid var(--accent-color); padding: 8px 16px; font-family: 'Orbitron'; font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 6px; display: flex; align-items: center; }
+        .btn-toggle-adm-nav { display: none; background: var(--gold-warning); color: #000; border: none; padding: 8px 12px; font-family: 'Orbitron'; font-size: 12px; font-weight: bold; cursor: pointer; border-radius: 6px; }
+
+        header.hero {
+            min-height: 45vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; padding: 40px 15px; position: relative; background-size: cover; background-position: center;
+            border-bottom: 2px solid var(--steel-border); margin-top: 65px; width: 100%; overflow: hidden; z-index: 2;
+        }
+        header.hero::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(180deg, rgba(11,15,23,0.85) 0%, rgba(11,15,23,0.98) 100%); z-index: 1;
+        }
+        header.hero > * { position: relative; z-index: 2; }
+        header.hero h1 { font-family: 'Orbitron', sans-serif; font-size: clamp(22px, 5vw, 48px); font-weight: 900; color: #fff; margin-bottom: 10px; text-transform: uppercase; }
+        header.hero h1 span { color: var(--accent-color); text-shadow: 0 0 25px var(--accent-glow); }
+        header.hero p { font-size: 14px; max-width: 600px; margin-bottom: 20px; color: #94a3b8; padding: 0 10px; }
+
+        .global-stats-bar {
+            display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;
+            background: var(--panel-bg); border: 1px solid var(--steel-border);
+            padding: 10px 20px; border-radius: 8px; margin-bottom: 20px; font-family: 'Orbitron'; font-size: 11px; color: #94a3b8;
+        }
+        .global-stats-bar span strong { color: var(--accent-color); }
+
+        .btn-gaming {
+            font-family: 'Orbitron', sans-serif; background: var(--accent-color); color: #0b0f17; border: none;
+            padding: 12px 24px; font-size: 13px; font-weight: 800; cursor: pointer; text-transform: uppercase;
+            box-shadow: 0 0 20px var(--accent-glow); border-radius: 8px; text-decoration: none; display: inline-block; transition: 0.3s;
+            text-align: center;
+        }
+        .btn-gaming:hover { transform: scale(1.03); filter: brightness(1.2); }
+
+        .btn-pwa-install {
+            display: inline-block; background: #22c55e; color: #000; border: none; padding: 8px 14px;
+            font-family: 'Orbitron'; font-size: 11px; font-weight: bold; border-radius: 6px;
+            cursor: pointer; margin-top: 10px; box-shadow: 0 0 15px rgba(34, 197, 94, 0.4);
         }
 
-        .mail-title { font-weight: bold; font-size: 0.9rem; color: #fff; }
-        .mail-body { font-size: 0.8rem; color: var(--text-muted); margin: 4px 0; }
-        .mail-date { font-size: 0.7rem; color: #666; text-align: right; }
+        section { padding: 25px 15px; width: 100%; max-width: 1350px; margin: 0 auto; box-sizing: border-box; z-index: 2; position: relative; }
+        .section-title { font-family: 'Orbitron', sans-serif; font-size: 18px; margin-bottom: 20px; border-left: 4px solid var(--accent-color); padding-left: 10px; text-transform: uppercase; color: #fff; }
+
+        .search-filter-bar { display: flex; gap: 12px; margin-bottom: 20px; flex-direction: column; }
+        @media(min-width: 850px) { .search-filter-bar { flex-direction: row; } }
+
+        .games-layout-split { display: flex; flex-direction: column; gap: 20px; margin-bottom: 30px; }
+        @media(min-width: 900px) { .games-layout-split { display: grid; grid-template-columns: 1.4fr 1fr; } }
+
+        .featured-game-box { background: var(--panel-bg); border: 2px solid var(--accent-color); padding: 15px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 0 30px var(--accent-glow); border-radius: 12px; position: relative; }
+        .featured-badge { position: absolute; top: 15px; right: 15px; background: var(--gold-warning); color: #000; font-weight: 800; font-size: 10px; padding: 4px 8px; font-family: 'Orbitron'; border-radius: 4px; z-index: 5; }
+        .featured-img { width: 100%; height: 220px; object-fit: cover; border-radius: 8px; border: 1px solid var(--steel-border); cursor: pointer; }
+        @media(min-width: 600px) { .featured-img { height: 300px; } }
+
+        .game-card-actions { display: flex; gap: 10px; align-items: center; }
+        .btn-fav { background: none; border: 1px solid var(--gold-warning); color: var(--gold-warning); padding: 8px 12px; font-size: 16px; cursor: pointer; border-radius: 8px; }
+
+        .games-list-column { display: flex; flex-direction: column; gap: 10px; max-height: 500px; overflow-y: auto; }
+        .game-list-card { background: var(--panel-bg); border: 1px solid var(--steel-border); padding: 10px; display: flex; align-items: center; gap: 12px; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+        .game-list-card:hover { border-color: var(--accent-color); }
+        .game-list-thumb { width: 75px; height: 50px; object-fit: cover; border-radius: 6px; border: 1px solid var(--steel-border); flex-shrink: 0; }
+        .game-list-info { flex-grow: 1; min-width: 0; }
+        .game-list-info h4 { font-family: 'Orbitron', sans-serif; color: #fff; font-size: 13px; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .game-list-info p { font-size: 11px; color: #94a3b8; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 15, 23, 0.92); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 15px; }
+        .modal-card { background: var(--panel-bg); border: 2px solid var(--accent-color); width: 100%; max-width: 480px; padding: 20px; border-radius: 12px; position: relative; box-shadow: 0 0 35px var(--accent-glow); max-height: 90vh; overflow-y: auto; }
+        .modal-close { position: absolute; top: 12px; right: 15px; background: none; border: none; color: var(--ink); font-size: 22px; cursor: pointer; }
+
+        .tab-switcher { display: flex; border-bottom: 2px solid var(--steel-border); margin-bottom: 15px; flex-wrap: wrap; }
+        .tab-btn { flex: 1; background: none; border: none; padding: 8px; font-family: 'Orbitron'; font-weight: 700; font-size: 11px; color: #64748b; cursor: pointer; display: block; }
+        .tab-btn.active { color: var(--accent-color); border-bottom: 2px solid var(--accent-color); margin-bottom: -2px; }
+
+        .auth-form { display: flex; flex-direction: column; gap: 10px; }
+        .auth-input { background: #0b0f17; border: 1px solid var(--steel-border); padding: 10px; color: var(--ink); font-size: 13px; width: 100%; border-radius: 6px; }
+        .auth-input:focus { border-color: var(--accent-color); outline: none; }
+        .form-panel { display: none; }
+        .form-panel.active { display: flex; flex-direction: column; gap: 10px; }
+
+        .embed-container { display: none; background: #000; border: 2px solid var(--accent-color); width: 100%; height: 70vh; max-height: 800px; position: relative; box-shadow: 0 0 35px var(--accent-glow); margin-top: 15px; border-radius: 10px; }
+        .embed-container iframe { width: 100%; height: 100%; border: none; border-radius: 8px; }
+        .player-controls-bar { display: none; justify-content: center; align-items: center; gap: 10px; margin-top: 12px; padding: 10px; background: var(--panel-bg); border: 1px solid var(--steel-border); border-radius: 8px; flex-wrap: wrap; }
+
+        .site-leaderboard-section {
+            display: none; background: var(--panel-bg); border: 2px solid var(--accent-color);
+            padding: 15px; border-radius: 10px; margin-top: 15px; box-shadow: 0 0 25px var(--accent-glow);
+        }
+        .site-leaderboard-list {
+            display: flex; flex-direction: column; gap: 6px; max-height: 220px; overflow-y: auto; margin-top: 10px;
+        }
+
+        .live-section-box { display: none; background: var(--panel-bg); border: 1px solid var(--accent-color); padding: 15px; text-align: center; margin-bottom: 20px; border-radius: 10px; }
+        .live-embed-container { margin: 10px auto; width: 100%; max-width: 800px; height: 0; padding-bottom: 56.25%; position: relative; background: #000; border-radius: 8px; overflow: hidden; }
+        .live-embed-container iframe { position: absolute; top:0; left:0; width: 100%; height: 100%; border: none; }
+
+        .community-main-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 15px; }
+        @media(min-width: 850px) { .community-main-grid { grid-template-columns: 1fr 320px; } }
+        .panel-card { background: var(--panel-bg); border: 1px solid var(--steel-border); padding: 15px; border-radius: 10px; display: flex; flex-direction: column; }
+        .panel-card h3 { font-family: 'Orbitron', sans-serif; font-size: 15px; color: var(--accent-color); margin-bottom: 12px; }
+
+        .social-buttons-flex { display: flex; flex-direction: column; gap: 8px; }
+        .social-btn-item { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px; border-radius: 6px; font-family: 'Orbitron'; font-size: 12px; font-weight: 700; text-decoration: none; color: #fff; transition: 0.2s; }
+        .btn-discord-net { background: #5865F2; }
+        .btn-youtube-net { background: #FF0000; }
+        .btn-instagram-net { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+
+        .qrcode-box { display: flex; flex-direction: column; align-items: center; justify-content: center; background: #0b0f17; border: 1px solid var(--steel-border); padding: 12px; border-radius: 8px; text-align: center; }
+        .qrcode-img { width: 130px; height: 130px; object-fit: contain; background: #fff; padding: 4px; border-radius: 6px; margin-bottom: 6px; }
+        .btn-qrcode-link { display: inline-block; background: var(--gold-warning); color: #000; text-decoration: none; font-family: 'Orbitron'; font-size: 10px; font-weight: 800; padding: 6px 10px; border-radius: 4px; margin-top: 6px; }
+
+        .minichat-container { display: flex; flex-direction: column; height: 180px; background: #0b0f17; border: 1px solid var(--steel-border); border-radius: 6px; overflow: hidden; margin-top: 8px; }
+        .minichat-messages { flex: 1; padding: 8px; overflow-y: auto; font-size: 11px; display: flex; flex-direction: column; gap: 4px; }
+        
+        .chat-msg-item { padding: 4px 6px; border-radius: 4px; background: rgba(255,255,255,0.02); }
+        .chat-msg-item.mentioned { border-left: 3px solid var(--accent-color); background: rgba(0, 240, 255, 0.08); }
+
+        .emoji-picker-bar { display: flex; gap: 4px; margin-top: 5px; overflow-x: auto; padding-bottom: 2px; }
+        .emoji-btn { background: none; border: 1px solid var(--steel-border); border-radius: 4px; font-size: 12px; padding: 2px 6px; cursor: pointer; color: #fff; }
+        .emoji-btn:hover { background: var(--steel-bright); }
+
+        .minichat-input-box { display: flex; border-top: 1px solid var(--steel-border); margin-top: 5px; }
+        .minichat-input-box input { flex: 1; background: #0f172a; border: none; padding: 6px 10px; color: #fff; font-size: 11px; outline: none; }
+        .minichat-input-box button { background: var(--accent-color); border: none; padding: 0 12px; font-family: 'Orbitron'; font-weight: bold; font-size: 10px; cursor: pointer; color: #0b0f17; }
+
+        .toast-notification {
+            position: fixed; bottom: 20px; right: 20px; background: var(--panel-bg);
+            border: 2px solid var(--accent-color); padding: 12px 20px; border-radius: 8px;
+            box-shadow: 0 0 25px var(--accent-glow); font-family: 'Orbitron'; font-size: 12px;
+            z-index: 9999; transform: translateY(150px); opacity: 0; transition: 0.3s ease; color: #fff;
+        }
+        .toast-notification.show { transform: translateY(0); opacity: 1; }
+
+        .admin-section { display: none; background: #070a10; border-top: 3px solid var(--accent-color); padding: 25px 15px; margin-top: 30px; }
+        .admin-container { width: 100%; max-width: 1100px; margin: 0 auto; background: var(--panel-bg); border: 1px solid var(--steel-bright); padding: 15px; border-radius: 12px; }
+        .admin-grid-tools { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 15px; }
+        @media(min-width: 768px) { .admin-grid-tools { grid-template-columns: 1fr 1fr; } }
+
+        .admin-block { background: #0b0f17; border: 1px solid var(--steel-border); padding: 12px; border-radius: 8px; display: flex; flex-direction: column; gap: 8px; }
+        .admin-game-item { background: #0b0f17; border: 1px solid var(--steel-border); padding: 12px; border-radius: 8px; display: flex; flex-direction: column; gap: 8px; }
+        .file-upload-label { font-size: 11px; color: #94a3b8; display: flex; flex-direction: column; gap: 4px; }
+        .file-upload-label input[type="file"] { background: #101622; border: 1px solid var(--steel-border); padding: 6px; color: var(--ink); border-radius: 4px; font-size: 11px; }
+
+        .btn-danger { background: rgba(239, 68, 68, 0.15); border-color: var(--alert-red); color: var(--alert-red); }
+        .btn-success { background: rgba(34, 197, 94, 0.15); border-color: #22c55e; color: #22c55e; }
+
+        footer { text-align: center; padding: 20px; color: #64748b; font-size: 12px; border-top: 1px solid var(--steel-border); position: relative; z-index: 2; }
     </style>
 </head>
-<body>
+<body id="mainBody">
 
-    <header>
-        <div class="logo">⚡ WAVECOMBAT</div>
-        <button class="btn btn-secondary" style="width: auto; padding: 6px 12px;" onclick="abrirModalCorreio()">📬 Correio</button>
+    <div class="bg-particles" id="bgParticles"></div>
+    <div class="toast-notification" id="toastNotification">⚡ Ação realizada com sucesso!</div>
+
+    <nav>
+        <a href="#inicio" class="logo-container" id="navLogoContainer" onclick="tocarSomClique()">
+            <svg class="logo-svg" id="defaultLogoSvg" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="250" cy="250" r="220" fill="none" stroke="#00f0ff" stroke-width="30"/>
+                <polygon points="180,140 380,250 180,360" fill="#00f0ff"/>
+            </svg>
+            <div class="logo-text" id="logoText">WAVECOMBAT</div>
+        </a>
+
+        <button class="menu-toggle-btn" id="menuToggleBtn" onclick="toggleMenuMobile(); tocarSomClique();">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#inicio" onclick="fecharMenuMobile(); tocarSomClique();">Início</a></li>
+            <li><a href="#jogos" onclick="fecharMenuMobile(); tocarSomClique();">Games</a></li>
+            <li><a href="#lojaDiamantes" onclick="fecharMenuMobile(); tocarSomClique();">Loja 💎</a></li>
+            <li><a href="#comunidade" onclick="fecharMenuMobile(); tocarSomClique();">Social</a></li>
+            <li>
+                <div class="user-nav-wrapper">
+                    <button class="btn-toggle-adm-nav" id="btnToggleAdmNav" onclick="alternarPainelAdm(); fecharMenuMobile(); tocarSomClique();" style="display:none;">⚙️ ADM</button>
+                    <button class="btn-auth-nav" id="btnAuthNav" onclick="abrirModalAuth(); fecharMenuMobile(); tocarSomClique();">Entrar</button>
+                </div>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="modal-overlay" id="authModal">
+        <div class="modal-card" id="authModalCard">
+            <button class="modal-close" onclick="fecharModalAuth(); tocarSomClique();">&times;</button>
+            <div class="tab-switcher" id="modalTabSwitcher">
+                <button class="tab-btn active" id="tabLoginBtn" onclick="alternarAba('login'); tocarSomClique();">Entrar</button>
+                <button class="tab-btn" id="tabRegisterBtn" onclick="alternarAba('registro'); tocarSomClique();">Criar Conta</button>
+                <button class="tab-btn" id="tabPerfilBtn" onclick="alternarAba('perfil'); tocarSomClique();">Perfil & Estatísticas</button>
+                <button class="tab-btn" id="tabCorreioBtn" onclick="alternarAba('correio'); tocarSomClique();">📬 Correio</button>
+            </div>
+            
+            <div class="form-panel active" id="panelLogin">
+                <p id="msgBloqueioJogo" style="display:none; color:var(--gold-warning); font-size:12px; font-weight:bold; text-align:center; margin-bottom:8px;">⚠️ CRIE SUA CONTA OU FAÇA LOGIN PARA REALIZAR COMPRAS!</p>
+                <form class="auth-form" onsubmit="fazerLoginPlataforma(event)">
+                    <input type="text" id="loginUser" placeholder="Seu Nick ou ADM" class="auth-input" required>
+                    <input type="password" id="loginPass" placeholder="Sua Senha" class="auth-input" required>
+                    <button type="submit" class="btn-gaming" onclick="tocarSomLevelUp()" style="width:100%; padding:10px;">Entrar na Conta</button>
+                </form>
+            </div>
+
+            <div class="form-panel" id="panelRegistro">
+                <form class="auth-form" onsubmit="fazerRegistroPlataforma(event)">
+                    <input type="text" id="regUser" placeholder="Escolha um Nick de Jogador" class="auth-input" required>
+                    <input type="password" id="regPass" placeholder="Crie uma Senha" class="auth-input" required>
+                    <button type="submit" class="btn-gaming" onclick="tocarSomLevelUp()" style="width:100%; padding:10px; background:#22c55e;">Criar Minha Conta</button>
+                </form>
+            </div>
+
+            <div class="form-panel" id="panelPerfil">
+                <div id="perfilUserData"><p style="color:#94a3b8; text-align:center;">Faça login para ver seu perfil expandido.</p></div>
+            </div>
+
+            <div class="form-panel" id="panelCorreio">
+                <div id="correioMensagensContainer">
+                    <p style="color:#94a3b8; text-align:center; font-size:11px;">Nenhuma mensagem no correio.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PARA EXIBIR O QR CODE PIX -->
+    <div class="modal-overlay" id="pixModal">
+        <div class="modal-card" style="text-align: center;">
+            <button class="modal-close" onclick="fecharModalPix()">&times;</button>
+            <h3 style="font-family:'Orbitron'; color:var(--accent-color); margin-bottom:10px;">Pagamento via Pix</h3>
+            <p style="font-size:12px; color:#94a3b8; margin-bottom:12px;">Escaneie o QR Code abaixo ou copie o código Pix para pagar no app do seu banco:</p>
+            
+            <div style="margin-bottom:10px;">
+                <input type="text" id="inputCupomRecarga" placeholder="Possui Cupom de Influenciador? Digite aqui" class="auth-input" style="font-size:11px; text-align:center; border-color:var(--gold-warning);">
+            </div>
+
+            <div id="pixQrContainer" style="margin: 15px 0; display: flex; justify-content: center;"></div>
+            
+            <input type="text" id="pixCopiaColaInput" class="auth-input" readonly style="font-size:10px; margin-bottom:10px;">
+            <button class="btn-gaming" onclick="copiarPixCopiaCola()" style="width:100%; padding:8px; font-size:11px;">📋 Copiar Código Pix</button>
+            
+            <p style="font-size:10px; color:var(--gold-warning); margin-top:12px;">⚡ Assim que o pagamento for confirmado, os diamantes caem na sua conta automaticamente!</p>
+        </div>
+    </div>
+
+    <!-- MODAL DE FESTA / RECOMPENSA DE VERIFICADO -->
+    <div class="modal-overlay" id="modalVerificadoPremio" style="z-index: 3000;">
+        <div class="modal-card" style="text-align: center; border-color: #FFD700; box-shadow: 0 0 50px rgba(255,215,0,0.8);">
+            <h2 style="font-family:'Orbitron'; color:#FFD700; margin-bottom:10px;">🎉 PARABÉNS! VOCÊ É VERIFICADO! ⭐</h2>
+            <p style="font-size:12px; color:#fff; margin-bottom:15px;">Você resgatou com sucesso o selo oficial de prestígio e todas as suas recompensas:</p>
+            <div style="background:#0b0f17; border:1px solid #FFD700; padding:15px; border-radius:8px; margin-bottom:15px; text-align:left; font-size:11px; display:flex; flex-direction:column; gap:6px;">
+                <div>✨ Símbolo <strong>V Dourado</strong> à frente do seu Nick em todo o site</div>
+                <div>🖼️ Moldura Dourada & Fundo Animado Exclusivo para Perfil</div>
+                <div>💎 <strong>5.000 Diamantes</strong> creditados na sua conta</div>
+                <div id="infoCupomGeradoPremio" style="color:var(--gold-warning); font-weight:bold;"></div>
+            </div>
+            <button class="btn-gaming" onclick="fecharModalVerificadoPremio()" style="background:#FFD700; color:#000; width:100%; padding:10px;">Curtir a Festa! 🥳</button>
+        </div>
+    </div>
+
+    <header class="hero" id="heroHeader">
+        <h1 id="heroTitle">WAVECOMBAT <span>HUB</span></h1>
+        <p id="heroDesc">Plataforma moderna de jogos, arcade e experiências imersivas.</p>
+        
+        <div class="global-stats-bar" id="globalStatsBar">
+            <span>Partidas Jogadas: <strong id="statTotalPartidas">--</strong></span>
+            <span>Jogadores Registrados: <strong id="statTotalUsuarios">--</strong></span>
+            <span>Status: <strong style="color:#22c55e">ONLINE</strong></span>
+        </div>
+
+        <a href="#player" class="btn-gaming" onclick="tentarExecutarJogoDestaque(); tocarSomClique();">Jogar Destaque Agora</a>
+        
+        <div style="display:flex; gap:10px; justify-content:center; align-items:center; flex-wrap:wrap; margin-top:8px;">
+            <button class="btn-pwa-install" id="btnPwaInstall" onclick="instalarAppMobile()">📲 INSTALAR APLICATIVO DO SITE</button>
+            <button class="btn-pwa-install" id="btnPushNotif" onclick="solicitarPermissaoNotificacao()" style="background:#3b82f6; display:none;">🔔 ATIVAR NOTIFICAÇÕES</button>
+        </div>
     </header>
 
-    <div class="container">
+    <section id="jogos">
+        <h2 class="section-title">Biblioteca de Jogos</h2>
+        <div class="search-filter-bar">
+            <input type="text" id="inputSearchGames" placeholder="🔍 Pesquisar jogo..." class="auth-input" oninput="atualizarPlataforma()">
+            <select id="selectCategoryFilter" class="auth-input" onchange="atualizarPlataforma()">
+                <option value="todos">Todas Categorias</option>
+                <option value="Arcade">Arcade</option>
+                <option value="Estratégia">Estratégia</option>
+                <option value="Multiplayer">Multiplayer</option>
+                <option value="favoritos">⭐ Favoritos</option>
+            </select>
+        </div>
         
-        <!-- Salvar Live na Nuvem -->
-        <div class="card">
-            <button class="btn btn-secondary">💾 SALVAR LIVE NA NUVEM</button>
-        </div>
-
-        <!-- Envio Manual de Diamantes -->
-        <div class="card">
-            <h3>💎 Envio Manual de Diamantes (ADM)</h3>
-            <div class="form-group">
-                <input type="text" id="adm-id-jogador" placeholder="ID do Jogador">
-                <input type="number" id="adm-qtd-diamantes" placeholder="Quantidade">
-            </div>
-            <button class="btn btn-green" onclick="enviarDiamantesADM()">⚡ ENVIAR DIAMANTES</button>
-        </div>
-
-        <!-- Gestão de Usuários -->
-        <div class="card">
-            <h3>👥 Lista e Gestão de Usuários Cadastrados</h3>
-            <div class="form-group">
-                <input type="text" id="search-user" placeholder="Pesquisar por Nick ou ID...">
-            </div>
-            <div class="form-group" style="align-items: center;">
-                <span id="user-found-name" style="font-weight: bold; flex: 1;">ROCKY (ID: 963487998)</span>
-                <select id="ban-duration" style="flex: 0.8;">
-                    <option value="7">Ban 7 Dias</option>
-                    <option value="30">Ban 30 Dias</option>
-                    <option value="365">Ban 1 Ano</option>
-                </select>
-                <button class="btn btn-danger" style="width: auto;" onclick="banirUsuario()">BANIR</button>
+        <div class="games-layout-split">
+            <div id="featuredGameContainer"></div>
+            <div>
+                <div style="font-family:'Orbitron'; font-size:13px; color:var(--accent-color); margin-bottom:8px;">🔥 Todos os Games</div>
+                <div class="games-list-column" id="gamesListContainer"></div>
             </div>
         </div>
 
-        <!-- Painel de Influenciadores -->
-        <div class="card card-gold">
-            <h3 class="gold-title">★ PAINEL ÚNICO: INFLUENCIADORES, VERIFICADOS & PARCERIAS</h3>
-            <p class="subtitle">Defina o influenciador, o cupom e envie tudo para o correio com um único clique.</p>
-
-            <div class="form-group">
-                <input type="text" id="inf-target" placeholder="Nick ou ID do Jogador">
-                <input type="text" id="inf-cupom" placeholder="Cupom Personalizado (Ex: CAPUDO)">
-            </div>
-
-            <button class="btn btn-gold" onclick="salvarEEnviarInfluenciador()">★ SALVAR INFLUENCIADOR & ENVIAR CONVITE</button>
-
-            <div id="lista-influenciadores">
-                <!-- Carregado via JS -->
-            </div>
+        <div class="embed-container" id="player">
+            <iframe id="gameIframe" src="about:blank" title="WaveCombat Player" allow="fullscreen; autoplay; gamepad" allowfullscreen="true"></iframe>
+        </div>
+        <div class="player-controls-bar" id="playerControlsBar">
+            <button class="btn-gaming" onclick="toggleTelaCheia(); tocarSomClique();" style="padding:8px 14px; font-size:11px;">⛶ Tela Cheia</button>
+            <button class="btn-gaming btn-danger" onclick="encerrarJogo(); tocarSomClique();" style="padding:8px 14px; font-size:11px;">✖ Sair do Game</button>
         </div>
 
+        <div class="site-leaderboard-section" id="siteLeaderboardSection">
+            <h3 style="color:var(--accent-color); font-family:'Orbitron'; font-size:14px; text-align:center;">🏆 RANKING GLOBAL DE JOGADORES</h3>
+            <div class="site-leaderboard-list" id="siteLeaderboardListContainer">
+                <p style="color:#94a3b8; text-align:center; font-size:11px;">Carregando ranking global...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEÇÃO DA LOJA DE DIAMANTES (PIX MERCADO PAGO) -->
+    <section id="lojaDiamantes">
+        <h2 class="section-title">💎 Loja de Diamantes (Pix Automático)</h2>
+        
+        <div style="background: var(--panel-bg); border: 2px solid var(--accent-color); padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <div>
+                <span style="font-size: 12px; color: #94a3b8;">Seu Saldo Atual:</span>
+                <h3 style="font-family: 'Orbitron'; color: #fff; font-size: 20px;">💎 <span id="userDiamondBalance">0</span> Diamantes</h3>
+            </div>
+            <button class="btn-gaming" onclick="carregarSaldoDiamantesSite()" style="font-size: 11px; padding: 6px 12px;">🔄 Atualizar Saldo</button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px;">
+            <div class="panel-card" style="text-align: center; border: 1px solid var(--steel-border);">
+                <h4 style="font-family: 'Orbitron'; color: var(--accent-color);">110 💎</h4>
+                <p style="font-size: 10px; color: #22c55e;">+10% Bônus Incluído</p>
+                <p style="font-size: 14px; color: var(--gold-warning); font-weight: bold; margin: 8px 0;">R$ 3,00</p>
+                <button class="btn-gaming" onclick="gerarPixMercadoPago(3.00, 110)" style="width: 100%; font-size: 11px; padding: 8px;">Comprar Pix</button>
+            </div>
+
+            <div class="panel-card" style="text-align: center; border: 1px solid var(--steel-border);">
+                <h4 style="font-family: 'Orbitron'; color: var(--accent-color);">330 💎</h4>
+                <p style="font-size: 10px; color: #22c55e;">+10% Bônus Incluído</p>
+                <p style="font-size: 14px; color: var(--gold-warning); font-weight: bold; margin: 8px 0;">R$ 6,00</p>
+                <button class="btn-gaming" onclick="gerarPixMercadoPago(6.00, 330)" style="width: 100%; font-size: 11px; padding: 8px;">Comprar Pix</button>
+            </div>
+
+            <div class="panel-card" style="text-align: center; border: 1px solid var(--steel-border);">
+                <h4 style="font-family: 'Orbitron'; color: var(--accent-color);">660 💎</h4>
+                <p style="font-size: 10px; color: #22c55e;">+10% Bônus Incluído</p>
+                <p style="font-size: 14px; color: var(--gold-warning); font-weight: bold; margin: 8px 0;">R$ 9,00</p>
+                <button class="btn-gaming" onclick="gerarPixMercadoPago(9.00, 660)" style="width: 100%; font-size: 11px; padding: 8px;">Comprar Pix</button>
+            </div>
+
+            <div class="panel-card" style="text-align: center; border: 1px solid var(--steel-border);">
+                <h4 style="font-family: 'Orbitron'; color: var(--accent-color);">1.320 💎</h4>
+                <p style="font-size: 10px; color: #22c55e;">+10% Bônus Incluído</p>
+                <p style="font-size: 14px; color: var(--gold-warning); font-weight: bold; margin: 8px 0;">R$ 18,00</p>
+                <button class="btn-gaming" onclick="gerarPixMercadoPago(18.00, 1320)" style="width: 100%; font-size: 11px; padding: 8px;">Comprar Pix</button>
+            </div>
+
+            <div class="panel-card" style="text-align: center; border: 1px solid var(--steel-border);">
+                <h4 style="font-family: 'Orbitron'; color: var(--accent-color);">3.960 💎</h4>
+                <p style="font-size: 10px; color: #22c55e;">+10% Bônus Incluído</p>
+                <p style="font-size: 14px; color: var(--gold-warning); font-weight: bold; margin: 8px 0;">R$ 32,00</p>
+                <button class="btn-gaming" onclick="gerarPixMercadoPago(32.00, 3960)" style="width: 100%; font-size: 11px; padding: 8px;">Comprar Pix</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- PLAYER DE LIVE/VÍDEO -->
+    <section id="transmissaoAoVivo">
+        <div class="live-section-box" id="liveSectionBox">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <h3 style="margin:0; font-size:13px; color:var(--accent-color); font-family:'Orbitron';">🔴 TRANSMISSÃO / VÍDEO DO CRIADOR</h3>
+            </div>
+            <div class="live-embed-container">
+                <iframe id="youtubeLiveIframe" src="about:blank" allowfullscreen></iframe>
+            </div>
+        </div>
+    </section>
+
+    <section id="comunidade">
+        <h2 class="section-title">Central Social & Comunidade</h2>
+        <div class="community-main-grid">
+            <div class="panel-card">
+                <h3>🌐 Redes Sociais & Chat Global</h3>
+                <div class="social-buttons-flex" style="margin-bottom:12px;">
+                    <a href="https://discord.gg/FaeYug6XBx" target="_blank" class="social-btn-item btn-discord-net" onclick="tocarSomClique()">🎮 Discord Oficial (Convidar Amigos)</a>
+                    <a href="https://youtube.com/@capudooficial7?si=NSvfxpSzswVEStdu" target="_blank" class="social-btn-item btn-youtube-net" onclick="tocarSomClique()">▶ siga o criador do jogo aqui</a>
+                    <a href="https://www.instagram.com/capudooficial.7/" target="_blank" class="social-btn-item btn-instagram-net" onclick="tocarSomClique()">📸 Instagram Oficial</a>
+                </div>
+
+                <h4 style="font-family:'Orbitron'; font-size:11px; color:var(--accent-color); margin-bottom:4px;">💬 Chat Global ao Vivo</h4>
+                <div class="minichat-container">
+                    <div class="minichat-messages" id="miniChatMessages">
+                        <div style="color:#64748b; font-style:italic;">Carregando mensagens da comunidade...</div>
+                    </div>
+                    
+                    <div class="emoji-picker-bar">
+                        <button class="emoji-btn" onclick="inserirEmojiChat('🔥')">🔥</button>
+                        <button class="emoji-btn" onclick="inserirEmojiChat('🎮')">🎮</button>
+                        <button class="emoji-btn" onclick="inserirEmojiChat('🚀')">🚀</button>
+                        <button class="emoji-btn" onclick="inserirEmojiChat('🏆')">🏆</button>
+                        <button class="emoji-btn" onclick="inserirEmojiChat('💎')">💎</button>
+                        <button class="emoji-btn" onclick="inserirEmojiChat('😎')">😎</button>
+                        <button class="emoji-btn" onclick="inserirEmojiChat(' GG ')">GG</button>
+                    </div>
+
+                    <div class="minichat-input-box">
+                        <input type="text" id="miniChatInput" placeholder="Digite sua mensagem... (Use @ para mencionar)" maxlength="100" onkeypress="checarEnvioChat(event)">
+                        <button onclick="enviarMensagemChat(); tocarSomClique();">Enviar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:15px;">
+                <div class="qrcode-box">
+                    <h4 style="font-family:'Orbitron'; font-size:11px; color:var(--accent-color); margin-bottom:6px;">🎁 Doação LivePix</h4>
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://livepix.gg/capudooficial" alt="QR Code LivePix" class="qrcode-img">
+                    <a href="https://livepix.gg/capudooficial" target="_blank" class="btn-qrcode-link" onclick="tocarSomClique()">🔗 Acessar Link LivePix</a>
+                </div>
+
+                <div class="panel-card" style="padding:10px;">
+                    <h3 style="font-size:12px; margin-bottom:8px;">⚙️ Preferências do Hub</h3>
+                    <div style="display:flex; flex-direction:column; gap:8px; font-size:11px;">
+                        <label style="display:flex; justify-content:space-between; align-items:center;">
+                            Efeitos Sonoros Arcade:
+                            <input type="checkbox" id="checkAudioSFX" checked onchange="toggleAudioSFX(this.checked)">
+                        </label>
+                        <label style="display:flex; justify-content:space-between; align-items:center;">
+                            Música Tema Arcade (BGM):
+                            <input type="checkbox" id="checkBGM" onchange="toggleBGM(this.checked)">
+                        </label>
+                        <label style="display:flex; flex-direction:column; gap:4px;">
+                            Volume da Música:
+                            <input type="range" id="rangeBGMVolume" min="0" max="100" value="30" oninput="setBGMVolume(this.value)">
+                        </label>
+                        <label style="display:flex; justify-content:space-between; align-items:center;">
+                            Tema OLED (Preto Absoluto):
+                            <input type="checkbox" id="checkThemeOLED" onchange="toggleThemeOLED(this.checked)">
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PAINEL ADMINISTRATIVO EXPANDIDO -->
+    <div class="admin-section" id="adminSection" style="display:none;">
+        <div class="admin-container">
+            <h3 style="color:var(--accent-color); font-family:'Orbitron'; text-align:center; margin-bottom:15px; font-size:16px;">⚙️ PAINEL ADMINISTRATIVO</h3>
+
+            <div class="admin-grid-tools">
+                <div class="admin-block">
+                    <h4>🖼️ Alterar Logo Principal</h4>
+                    <input type="file" id="admLogoFile" accept="image/*">
+                    <button type="button" class="btn-gaming" onclick="alterarLogoSite(); tocarSomLevelUp();" style="font-size:11px; padding:6px;">Atualizar Logo na Nuvem</button>
+                </div>
+                <div class="admin-block">
+                    <h4>🔴 Gerenciar Transmissão ao Vivo</h4>
+                    <button type="button" id="btnToggleLiveStatus" class="btn-gaming" onclick="alternarStatusLiveAdm(); tocarSomClique();" style="font-size:11px; padding:8px; margin-bottom:6px; background:#ef4444; color:#fff;">LIVE: OFFLINE</button>
+                    <input type="text" id="inputAdminLiveUrl" placeholder="Cole o link do YouTube aqui" class="auth-input" style="font-size:11px; margin-bottom:6px;">
+                    <button type="button" class="btn-gaming" onclick="salvarConfigLiveAdm(); tocarSomLevelUp();" style="font-size:10px; padding:6px;">💾 Salvar Live na Nuvem</button>
+                </div>
+            </div>
+
+            <!-- DIAMANTES LIVRES -->
+            <div class="admin-grid-tools" style="margin-top: 15px;">
+                <div class="admin-block" style="grid-column: 1 / -1;">
+                    <h4>💎 Envio Manual de Diamantes (ADM)</h4>
+                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                        <input type="text" id="admTargetId" placeholder="ID do Jogador (ex: 577082415)" class="auth-input" style="font-size:11px; flex:1;">
+                        <input type="number" id="admTargetQtd" placeholder="Quantidade de Diamantes" class="auth-input" style="font-size:11px; flex:1;">
+                        <button type="button" class="btn-gaming" onclick="admEnviarDiamantesLivre()" style="font-size:10px; padding:8px 12px; background:#22c55e; color:#000;">⚡ Enviar Diamantes</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LISTA DE USUÁRIOS (ORDEM ALFABÉTICA) -->
+            <div class="admin-block" style="margin-top: 15px;">
+                <h4 style="color:var(--accent-color);">👥 Lista e Gestão de Usuários Cadastrados (Ordem Alfabética)</h4>
+                <div style="display:flex; gap:10px; margin-bottom:10px;">
+                    <input type="text" id="inputBuscaAdminUser" placeholder="Pesquisar por Nick ou ID..." class="auth-input" oninput="renderizarTabelaUsuariosAdmin()" style="font-size:11px;">
+                </div>
+                <div id="adminListaUsuariosContainer" style="max-height:250px; overflow-y:auto; display:flex; flex-direction:column; gap:6px;"></div>
+            </div>
+
+            <!-- BOTÃO ÚNICO INFLUENCIADOR & CORREIO -->
+            <div class="admin-block" style="margin-top: 15px; border: 2px solid var(--gold-warning); background: rgba(245, 158, 11, 0.05);">
+                <h4 style="color:var(--gold-warning); font-family:'Orbitron';">🌟 PAINEL ÚNICO: INFLUENCIADORES, VERIFICADOS & PARCERIAS</h4>
+                <p style="font-size:11px; color:#94a3b8; margin-bottom:8px;">Defina o influenciador, o cupom e envie tudo para o correio com um único clique.</p>
+                
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
+                    <input type="text" id="infTargetNick" placeholder="Nick ou ID do Jogador" class="auth-input" style="font-size:11px; flex:1;">
+                    <input type="text" id="infTargetCodigo" placeholder="Cupom Personalizado (Ex: CAPUDO7)" class="auth-input" style="font-size:11px; flex:1;">
+                    <button type="button" class="btn-gaming" onclick="adicionarInfluenciadorEEnviarCorreio()" style="font-size:10px; background:var(--gold-warning); color:#000; flex-grow:2;">🌟 Salvar Influenciador & Enviar Convite</button>
+                </div>
+                
+                <div id="adminListaInfluenciadoresContainer" style="max-height:220px; overflow-y:auto; display:flex; flex-direction:column; gap:6px;"></div>
+            </div>
+
+            <h4 style="color:#fff; margin-bottom:10px; font-family:'Orbitron'; font-size:14px; margin-top:15px;">🎮 Gestão de Games na Nuvem (Expansível)</h4>
+            <div id="adminListaJogos" style="display:flex; flex-direction:column; gap:10px;"></div>
+
+            <div style="text-align:center; margin-top:15px;">
+                <button type="button" class="btn-gaming btn-danger" onclick="fazerLogoutAdmin(); tocarSomClique();" style="font-size:11px; padding:6px 16px;">Sair do Painel ADM</button>
+            </div>
+        </div>
     </div>
 
-    <!-- Modal do Correio -->
-    <div class="modal" id="modal-correio">
-        <div class="modal-content">
-            <span class="close-btn" onclick="fecharModalCorreio()">&times;</span>
-            <h3>📬 Caixa de Entrada / Correio</h3>
-            <div class="mail-list" id="mail-list-container">
-                <p style="font-size: 0.85rem; color: var(--text-muted);">Carregando mensagens...</p>
-            </div>
-        </div>
-    </div>
+    <footer>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.420 (Realtime Chat & Robust Sync)</strong>
+    </footer>
 
     <script>
-        // Configuração do Supabase (Ajuste a URL e KEY se necessário)
-        const SUPABASE_URL = 'https://sua-url-supabase.supabase.co';
-        const SUPABASE_KEY = 'sua-chave-anon-supabase';
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const SUPABASE_URL = "https://ipqjeacdfiomcxfuixdj.supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable_EWW84q_43YbOvMwB_Rua-A_X465PbLP";
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // ID do usuário logado no momento (Exemplo: seu ID 577082415)
-        let idUsuarioLogado = "577082415";
+        const MEU_ID_MESTRE = "577082415";
 
-        // Busca Inteligente: Identifica Nick ou ID na tabela de usuários
-        async function buscarUsuario(termo) {
+        const jogosIniciaisFallback = [
+            { id: "1", nome: "Riverbed Warfare", categoria: "Estratégia", desc: "Combate veicular em tempo real, extração de recursos e defesa contra hordas.", arquivo: "riverbed-warfare.html", img: "", publicado: true, destaque_manual: true, acessos: 154 },
+            { id: "2", nome: "tanque defence", categoria: "Estratégia", desc: "Combate veicular em tempo real, extração de recursos e defesa contra hordas.", arquivo: "tanque-defence.html", img: "", publicado: true, destaque_manual: false, acessos: 154 },
+            { id: "3", nome: "Esquadrão de Tanques", categoria: "Arcade", desc: "Jogo de sobrevivência de tanques combate intenso.", arquivo: "esquadrao-de-tanques.html", img: "", publicado: true, destaque_manual: false, acessos: 93 },
+            { id: "4", nome: "Gravitas Arena", categoria: "Estratégia", desc: "Jogo de guerra de tanques e estratégia tática.", arquivo: "Gravitas-Arena.html", img: "", publicado: true, destaque_manual: false, acessos: 64 },
+            { id: "5", nome: "Zombie House", categoria: "Multiplayer", desc: "Sobreviva ao apocalipse zumbi na casa florestal.", arquivo: "Zombie_House.html", img: "", publicado: true, destaque_manual: false, acessos: 120 }
+        ];
+
+        let listaJogosCache = [];
+        let usuarioLogado = null;
+        let painelAdmAberto = false;
+        let siteConfigGlobal = { url: "", ativa: false, logo: "" };
+        let audioSfxAtivo = true;
+        let ultimaMensagemChatTempo = 0;
+
+        let bgmInterval = null;
+        let bgmActive = false;
+        let bgmVolumeValue = 0.3;
+        const arcadeNotes = [261.63, 329.63, 392.00, 523.25, 493.88, 392.00, 329.63, 293.66, 349.23, 440.00]; 
+        let noteIndex = 0;
+
+        function formatarNumero(num) {
+            if (num === null || num === undefined) return '0';
+            num = Number(num);
+            if (isNaN(num)) return '0';
+            if (num >= 1e12) return (num / 1e12).toFixed(1).replace('.0', '') + 'T';
+            if (num >= 1e9) return (num / 1e9).toFixed(1).replace('.0', '') + 'B';
+            if (num >= 1e6) return (num / 1e6).toFixed(1).replace('.0', '') + 'M';
+            if (num >= 1e3) {
+                return (num / 1000).toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + 'k';
+            }
+            return num.toLocaleString('pt-BR');
+        }
+
+        function verificarBanimentoAtual() {
+            if (!usuarioLogado) return false;
+            try {
+                let banidos = JSON.parse(localStorage.getItem('wavecombat_banidos') || '{}');
+                let banInfo = banidos[usuarioLogado.id];
+                if (banInfo) {
+                    if (Date.now() < banInfo.expiraEm) {
+                        alert(`⚠️ Sua conta está banida até ${new Date(banInfo.expiraEm).toLocaleString('pt-BR')}.`);
+                        fazerLogout();
+                        return true;
+                    } else {
+                        delete banidos[usuarioLogado.id];
+                        localStorage.setItem('wavecombat_banidos', JSON.stringify(banidos));
+                    }
+                }
+            } catch(e){}
+            return false;
+        }
+
+        function obterHtmlNickVerificado(nick, id) {
+            if (!nick) return '';
+            let verificados = {};
+            try { verificados = JSON.parse(localStorage.getItem('wavecombat_verificados') || '{}'); } catch(e){}
+            let isVerif = verificados[id];
+            let isStaff = (nick.toLowerCase() === 'capudo7' || (usuarioLogado && usuarioLogado.isAdm && id === MEU_ID_MESTRE));
+
+            let html = '';
+            if (isStaff) {
+                html += `<span class="staff-star" title="Administrador / Staff">⭐</span>`;
+            }
+            if (isVerif) {
+                html += `<span class="verified-v" title="Usuário Verificado">V</span>`;
+            }
+            html += nick;
+            return html;
+        }
+
+        function playBGMNote() {
+            if (!bgmActive) return;
+            try {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'square'; 
+                osc.frequency.setValueAtTime(arcadeNotes[noteIndex], audioCtx.currentTime);
+                
+                gain.gain.setValueAtTime(bgmVolumeValue * 0.04, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.16);
+                
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.16);
+                
+                noteIndex = (noteIndex + 1) % arcadeNotes.length;
+            } catch(e) {}
+        }
+
+        function toggleBGM(ativo) {
+            bgmActive = ativo;
+            if (bgmActive) {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                if (bgmInterval) clearInterval(bgmInterval);
+                bgmInterval = setInterval(playBGMNote, 180); 
+                mostrarToast("🎵 Música tema arcade ativada!");
+            } else {
+                if (bgmInterval) clearInterval(bgmInterval);
+                mostrarToast("🔇 Música tema arcade desativada.");
+            }
+        }
+
+        function setBGMVolume(val) { bgmVolumeValue = val / 100; }
+
+        let deferredPrompt = null;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const btn = document.getElementById('btnPwaInstall');
+            if (btn) btn.style.display = 'inline-block';
+        });
+
+        function instalarAppMobile() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        mostrarToast("📲 Aplicativo instalado com sucesso!");
+                    }
+                    deferredPrompt = null;
+                });
+            } else {
+                alert("Para instalar: Toque nos 3 pontos do navegador e selecione 'Adicionar ao ecrã principal'.");
+            }
+        }
+
+        function verificarEstadoNotificacao() {
+            if ("Notification" in window) {
+                const btnPush = document.getElementById('btnPushNotif');
+                if (Notification.permission === "default") {
+                    if (btnPush) btnPush.style.display = 'inline-block';
+                } else if (btnPush) {
+                    btnPush.style.display = 'none';
+                }
+            }
+        }
+
+        function solicitarPermissaoNotificacao() {
+            if ("Notification" in window) {
+                Notification.requestPermission().then(permission => {
+                    if (permission === "granted") {
+                        mostrarToast("🔔 Notificações ativadas com sucesso!");
+                        document.getElementById('btnPushNotif').style.display = 'none';
+                        new Notification("WaveCombat Hub", { body: "Obrigado por ativar as notificações!" });
+                    } else {
+                        mostrarToast("❌ Permissão de notificação negada.");
+                    }
+                });
+            }
+        }
+
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function tocarSomClique() {
+            if (!audioSfxAtivo) return;
+            try {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.08);
+                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.08);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.08);
+            } catch(e) {}
+        }
+
+        function tocarSomLevelUp() {
+            if (!audioSfxAtivo) return;
+            try {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const now = audioCtx.currentTime;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.setValueAtTime(450, now + 0.1);
+                osc.frequency.setValueAtTime(600, now + 0.2);
+                gain.gain.setValueAtTime(0.08, now);
+                gain.gain.linearRampToValueAtTime(0, now + 0.35);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(now); osc.stop(now + 0.35);
+            } catch(e) {}
+        }
+
+        function toggleAudioSFX(ativo) {
+            audioSfxAtivo = ativo;
+            mostrarToast(ativo ? "🔊 Efeitos sonoros ativados" : "🔇 Efeitos sonoros desativados");
+        }
+
+        function toggleThemeOLED(ativo) {
+            document.getElementById('mainBody').classList.toggle('theme-oled', ativo);
+            localStorage.setItem('wavecombat_oled', ativo ? 'true' : 'false');
+            mostrarToast(ativo ? "⚫ Tema OLED ativado" : "🌙 Tema padrão ativado");
+        }
+
+        function mostrarToast(texto) {
+            const toast = document.getElementById('toastNotification');
+            toast.textContent = texto;
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 3500);
+        }
+
+        function gerarParticulasFundo() {
+            const container = document.getElementById('bgParticles');
+            for (let i = 0; i < 25; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.left = Math.random() * 100 + 'vw';
+                p.style.animationDuration = (10 + Math.random() * 15) + 's';
+                p.style.animationDelay = (Math.random() * 5) + 's';
+                container.appendChild(p);
+            }
+        }
+
+        function inicializarIdentidadeLocal() {
+            if (!localStorage.getItem('wavecombat_id') && usuarioLogado) {
+                localStorage.setItem('wavecombat_id', usuarioLogado.id);
+            }
+        }
+
+        function carregarSessaoSalva() {
+            if (localStorage.getItem('wavecombat_oled') === 'true') {
+                document.getElementById('checkThemeOLED').checked = true;
+                document.getElementById('mainBody').classList.add('theme-oled');
+            }
+
+            try {
+                const sessaoSalva = localStorage.getItem('wavecombat_sessao_ativa');
+                if(sessaoSalva) {
+                    usuarioLogado = JSON.parse(sessaoSalva);
+                    if (usuarioLogado.nick.toLowerCase() === 'capudo7') {
+                        usuarioLogado.id = MEU_ID_MESTRE;
+                        usuarioLogado.isAdm = true;
+                    }
+                    if (verificarBanimentoAtual()) return;
+
+                    document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(usuarioLogado.nick, usuarioLogado.id);
+                    localStorage.setItem('wavecombat_nick', usuarioLogado.nick);
+                    localStorage.setItem('wavecombat_id', usuarioLogado.id);
+                    if(usuarioLogado.isAdm) {
+                        document.getElementById('btnToggleAdmNav').style.display = 'inline-block';
+                    }
+                }
+            } catch(e) {}
+            atualizarAbasPerfilUI();
+            carregarSaldoDiamantesSite();
+            verificarEstadoNotificacao();
+        }
+
+        function atualizarAbasPerfilUI() {
+            const tabLogin = document.getElementById('tabLoginBtn');
+            const tabRegister = document.getElementById('tabRegisterBtn');
+            const tabPerfil = document.getElementById('tabPerfilBtn');
+
+            if (usuarioLogado) {
+                tabLogin.style.display = 'none';
+                tabRegister.style.display = 'none';
+                tabPerfil.classList.add('active');
+                alternarAba('perfil');
+            } else {
+                tabLogin.style.display = 'block';
+                tabRegister.style.display = 'block';
+                tabLogin.classList.add('active');
+                tabPerfil.classList.remove('active');
+                alternarAba('login');
+            }
+            atualizarPerfilExpandidoUI();
+            carregarCorreioUsuario();
+        }
+
+        function registrarHistoricoJogo(nomeJogo) {
+            try {
+                let hist = JSON.parse(localStorage.getItem('wavecombat_historico') || '[]');
+                hist.unshift({ nome: nomeJogo, data: new Date().toLocaleDateString('pt-BR') });
+                if (hist.length > 5) hist.pop();
+                localStorage.setItem('wavecombat_historico', JSON.stringify(hist));
+            } catch(e) {}
+        }
+
+        function toggleMenuMobile() { document.getElementById('navLinks').classList.toggle('active'); }
+        function fecharMenuMobile() { document.getElementById('navLinks').classList.remove('active'); }
+
+        function abrirModalAuth(motivoJogo = false) { 
+            const msg = document.getElementById('msgBloqueioJogo');
+            if(msg) msg.style.display = motivoJogo ? 'block' : 'none';
+            document.getElementById('authModal').style.display = 'flex'; 
+            atualizarAbasPerfilUI();
+        }
+        function fecharModalAuth() { document.getElementById('authModal').style.display = 'none'; }
+        
+        let pixIntervalCheck = null;
+        let saldoAnteriorPix = 0;
+
+        function fecharModalPix() {
+            document.getElementById('pixModal').style.display = 'none';
+            if (pixIntervalCheck) clearInterval(pixIntervalCheck);
+        }
+
+        function copiarPixCopiaCola() {
+            const input = document.getElementById('pixCopiaColaInput');
+            input.select();
+            document.execCommand('copy');
+            mostrarToast("📋 Código Pix copiado!");
+        }
+
+        async function carregarSaldoDiamantesSite() {
+            const idJogador = localStorage.getItem('wavecombat_id');
+            if (!idJogador) {
+                document.getElementById('userDiamondBalance').textContent = '0';
+                return;
+            }
+            try {
+                const { data } = await supabaseClient.from('carteira_diamantes').select('diamantes').eq('id_jogador', idJogador).single();
+                if (data) {
+                    document.getElementById('userDiamondBalance').textContent = formatarNumero(data.diamantes || 0);
+                } else {
+                    const nick = localStorage.getItem('wavecombat_nick') || 'Jogador';
+                    await supabaseClient.from('carteira_diamantes').insert([{ id_jogador: idJogador, nick: nick, diamantes: 0 }]);
+                    document.getElementById('userDiamondBalance').textContent = '0';
+                }
+            } catch (e) {}
+        }
+
+        async function gerarPixMercadoPago(valor, quantDiamantes) {
+            const idJogador = localStorage.getItem('wavecombat_id');
+            const nick = localStorage.getItem('wavecombat_nick') || 'Jogador';
+
+            if (!usuarioLogado || !idJogador) {
+                alert("⚠️ Você precisa criar uma conta ou fazer login para comprar diamantes!");
+                abrirModalAuth(true);
+                return;
+            }
+
+            const cupomDigitado = (document.getElementById('inputCupomRecarga')?.value || '').trim().toUpperCase();
+            let bonusDiamantes = 0;
+
+            if (cupomDigitado) {
+                try {
+                    let influenciadores = JSON.parse(localStorage.getItem('wavecombat_influenciadores') || '{}');
+                    let infEncontradoKey = Object.keys(influenciadores).find(k => influenciadores[k].codigo === cupomDigitado);
+                    if (infEncontradoKey) {
+                        bonusDiamantes = Math.round(quantDiamantes * 0.05);
+                        quantDiamantes += bonusDiamantes;
+                        let comissao = valor * 0.30;
+                        influenciadores[infEncontradoKey].saldoReceber = (influenciadores[infEncontradoKey].saldoReceber || 0) + comissao;
+                        influenciadores[infEncontradoKey].usosCupom = (influenciadores[infEncontradoKey].usosCupom || 0) + 1;
+                        localStorage.setItem('wavecombat_influenciadores', JSON.stringify(influenciadores));
+                        mostrarToast(`⭐ Cupom "${cupomDigitado}" aplicado! +${bonusDiamantes} Diamantes bônus.`);
+                    } else {
+                        mostrarToast("⚠️ Cupom inválido, mas a compra prosseguirá.");
+                    }
+                } catch(e){}
+            }
+
+            const saldoEl = document.getElementById('userDiamondBalance');
+            saldoAnteriorPix = parseInt(saldoEl ? saldoEl.textContent.replace(/\./g, '').replace('k','000') : '0', 10);
+            mostrarToast("⏳ Gerando cobrança Pix no Mercado Pago...");
+
+            try {
+                const res = await fetch(`${SUPABASE_URL}/functions/v1/gerar-pix`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ valor: valor, diamantes: quantDiamantes, id_jogador: idJogador, nick: nick })
+                });
+                const data = await res.json();
+                if (data.qr_code_base64 && data.qr_code) {
+                    document.getElementById('pixQrContainer').innerHTML = `<img src="data:image/png;base64,${data.qr_code_base64}" style="width:180px; height:180px; border-radius:8px; border:2px solid var(--accent-color);">`;
+                    document.getElementById('pixCopiaColaInput').value = data.qr_code;
+                    document.getElementById('pixModal').style.display = 'flex';
+                    mostrarToast("✅ Pix gerado com sucesso! Aguardando pagamento...");
+
+                    if (pixIntervalCheck) clearInterval(pixIntervalCheck);
+                    pixIntervalCheck = setInterval(async () => {
+                        const { data: carteira } = await supabaseClient.from('carteira_diamantes').select('diamantes').eq('id_jogador', idJogador).single();
+                        if (carteira && carteira.diamantes > saldoAnteriorPix) {
+                            clearInterval(pixIntervalCheck);
+                            document.getElementById('pixModal').style.display = 'none';
+                            carregarSaldoDiamantesSite();
+                            tocarSomLevelUp();
+                            mostrarToast("💎 Pagamento confirmado! Diamantes adicionados!");
+                        }
+                    }, 3000);
+                } else {
+                    alert("Erro ao gerar o Pix. Verifique os dados.");
+                }
+            } catch (e) {
+                alert("Erro na conexão com a Edge Function de pagamento.");
+            }
+        }
+
+        async function admEnviarDiamantesLivre() {
+            const idDestino = document.getElementById('admTargetId').value.trim();
+            const qtd = parseInt(document.getElementById('admTargetQtd').value);
+            if (!idDestino || isNaN(qtd) || qtd <= 0) {
+                alert("Insira um ID de jogador válido e uma quantidade correta.");
+                return;
+            }
+            try {
+                const userObj = await buscarUsuarioPorNickOuId(idDestino);
+                const idFinal = userObj ? userObj.id : idDestino;
+
+                const { data: carteira } = await supabaseClient.from('carteira_diamantes').select('diamantes').eq('id_jogador', idFinal).single();
+                const saldoAtual = carteira ? (carteira.diamantes || 0) : 0;
+                const novoSaldo = saldoAtual + qtd;
+                
+                const { error: walletError } = await supabaseClient.from('carteira_diamantes').upsert({ id_jogador: String(idFinal), diamantes: novoSaldo }, { onConflict: 'id_jogador' });
+                
+                if (!walletError) {
+                    // Envia também uma notificação formal no correio
+                    await supabaseClient.from('correios').insert([
+                        {
+                            id_jogador: String(idFinal),
+                            titulo: '🎁 Recompensa Administrativa de Diamantes',
+                            mensagem: `Você recebeu ${qtd} Diamantes creditados diretamente pela Administração!`,
+                            tipo: 'diamantes',
+                            codigo_cupom: null,
+                            resgatado: true,
+                            data: new Date().toLocaleDateString('pt-BR')
+                        }
+                    ]);
+
+                    mostrarToast(`⚡ Sucesso! ${qtd} diamantes enviados para o ID: ${idFinal}`);
+                    document.getElementById('admTargetId').value = '';
+                    document.getElementById('admTargetQtd').value = '';
+                    carregarSaldoDiamantesSite();
+                } else {
+                    alert("Erro ao atualizar diamantes no banco de dados.");
+                }
+            } catch (e) {
+                alert("Erro de conexão com o Supabase.");
+            }
+        }
+
+        async function buscarUsuarioPorNickOuId(termo) {
             termo = termo.trim();
             if (!termo) return null;
 
-            let { data, error } = await supabase
-                .from('usuarios')
-                .select('*')
-                .or(`id.eq.${termo},nick.ilike.${termo}`)
-                .maybeSingle();
+            try {
+                let { data } = await supabaseClient
+                    .from('usuarios')
+                    .select('*')
+                    .or(`id.eq.${termo},id_jogador.eq.${termo},nick.ilike.${termo}`)
+                    .maybeSingle();
 
-            if (data) return data;
+                if (data) {
+                    return { id: String(data.id_jogador || data.id), nick: data.nick };
+                }
+            } catch(e){}
 
-            // Se for número puro, assume o ID informado
             if (/^\d+$/.test(termo)) {
                 return { id: termo, nick: termo };
             }
-
             return null;
         }
 
-        // 1. Envio de Diamantes ADM
-        async function enviarDiamantesADM() {
-            const idInput = document.getElementById('adm-id-jogador').value.trim();
-            const qtd = parseInt(document.getElementById('adm-qtd-diamantes').value);
-
-            if (!idInput || isNaN(qtd) || qtd <= 0) {
-                alert('Preencha o ID e a quantidade corretamente!');
+        async function adicionarInfluenciadorEEnviarCorreio() {
+            let termo = document.getElementById('infTargetNick').value.trim();
+            let codigo = document.getElementById('infTargetCodigo').value.trim().toUpperCase();
+            if (!termo || !codigo) {
+                alert("Preencha o Nick/ID e o Cupom Personalizado.");
                 return;
             }
 
-            const user = await buscarUsuario(idInput);
-            const idFinal = user ? user.id : idInput;
+            const userObj = await buscarUsuarioPorNickOuId(termo);
+            if (!userObj) {
+                alert("Jogador não encontrado na base do sistema!");
+                return;
+            }
 
-            const { error } = await supabase.from('correios').insert([
-                {
-                    id_jogador: String(idFinal),
-                    titulo: '🎁 Recompensa Administrativa',
-                    mensagem: `Você recebeu ${qtd} Diamantes enviados pela Administração!`,
-                    tipo: 'diamantes',
-                    codigo_cupom: null,
-                    resgatado: false,
-                    data: new Date().toLocaleDateString('pt-BR')
-                }
-            ]);
+            let idAlvo = String(userObj.id);
+            let nickAlvo = userObj.nick;
 
-            if (error) {
-                alert('Erro ao enviar: ' + error.message);
-            } else {
-                alert(`Sucesso! ${qtd} Diamantes enviados para o ID ${idFinal}.`);
-                document.getElementById('adm-id-jogador').value = '';
-                document.getElementById('adm-qtd-diamantes').value = '';
+            // 1. Grava localmente e no Supabase a influenciadores
+            let influenciadores = {};
+            try { influenciadores = JSON.parse(localStorage.getItem('wavecombat_influenciadores') || '{}'); } catch(e){}
+            influenciadores[idAlvo] = { nick: nickAlvo, id: idAlvo, codigo: codigo, saldoReceber: influenciadores[idAlvo] ? influenciadores[idAlvo].saldoReceber : 0, usosCupom: influenciadores[idAlvo] ? influenciadores[idAlvo].usosCupom : 0 };
+            localStorage.setItem('wavecombat_influenciadores', JSON.stringify(influenciadores));
+
+            try {
+                await supabaseClient.from('influenciadores').upsert([
+                    {
+                        id_jogador: idAlvo,
+                        cupom: codigo,
+                        usos: influenciadores[idAlvo].usosCupom || 0,
+                        comissao: influenciadores[idAlvo].saldoReceber || 0.00
+                    }
+                ]);
+            } catch(e){}
+
+            // 2. Grava no Correio Local + Supabase no formato padronizado
+            try {
+                let correios = {};
+                try { correios = JSON.parse(localStorage.getItem('wavecombat_correios') || '{}'); } catch(e){}
+                if (!correios[idAlvo]) correios[idAlvo] = [];
+                
+                const novaCarta = {
+                    tipo: 'verificado_invite',
+                    titulo: "🎉 Convite Especial de Verificado & Cupom! ⭐",
+                    mensagem: `Sua conta foi selecionada para verificado e parceria! Clique para resgatar o Selo V Dourado, Moldura, Fundo Animado, 5.000 Diamantes e ativar seu Cupom: ${codigo}`,
+                    codigoCupom: codigo,
+                    data: new Date().toLocaleDateString('pt-BR'),
+                    resgatado: false
+                };
+                
+                correios[idAlvo].unshift(novaCarta);
+                localStorage.setItem('wavecombat_correios', JSON.stringify(correios));
+
+                await supabaseClient.from('correios').insert([
+                    {
+                        id_jogador: idAlvo,
+                        titulo: novaCarta.titulo,
+                        mensagem: novaCarta.mensagem,
+                        tipo: 'verificado_invite',
+                        codigo_cupom: codigo,
+                        resgatado: false,
+                        data: novaCarta.data
+                    }
+                ]);
+
+                mostrarToast(`🌟 Influenciador ${nickAlvo} (ID: ${idAlvo}) configurado e convite enviado!`);
+                document.getElementById('infTargetNick').value = '';
+                document.getElementById('infTargetCodigo').value = '';
+                renderizarTabelaInfluenciadoresAdmin();
+            } catch(e) {
+                alert("Erro ao enviar carta para o correio.");
             }
         }
 
-        // 2. Salvar Influenciador & Enviar para Correio (Corrigido para usar ID Real)
-        async function salvarEEnviarInfluenciador() {
-            const targetInput = document.getElementById('inf-target').value.trim();
-            const cupom = document.getElementById('inf-cupom').value.trim().toUpperCase();
+        async function obterUsuariosCadastrados() {
+            let listaLocal = [];
+            try { listaLocal = JSON.parse(localStorage.getItem('wavecombat_users') || '[]'); } catch(e){}
+            try {
+                const { data } = await supabaseClient.from('usuarios').select('*');
+                if (data && data.length > 0) {
+                    data.forEach(u => {
+                        let idU = String(u.id_jogador || u.id);
+                        if (!listaLocal.some(x => (String(x.id) === idU) || (x.nick && x.nick.toLowerCase() === u.nick.toLowerCase()))) {
+                            listaLocal.push({ nick: u.nick, pass: u.pass || '', id: idU });
+                        }
+                    });
+                }
+            } catch(e){}
+            return listaLocal;
+        }
 
-            if (!targetInput || !cupom) {
-                alert('Informe o Nick/ID e o Cupom!');
+        async function renderizarTabelaUsuariosAdmin() {
+            let container = document.getElementById('adminListaUsuariosContainer');
+            if (!container) return;
+            let filtro = (document.getElementById('inputBuscaAdminUser')?.value || '').toLowerCase();
+            let usuarios = await obterUsuariosCadastrados();
+            let banidos = {};
+            try { banidos = JSON.parse(localStorage.getItem('wavecombat_banidos') || '{}'); } catch(e){}
+
+            if (!usuarios || usuarios.length === 0) {
+                container.innerHTML = `<p style="color:#94a3b8; font-size:11px; text-align:center;">Nenhum usuário cadastrado.</p>`;
                 return;
             }
 
-            const user = await buscarUsuario(targetInput);
+            usuarios.sort((a, b) => (a.nick || '').localeCompare(b.nick || '', 'pt-BR', { sensitivity: 'base' }));
+            let filtrados = usuarios.filter(u => (u.nick && u.nick.toLowerCase().includes(filtro)) || (u.id && String(u.id).includes(filtro)));
             
-            if (!user) {
-                alert('Jogador não encontrado!');
-                return;
-            }
-
-            const idJogadorReal = String(user.id);
-
-            // Tenta registrar na tabela de influenciadores
-            await supabase.from('influenciadores').upsert([
-                {
-                    id_jogador: idJogadorReal,
-                    cupom: cupom,
-                    usos: 0,
-                    comissao: 0.00
-                }
-            ]);
-
-            // Envia a carta para o ID real no correio
-            const { error: mailError } = await supabase.from('correios').insert([
-                {
-                    id_jogador: idJogadorReal,
-                    titulo: '⭐ Parceria de Influenciador Aprovada!',
-                    mensagem: `Parabéns! Sua conta foi aprovada como Influenciador Oficial. Seu cupom exclusivo é: ${cupom}`,
-                    tipo: 'parceria',
-                    codigo_cupom: cupom,
-                    resgatado: false,
-                    data: new Date().toLocaleDateString('pt-BR')
-                }
-            ]);
-
-            if (mailError) {
-                alert('Erro ao enviar mensagem para o correio: ' + mailError.message);
-            } else {
-                alert(`Sucesso! Parceria registrada e convite enviado ao correio do ID ${idJogadorReal}.`);
-                document.getElementById('inf-target').value = '';
-                document.getElementById('inf-cupom').value = '';
-                carregarInfluenciadores();
-            }
-        }
-
-        // 3. Carregar Lista de Influenciadores no Painel
-        async function carregarInfluenciadores() {
-            const container = document.getElementById('lista-influenciadores');
-            const { data, error } = await supabase.from('influenciadores').select('*');
-
-            if (error || !data) return;
-
-            container.innerHTML = '';
-            data.forEach(item => {
-                const html = `
-                    <div class="influencer-item">
-                        <div class="influencer-header">${item.id_jogador} | Cupom: ${item.cupom}</div>
-                        <div class="influencer-stats">Usos: ${item.usos || 0} | Comissões (30%): R$ ${(item.comissao || 0).toFixed(2)}</div>
-                        <div class="influencer-actions">
-                            <button class="btn-small-gold" onclick="resetarSaldo('${item.id_jogador}')">RESETAR SALDO</button>
-                            <button class="btn-danger" onclick="removerInfluenciador('${item.id_jogador}')">REMOVER</button>
+            container.innerHTML = filtrados.map(u => {
+                let isBan = banidos[u.id] && Date.now() < banidos[u.id].expiraEm;
+                return `
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:#070a10; border:1px solid var(--steel-border); padding:8px; border-radius:6px; font-size:11px; flex-wrap:wrap; gap:6px;">
+                        <div style="display:flex; align-items:center;">
+                            <strong>${obterHtmlNickVerificado(u.nick, u.id)}</strong>&nbsp;<span style="color:#64748b;">(ID: ${u.id})</span>
+                            ${isBan ? '<span style="color:var(--alert-red); margin-left:6px;">[BANIDO]</span>' : ''}
+                        </div>
+                        <div style="display:flex; gap:4px; align-items:center;">
+                            <select id="selectBan_${u.id}" class="auth-input" style="padding:4px; font-size:10px; width:auto;">
+                                <option value="7d">Ban 7 Dias</option>
+                                <option value="1m">Ban 1 Mês</option>
+                                <option value="999a">Ban 999 Anos</option>
+                            </select>
+                            <button class="btn-gaming btn-danger" onclick="aplicarBanimentoUser('${u.id}')" style="padding:4px 8px; font-size:10px;">Banir</button>
+                            ${isBan ? `<button class="btn-gaming" onclick="removerBanimentoUser('${u.id}')" style="padding:4px 8px; font-size:10px; background:#22c55e; color:#000;">Desbanir</button>` : ''}
                         </div>
                     </div>
                 `;
-                container.innerHTML += html;
-            });
+            }).join('');
         }
 
-        // 4. Modal do Correio
-        async function abrirModalCorreio() {
-            document.getElementById('modal-correio').classList.add('active');
-            const container = document.getElementById('mail-list-container');
-            container.innerHTML = '<p style="font-size: 0.85rem; color: var(--text-muted);">Buscando mensagens...</p>';
+        function aplicarBanimentoUser(id) {
+            let duracao = document.getElementById(`selectBan_${id}`).value;
+            let tempoMs = 7 * 24 * 60 * 60 * 1000;
+            if (duracao === '1m') tempoMs = 30 * 24 * 60 * 60 * 1000;
+            if (duracao === '999a') tempoMs = 999 * 365 * 24 * 60 * 60 * 1000;
 
-            const { data, error } = await supabase
-                .from('correios')
-                .select('*')
-                .eq('id_jogador', String(idUsuarioLogado))
-                .order('created_at', { ascending: false });
+            let banidos = {};
+            try { banidos = JSON.parse(localStorage.getItem('wavecombat_banidos') || '{}'); } catch(e){}
+            banidos[id] = { expiraEm: Date.now() + tempoMs };
+            localStorage.setItem('wavecombat_banidos', JSON.stringify(banidos));
+            mostrarToast("🔨 Usuário banido!");
+            renderizarTabelaUsuariosAdmin();
+        }
 
-            if (error || !data || data.length === 0) {
-                container.innerHTML = '<p style="font-size: 0.85rem; color: var(--text-muted);">Nenhuma mensagem encontrada.</p>';
+        function removerBanimentoUser(id) {
+            let banidos = {};
+            try { banidos = JSON.parse(localStorage.getItem('wavecombat_banidos') || '{}'); } catch(e){}
+            delete banidos[id];
+            localStorage.setItem('wavecombat_banidos', JSON.stringify(banidos));
+            mostrarToast("✨ Banimento removido!");
+            renderizarTabelaUsuariosAdmin();
+        }
+
+        function renderizarTabelaInfluenciadoresAdmin() {
+            let container = document.getElementById('adminListaInfluenciadoresContainer');
+            if (!container) return;
+            let influenciadores = {};
+            try { influenciadores = JSON.parse(localStorage.getItem('wavecombat_influenciadores') || '{}'); } catch(e){}
+            let chaves = Object.keys(influenciadores);
+            if (chaves.length === 0) {
+                container.innerHTML = `<p style="color:#94a3b8; font-size:11px; text-align:center;">Nenhum influenciador cadastrado.</p>`;
+                return;
+            }
+            chaves.sort((a, b) => (influenciadores[a].nick || '').localeCompare(influenciadores[b].nick || '', 'pt-BR', { sensitivity: 'base' }));
+
+            container.innerHTML = chaves.map(k => {
+                let inf = influenciadores[k];
+                return `
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:#070a10; border:1px solid var(--steel-border); padding:8px; border-radius:6px; font-size:11px; flex-wrap:wrap; gap:6px;">
+                        <div>
+                            <strong style="color:var(--accent-color);">${inf.nick}</strong> <span style="color:#64748b;">(ID: ${inf.id || k})</span> | Cupom: <strong style="color:var(--gold-warning);">${inf.codigo}</strong>
+                            <br><span style="color:#22c55e;">Usos: ${inf.usosCupom || 0}</span> | Comissões (30%): <strong style="color:#fff;">R$ ${(inf.saldoReceber || 0).toFixed(2)}</strong>
+                        </div>
+                        <div style="display:flex; gap:4px;">
+                            <button class="btn-gaming" onclick="resetarSaldoInfluenciador('${k}')" style="padding:4px 8px; font-size:10px; background:var(--gold-warning); color:#000;">Resetar Saldo</button>
+                            <button class="btn-gaming btn-danger" onclick="removerInfluenciador('${k}')" style="padding:4px 8px; font-size:10px;">Remover</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function resetarSaldoInfluenciador(k) {
+            let influenciadores = {};
+            try { influenciadores = JSON.parse(localStorage.getItem('wavecombat_influenciadores') || '{}'); } catch(e){}
+            if (influenciadores[k]) {
+                influenciadores[k].saldoReceber = 0;
+                localStorage.setItem('wavecombat_influenciadores', JSON.stringify(influenciadores));
+                mostrarToast("🔄 Saldo resetado!");
+                renderizarTabelaInfluenciadoresAdmin();
+            }
+        }
+
+        function removerInfluenciador(k) {
+            let influenciadores = {};
+            try { influenciadores = JSON.parse(localStorage.getItem('wavecombat_influenciadores') || '{}'); } catch(e){}
+            delete influenciadores[k];
+            localStorage.setItem('wavecombat_influenciadores', JSON.stringify(influenciadores));
+            mostrarToast("❌ Influenciador removido.");
+            renderizarTabelaInfluenciadoresAdmin();
+        }
+
+        async function carregarCorreioUsuario() {
+            let container = document.getElementById('correioMensagensContainer');
+            if (!container || !usuarioLogado) return;
+
+            let idUser = String(usuarioLogado.id);
+            let minhasMsgs = [];
+
+            // Tenta obter do Supabase primeiro
+            try {
+                const { data } = await supabaseClient
+                    .from('correios')
+                    .select('*')
+                    .eq('id_jogador', idUser)
+                    .order('created_at', { ascending: false });
+
+                if (data && data.length > 0) {
+                    minhasMsgs = data.map(m => ({
+                        id: m.id,
+                        tipo: m.tipo,
+                        titulo: m.titulo,
+                        mensagem: m.mensagem,
+                        codigoCupom: m.codigo_cupom,
+                        data: m.data || new Date(m.created_at).toLocaleDateString('pt-BR'),
+                        resgatado: m.resgatado
+                    }));
+                }
+            } catch(e){}
+
+            // Fallback para mensagens locais caso não venha do Supabase
+            if (minhasMsgs.length === 0) {
+                let correiosLocais = {};
+                try { correiosLocais = JSON.parse(localStorage.getItem('wavecombat_correios') || '{}'); } catch(e){}
+                minhasMsgs = correiosLocais[idUser] || [];
+            }
+
+            if (minhasMsgs.length === 0) {
+                container.innerHTML = `<p style="color:#94a3b8; text-align:center; font-size:11px;">Nenhuma mensagem no correio.</p>`;
                 return;
             }
 
-            container.innerHTML = '';
-            data.forEach(mail => {
-                container.innerHTML += `
-                    <div class="mail-item">
-                        <div class="mail-title">${mail.titulo}</div>
-                        <div class="mail-body">${mail.mensagem}</div>
-                        <div class="mail-date">${mail.data || ''}</div>
+            container.innerHTML = minhasMsgs.map((m, idx) => `
+                <div style="background:#0b0f17; border:1px solid ${m.resgatado ? 'var(--steel-border)' : '#FFD700'}; padding:10px; border-radius:8px; margin-bottom:8px; font-size:11px;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                        <strong style="color:var(--accent-color);">${m.titulo}</strong>
+                        <span style="color:#64748b; font-size:9px;">${m.data}</span>
+                    </div>
+                    <p style="color:#94a3b8; margin-bottom:8px;">${m.mensagem}</p>
+                    ${!m.resgatado ? `<button class="btn-gaming" onclick="resgatarPremioCorreio(${idx}, ${m.id || 'null'})" style="background:#FFD700; color:#000; width:100%; padding:6px; font-size:10px;">🎁 Resgatar Benefícios & Prêmios</button>` : `<span style="color:#22c55e; font-weight:bold;">✅ Prêmios Resgatados</span>`}
+                </div>
+            `).join('');
+        }
+
+        async function resgatarPremioCorreio(idx, dbId = null) {
+            let idUser = String(usuarioLogado.id);
+            let nickUser = usuarioLogado.nick;
+
+            let correiosLocais = {};
+            try { correiosLocais = JSON.parse(localStorage.getItem('wavecombat_correios') || '{}'); } catch(e){}
+            
+            let msgData = null;
+            if (correiosLocais[idUser] && correiosLocais[idUser][idx]) {
+                msgData = correiosLocais[idUser][idx];
+                msgData.resgatado = true;
+                localStorage.setItem('wavecombat_correios', JSON.stringify(correiosLocais));
+            }
+
+            // Atualiza status no Supabase se houver ID da linha
+            if (dbId) {
+                try {
+                    await supabaseClient.from('correios').update({ resgatado: true }).eq('id', dbId);
+                } catch(e){}
+            }
+
+            // Aplica os prêmios
+            let verificados = {};
+            try { verificados = JSON.parse(localStorage.getItem('wavecombat_verificados') || '{}'); } catch(e){}
+            verificados[idUser] = true;
+            localStorage.setItem('wavecombat_verificados', JSON.stringify(verificados));
+
+            if (msgData && msgData.codigoCupom) {
+                let influenciadores = {};
+                try { influenciadores = JSON.parse(localStorage.getItem('wavecombat_influenciadores') || '{}'); } catch(e){}
+                if (!influenciadores[idUser]) {
+                    influenciadores[idUser] = { nick: nickUser, id: idUser, codigo: msgData.codigoCupom, saldoReceber: 0, usosCupom: 0 };
+                    localStorage.setItem('wavecombat_influenciadores', JSON.stringify(influenciadores));
+                }
+            }
+
+            try {
+                const { data: carteira } = await supabaseClient.from('carteira_diamantes').select('diamantes').eq('id_jogador', idUser).single();
+                let saldoAtual = carteira ? (carteira.diamantes || 0) : 0;
+                await supabaseClient.from('carteira_diamantes').upsert({ id_jogador: idUser, nick: nickUser, diamantes: saldoAtual + 5000 }, { onConflict: 'id_jogador' });
+            } catch(e){}
+
+            tocarSomLevelUp();
+            document.getElementById('modalVerificadoPremio').style.display = 'flex';
+            carregarCorreioUsuario();
+            carregarSaldoDiamantesSite();
+            atualizarPerfilExpandidoUI();
+            document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(nickUser, idUser);
+        }
+
+        function fecharModalVerificadoPremio() { document.getElementById('modalVerificadoPremio').style.display = 'none'; }
+
+        function alternarAba(aba) {
+            document.getElementById('tabLoginBtn')?.classList.toggle('active', aba === 'login');
+            document.getElementById('tabRegisterBtn')?.classList.toggle('active', aba === 'registro');
+            document.getElementById('tabPerfilBtn')?.classList.toggle('active', aba === 'perfil');
+            document.getElementById('tabCorreioBtn')?.classList.toggle('active', aba === 'correio');
+            
+            document.getElementById('panelLogin').classList.toggle('active', aba === 'login');
+            document.getElementById('panelRegistro').classList.toggle('active', aba === 'registro');
+            document.getElementById('panelPerfil').classList.toggle('active', aba === 'perfil');
+            document.getElementById('panelCorreio').classList.toggle('active', aba === 'correio');
+        }
+
+        async function fazerRegistroPlataforma(e) {
+            e.preventDefault();
+            const u = document.getElementById('regUser').value.trim();
+            const p = document.getElementById('regPass').value;
+            let users = await obterUsuariosCadastrados();
+            if(users.some(x => x.nick && x.nick.toLowerCase() === u.toLowerCase())) {
+                alert("Este nick já existe! Escolha outro.");
+                return;
+            }
+            const novoId = Math.floor(100000000 + Math.random() * 900000000).toString();
+            try {
+                const { error: regError } = await supabaseClient.from('usuarios').insert([{ id_jogador: novoId, nick: u, pass: p }]);
+                if (regError) {
+                    console.error("Erro ao registrar no Supabase:", regError);
+                    alert("Aviso: Falha ao sincronizar registro com a nuvem, mas a conta foi criada localmente.");
+                }
+            } catch(err){
+                console.error("Exceção ao registrar:", err);
+            }
+
+            let localUsers = [];
+            try { localUsers = JSON.parse(localStorage.getItem('wavecombat_users') || '[]'); } catch(e){}
+            localUsers.push({ nick: u, pass: p, id: novoId });
+            localStorage.setItem('wavecombat_users', JSON.stringify(localUsers));
+            
+            usuarioLogado = { nick: u, isAdm: false, id: novoId };
+            localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
+            localStorage.setItem('wavecombat_nick', u);
+            localStorage.setItem('wavecombat_id', novoId);
+            
+            mostrarToast("✨ Conta criada com sucesso!");
+            document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(u, novoId);
+            fecharModalAuth();
+            atualizarAbasPerfilUI();
+            carregarSaldoDiamantesSite();
+        }
+
+        async function fazerLoginPlataforma(e) {
+            e.preventDefault();
+            const u = document.getElementById('loginUser').value.trim();
+            const p = document.getElementById('loginPass').value;
+            
+            if (u.toLowerCase() === 'capudo7' && p === '262026') {
+                usuarioLogado = { nick: 'capudo7', isAdm: true, id: MEU_ID_MESTRE };
+                localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
+                localStorage.setItem('wavecombat_nick', 'capudo7');
+                localStorage.setItem('wavecombat_id', MEU_ID_MESTRE);
+                if (verificarBanimentoAtual()) return;
+
+                mostrarToast('⭐ Acesso ADM Concedido!');
+                document.getElementById('btnToggleAdmNav').style.display = 'inline-block';
+                document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado('capudo7', MEU_ID_MESTRE);
+                fecharModalAuth();
+                atualizarAbasPerfilUI();
+                carregarSaldoDiamantesSite();
+                return;
+            }
+
+            let users = await obterUsuariosCadastrados();
+            let achou = users.find(x => x.nick && x.nick.toLowerCase() === u.toLowerCase() && x.pass === p);
+            if(achou) {
+                let idUser = String(achou.id_jogador || achou.id || Math.floor(100000000 + Math.random() * 900000000).toString());
+                usuarioLogado = { nick: achou.nick, isAdm: false, id: idUser };
+                if (verificarBanimentoAtual()) return;
+
+                localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
+                localStorage.setItem('wavecombat_nick', achou.nick);
+                localStorage.setItem('wavecombat_id', idUser);
+                mostrarToast(`👋 Bem-vindo, ${achou.nick}!`);
+                document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(achou.nick, idUser);
+                fecharModalAuth();
+                atualizarAbasPerfilUI();
+                carregarSaldoDiamantesSite();
+            } else {
+                alert('Usuário ou senha incorretos!');
+            }
+        }
+
+        async function atualizarPerfilExpandidoUI() {
+            const perfilDiv = document.getElementById('perfilUserData');
+            const nickAtual = localStorage.getItem('wavecombat_nick') || '';
+            const idAtual = localStorage.getItem('wavecombat_id') || '';
+            let corAtual = localStorage.getItem('wavecombat_cor_nick') || '#00f0ff';
+            let historico = [];
+            try { historico = JSON.parse(localStorage.getItem('wavecombat_historico') || '[]'); } catch(e){}
+
+            let verificados = {};
+            try { verificados = JSON.parse(localStorage.getItem('wavecombat_verificados') || '{}'); } catch(e){}
+            let isVerif = verificados[idAtual];
+
+            let histHtml = historico.length > 0 
+                ? historico.map(h => `<li style="font-size:10px; color:#94a3b8;">🎮 ${h.nome} (${h.data})</li>`).join('') 
+                : `<li style="font-size:10px; color:#64748b;">Nenhum jogo recente.</li>`;
+
+            let nivelUser = 1;
+            let xpUser = 0;
+            if (idAtual) {
+                try {
+                    const { data: lbData } = await supabaseClient.from('leaderboard').select('nivel, xp').eq('id_jogador', idAtual).single();
+                    if (lbData) { nivelUser = lbData.nivel || 1; xpUser = lbData.xp || 0; }
+                } catch(e){}
+            }
+
+            let influenciadorInfoHtml = '';
+            try {
+                let influenciadores = JSON.parse(localStorage.getItem('wavecombat_influenciadores') || '{}');
+                let meuInf = influenciadores[idAtual];
+                if (meuInf) {
+                    influenciadorInfoHtml = `
+                        <div style="background:rgba(245, 158, 11, 0.1); border:1px solid var(--gold-warning); padding:10px; border-radius:8px; margin-top:10px;">
+                            <h5 style="font-family:'Orbitron'; font-size:11px; color:var(--gold-warning); margin-bottom:4px;">🌟 Painel do Influenciador</h5>
+                            <p style="font-size:10px; color:#fff;">Seu Cupom: <strong>${meuInf.codigo}</strong></p>
+                            <p style="font-size:10px; color:#22c55e;">Usos: ${meuInf.usosCupom || 0}</p>
+                            <p style="font-size:10px; color:var(--gold-warning);">Comissão (30%): <strong>R$ ${(meuInf.saldoReceber || 0).toFixed(2)}</strong></p>
+                        </div>
+                    `;
+                }
+            } catch(e){}
+
+            let cardStyleClass = isVerif ? 'profile-frame-gold' : '';
+
+            perfilDiv.innerHTML = `
+                <div style="display:flex; flex-direction:column; gap:10px;">
+                    <div class="${cardStyleClass}" style="background:#0b0f17; border:1px solid var(--steel-border); padding:10px; border-radius:8px; text-align:center;">
+                        <h4 style="color:var(--accent-color); font-family:'Orbitron'; font-size:13px; display:flex; align-items:center; justify-content:center;">${usuarioLogado ? obterHtmlNickVerificado(usuarioLogado.nick, idAtual) : 'Convidado'}</h4>
+                        <p style="font-size:11px; color:var(--gold-warning); font-family:'Orbitron'; margin-top:4px;">ID Único: <strong>${idAtual || 'Não Logado'}</strong></p>
+                        <p style="font-size:10px; color:#22c55e; margin-top:2px;">⭐ Nível: ${nivelUser} | XP: ${xpUser}</p>
+                        ${isVerif ? '<p style="font-size:10px; color:#FFD700; margin-top:4px; font-weight:bold;">⭐ Conta Oficial Verificada</p>' : ''}
+                    </div>
+                    ${influenciadorInfoHtml}
+                    <div>
+                        <label style="font-size:11px; color:#94a3b8;">Editar Nick:</label>
+                        <input type="text" id="inputHubNickEdit" value="${nickAtual}" class="auth-input" oninput="salvarNickManualSite(this.value)">
+                    </div>
+                    <div>
+                        <label style="font-size:11px; color:#94a3b8;">🎨 Cor do Nick no Chat:</label>
+                        <div style="display:flex; gap:10px; align-items:center; margin-top:4px;">
+                            <input type="color" id="inputCorNickEdit" value="${corAtual}" style="width:40px; height:30px; border:none; background:none; cursor:pointer;" onchange="salvarCorNickSite(this.value)">
+                        </div>
+                    </div>
+                    <div>
+                        <h5 style="font-family:'Orbitron'; font-size:11px; color:var(--accent-color); margin-bottom:4px;">📜 Últimos Jogos:</h5>
+                        <ul style="padding-left:15px; display:flex; flex-direction:column; gap:3px;">${histHtml}</ul>
+                    </div>
+                    ${usuarioLogado ? `<button class="btn-gaming btn-danger" onclick="fazerLogout(); tocarSomClique();" style="padding:6px; font-size:11px;">Sair da Conta</button>` : ``}
+                </div>
+            `;
+        }
+
+        function salvarNickManualSite(novoNick) {
+            const limpo = novoNick.trim();
+            if (limpo) localStorage.setItem('wavecombat_nick', limpo);
+        }
+
+        function salvarCorNickSite(novaCor) {
+            localStorage.setItem('wavecombat_cor_nick', novaCor);
+            mostrarToast("🎨 Cor do nick atualizada!");
+        }
+
+        function fazerLogout() {
+            usuarioLogado = null;
+            localStorage.removeItem('wavecombat_sessao_ativa');
+            localStorage.removeItem('wavecombat_id');
+            localStorage.removeItem('wavecombat_nick');
+            document.getElementById('btnAuthNav').textContent = 'Entrar';
+            document.getElementById('btnToggleAdmNav').style.display = 'none';
+            document.getElementById('adminSection').style.display = 'none';
+            document.getElementById('userDiamondBalance').textContent = '0';
+            mostrarToast('Sessão encerrada.');
+            atualizarAbasPerfilUI();
+        }
+
+        async function carregarLeaderboardSite() {
+            const container = document.getElementById('siteLeaderboardListContainer');
+            const section = document.getElementById('siteLeaderboardSection');
+            if(!container || !section) return;
+            section.style.display = 'block';
+            try {
+                const { data, error } = await supabaseClient.from('leaderboard').select('*').order('pontos', { ascending: false }).limit(10);
+                if (error || !data || data.length === 0) {
+                    container.innerHTML = `<p style="color:#94a3b8; text-align:center; font-size:11px;">Nenum recorde registrado.</p>`;
+                    return;
+                }
+                container.innerHTML = data.map((item, idx) => `
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:#0b0f17; border:1px solid var(--steel-border); padding:6px 10px; border-radius:6px; font-size:11px;">
+                        <span style="display:flex; align-items:center;"><strong>#${idx+1}</strong>&nbsp;${obterHtmlNickVerificado(item.nick, item.id_jogador)} <span style="color:#64748b; font-size:9px; margin-left:4px;">(Nível ${item.nivel || 1})</span></span>
+                        <strong style="color:var(--accent-color);">${formatarNumero(item.pontos)} pts</strong>
+                    </div>
+                `).join('');
+            } catch(e) {}
+        }
+
+        // CARREGAMENTO DO CHAT OTIMIZADO COM ORDENAÇÃO ASCENDENTE E LIMITE
+        async function carregarMensagensChat() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('chat_global')
+                    .select('*')
+                    .order('created_at', { ascending: true })
+                    .limit(30);
+
+                const container = document.getElementById('miniChatMessages');
+                if (!container) return;
+
+                if (error) {
+                    console.error("Erro ao carregar chat:", error);
+                    return;
+                }
+
+                if (!data || data.length === 0) {
+                    container.innerHTML = `<div style="color:#64748b; font-style:italic;">Nenhuma mensagem recente. Seja o primeiro a falar!</div>`;
+                    return;
+                }
+
+                const nickAtual = localStorage.getItem('wavecombat_nick') || '';
+                container.innerHTML = data.map(m => {
+                    const isMentioned = nickAtual && m.mensagem.toLowerCase().includes(`@${nickAtual.toLowerCase()}`);
+                    const corNick = m.cor || '#00f0ff';
+                    return `
+                        <div class="chat-msg-item ${isMentioned ? 'mentioned' : ''}">
+                            <strong style="color:${corNick}; font-family:'Orbitron';">${obterHtmlNickVerificado(m.nick, m.id_jogador || '')}:</strong> <span style="color:#f8fafc;">${m.mensagem}</span>
+                        </div>
+                    `;
+                }).join('');
+                
+                container.scrollTop = container.scrollHeight;
+            } catch(e) {
+                console.error("Exceção ao buscar mensagens do chat:", e);
+            }
+        }
+
+        function inserirEmojiChat(emoji) {
+            const input = document.getElementById('miniChatInput');
+            if(input) { input.value += emoji; input.focus(); }
+        }
+
+        function checarEnvioChat(e) { if (e.key === 'Enter') enviarMensagemChat(); }
+
+        async function enviarMensagemChat() {
+            const agora = Date.now();
+            if (agora - ultimaMensagemChatTempo < 2000) {
+                mostrarToast("⏳ Aguarde 2 segundos para enviar outra mensagem.");
+                return;
+            }
+            const input = document.getElementById('miniChatInput');
+            const txt = input.value.trim();
+            if (!txt) return;
+
+            ultimaMensagemChatTempo = agora;
+            const nick = localStorage.getItem('wavecombat_nick') || 'Convidado';
+            const cor = localStorage.getItem('wavecombat_cor_nick') || '#00f0ff';
+            const idJogador = localStorage.getItem('wavecombat_id') || '';
+            
+            try {
+                const { error } = await supabaseClient.from('chat_global').insert([{ nick, mensagem: txt, cor, id_jogador: idJogador }]);
+                if (error) {
+                    console.error("Erro ao enviar mensagem:", error);
+                    alert("Erro ao enviar mensagem no chat. Verifique as permissões da tabela.");
+                    return;
+                }
+                input.value = '';
+                carregarMensagensChat();
+                tocarSomClique();
+            } catch(e) {
+                console.error("Exceção ao enviar mensagem:", e);
+                alert("Erro ao conectar com o servidor para enviar a mensagem.");
+            }
+        }
+
+        async function buscarDadosNuvem() {
+            try {
+                const { data, error } = await supabaseClient.from('jogos').select('*');
+                if (error || !data || data.length === 0) {
+                    for(let j of jogosIniciaisFallback) { await supabaseClient.from('jogos').insert([j]); }
+                    const { data: newData } = await supabaseClient.from('jogos').select('*');
+                    listaJogosCache = newData || jogosIniciaisFallback;
+                } else {
+                    listaJogosCache = data;
+                }
+            } catch(e) {
+                listaJogosCache = jogosIniciaisFallback;
+            }
+
+            try {
+                const { data: confData } = await supabaseClient.from('configuracoes').select('*');
+                if(confData) {
+                    confData.forEach(item => {
+                        if(item.chave === 'live_url') siteConfigGlobal.url = item.valor || "";
+                        if(item.chave === 'live_ativa') siteConfigGlobal.ativa = (item.valor === 'true');
+                        if(item.chave === 'site_logo') siteConfigGlobal.logo = item.valor || "";
+                    });
+                }
+            } catch(e) {}
+
+            let totalAcessos = listaJogosCache.reduce((acc, curr) => acc + (curr.acessos || 0), 1250);
+            let totalUsers = (await obterUsuariosCadastrados()).length + 42;
+            document.getElementById('statTotalPartidas').textContent = formatarNumero(totalAcessos);
+            document.getElementById('statTotalUsuarios').textContent = formatarNumero(totalUsers);
+
+            sincronizarCamposAdmUI();
+            aplicarLogoNoSite();
+            atualizarVisibilidadeLiveGeral();
+            atualizarPlataforma();
+            carregarLeaderboardSite();
+        }
+
+        function sincronizarCamposAdmUI() {
+            const inputLive = document.getElementById('inputAdminLiveUrl');
+            if(inputLive) inputLive.value = siteConfigGlobal.url;
+            const btnStatus = document.getElementById('btnToggleLiveStatus');
+            if(btnStatus) {
+                if(siteConfigGlobal.ativa) {
+                    btnStatus.textContent = "LIVE: ONLINE"; btnStatus.style.background = "#22c55e"; btnStatus.style.color = "#000";
+                } else {
+                    btnStatus.textContent = "LIVE: OFFLINE"; btnStatus.style.background = "#ef4444"; btnStatus.style.color = "#fff";
+                }
+            }
+        }
+
+        function alternarStatusLiveAdm() {
+            siteConfigGlobal.ativa = !siteConfigGlobal.ativa;
+            sincronizarCamposAdmUI();
+        }
+
+        async function salvarConfigLiveAdm() {
+            const url = document.getElementById('inputAdminLiveUrl').value.trim();
+            siteConfigGlobal.url = url;
+            try {
+                await supabaseClient.from('configuracoes').upsert({ chave: 'live_url', valor: url });
+                await supabaseClient.from('configuracoes').upsert({ chave: 'live_ativa', valor: String(siteConfigGlobal.ativa) });
+                mostrarToast('💾 Configurações da live guardadas!');
+            } catch(e) {}
+            atualizarVisibilidadeLiveGeral();
+        }
+
+        async function alterarLogoSite() {
+            const f = document.getElementById('admLogoFile').files[0];
+            if(f) {
+                const fileName = `logo_${Date.now()}_${f.name}`;
+                const { error } = await supabaseClient.storage.from('capas').upload(fileName, f);
+                if(!error) {
+                    const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/capas/${fileName}`;
+                    siteConfigGlobal.logo = publicUrl;
+                    try { await supabaseClient.from('configuracoes').upsert({ chave: 'site_logo', valor: publicUrl }); } catch(e) {}
+                    aplicarLogoNoSite();
+                    mostrarToast('🖼️ Logo atualizada!');
+                }
+            }
+        }
+
+        function aplicarLogoNoSite() {
+            const logoUrl = siteConfigGlobal.logo;
+            if (logoUrl && logoUrl.trim() !== "") {
+                document.getElementById('defaultLogoSvg').style.display = 'none';
+                let img = document.getElementById('customNavLogo');
+                if(!img) {
+                    img = document.createElement('img');
+                    img.id = 'customNavLogo'; img.className = 'logo-img-custom';
+                    document.getElementById('navLogoContainer').prepend(img);
+                }
+                img.src = logoUrl;
+            }
+        }
+
+        async function tentarExecutarJogo(jogo) {
+            if (verificarBanimentoAtual()) return;
+            inicializarIdentidadeLocal();
+            registrarHistoricoJogo(jogo.nome);
+
+            if (bgmActive) {
+                if (bgmInterval) clearInterval(bgmInterval);
+                bgmActive = false;
+                const checkBGM = document.getElementById('checkBGM');
+                if(checkBGM) checkBGM.checked = false;
+            }
+
+            try { await supabaseClient.from('jogos').update({ acessos: (jogo.acessos || 0) + 1 }).eq('id', jogo.id); } catch(e){}
+
+            document.getElementById('gameIframe').src = jogo.arquivo;
+            document.getElementById('player').style.display = 'block';
+            document.getElementById('playerControlsBar').style.display = 'flex';
+            document.getElementById('player').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function tentarExecutarJogoDestaque() {
+            const jogos = listaJogosCache.filter(j => j.publicado);
+            const destaque = obterJogoDestaque(jogos);
+            if(destaque) tentarExecutarJogo(destaque);
+        }
+
+        function obterFavoritos() { 
+            try { return JSON.parse(localStorage.getItem('wavecombat_favs') || '[]'); } catch(e) { return []; } 
+        }
+
+        function toggleFavorito(id) {
+            let favs = obterFavoritos();
+            if(favs.includes(id)) favs = favs.filter(i => i !== id);
+            else favs.push(id);
+            try { localStorage.setItem('wavecombat_favs', JSON.stringify(favs)); } catch(e) {}
+            atualizarPlataforma();
+            tocarSomClique();
+        }
+
+        function alternarPainelAdm() {
+            const painel = document.getElementById('adminSection');
+            painelAdmAberto = (painel.style.display !== 'block');
+            painel.style.display = painelAdmAberto ? 'block' : 'none';
+            if(painelAdmAberto) {
+                painel.scrollIntoView({ behavior: 'smooth' });
+                renderizarJogosAdmin();
+                renderizarTabelaUsuariosAdmin();
+                renderizarTabelaInfluenciadoresAdmin();
+                sincronizarCamposAdmUI();
+            }
+        }
+
+        function fazerLogoutAdmin() { fazerLogout(); }
+
+        function converterUrlYoutubeParaEmbed(url) {
+            if(!url) return "";
+            let videoId = "";
+            if (url.includes("embed/")) return url;
+            if (url.includes("watch?v=")) videoId = url.split("watch?v=")[1].split("&")[0];
+            else if (url.includes("youtu.be/")) videoId = url.split("youtu.be/")[1].split("?")[0];
+            else if (url.includes("live/")) videoId = url.split("live/")[1].split("?")[0];
+            return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
+        }
+
+        function atualizarVisibilidadeLiveGeral() {
+            const box = document.getElementById('liveSectionBox');
+            const iframe = document.getElementById('youtubeLiveIframe');
+            if(!box || !iframe) return;
+
+            if (siteConfigGlobal.ativa && siteConfigGlobal.url.trim() !== "") {
+                box.style.display = 'block';
+                iframe.src = converterUrlYoutubeParaEmbed(siteConfigGlobal.url);
+                if (bgmActive) {
+                    if (bgmInterval) clearInterval(bgmInterval);
+                    bgmActive = false;
+                    const checkBGM = document.getElementById('checkBGM');
+                    if(checkBGM) checkBGM.checked = false;
+                }
+            } else {
+                box.style.display = 'none';
+                iframe.src = "about:blank";
+            }
+        }
+
+        function toggleTelaCheia() {
+            const c = document.getElementById('player');
+            if (!document.fullscreenElement) c.requestFullscreen().catch(()=>{});
+            else document.exitFullscreen();
+        }
+
+        function encerrarJogo() {
+            document.getElementById('gameIframe').src = "about:blank";
+            if (document.fullscreenElement) document.exitFullscreen();
+            document.getElementById('player').style.display = 'none';
+            document.getElementById('playerControlsBar').style.display = 'none';
+        }
+
+        function gerarPrintAutoCapa(nome) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 640; canvas.height = 360;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#0b0f17'; ctx.fillRect(0,0,640,360);
+            ctx.fillStyle = '#00f0ff'; ctx.font = 'bold 28px Orbitron'; ctx.textAlign = 'center';
+            ctx.fillText(nome.toUpperCase(), 320, 180);
+            return canvas.toDataURL('image/png');
+        }
+
+        function extrairCorDinamicaImagem(imgElement) {
+            try {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = 50; canvas.height = 50;
+                ctx.drawImage(imgElement, 0, 0, 50, 50);
+                const data = ctx.getImageData(0, 0, 50, 50).data;
+                let r = 0, g = 0, b = 0, count = 0;
+                for (let i = 0; i < data.length; i += 16) {
+                    let red = data[i], green = data[i+1], blue = data[i+2];
+                    let max = Math.max(red, green, blue), min = Math.min(red, green, blue);
+                    if (max > 40 && (max - min) > 20) { r += red; g += green; b += blue; count++; }
+                }
+                if (count > 0) {
+                    r = Math.floor(r / count); g = Math.floor(g / count); b = Math.floor(b / count);
+                    document.documentElement.style.setProperty('--accent-color', `rgb(${r}, ${g}, ${b})`);
+                    document.documentElement.style.setProperty('--accent-glow', `rgba(${r}, ${g}, ${b}, 0.35)`);
+                }
+            } catch(e) {}
+        }
+
+        function obterJogoDestaque(jogosPublicados) {
+            const manual = jogosPublicados.find(j => j.destaque_manual);
+            if(manual) return manual;
+            return [...jogosPublicados].sort((a,b) => (b.acessos || 0) - (a.acessos || 0))[0] || null;
+        }
+
+        function atualizarPlataforma() {
+            let jogosPublicados = listaJogosCache.filter(j => j.publicado);
+            const busca = (document.getElementById('inputSearchGames')?.value || '').toLowerCase();
+            const cat = document.getElementById('selectCategoryFilter')?.value || 'todos';
+            const favs = obterFavoritos();
+
+            if (busca) jogosPublicados = jogosPublicados.filter(j => j.nome.toLowerCase().includes(busca));
+            if (cat === 'favoritos') jogosPublicados = jogosPublicados.filter(j => favs.includes(j.id));
+            else if (cat !== 'todos') jogosPublicados = jogosPublicados.filter(j => j.categoria === cat);
+
+            jogosPublicados.sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR', { sensitivity: 'base' }));
+
+            const destaque = obterJogoDestaque(jogosPublicados);
+            const capaDestaque = destaque ? (destaque.img || gerarPrintAutoCapa(destaque.nome)) : "";
+
+            if(capaDestaque) {
+                document.getElementById('heroHeader').style.backgroundImage = `url('${capaDestaque}')`;
+                const tempImg = new Image();
+                tempImg.crossOrigin = "Anonymous";
+                tempImg.src = capaDestaque;
+                tempImg.onload = () => extrairCorDinamicaImagem(tempImg);
+            }
+
+            const featuredContainer = document.getElementById('featuredGameContainer');
+            if(destaque) {
+                const isFav = favs.includes(destaque.id);
+                featuredContainer.innerHTML = `
+                    <div class="featured-game-box">
+                        <div class="featured-badge">${destaque.destaque_manual ? '★ DESTAQUE' : '🔥 DESTAQUE'}</div>
+                        <img src="${capaDestaque}" class="featured-img" alt="${destaque.nome}" onclick="tentarExecutarJogo(${JSON.stringify(destaque).replace(/"/g, '&quot;')}); tocarSomClique();">
+                        <h3 style="font-size:16px; font-family:'Orbitron';">${destaque.nome}</h3>
+                        <p style="font-size:12px; color:#94a3b8;">${destaque.desc}</p>
+                        <div class="game-card-actions">
+                            <button type="button" class="btn-gaming" onclick="tentarExecutarJogo(${JSON.stringify(destaque).replace(/"/g, '&quot;')}); tocarSomClique();" style="flex:1; padding:8px;">▶ JOGAR AGORA</button>
+                            <button type="button" class="btn-fav" onclick="toggleFavorito('${destaque.id}')">${isFav ? '★' : '☆'}</button>
+                        </div>
                     </div>
                 `;
+            } else {
+                featuredContainer.innerHTML = `<p style="color:#94a3b8;">Nenhum jogo visível.</p>`;
+            }
+
+            const listContainer = document.getElementById('gamesListContainer');
+            listContainer.innerHTML = '';
+            jogosPublicados.forEach(jogo => {
+                const thumb = jogo.img || gerarPrintAutoCapa(jogo.nome);
+                const isFav = favs.includes(jogo.id);
+                const item = document.createElement('div');
+                item.className = 'game-list-card';
+                item.innerHTML = `
+                    <img src="${thumb}" class="game-list-thumb" alt="${jogo.nome}">
+                    <div class="game-list-info" onclick="tentarExecutarJogo(${JSON.stringify(jogo).replace(/"/g, '&quot;')}); tocarSomClique();">
+                        <h4>${jogo.nome}</h4>
+                        <p>${jogo.desc}</p>
+                    </div>
+                    <button type="button" class="btn-fav" onclick="toggleFavorito('${jogo.id}')">${isFav ? '★' : '☆'}</button>
+                `;
+                listContainer.appendChild(item);
+            });
+
+            if(painelAdmAberto) renderizarJogosAdmin();
+        }
+
+        function renderizarJogosAdmin() {
+            const container = document.getElementById('adminListaJogos');
+            if(!container) return;
+            container.innerHTML = '';
+            
+            listaJogosCache.forEach((jogo) => {
+                const item = document.createElement('div');
+                item.className = 'admin-game-item';
+                item.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:5px;">
+                        <span style="color:var(--accent-color); font-weight:bold; font-size:12px;">${jogo.nome} (${formatarNumero(jogo.acessos || 0)})</span>
+                        <div style="display:flex; gap:4px; align-items:center;">
+                            <button type="button" class="btn-gaming" onclick="tentarExecutarJogo(${JSON.stringify(jogo).replace(/"/g, '&quot;')}); tocarSomClique();" style="font-size:9px; padding:3px 6px;">🎮 Testar</button>
+                            <button type="button" class="btn-gaming ${jogo.publicado ? 'btn-danger' : 'btn-success'}" onclick="togglePublicarJogo('${jogo.id}')" style="font-size:9px; padding:3px 6px;">
+                                ${jogo.publicado ? '👁️ Ocultar' : '🚀 Publicar'}
+                            </button>
+                            <button type="button" class="btn-gaming" onclick="fixarDestaqueAdm('${jogo.id}')" style="font-size:9px; padding:3px 6px; background:${jogo.destaque_manual?'var(--gold-warning)':'var(--steel-bright)'}; color:${jogo.destaque_manual?'#000':'#fff'};">
+                                ${jogo.destaque_manual ? '★ Fixado' : '☆ Destaque'}
+                            </button>
+                            <button type="button" class="btn-gaming" onclick="toggleExpandirEdicaoJogo('${jogo.id}')" id="btnExpand_${jogo.id}" style="font-size:10px; padding:3px 8px; background:var(--steel-bright); color:#fff;" title="Expandir Edição">▼</button>
+                        </div>
+                    </div>
+                    <div id="corpoEdicao_${jogo.id}" style="display:none; flex-direction:column; gap:8px; margin-top:8px; border-top:1px solid var(--steel-border); padding-top:8px;">
+                        <label class="file-upload-label">Título: <input type="text" value="${jogo.nome}" id="editNome_${jogo.id}" class="auth-input"></label>
+                        <label class="file-upload-label">Gênero: 
+                            <select id="editCat_${jogo.id}" class="auth-input">
+                                <option value="Arcade" ${jogo.categoria==='Arcade'?'selected':''}>Arcade</option>
+                                <option value="Estratégia" ${jogo.categoria==='Estratégia'?'selected':''}>Estratégia</option>
+                                <option value="Multiplayer" ${jogo.categoria==='Multiplayer'?'selected':''}>Multiplayer</option>
+                            </select>
+                        </label>
+                        <label class="file-upload-label">Descrição: <textarea id="editDesc_${jogo.id}" class="auth-input" style="height:45px;">${jogo.desc}</textarea></label>
+                        <label class="file-upload-label">Caminho do Ficheiro: <input type="text" value="${jogo.arquivo}" id="editArq_${jogo.id}" class="auth-input"></label>
+                        <label class="file-upload-label">🖼️ Alterar Capa: <input type="file" id="editImgFile_${jogo.id}" accept="image/*"></label>
+                        <button type="button" class="btn-gaming" onclick="salvarEdicaoJogoAdm('${jogo.id}')" style="font-size:10px; padding:6px; margin-top:4px;">💾 Guardar Alterações na Nuvem</button>
+                    </div>
+                `;
+                container.appendChild(item);
             });
         }
 
-        function fecharModalCorreio() {
-            document.getElementById('modal-correio').classList.remove('active');
+        function toggleExpandirEdicaoJogo(id) {
+            const corpo = document.getElementById(`corpoEdicao_${id}`);
+            const btn = document.getElementById(`btnExpand_${id}`);
+            if(corpo && btn) {
+                if(corpo.style.display === 'none') { corpo.style.display = 'flex'; btn.textContent = '▲'; }
+                else { corpo.style.display = 'none'; btn.textContent = '▼'; }
+            }
         }
 
-        // Inicializar
-        window.onload = () => {
-            carregarInfluenciadores();
-        };
+        async function togglePublicarJogo(id) {
+            let j = listaJogosCache.find(x => x.id === id);
+            if(j) {
+                const novoEstado = !j.publicado;
+                await supabaseClient.from('jogos').update({ publicado: novoEstado }).eq('id', id);
+                await buscarDadosNuvem();
+            }
+        }
+
+        async function fixarDestaqueAdm(id) {
+            for(let j of listaJogosCache) {
+                await supabaseClient.from('jogos').update({ destaque_manual: (j.id === id) }).eq('id', j.id);
+            }
+            await buscarDadosNuvem();
+        }
+
+        async function salvarEdicaoJogoAdm(id) {
+            let idx = listaJogosCache.findIndex(j => j.id === id);
+            if (idx !== -1) {
+                const nome = document.getElementById(`editNome_${id}`).value;
+                const categoria = document.getElementById(`editCat_${id}`).value;
+                const desc = document.getElementById(`editDesc_${id}`).value;
+                const arquivo = document.getElementById(`editArq_${id}`).value;
+                let imgUrl = listaJogosCache[idx].img;
+
+                const imgInput = document.getElementById(`editImgFile_${id}`)?.files[0];
+                if(imgInput) {
+                    const fileName = `capa_${Date.now()}_${imgInput.name}`;
+                    const { error } = await supabaseClient.storage.from('capas').upload(fileName, imgInput);
+                    if(!error) imgUrl = `${SUPABASE_URL}/storage/v1/object/public/capas/${fileName}`;
+                }
+
+                const { error } = await supabaseClient.from('jogos').update({ nome, categoria, desc, arquivo, img: imgUrl }).eq('id', id);
+                if(!error) {
+                    mostrarToast("💾 Jogo atualizado!");
+                    await buscarDadosNuvem();
+                } else {
+                    alert("Erro ao atualizar jogo.");
+                }
+            }
+        }
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch(() => {});
+            });
+        }
+
+        gerarParticulasFundo();
+        carregarSessaoSalva();
+        buscarDadosNuvem();
+        carregarMensagensChat();
+        setInterval(carregarMensagensChat, 3000); // Polling automático do chat em tempo real
     </script>
 </body>
 </html>
