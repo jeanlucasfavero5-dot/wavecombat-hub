@@ -116,7 +116,7 @@
             .nav-links {
                 position: fixed; top: 0; right: -100%; width: 250px; height: 100vh;
                 background: rgba(11, 15, 23, 0.98); border-left: 2px solid var(--accent-color);
-                flex-direction: column; justify-center; gap: 25px;
+                flex-direction: column; justify-content: center; gap: 25px;
                 transition: 0.3s ease-in-out; z-index: 1001; padding: 20px;
             }
             .nav-links.active { right: 0; }
@@ -357,6 +357,22 @@
             <div style="display:flex; gap:10px;">
                 <button class="btn-gaming btn-danger" onclick="fecharModalConfirmarDiamantes()" style="flex:1; padding:10px; font-size:11px;">Cancelar</button>
                 <button class="btn-gaming" id="btnConfirmarAcaoDiamantes" style="flex:1; padding:10px; font-size:11px; background:#22c55e; color:#000;">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE CONFIRMAÇÃO DE EXCLUSÃO DE CONTA (ADM) -->
+    <div class="modal-overlay" id="modalConfirmarExclusao" style="z-index: 3500;">
+        <div class="modal-card" style="text-align: center; border-color: var(--alert-red);">
+            <h3 style="font-family:'Orbitron'; color:var(--alert-red); margin-bottom:10px;">⚠️ Confirmar Exclusão de Conta</h3>
+            <p style="font-size:12px; color:#94a3b8; margin-bottom:15px;">Tem certeza que deseja apagar permanentemente esta conta e todos os dados associados?</p>
+            <div style="background:#0b0f17; border:1px solid var(--steel-border); padding:15px; border-radius:8px; margin-bottom:15px; text-align:left; font-size:12px; display:flex; flex-direction:column; gap:8px;">
+                <div>👤 Nick: <strong id="confDelNick" style="color:#fff;">--</strong></div>
+                <div>🆔 ID Único: <strong id="confDelId" style="color:var(--gold-warning);">--</strong></div>
+            </div>
+            <div style="display:flex; gap:10px;">
+                <button class="btn-gaming" onclick="fecharModalConfirmarExclusao()" style="flex:1; padding:10px; font-size:11px;">Cancelar</button>
+                <button class="btn-gaming btn-danger" id="btnConfirmarAcaoExclusao" style="flex:1; padding:10px; font-size:11px;">Sim, Excluir</button>
             </div>
         </div>
     </div>
@@ -611,6 +627,17 @@
                 </div>
             </div>
 
+            <!-- EXCLUSÃO DE CONTA POR ID OU NICK (ADM) -->
+            <div class="admin-grid-tools" style="margin-top: 15px;">
+                <div class="admin-block" style="grid-column: 1 / -1; border-color: var(--alert-red);">
+                    <h4 style="color:var(--alert-red);">🗑️ Exclusão de Conta (ADM)</h4>
+                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                        <input type="text" id="admDeleteTargetId" placeholder="ID ou Nick do Jogador para Excluir" class="auth-input" style="font-size:11px; flex:1;">
+                        <button type="button" class="btn-gaming btn-danger" onclick="prepararAcaoExcluirConta()" style="font-size:10px; padding:8px 12px;">🗑️ Excluir Conta</button>
+                    </div>
+                </div>
+            </div>
+
             <!-- LISTA DE USUÁRIOS (ORDEM ALFABÉTICA) -->
             <div class="admin-block" style="margin-top: 15px;">
                 <h4 style="color:var(--accent-color);">👥 Lista e Gestão de Usuários Cadastrados (Ordem Alfabética)</h4>
@@ -644,7 +671,7 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.447 (Instant Verified & Profile Apply)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.448 (Admin Delete Account Modal)</strong>
     </footer>
 
     <script>
@@ -1114,6 +1141,63 @@
             }
         }
 
+        async function prepararAcaoExcluirConta() {
+            const termo = document.getElementById('admDeleteTargetId').value.trim();
+            if (!termo) {
+                alert("⚠️ Insira o ID ou Nick do jogador que deseja excluir.");
+                return;
+            }
+
+            mostrarToast("🔍 Buscando jogador para exclusão...");
+            const userObj = await buscarUsuarioPorNickOuId(termo);
+            if (!userObj) {
+                alert("❌ Jogador não encontrado no sistema!");
+                return;
+            }
+
+            const idFinal = userObj.id;
+            const nickFinal = userObj.nick;
+
+            if (idFinal === MEU_ID_MESTRE || nickFinal.toLowerCase() === 'capudo7') {
+                alert("🚫 Você não pode excluir a conta mestre do administrador!");
+                return;
+            }
+
+            document.getElementById('confDelNick').textContent = nickFinal;
+            document.getElementById('confDelId').textContent = idFinal;
+
+            const btnConf = document.getElementById('btnConfirmarAcaoExclusao');
+            btnConf.onclick = () => executarExclusaoContaDefinitiva(idFinal, nickFinal);
+            document.getElementById('modalConfirmarExclusao').style.display = 'flex';
+        }
+
+        function fecharModalConfirmarExclusao() {
+            document.getElementById('modalConfirmarExclusao').style.display = 'none';
+        }
+
+        async function executarExclusaoContaDefinitiva(idFinal, nickFinal) {
+            fecharModalConfirmarExclusao();
+            mostrarToast(`🗑️ Excluindo dados do jogador ${nickFinal}...`);
+
+            try {
+                await supabaseClient.from('usuarios').delete().eq('id_jogador', String(idFinal));
+                await supabaseClient.from('carteira_diamantes').delete().eq('id_jogador', String(idFinal));
+                await supabaseClient.from('correios').delete().eq('id_jogador', String(idFinal));
+                await supabaseClient.from('influenciadores').delete().eq('id_jogador', String(idFinal));
+                await supabaseClient.from('wavecombat_verificados').delete().eq('id_jogador', String(idFinal));
+                await supabaseClient.from('leaderboard').delete().eq('id_jogador', String(idFinal));
+                await supabaseClient.from('wavecombat_banidos').delete().eq('id_jogador', String(idFinal));
+
+                mostrarToast(`✅ Conta de ${nickFinal} (ID: ${idFinal}) excluída com sucesso!`);
+                document.getElementById('admDeleteTargetId').value = '';
+                
+                renderizarTabelaUsuariosAdmin();
+                renderizarTabelaInfluenciadoresAdmin();
+            } catch(e) {
+                alert("Erro ao conectar com o Supabase para excluir a conta.");
+            }
+        }
+
         async function buscarUsuarioPorNickOuId(termo) {
             termo = termo.trim();
             if (!termo) return null;
@@ -1407,31 +1491,25 @@
             let cupomFinal = (codigoCupomMsg && codigoCupomMsg.trim() !== '') ? codigoCupomMsg : (nickUser.toUpperCase() + '7');
 
             try {
-                // 1. Marcar correio como resgatado
                 await supabaseClient.from('correios').update({ resgatado: true }).eq('id', dbId);
 
-                // 2. Inserir na tabela de verificados
                 await supabaseClient.from('wavecombat_verificados').upsert([
                     { id_jogador: idUser, nick: nickUser }
                 ], { onConflict: 'id_jogador' });
 
-                // 3. Cadastrar ou atualizar influenciador
                 await supabaseClient.from('influenciadores').upsert([
                     { id_jogador: idUser, nick: nickUser, cupom: cupomFinal, usos: 0, comissao: 0.00 }
                 ], { onConflict: 'id_jogador' });
 
-                // 4. Adicionar 5000 diamantes à carteira
                 const { data: carteira } = await supabaseClient.from('carteira_diamantes').select('diamantes').eq('id_jogador', idUser).single();
                 let saldoAtual = carteira ? (carteira.diamantes || 0) : 0;
                 await supabaseClient.from('carteira_diamantes').upsert({ id_jogador: idUser, nick: nickUser, diamantes: saldoAtual + 5000 }, { onConflict: 'id_jogador' });
 
-                // Recarrega o cache de verificados imediatamente
                 await carregarVerificadosNuvem();
                 
                 tocarSomLevelUp();
                 document.getElementById('modalVerificadoPremio').style.display = 'flex';
                 
-                // Atualiza todas as exibições na tela imediatamente
                 await carregarCorreioUsuario();
                 await carregarSaldoDiamantesSite();
                 await atualizarPerfilExpandidoUI();
