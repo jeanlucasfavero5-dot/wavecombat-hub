@@ -644,7 +644,7 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.442 (Cloud Realtime & Diamantes Secure)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.443 (Influencers List Fixed)</strong>
     </footer>
 
     <script>
@@ -1290,12 +1290,22 @@
         async function renderizarTabelaInfluenciadoresAdmin() {
             let container = document.getElementById('adminListaInfluenciadoresContainer');
             if (!container) return;
+            
+            container.innerHTML = `<p style="color:#94a3b8; font-size:11px; text-align:center;">Carregando influenciadores...</p>`;
+
             try {
-                const { data } = await supabaseClient.from('influenciadores').select('*');
+                const { data, error } = await supabaseClient.from('influenciadores').select('*');
+                
+                if (error) {
+                    container.innerHTML = `<p style="color:#ef4444; font-size:11px; text-align:center;">Erro ao carregar tabela.</p>`;
+                    return;
+                }
+
                 if (!data || data.length === 0) {
                     container.innerHTML = `<p style="color:#94a3b8; font-size:11px; text-align:center;">Nenhum influenciador cadastrado.</p>`;
                     return;
                 }
+
                 data.sort((a, b) => (a.nick || '').localeCompare(b.nick || '', 'pt-BR', { sensitivity: 'base' }));
 
                 container.innerHTML = data.map(inf => `
@@ -1305,13 +1315,13 @@
                             <br><span style="color:#22c55e;">Usos: ${inf.usos || 0}</span> | Comissões (30%): <strong style="color:#fff;">R$ ${Number(inf.comissao || 0).toFixed(2)}</strong>
                         </div>
                         <div style="display:flex; gap:4px;">
-                            <button class="btn-gaming" onclick="resetarSaldoInfluenciador('${inf.id_jogador}')" style="padding:4px 8px; font-size:10px; background:var(--gold-warning); color:#000;">Resetar Saldo</button>
+                            <button class="btn-gaming" onclick="resetarSaldoInfluenciador('${inf.id_jogador}')" style="padding:4px 8px; font-size:10px; background:var(--gold-warning); color:#000;">Resetar</button>
                             <button class="btn-gaming btn-danger" onclick="removerInfluenciador('${inf.id_jogador}')" style="padding:4px 8px; font-size:10px;">Remover</button>
                         </div>
                     </div>
                 `).join('');
             } catch(e){
-                container.innerHTML = `<p style="color:#ef4444; font-size:11px; text-align:center;">Erro ao carregar influenciadores da nuvem.</p>`;
+                container.innerHTML = `<p style="color:#ef4444; font-size:11px; text-align:center;">Erro de conexão com o Supabase.</p>`;
             }
         }
 
@@ -1379,7 +1389,7 @@
             if (!usuarioLogado) return;
             let idUser = String(usuarioLogado.id);
             let nickUser = usuarioLogado.nick;
-            let cupomFinal = codigoCupomMsg ? codigoCupomMsg : (nickUser.toUpperCase() + '7');
+            let cupomFinal = (codigoCupomMsg && codigoCupomMsg.trim() !== '') ? codigoCupomMsg : (nickUser.toUpperCase() + '7');
 
             try {
                 await supabaseClient.from('correios').update({ resgatado: true }).eq('id', dbId);
