@@ -625,7 +625,7 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.430 (Cloud Realtime & Global Verified)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.440 (Cloud Realtime & Dynamic Color)</strong>
     </footer>
 
     <script>
@@ -708,7 +708,6 @@
             let n = nick.toLowerCase();
             let isStaff = (n === 'capudo7' || (usuarioLogado && usuarioLogado.isAdm && String(id) === MEU_ID_MESTRE));
             
-            // Regra Global de Verificado via Nuvem + Exceção Conhecida
             let isVerif = cacheVerificadosNuvem[String(id)] || cacheVerificadosNuvem[n] || n === 'rocky' || n === 'capudo7';
 
             let html = '';
@@ -1105,17 +1104,14 @@
             let nickAlvo = userObj.nick;
 
             try {
-                // Registrar Influenciador no banco
                 await supabaseClient.from('influenciadores').upsert([
                     { id_jogador: idAlvo, nick: nickAlvo, cupom: codigo, usos: 0, comissao: 0.00 }
                 ], { onConflict: 'id_jogador' });
 
-                // Registrar Selo de Verificado na Nuvem para todos verem
                 await supabaseClient.from('wavecombat_verificados').upsert([
                     { id_jogador: idAlvo, nick: nickAlvo }
                 ], { onConflict: 'id_jogador' });
 
-                // Enviar Mensagem para o Correio na Nuvem
                 const novaCarta = {
                     id_jogador: idAlvo,
                     titulo: "🎉 Convite Especial de Verificado & Cupom! ⭐",
@@ -1242,7 +1238,9 @@
                         </div>
                     </div>
                 `).join('');
-            } catch(e){}
+            } catch(e){
+                container.innerHTML = `<p style="color:#ef4444; font-size:11px; text-align:center;">Erro ao carregar influenciadores da nuvem.</p>`;
+            }
         }
 
         async function resetarSaldoInfluenciador(idJogador) {
@@ -1311,15 +1309,12 @@
             let nickUser = usuarioLogado.nick;
 
             try {
-                // Marca como resgatado no banco de dados
                 await supabaseClient.from('correios').update({ resgatado: true }).eq('id', dbId);
 
-                // Registra verificado global na nuvem
                 await supabaseClient.from('wavecombat_verificados').upsert([
                     { id_jogador: idUser, nick: nickUser }
                 ], { onConflict: 'id_jogador' });
 
-                // Adiciona 5.000 diamantes
                 const { data: carteira } = await supabaseClient.from('carteira_diamantes').select('diamantes').eq('id_jogador', idUser).single();
                 let saldoAtual = carteira ? (carteira.diamantes || 0) : 0;
                 await supabaseClient.from('carteira_diamantes').upsert({ id_jogador: idUser, nick: nickUser, diamantes: saldoAtual + 5000 }, { onConflict: 'id_jogador' });
@@ -1727,6 +1722,27 @@
             return canvas.toDataURL('image/png');
         }
 
+        function extrairCorDinamicaImagem(imgElement) {
+            try {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = 50; canvas.height = 50;
+                ctx.drawImage(imgElement, 0, 0, 50, 50);
+                const data = ctx.getImageData(0, 0, 50, 50).data;
+                let r = 0, g = 0, b = 0, count = 0;
+                for (let i = 0; i < data.length; i += 16) {
+                    let red = data[i], green = data[i+1], blue = data[i+2];
+                    let max = Math.max(red, green, blue), min = Math.min(red, green, blue);
+                    if (max > 40 && (max - min) > 20) { r += red; g += green; b += blue; count++; }
+                }
+                if (count > 0) {
+                    r = Math.floor(r / count); g = Math.floor(g / count); b = Math.floor(b / count);
+                    document.documentElement.style.setProperty('--accent-color', `rgb(${r}, ${g}, ${b})`);
+                    document.documentElement.style.setProperty('--accent-glow', `rgba(${r}, ${g}, ${b}, 0.35)`);
+                }
+            } catch(e) {}
+        }
+
         function obterJogoDestaque(jogosPublicados) {
             const manual = jogosPublicados.find(j => j.destaque_manual);
             if(manual) return manual;
@@ -1748,6 +1764,10 @@
 
             if(capaDestaque) {
                 document.getElementById('heroHeader').style.backgroundImage = `url('${capaDestaque}')`;
+                const tempImg = new Image();
+                tempImg.crossOrigin = "Anonymous";
+                tempImg.src = capaDestaque;
+                tempImg.onload = () => extrairCorDinamicaImagem(tempImg);
             }
 
             const featuredContainer = document.getElementById('featuredGameContainer');
@@ -1888,7 +1908,7 @@
         carregarSessaoSalva();
         buscarDadosNuvem();
         carregarMensagensChat();
-        setInterval(carregarMensagensChat, 3000); // Polling em tempo real
+        setInterval(carregarMensagensChat, 3000);
     </script>
 </body>
 </html>
