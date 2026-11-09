@@ -625,7 +625,7 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.440 (Cloud Realtime & Dynamic Color)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.441 (Cloud Realtime & Fixed Lists)</strong>
     </footer>
 
     <script>
@@ -1125,7 +1125,7 @@
                 await supabaseClient.from('correios').insert([novaCarta]);
 
                 await carregarVerificadosNuvem();
-                mostrarToast(`🌟 Influenciador ${nickAlvo} (ID: ${idAlvo}) verificado na nuvem e convite enviado!`);
+                mostrarToast(`⭐ Influenciador ${nickAlvo} (ID: ${idAlvo}) verificado na nuvem e convite enviado!`);
                 document.getElementById('infTargetNick').value = '';
                 document.getElementById('infTargetCodigo').value = '';
                 renderizarTabelaInfluenciadoresAdmin();
@@ -1150,6 +1150,15 @@
             let filtro = (document.getElementById('inputBuscaAdminUser')?.value || '').toLowerCase();
             let usuarios = await obterUsuariosCadastrados();
             
+            // Buscar diamantes de todos os usuários em cache ou lote
+            let diamantesDict = {};
+            try {
+                const { data: dList } = await supabaseClient.from('carteira_diamantes').select('id_jogador, diamantes');
+                if (dList) {
+                    dList.forEach(d => { diamantesDict[String(d.id_jogador)] = d.diamantes || 0; });
+                }
+            } catch(e){}
+
             let banidosDict = {};
             try {
                 const { data: bList } = await supabaseClient.from('wavecombat_banidos').select('*');
@@ -1169,11 +1178,13 @@
             container.innerHTML = filtrados.map(u => {
                 let expira = banidosDict[u.id];
                 let isBan = expira && Date.now() < expira;
+                let diamantesUser = diamantesDict[u.id] || 0;
                 return `
                     <div style="display:flex; justify-content:space-between; align-items:center; background:#070a10; border:1px solid var(--steel-border); padding:8px; border-radius:6px; font-size:11px; flex-wrap:wrap; gap:6px;">
-                        <div style="display:flex; align-items:center;">
-                            <strong>${obterHtmlNickVerificado(u.nick, u.id)}</strong>&nbsp;<span style="color:#64748b;">(ID: ${u.id})</span>
-                            ${isBan ? '<span style="color:var(--alert-red); margin-left:6px;">[BANIDO]</span>' : ''}
+                        <div style="display:flex; align-items:center; gap:6px;">
+                            <strong>${obterHtmlNickVerificado(u.nick, u.id)}</strong><span style="color:#64748b;">(ID: ${u.id})</span>
+                            <span style="color:var(--accent-color); font-weight:bold; background:rgba(0,240,255,0.1); padding:2px 6px; border-radius:4px;">💎 ${formatarNumero(diamantesUser)}</span>
+                            ${isBan ? '<span style="color:var(--alert-red);">[BANIDO]</span>' : ''}
                         </div>
                         <div style="display:flex; gap:4px; align-items:center;">
                             <select id="selectBan_${u.id}" class="auth-input" style="padding:4px; font-size:10px; width:auto;">
