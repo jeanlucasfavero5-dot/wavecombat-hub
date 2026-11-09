@@ -601,15 +601,15 @@
                 <div id="adminListaUsuariosContainer" style="max-height:250px; overflow-y:auto; display:flex; flex-direction:column; gap:6px;"></div>
             </div>
 
-            <!-- BOTÃO ÚNICO INFLUENCIADOR & CORREIO -->
+            <!-- BOTÃO ÚNICO INFLUENCIADOR & CORREIO (100% NUVEM SUPABASE) -->
             <div class="admin-block" style="margin-top: 15px; border: 2px solid var(--gold-warning); background: rgba(245, 158, 11, 0.05);">
-                <h4 style="color:var(--gold-warning); font-family:'Orbitron';">🌟 PAINEL ÚNICO: INFLUENCIADORES, VERIFICADOS & PARCERIAS</h4>
-                <p style="font-size:11px; color:#94a3b8; margin-bottom:8px;">Defina o influenciador, o cupom e envie tudo para o correio com um único clique.</p>
+                <h4 style="color:var(--gold-warning); font-family:'Orbitron';">🌟 PAINEL ÚNICO: INFLUENCIADORES, VERIFICADOS & PARCERIAS (NUVEM)</h4>
+                <p style="font-size:11px; color:#94a3b8; margin-bottom:8px;">Defina o influenciador, o cupom e envie tudo para o correio na nuvem com um único clique.</p>
                 
                 <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
                     <input type="text" id="infTargetNick" placeholder="Nick ou ID do Jogador" class="auth-input" style="font-size:11px; flex:1;">
                     <input type="text" id="infTargetCodigo" placeholder="Cupom Personalizado (Ex: CAPUDO7)" class="auth-input" style="font-size:11px; flex:1;">
-                    <button type="button" class="btn-gaming" onclick="adicionarInfluenciadorEEnviarCorreio()" style="font-size:10px; background:var(--gold-warning); color:#000; flex-grow:2;">🌟 Salvar Influenciador & Enviar Convite</button>
+                    <button type="button" class="btn-gaming" onclick="adicionarInfluenciadorEEnviarCorreio()" style="font-size:10px; background:var(--gold-warning); color:#000; flex-grow:2;">🌟 Salvar Influenciador & Enviar Correio (Nuvem)</button>
                 </div>
                 
                 <div id="adminListaInfluenciadoresContainer" style="max-height:220px; overflow-y:auto; display:flex; flex-direction:column; gap:6px;"></div>
@@ -625,7 +625,7 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.420 (Realtime Chat & Robust Sync)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.421 (Cloud Correio & Supabase Sync Fix)</strong>
     </footer>
 
     <script>
@@ -1056,6 +1056,7 @@
             }
         }
 
+        // SISTEMA DE CORREIO 100% NA NUVEM SUPABASE
         async function adicionarInfluenciadorEEnviarCorreio() {
             let termo = document.getElementById('infTargetNick').value.trim();
             let codigo = document.getElementById('infTargetCodigo').value.trim().toUpperCase();
@@ -1065,33 +1066,42 @@
             }
             let usuarios = await obterUsuariosCadastrados();
             let alvo = usuarios.find(u => u.nick.toLowerCase() === termo.toLowerCase() || u.id === termo);
-            let idAlvo = alvo ? alvo.id : 'inf_' + Math.floor(Math.random()*10000);
+            let idAlvo = alvo ? alvo.id : termo;
             let nickAlvo = alvo ? alvo.nick : termo;
 
             let influenciadores = {};
             try { influenciadores = JSON.parse(localStorage.getItem('wavecombat_influenciadores') || '{}'); } catch(e){}
-            influenciadores[idAlvo] = { nick: nickAlvo, id: idAlvo, codigo: codigo, saldoReceber: influenciadores[idAlvo] ? influenciadores[idAlvo].saldoReceber : 0, usosCupom: influenciadores[idAlvo] ? influenciadores[idAlvo].usosCupom : 0 };
+            influenciadores[idAlvo] = { 
+                nick: nickAlvo, 
+                id: idAlvo, 
+                codigo: codigo, 
+                saldoReceber: influenciadores[idAlvo] ? influenciadores[idAlvo].saldoReceber : 0, 
+                usosCupom: influenciadores[idAlvo] ? influenciadores[idAlvo].usosCupom : 0 
+            };
             localStorage.setItem('wavecombat_influenciadores', JSON.stringify(influenciadores));
 
             try {
-                let correios = {};
-                try { correios = JSON.parse(localStorage.getItem('wavecombat_correios') || '{}'); } catch(e){}
-                if (!correios[idAlvo]) correios[idAlvo] = [];
-                correios[idAlvo].unshift({
+                const { error } = await supabaseClient.from('correios').insert([{
+                    id_jogador: idAlvo,
                     tipo: 'verificado_invite',
                     titulo: "🎉 Convite Especial de Verificado & Cupom! ⭐",
                     mensagem: `Sua conta foi selecionada para verificado e parceria! Clique para resgatar o Selo V Dourado, Moldura, Fundo Animado, 5.000 Diamantes e ativar seu Cupom: ${codigo}`,
-                    codigoCupom: codigo,
+                    codigo_cupom: codigo,
                     data: new Date().toLocaleDateString('pt-BR'),
                     resgatado: false
-                });
-                localStorage.setItem('wavecombat_correios', JSON.stringify(correios));
-                mostrarToast(`🌟 Influenciador ${nickAlvo} configurado e carta enviada!`);
+                }]);
+
+                if (error) {
+                    alert("Erro ao enviar correio para a nuvem: " + error.message);
+                    return;
+                }
+
+                mostrarToast(`🌟 Influenciador ${nickAlvo} configurado e carta enviada para a nuvem!`);
                 document.getElementById('infTargetNick').value = '';
                 document.getElementById('infTargetCodigo').value = '';
                 renderizarTabelaInfluenciadoresAdmin();
             } catch(e) {
-                alert("Erro ao enviar carta para o correio.");
+                alert("Erro de conexão ao enviar carta.");
             }
         }
 
@@ -1222,52 +1232,61 @@
             renderizarTabelaInfluenciadoresAdmin();
         }
 
-        function carregarCorreioUsuario() {
+        async function carregarCorreioUsuario() {
             let container = document.getElementById('correioMensagensContainer');
             if (!container || !usuarioLogado) return;
-            let correios = {};
-            try { correios = JSON.parse(localStorage.getItem('wavecombat_correios') || '{}'); } catch(e){}
-            let minhasMsgs = correios[usuarioLogado.id] || [];
+            
+            container.innerHTML = `<p style="color:#94a3b8; text-align:center; font-size:11px;">Carregando correio da nuvem...</p>`;
 
-            if (minhasMsgs.length === 0) {
-                container.innerHTML = `<p style="color:#94a3b8; text-align:center; font-size:11px;">Nenhuma mensagem no correio.</p>`;
-                return;
-            }
+            try {
+                const { data, error } = await supabaseClient
+                    .from('correios')
+                    .select('*')
+                    .eq('id_jogador', usuarioLogado.id)
+                    .order('created_at', { ascending: false });
 
-            container.innerHTML = minhasMsgs.map((m, idx) => `
-                <div style="background:#0b0f17; border:1px solid ${m.resgatado ? 'var(--steel-border)' : '#FFD700'}; padding:10px; border-radius:8px; margin-bottom:8px; font-size:11px;">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-                        <strong style="color:var(--accent-color);">${m.titulo}</strong>
-                        <span style="color:#64748b; font-size:9px;">${m.data}</span>
+                if (error || !data || data.length === 0) {
+                    container.innerHTML = `<p style="color:#94a3b8; text-align:center; font-size:11px;">Nenhuma mensagem no correio.</p>`;
+                    return;
+                }
+
+                container.innerHTML = data.map((m) => `
+                    <div style="background:#0b0f17; border:1px solid ${m.resgatado ? 'var(--steel-border)' : '#FFD700'}; padding:10px; border-radius:8px; margin-bottom:8px; font-size:11px;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                            <strong style="color:var(--accent-color);">${m.titulo}</strong>
+                            <span style="color:#64748b; font-size:9px;">${m.data || 'Recente'}</span>
+                        </div>
+                        <p style="color:#94a3b8; margin-bottom:8px;">${m.mensagem}</p>
+                        ${!m.resgatado ? `<button class="btn-gaming" onclick="resgatarPremioCorreioNuvem(${m.id}, '${m.tipo || ''}', '${m.codigo_cupom || ''}')" style="background:#FFD700; color:#000; width:100%; padding:6px; font-size:10px;">🎁 Resgatar Benefícios & Prêmios</button>` : `<span style="color:#22c55e; font-weight:bold;">✅ Prêmios Resgatados</span>`}
                     </div>
-                    <p style="color:#94a3b8; margin-bottom:8px;">${m.mensagem}</p>
-                    ${!m.resgatado ? `<button class="btn-gaming" onclick="resgatarPremioCorreio(${idx})" style="background:#FFD700; color:#000; width:100%; padding:6px; font-size:10px;">🎁 Resgatar Benefícios & Prêmios</button>` : `<span style="color:#22c55e; font-weight:bold;">✅ Prêmios Resgatados</span>`}
-                </div>
-            `).join('');
+                `).join('');
+            } catch(e) {
+                container.innerHTML = `<p style="color:var(--alert-red); text-align:center; font-size:11px;">Erro ao carregar correio.</p>`;
+            }
         }
 
-        async function resgatarPremioCorreio(idx) {
-            let correios = {};
-            try { correios = JSON.parse(localStorage.getItem('wavecombat_correios') || '{}'); } catch(e){}
+        async function resgatarPremioCorreioNuvem(msgId, tipo, codigoCupom) {
             let idUser = usuarioLogado.id;
             let nickUser = usuarioLogado.nick;
-            
-            if (correios[idUser] && correios[idUser][idx]) {
-                let msgData = correios[idUser][idx];
-                msgData.resgatado = true;
-                localStorage.setItem('wavecombat_correios', JSON.stringify(correios));
 
-                if (msgData.tipo === 'verificado_invite') {
+            try {
+                const { error } = await supabaseClient.from('correios').update({ resgatado: true }).eq('id', msgId);
+                if (error) {
+                    alert("Erro ao atualizar resgate na nuvem.");
+                    return;
+                }
+
+                if (tipo === 'verificado_invite') {
                     let verificados = {};
                     try { verificados = JSON.parse(localStorage.getItem('wavecombat_verificados') || '{}'); } catch(e){}
                     verificados[idUser] = true;
                     localStorage.setItem('wavecombat_verificados', JSON.stringify(verificados));
 
-                    if (msgData.codigoCupom) {
+                    if (codigoCupom) {
                         let influenciadores = {};
                         try { influenciadores = JSON.parse(localStorage.getItem('wavecombat_influenciadores') || '{}'); } catch(e){}
                         if (!influenciadores[idUser]) {
-                            influenciadores[idUser] = { nick: nickUser, id: idUser, codigo: msgData.codigoCupom, saldoReceber: 0, usosCupom: 0 };
+                            influenciadores[idUser] = { nick: nickUser, id: idUser, codigo: codigoCupom, saldoReceber: 0, usosCupom: 0 };
                             localStorage.setItem('wavecombat_influenciadores', JSON.stringify(influenciadores));
                         }
                     }
@@ -1285,6 +1304,8 @@
                 carregarSaldoDiamantesSite();
                 atualizarPerfilExpandidoUI();
                 document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(nickUser, idUser);
+            } catch(e) {
+                alert("Erro ao processar resgate.");
             }
         }
 
@@ -1316,7 +1337,6 @@
                 const { error: regError } = await supabaseClient.from('usuarios').insert([{ id_jogador: novoId, nick: u, pass: p }]);
                 if (regError) {
                     console.error("Erro ao registrar no Supabase:", regError);
-                    alert("Aviso: Falha ao sincronizar registro com a nuvem, mas a conta foi criada localmente.");
                 }
             } catch(err){
                 console.error("Exceção ao registrar:", err);
@@ -1494,7 +1514,6 @@
             } catch(e) {}
         }
 
-        // CARREGAMENTO DO CHAT OTIMIZADO COM ORDENAÇÃO ASCENDENTE E LIMITE
         async function carregarMensagensChat() {
             try {
                 const { data, error } = await supabaseClient
