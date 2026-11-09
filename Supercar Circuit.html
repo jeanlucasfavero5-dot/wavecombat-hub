@@ -56,6 +56,12 @@ input:not([type=range]):not([type=checkbox]):not([type=color]){background:#0a153
 #sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;width:min(96vw,900px)}#sgrid .pn{width:auto;text-align:left}
 @media(pointer:coarse),(max-width:720px){#gtl{transform:scale(.7);transform-origin:top left}#gdr{font-size:10.5px;gap:5px;padding:7px;width:min(38vw,270px)}#gdr button{padding:4px 7px;font-size:10.5px}#gdr button[style*='width:32px']{width:22px!important;height:22px!important}#gdr input:not([type=range]):not([type=color]){padding:3px;width:80px}}
 #hv{position:absolute;left:12px;top:calc(env(safe-area-inset-top,0px) + 240px);width:184px;height:18px;background:#0a1530;border:2px solid #ff3d2e;border-radius:4px;overflow:hidden;text-align:center;font:700 10px/14px Orbitron,sans-serif;color:#fff;display:none}#hf{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#ffb000,#ff1a1a);width:0}#hv span{position:relative}
+.vb{display:inline-block;width:18px;height:18px;border-radius:50%;background:linear-gradient(#ffe27a,#d99a00);color:#3a2600;font:900 11px/18px system-ui,sans-serif;text-align:center;margin-left:4px;vertical-align:middle}
+a.bt{display:inline-block;text-decoration:none;font:inherit;color:#fff;background:linear-gradient(#e62117,#8f0d08);border:1px solid #ff9a00;border-radius:4px 12px 4px 12px;padding:10px 16px;cursor:pointer;text-transform:none}
+#fab{position:fixed;left:10px;top:calc(env(safe-area-inset-top,0px) + 10px);z-index:35;display:none;gap:8px}#fab button{width:42px;height:42px;padding:0;font-size:20px;border-radius:50%;position:relative}.bdg{position:absolute;top:-4px;right:-4px;background:#ff3d2e;border-radius:9px;font:700 11px/16px system-ui;min-width:16px;text-align:center;font-style:normal}
+#frd{position:fixed;left:10px;top:calc(env(safe-area-inset-top,0px) + 60px);bottom:12px;width:min(300px,52vw);overflow:auto;z-index:36;display:none;text-align:left;font-size:13px}#frd.on{display:flex}
+#chp{position:fixed;right:10px;bottom:12px;width:min(340px,60vw);height:min(280px,50vh);z-index:36;display:none;text-align:left;font-size:13px}#chp.on{display:flex}#chm{flex:1;overflow:auto}#chm div{margin:2px 0;word-break:break-word}
+#lv h2{padding-left:96px}#shop>.pn:first-child{padding-left:100px!important}
 #lg{display:grid;grid-template-columns:repeat(auto-fill,minmax(54px,1fr));gap:6px;width:min(96vw,640px)}#lg button{padding:6px 0;font-size:15px;line-height:1.1}#lg button.lk{opacity:.4}#lg button.sel{background:linear-gradient(#ffd24a,#ff7a00);color:#1a0a00}#lg small{font-size:10px;color:#ffd24a}#lg .sel small{color:#1a0a00}
 #fx{position:fixed;inset:0;pointer-events:none;opacity:0;z-index:4;background:repeating-conic-gradient(from 0deg,transparent 0 5deg,rgba(255,255,255,.14) 5deg 5.6deg);-webkit-mask:radial-gradient(circle,transparent 40%,#000 95%);mask:radial-gradient(circle,transparent 40%,#000 95%)}
 #cd{position:fixed;inset:0;display:none;z-index:30;text-align:center;font:italic 900 clamp(80px,20vw,180px)/100vh Impact,system-ui;text-shadow:0 0 30px #ff9a00;pointer-events:none;color:#ffd24a}
@@ -65,17 +71,20 @@ input:not([type=range]):not([type=checkbox]):not([type=color]){background:#0a153
 <div id=hud><div id=hp><div id=po></div><div id=ht>⏱ 0:00.0</div></div><div id=hs><div id=rp></div><div class=sr><div id=gr>N</div><div><b id=sp>0</b><small>KM/H</small></div></div></div><div id=nb><i id=nf></i><span>⚡ NITRO [Espaço]</span></div>
 <div id=hv><i id=hf></i><span>🚓 CALOR</span></div><canvas id=mm width=120 height=120></canvas><div id=sk><button data-s=0>🛡️<small>1</small><i></i></button><button data-s=1>⚡<small>2</small><i></i></button><button data-s=2>🛢️<small>3</small><i></i></button></div><div id=tc><button data-k=l style="left:12px">◀</button><button data-k=r style="left:86px">▶</button><button data-k=sp style="right:16px;bottom:calc(env(safe-area-inset-bottom,0px) + 112px)">⚡</button><button data-k=up style="right:16px">⛽</button><button data-k=dn style="right:90px">🛑</button></div></div>
 
-<div id=start class="scr on"><h1>SUPERCAR<b>CIRCUIT</b></h1><div id=wb>🏁 <span id=nk></span> · ID <span id=uid></span></div><div id=hst style='display:none'></div><button class=big id=bGo>INICIAR</button><div class=row><button id=bDaily>🎁 Login Diário</button><button id=bAdm class=ao style='display:none'>🛠 Painel ADM</button><button id=bMail>📬 Correio</button><button id=bShop>🛒 Loja</button><button id=bRank>🏆 Ranking</button><button id=bFs>⛶ Tela Cheia</button></div><div class=ver>v0.012</div></div>
+<div id=start class="scr on"><h1>SUPERCAR<b>CIRCUIT</b></h1><div id=wb>🏁 <span id=nk></span><span id=vb class=vb style='display:none'>V</span> · ID <span id=uid></span></div><div id=hst style='display:none'></div><button class=big id=bGo>INICIAR</button><div class=row><button id=bDaily>🎁 Login Diário</button><button id=bAdm class=ao style='display:none'>🛠 Painel ADM</button><a class=bt href='https://youtube.com/@capudooficial7?si=NSvfxpSzswVEStdu' target=_blank rel=noopener>siga o criador do jogo aqui</a><button id=bMail>📬 Correio</button><button id=bShop>🛒 Loja</button><button id=bRank>🏆 Ranking</button><button id=bFs>⛶ Tela Cheia</button></div><div class=ver>v0.013</div></div>
 
 <div id=menu class=scr><div class=pn style="flex-direction:row;justify-content:space-around;padding:10px">🪙 <b id=gd></b> 💎 <b id=dm></b> 🏅 <b id=rkn></b></div>
 <div class=cards><div class="card on" data-m=l><h3>🏁 Corrida Livre</h3><p>Teste de pista</p></div><div class=card data-m=c><h3>🏆 Carreira</h3><p>50 níveis · Chefões</p><i id=crp></i></div><div class=card data-m=o><h3>🌐 Online</h3><p>Contra outros jogadores</p></div><div class=card data-m=p><h3>🚓 Perseguição</h3><p>Fuja da polícia</p></div></div>
-<div class=row id=df></div><div class=row id=th></div><div class=row><button id=bGar>🚗 Garagem</button><button id=bBack>← Voltar</button><button class=big id=bRace>🏁 INICIAR CORRIDA</button></div></div>
+<div class=row><a class=bt href='https://youtube.com/@capudooficial7?si=NSvfxpSzswVEStdu' target=_blank rel=noopener>siga o criador do jogo aqui</a></div><div class=row id=df></div><div class=row id=th></div><div class=row><button id=bGar>🚗 Garagem</button><button id=bBack>← Voltar</button><button class=big id=bRace>🏁 INICIAR CORRIDA</button></div></div>
 
 <div id=gar class=scr><div id=gtl class=pn><h2 id=gn></h2><div id=gi2></div><button id=gBuyD></button></div><div id=gbt><div class=row><button id=gPrev>◀</button><button id=gBuy></button><button id=gNext>▶</button></div></div><button id=gBack>← Voltar</button><button id=gCust>🎨 Personalizar</button><div id=gdr class=pn></div></div>
-<div id=onl class=scr><h2>🌐 ONLINE</h2><div class=pn><div id=onst>Conectando...</div><div id=onpl></div><div class=row><button id=oFind>🔍 Buscar partida (4 jogadores)</button></div><div class=row><button id=oCust>🏠 Sala personalizada</button></div><div class=row><button id=oBack>← Voltar</button></div></div></div>
+<div id=onl class=scr><h2>🌐 ONLINE</h2><div class=pn><div id=onst>Conectando...</div><div id=onpl></div><div class=row><button id=oFind>🔍 Buscar partida (4 jogadores)</button><button id=oCancel style='display:none'>Cancelar</button></div><div id=oq style='display:none;font-size:18px'>⏱ <b id=oqt>0:00</b> · 👥 <b id=oqc>1/4</b></div><div class=row><button id=oCust>🏠 Sala personalizada</button></div><div class=row><button id=oBack>← Voltar</button></div></div></div>
 <div id=cr0 class=scr><h2>🏠 SALA PERSONALIZADA</h2><div class=pn><button id=cSearch>🔎 Procurar salas</button><button id=cMake>➕ Criar sala</button><button id=cBack0>← Voltar</button></div></div>
 <div id=crs class=scr><h2>🔎 SALAS</h2><div class=pn><div id=rlist></div><div class=row><input id=rid placeholder='ID da sala' maxlength=14><input id=rpw type=password placeholder='Senha (se tiver)' maxlength=12><button id=rgo>Entrar</button></div><div class=row><button id=rref>🔄 Atualizar</button><button id=cBack1>← Voltar</button></div></div></div>
-<div id=crc class=scr><h2>➕ SALA PERSONALIZADA</h2><div class=pn><div id=cinf></div><div id=cfm style='display:flex;flex-direction:column;gap:8px'><label>ID da sala<input id=cn maxlength=14 placeholder='vazio = automático'></label><label>Senha<input id=cp maxlength=12 placeholder='vazio = sem senha'></label><label>Cenário<select id=cth><option value=4>Aleatório<option value=0>Deserto<option value=1>Floresta<option value=2>Neve<option value=3>Noite</select></label><label>Voltas<select id=clp><option>1<option selected>2<option>3<option>4<option>5</select></label><label>Vagas<select id=cmx><option>2<option>3<option selected>4</select></label><button id=ccreate>💾 Criar / Salvar sala</button></div><div id=cpl></div><button id=cgo style='display:none'>▶ Iniciar corrida (usa 1 cartão)</button><button id=cBack2>← Sair da sala</button></div></div>
+<div id=crc class=scr><h2>➕ SALA PERSONALIZADA</h2><div class=pn><div id=cinf></div><div id=crt></div><div id=cfm style='display:flex;flex-direction:column;gap:8px'><label>ID da sala<input id=cn maxlength=14 placeholder='vazio = automático'></label><label>Senha<input id=cp maxlength=12 placeholder='vazio = sem senha'></label><label>Cenário<select id=cth><option value=4>Aleatório<option value=0>Deserto<option value=1>Floresta<option value=2>Neve<option value=3>Noite</select></label><label>Voltas<select id=clp><option>1<option selected>2<option>3<option>4<option>5</select></label><label>Vagas<select id=cmx><option>2<option>3<option selected>4</select></label><button id=ccreate>💾 Criar / Salvar sala</button></div><div id=cpl></div><button id=cgo style='display:none'>▶ Iniciar corrida (usa 1 cartão)</button><button id=cBack2>← Sair da sala</button></div></div>
+<div id=fab><button id=fabF>👥</button><button id=fabC>💬<i id=chb class=bdg style='display:none'>0</i></button></div>
+<div id=frd class=pn><h2>👥 Amigos</h2><div id=frl></div><button id=frX>Fechar</button></div>
+<div id=chp class=pn><div class=row><button id=chTg>Geral</button><button id=chTs>Sala</button><button id=chX>✕</button></div><div id=chm></div><div class=row style='flex-wrap:nowrap'><input id=chi maxlength=140 placeholder='Mensagem...' style='flex:1;width:auto'><button id=chSend>Enviar</button></div></div>
 <div id=lv class=scr style='justify-content:flex-start;overflow:auto'><h2>🏆 CARREIRA</h2><div id=lg></div><div class=pn id=li></div><div class=row><button id=lBack>← Voltar</button><button class=big id=lGo>INICIAR</button></div></div>
 <div id=ld class='scr md' style='z-index:25;background:linear-gradient(#0a2a70,#02060f)'><h1>SUPERCAR<b>CIRCUIT</b></h1><div id=ldt style='font-size:22px;color:#ffd24a'></div><div class=bar><i></i></div><small>CARREGANDO PISTA...</small></div>
 <div id=adm class='scr md' style='z-index:26'><div class=pn><h2>🛠 Painel ADM</h2><div class=row id=ab></div><textarea id=sv2 rows=3 placeholder='Save JSON' style='width:100%;background:#0a1530;color:#fff;border:1px solid #2f6fe0'></textarea><div class=row><button id=aEx>Exportar</button><button id=aIm>Importar</button></div><button data-x>Fechar</button></div></div>
@@ -99,8 +108,8 @@ const sv=()=>{try{localStorage.setItem('sc1',JSON.stringify(S))}catch(e){}};
 const td=()=>new Date().toDateString(),ft=t=>(t/60|0)+':'+(t%60).toFixed(1).padStart(4,'0');
 const rk=p=>['Novato','Amador','Piloto','Veterano','Elite','Lenda'][[0,500,1500,3500,7000,12000].filter(t=>p>=t).length-1];
 const tt=m=>{const t=$('toast');t.textContent=m;t.style.opacity=1;clearTimeout(tt.h);tt.h=setTimeout(()=>t.style.opacity=0,2200)};
-const show=id=>{Q('.scr:not(.md)').forEach(e=>e.classList.remove('on'));id&&$(id).classList.add('on');if(id=='menu'&&TI!=S.th)setTheme(S.th)};
-const W_=window,HUB={url:(W_.supabaseClient&&W_.supabaseClient.supabaseUrl)||W_.SUPABASE_URL||'https://ipqjeacdfiomcxfuixdj.supabase.co',key:(W_.supabaseClient&&W_.supabaseClient.supabaseKey)||W_.SUPABASE_KEY||W_.SUPABASE_ANON_KEY||'sb_publishable_EWW84q_43YbOvMwB_Rua-A_X465PbLP',tabela:W_.SUPABASE_TABLE||'carteira_diamantes',colId:'',colDia:'',socket:W_.WC_SERVER||'https://riverbed-server.onrender.com',idMestre:'577082415',origem:'',poll:15000},lsg=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
+const show=id=>{Q('.scr:not(.md)').forEach(e=>e.classList.remove('on'));id&&$(id).classList.add('on');if(id=='menu'&&TI!=S.th)setTheme(S.th);const f=['start','menu','onl','cr0','crs','crc','lv','shop'].includes(id);$('fab').style.display=f?'flex':'none';if(!f){$('frd').classList.remove('on');$('chp').classList.remove('on')}presSend()};
+const W_=window,HUB={url:(W_.supabaseClient&&W_.supabaseClient.supabaseUrl)||W_.SUPABASE_URL||'https://ipqjeacdfiomcxfuixdj.supabase.co',key:(W_.supabaseClient&&W_.supabaseClient.supabaseKey)||W_.SUPABASE_KEY||W_.SUPABASE_ANON_KEY||'sb_publishable_EWW84q_43YbOvMwB_Rua-A_X465PbLP',tabela:W_.SUPABASE_TABLE||'carteira_diamantes',colId:'',colDia:'',socket:W_.WC_SERVER||'https://wavecombat-hub.onrender.com',idMestre:'577082415',origem:'',poll:15000},lsg=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
 let HM=(()=>{try{const q=new URLSearchParams(location.search),o={};[['id','id'],['nick','nick'],['diamantes','dm']].forEach(([k,p])=>{const v=q.get(k)||q.get(p)||q.get('wavecombat_'+k);if(v!=null)o[k]=v});return o}catch(e){return{}}})();
 const fk=(o,re,d=0)=>{if(!o||typeof o!='object'||d>3)return;for(const k in o){const v=o[k];if(re.test(k)&&v!=null&&typeof v!='object'&&v!=='')return v;const r=fk(v,re,d+1);if(r!=null)return r}};
 function hubRead(){const raw=lsg('wavecombat_sessao_ativa');let s={},rn=null,dk=null,sr=[];
@@ -112,9 +121,9 @@ let hb=hubRead();S.id=hb.id;S.nick=hb.nick;if(hb.dm!=null)S.dm=hb.dm;
 const SBH=()=>Object.assign({apikey:HUB.key,'Content-Type':'application/json'},HUB.key.startsWith('eyJ')?{Authorization:'Bearer '+HUB.key}:{}),sb=()=>HUB.url&&HUB.key&&hb.real,sbu=(c,id)=>`${HUB.url}/rest/v1/${HUB.tabela}?${c}=eq.${encodeURIComponent(id)}`;
 let SBST='';
 async function sbFind(){for(const c of [HUB.colId,'id_jogador','player_id','jogador_id','user_id','id_usuario','usuario_id','wavecombat_id','id'].filter((c,i,a)=>c&&a.indexOf(c)==i)){try{const r=await fetch(sbu(c,S.id)+'&select=*',{headers:SBH()});if(!r.ok){SBST='HTTP '+r.status;continue}const j=await r.json();if(!Array.isArray(j))continue;HUB.colId=c;SBST='ok';if(!j[0])return null;const k=Object.keys(j[0]).find(k=>/diamant|diamond|saldo|gem/i.test(k)&&!isNaN(j[0][k]));if(k)HUB.colDia=k;return j[0]}catch(e){SBST='bloqueado/offline';return null}}return null}
-async function dmPull(){hb=hubRead();S.id=hb.id;S.nick=hb.nick;let d=hb.dm;
+async function dmPull(){hb=hubRead();S.id=hb.id;S.nick=hb.nick||NKDB;let d=hb.dm;
  if(sb()){const row=await sbFind();if(row&&HUB.colDia&&row[HUB.colDia]!=null)d=+row[HUB.colDia]}
- if(d!=null&&!isNaN(d))S.dm=d;sv();ui()}
+ if(d!=null&&!isNaN(d))S.dm=d;sv();ui();if(LID!=S.id){LID=S.id;hubSync()}}
 async function dmPush(){if(sb()&&HUB.colId&&HUB.colDia)try{const r=await fetch(sbu(HUB.colId,S.id),{method:'PATCH',headers:Object.assign(SBH(),{Prefer:'return=minimal'}),body:JSON.stringify({[HUB.colDia]:S.dm})});SBST=r.ok?'ok':'HTTP '+r.status}catch(e){SBST='falha ao salvar'}
  try{if(lsg('wavecombat_diamantes')!=null)localStorage.setItem('wavecombat_diamantes',S.dm);const s=JSON.parse(lsg('wavecombat_sessao_ativa'));if(s&&typeof s=='object'&&'diamantes' in s){s.diamantes=S.dm;localStorage.setItem('wavecombat_sessao_ativa',JSON.stringify(s))}}catch(e){}}
 
@@ -305,8 +314,8 @@ function netConn(){if(net)return net;if(typeof io=='undefined'){tt('Socket.io in
  net=io(HUB.socket||undefined,{transports:['websocket','polling'],reconnection:false,timeout:60000});
  net.on('connect',()=>onSt('Conectado ao servidor.'));
  net.on('connect_error',()=>{onSt('Falha ao conectar ao servidor. Tente novamente em instantes.');tt('Servidor offline');if(net)net.disconnect();net=null});
- net.on('waiting_for_match',d=>onSt(d.message||'Procurando oponentes...'));
- net.on('match_found',d=>{RID=d.roomId;RM=d.players;OCF={th:4,lp:2,mx:4};startOnline()});
+ net.on('waiting_for_match',d=>{onSt(d.message||'Procurando oponentes...');if(d&&(d.count||d.players))oqSet(d.count||d.players)});net.on('queue_update',d=>oqSet((d&&(d.count||d.players||d.current))||1));
+ net.on('match_found',d=>{oqStop();RID=d.roomId;RM=d.players;OCF={th:4,lp:2,mx:4};startOnline()});
  net.on('player_joined',d=>{RM=d.players;if(RC&&RC.host)net.emit('game_action',{t:'cfg',cfg:OCF});roomUI()});
  net.on('player_left',d=>{delete RM[d.playerId];const i=AI.findIndex(a=>a.id==d.playerId);if(i>=0){sc.remove(AI[i].g);AI.splice(i,1);tt('Um jogador saiu')}roomUI()});
  net.on('game_action',d=>onMsg(d.playerId,d.action));
@@ -322,27 +331,29 @@ function startOnline(){if(!net||ONL)return;ONL=1;CR=0;PUR=0;const ids=Object.key
  AG.forEach(g=>g.visible=false);AI.forEach(a=>{if(a.r)sc.remove(a.g)});AI=[];ids.forEach(id=>{if(id!=net.id)rmk(id,RM[id].name,0)});
  place(-(k>>1)*6,[-3.5,3.5,-3.5,3.5][k%4]);show(null);$('ldt').textContent='🌐 ONLINE · '+TH[TI].n.replace(/^\S+\s/,'')+' · '+ids.length+' jogadores';$('ld').classList.add('on');
  setTimeout(()=>{go2();netHello();setTimeout(netHello,1500)},1400)}
-function onMsg(id,m){if(m.t=='cfg'){OCF=m.cfg;return roomUI()}if(m.t=='go'){OCF=m.cfg||OCF;return startOnline()}if(!ONL)return;if(m.t=='hello'){rmk(id,m.nm,m.m,m.gc);return}
+function onMsg(id,m){if(m.t=='chat'){chatAdd('s',m.nm,m.m,m.v);return}if(m.t=='cfg'){OCF=m.cfg;return roomUI()}if(m.t=='go'){OCF=m.cfg||OCF;return startOnline()}if(!ONL)return;if(m.t=='hello'){rmk(id,m.nm,m.m,m.gc);return}
  const a=AI.find(x=>x.id==id)||rmk(id,RM[id]?RM[id].name:'Jogador',0);
  if(m.t=='st'){a.tx=m.x;a.tz=m.z;a.th=m.h;a.v=m.v;a.pg=m.pg;if(!a.ready){a.g.position.set(m.x,0,m.z);a.g.rotation.y=m.h;a.ready=1}}
  if(m.t=='fin'&&!a.done){a.done=++FN;tt('🏁 '+a.nm+' terminou!')}}
 function netStep(a,dt){a.tx+=Math.sin(a.th)*a.v*dt;a.tz+=Math.cos(a.th)*a.v*dt;a.pg+=a.v*dt/SP;const k=Math.min(1,12*dt),p=a.g.position;p.x+=(a.tx-p.x)*k;p.z+=(a.tz-p.z)*k;let d=a.th-a.g.rotation.y;while(d>Math.PI)d-=6.2832;while(d<-Math.PI)d+=6.2832;a.g.rotation.y+=d*k;a.g.userData.W.forEach(w=>w.rotation.x+=a.v*dt/.4);
  const dx=C.x-p.x,dz=C.z-p.z,q=Math.hypot(dx,dz);if(q<3.6&&q>.01){const f=(3.6-q)*.5;C.x+=dx/q*f;C.z+=dz/q*f;C.v*=shT>0?1:1-1.5*dt}}
 function netTick(dt){if(!ONL||!net||!net.connected)return;NT-=dt;if(NT>0)return;NT=.066;net.emit('game_action',{t:'st',x:+C.x.toFixed(2),z:+C.z.toFixed(2),h:+C.h.toFixed(3),v:+C.v.toFixed(1),pg:+C.pg.toFixed(1)})}
-function netLeave(){if(net){net.disconnect();net=null}ONL=0;RM={};RC=null;RL={};if(ds){ds.disconnect();ds=null}AI.forEach(a=>{if(a.r)sc.remove(a.g)});AI=AI.filter(a=>!a.r)}
-$('oFind').onclick=()=>{const n=netConn();if(!n)return;n.emit('find_match',{gameId:'supercar-circuit',playerName:myNick()});onSt('Procurando oponentes...')};
+function netLeave(){if(OQ)oqStop();if(net){net.disconnect();net=null}ONL=0;RM={};RC=null;RL={};AI.forEach(a=>{if(a.r)sc.remove(a.g)});AI=AI.filter(a=>!a.r)}
+
 
 
 $('oBack').onclick=()=>{if(net)net.emit('cancel_matchmaking');netLeave();show('menu')};
 let ds=null,RC=null,RL={},OCF={th:4,lp:2,mx:4},JQ=null,QN=1,mmT=null,mmB=null;
 function dirConn(){if(ds)return ds;if(typeof io=='undefined'){tt('Socket.io indisponível');return null}
  ds=io(HUB.socket||undefined,{transports:['websocket','polling'],timeout:60000});
- ds.on('connect',()=>ds.emit('join_room',{gameId:'supercar-circuit',roomId:'lobby',playerName:myNick()}));
- ds.on('connect_error',()=>tt('Servidor offline'));
- ds.on('game_action',d=>dirMsg(d.playerId,d.action));return ds}
+ ds.on('connect',()=>{ds.emit('join_room',{gameId:'supercar-circuit',roomId:'lobby',playerName:myNick()});presSend();if(FRS.length)ds.emit('wc_friends_query',{ids:FRS.map(f=>f.id)})});
+ ds.on('connect_error',()=>{});
+ ds.on('game_action',d=>dirMsg(d.playerId,d.action));
+ ds.on('wc_friends_status',d=>{Object.entries(d||{}).forEach(([id,v])=>{if(v&&v.status&&v.status!='offline')PR[id]={st:v.status,gm:v.game||'',ts:Date.now()};else delete PR[id]});frUI()});
+ ds.on('wc_presence_update',d=>{if(d&&d.id){if(d.status&&d.status!='offline')PR[d.id]={st:d.status,gm:d.game||'',ts:Date.now()};else delete PR[d.id];frUI()}});return ds}
 function adSend(){if(ds&&RC&&RC.host&&!RC.started)ds.emit('game_action',{t:'ad',id:RC.id,nm:RC.name,host:myNick(),pw:!!RC.pw,n:Object.keys(RM).length,mx:OCF.mx,th:OCF.th,lp:OCF.lp})}
 setInterval(adSend,3000);
-function dirMsg(id,m){
+function dirMsg(id,m){if(m.t=='pres'){PR[m.id]={st:m.st,gm:m.gm,nm:m.nm,v:m.v,ts:Date.now()};frUI();return}if(m.t=='chat'){chatAdd('g',m.nm,m.m,m.v);return}
  if(m.t=='ad'){RL[m.id]=Object.assign(m,{ts:Date.now()});rlUI()}
  if(m.t=='cl'){delete RL[m.id];rlUI()}
  if(m.t=='ls')adSend();
@@ -351,7 +362,7 @@ function dirMsg(id,m){
 function rlUI(){if(!$('crs').classList.contains('on'))return;const e=$('rlist');e.innerHTML='';const L=Object.values(RL).filter(r=>Date.now()-r.ts<9000);if(!L.length){e.textContent='Nenhuma sala encontrada. Toque em Atualizar.';return}
  L.forEach(r=>{const d=EL('div','rr2'),t=EL('span');t.textContent=(r.pw?'🔒 ':'')+r.nm+' · '+r.host+' · '+r.n+'/'+r.mx+' · '+(r.th<4?TH[r.th].n.replace(/^\S+\s/,''):'Aleatório')+' · '+r.lp+' volta(s)';d.append(t,EB('Entrar',()=>{$('rid').value=r.id;if(r.pw){tt('Digite a senha da sala');$('rpw').focus()}else reqJoin(r.id,'')}));e.appendChild(d)})}
 function reqJoin(id,pw){if(!id)return tt('Informe o ID da sala');if(!dirConn())return;if(!ds.connected){ds.once('connect',()=>reqJoin(id,pw));return}JQ={id};ds.emit('game_action',{t:'jq',id,pw,from:ds.id,nm:myNick()});setTimeout(()=>{if(JQ&&JQ.id==id){JQ=null;tt('Sem resposta do anfitrião')}},4000)}
-function joinGame(id){RID=id;RM={};RC={id,host:false};const n=netConn();if(!n)return;n.emit('join_room',{gameId:'supercar-circuit',roomId:id,playerName:myNick()});show('crc');roomUI()}
+function joinGame(id){RID=id;RM={};RC={id,host:false,t0:Date.now()};const n=netConn();if(!n)return;n.emit('join_room',{gameId:'supercar-circuit',roomId:id,playerName:myNick()});show('crc');roomUI()}
 function roomUI(){if(!$('crc').classList.contains('on'))return;const h=!RC||RC.host,n=Object.keys(RM).length,e=$('cpl');e.innerHTML='';Object.values(RM).forEach(x=>{const d=EL('div');d.textContent=(net&&x.id==net.id?'👤 ':'🏎️ ')+x.name;e.appendChild(d)});
  $('cfm').style.display=h?'flex':'none';$('cgo').style.display=RC&&RC.host&&n>1?'':'none';
  $('cinf').textContent=RC?('Sala '+RC.id+(RC.pw?' 🔒':'')+' · '+n+'/'+OCF.mx+' jogadores · '+(OCF.th<4?TH[OCF.th].n.replace(/^\S+\s/,''):'Cenário aleatório')+' · '+OCF.lp+' volta(s)'+(RC.host?' · 🏠 cartões: '+(S.rc|0):' · aguardando o anfitrião')):'Configure a sala e toque em Criar.'}
@@ -365,7 +376,7 @@ $('cBack1').onclick=()=>show('cr0');
 $('cBack2').onclick=()=>{if(RC&&RC.host&&ds)ds.emit('game_action',{t:'cl',id:RC.id});if(net){net.disconnect();net=null}RC=null;RM={};show('cr0')};
 $('ccreate').onclick=()=>{const raw=$('cn').value.trim().replace(/[^\w-]/g,'').slice(0,14),id=raw||'r'+Math.random().toString(36).slice(2,8);OCF={th:+$('cth').value,lp:+$('clp').value||2,mx:+$('cmx').value||4};
  if(RC&&RC.host){RC.pw=$('cp').value;if(net)net.emit('game_action',{t:'cfg',cfg:OCF});adSend();tt('Sala atualizada');return roomUI()}
- if(!netConn()||!dirConn())return;RC={id,name:id,pw:$('cp').value,host:true,started:0};RID=id;RM={};net.emit('join_room',{gameId:'supercar-circuit',roomId:id,playerName:myNick()});roomUI();setTimeout(adSend,800)};
+ if(!netConn()||!dirConn())return;RC={id,name:id,pw:$('cp').value,host:true,started:0,t0:Date.now()};RID=id;RM={};net.emit('join_room',{gameId:'supercar-circuit',roomId:id,playerName:myNick()});roomUI();setTimeout(adSend,800)};
 $('cgo').onclick=()=>{if(!RC||!RC.host||!net)return;if((S.rc|0)<1)return tt('Você precisa de 1 cartão de sala (compre na Loja)');if(Object.keys(RM).length<2)return tt('Aguardando jogadores');S.rc--;sv();RC.started=1;if(ds)ds.emit('game_action',{t:'cl',id:RC.id});net.emit('game_action',{t:'go',cfg:OCF});startOnline()};
 function shopUI(){$('rcn').textContent=S.rc|0;$('qn').textContent=QN;$('qB').textContent='Comprar · '+5*QN+' 💎';$('sgd').textContent=S.gd;$('sdm').textContent=S.dm;const o=S.own.includes(5);$('f1B').textContent=o?'✔ Adquirido':'Comprar · 600 💎';$('f1B').disabled=o}
 $('bShop').onclick=()=>{QN=1;shopUI();show('shop')};$('sBack').onclick=()=>show('start');$('qM').onclick=()=>{QN=Math.max(1,QN-1);shopUI()};$('qP').onclick=()=>{QN=Math.min(99,QN+1);shopUI()};
@@ -420,6 +431,43 @@ const GP={},GPB={};
 function gpad(){const g=navigator.getGamepads?Array.from(navigator.getGamepads()).find(Boolean):null;if(!g)return;const ax=g.axes[0]||0,b=i=>!!(g.buttons[i]&&g.buttons[i].pressed),set=(k,v)=>{if(v){K[k]=1;GP[k]=1}else if(GP[k]){K[k]=0;GP[k]=0}};
  set('l',ax<-.25);set('r',ax>.25);set('up',b(7)||b(0));set('dn',b(6)||b(1));set('sp',b(2));
  [[3,0],[4,1],[5,2]].forEach(([n,i])=>{if(b(n)&&!GPB[n])skUse(i);GPB[n]=b(n)});if(b(9)&&!GPB[9]&&run&&!pz)gear();GPB[9]=b(9)}
+let VER=new Set(),VMe=false,FRS=[],PR={},CHL={g:[],s:[]},CHT='g',CHN=0,CHLast=0,OQ=0,OQC=1,NICKT='',NKDB='',LID='';
+async function sbGet(t,q){try{const r=await fetch(`${HUB.url}/rest/v1/${t}?${q}`,{headers:SBH()});if(!r.ok)return null;const j=await r.json();return Array.isArray(j)?j:null}catch(e){return null}}
+async function vLoad(){const j=await sbGet('wavecombat_verificados','select=*&limit=1000');if(!j)return;VER=new Set();j.forEach(row=>{const E=Object.entries(row);if(E.some(([k,v])=>/verific|ativo|active/i.test(k)&&(v===false||v==='false'||v===0)))return;E.forEach(([k,v])=>{if(v!=null&&typeof v!='object'&&/id|user|jogador|usuario|player/i.test(k))VER.add(String(v))})});VMe=VER.has(String(S.id));ui()}
+async function nickLoad(ids,arr){if(NICKT=='-')return;for(const t of(NICKT?[NICKT]:['wavecombat_jogadores','wavecombat_perfis','wavecombat_usuarios','jogadores','perfis','usuarios','profiles'])){for(const c of['id','id_jogador','jogador_id','user_id','wavecombat_id']){const j=await sbGet(t,`select=*&${c}=in.(${ids.map(encodeURIComponent).join(',')})`);if(!j||!j.length)continue;const nk=Object.keys(j[0]).find(k=>/nick|nome|name|apelido/i.test(k));if(!nk)continue;NICKT=t;j.forEach(r=>{const f=arr.find(x=>x.id==String(r[c]));if(f)f.nm=String(r[nk])});return}}if(!NICKT)NICKT='-'}
+async function frLoad(){const j=await sbGet('wavecombat_amigos','select=*&limit=1000');if(!j)return;const me=String(S.id),out=[],seen=new Set(),idk=k=>/(^|_)id$|^id_|amigo|friend|jogador|user|usuario|player|dono|owner|uid/i.test(k)&&!/created|updated|criado|atualiz|status|data|nick|nome|name|apelido/i.test(k);
+ j.forEach(row=>{const E=Object.entries(row).filter(([k,v])=>v!=null&&typeof v!='object'),ids=E.filter(([k])=>idk(k));if(!ids.some(([k,v])=>String(v)==me&&k!='id'))return;const st=E.find(([k])=>/status|aceito|accepted|estado|situacao/i.test(k));if(st&&/pend|wait|aguard|recus|bloq|false|^0$/i.test(String(st[1])))return;
+  const oth=ids.filter(([k,v])=>String(v)!=me&&k!='id'),pk=oth.find(([k])=>/amigo|friend|alvo|destin|para|id_b/i.test(k))||oth[0];if(!pk)return;const fid=String(pk[1]);if(seen.has(fid))return;seen.add(fid);
+  const nk=E.find(([k])=>/(amigo|friend).*(nick|nome|name)|(nick|nome|name).*(amigo|friend)/i.test(k));out.push({id:fid,nm:nk?String(nk[1]):''})});
+ FRS=out;const miss=out.filter(f=>!f.nm).map(f=>f.id);if(miss.length)await nickLoad(miss,FRS);frUI()}
+const vbEl=()=>{const b=EL('span','vb');b.textContent='V';return b};
+function frUI(){const e=$('frl');e.innerHTML='';if(!FRS.length){e.textContent=sb()?'Nenhum amigo encontrado.':'Faça login no Hub para ver seus amigos.';return}
+ const now=Date.now(),on=[],off=[];FRS.forEach(f=>{const p=PR[f.id];(p&&now-p.ts<30000?on:off).push(f)});
+ const sec=(t,L,o)=>{const h=EL('b');h.textContent=t+' ('+L.length+')';e.appendChild(h);if(!L.length){const n=EL('small');n.textContent='—';e.appendChild(n)}
+  L.forEach(f=>{const d=EL('div','rr2'),s=EL('span'),p=PR[f.id],t2=EL('small');if(VER.has(f.id))s.appendChild(vbEl());s.append((VER.has(f.id)?' ':'')+(f.nm||'Jogador '+f.id));
+   t2.textContent=o?(p.gm=='supercar-circuit'?(p.st=='race'?'🎮 em corrida':p.st=='online'?'🌐 partida online':p.st=='search'?'🔍 procurando partida':'🎮 no menu'):'online'):'offline';d.append(s,t2);e.appendChild(d)})};
+ sec('🟢 Online',on,1);sec('⚫ Offline',off,0)}
+const presSt=()=>ONL?'online':run?'race':OQ?'search':'menu';
+function presSend(){if(!ds||!ds.connected||!S.id)return;const st=presSt();ds.emit('game_action',{t:'pres',id:String(S.id),nm:S.nick,v:VMe,st,gm:'supercar-circuit'});ds.emit('wc_presence',{id:String(S.id),nick:S.nick,game:'supercar-circuit',status:st})}
+setInterval(()=>{presSend();if(ds&&ds.connected&&FRS.length)ds.emit('wc_friends_query',{ids:FRS.map(f=>f.id)});frUI()},10000);
+async function hubSync(){if(!sb())return;await vLoad();if(!S.nick){const a=[{id:String(S.id),nm:''}];await nickLoad([String(S.id)],a);if(a[0].nm){NKDB=a[0].nm;S.nick=NKDB;sv();ui()}}await frLoad();presSend()}
+setInterval(hubSync,60000);
+function chBadge(){const b=$('chb');b.textContent=CHN;b.style.display=CHN?'':'none'}
+function chatUI(){const e=$('chm');e.innerHTML='';CHL[CHT].forEach(x=>{const d=EL('div'),n=EL('b'),t=EL('span');if(x.v){d.append(vbEl(),' ')}n.textContent=x.nm+': ';n.style.color=x.me?'#ffd24a':'#9cc4ff';t.textContent=x.m;d.append(n,t);e.appendChild(d)});e.scrollTop=e.scrollHeight;$('chTg').style.borderColor=CHT=='g'?'#fff':'';$('chTs').style.borderColor=CHT=='s'?'#fff':''}
+function chatAdd(tab,nm,m,v,me){const a=CHL[tab];a.push({nm:String(nm||'?'),m:String(m||'').slice(0,140),v:!!v,me:!!me});if(a.length>80)a.shift();if($('chp').classList.contains('on')&&CHT==tab)chatUI();else if(!me){CHN++;chBadge()}}
+function chatSend(){const m=$('chi').value.trim().slice(0,140);if(!m)return;const t=Date.now();if(t-CHLast<800)return tt('Aguarde um instante');CHLast=t;$('chi').value='';const p={t:'chat',nm:S.nick||'Jogador',m,v:VMe};
+ if(CHT=='g'){if(!ds||!ds.connected)return tt('Chat indisponível (sem conexão)');ds.emit('game_action',p);chatAdd('g',p.nm,m,VMe,1)}
+ else{if(!net||!net.connected||!(RC||ONL))return tt('Entre em uma sala para usar o chat da sala');net.emit('game_action',p);chatAdd('s',p.nm,m,VMe,1)}}
+$('fabF').onclick=()=>{$('frd').classList.toggle('on');frUI();if($('frd').classList.contains('on'))hubSync()};$('frX').onclick=()=>$('frd').classList.remove('on');
+$('fabC').onclick=()=>{$('chp').classList.toggle('on');if($('chp').classList.contains('on')){CHN=0;chBadge();chatUI();dirConn()}};
+$('chX').onclick=()=>$('chp').classList.remove('on');$('chTg').onclick=()=>{CHT='g';chatUI()};$('chTs').onclick=()=>{CHT='s';chatUI()};$('chSend').onclick=chatSend;$('chi').onkeydown=e=>{if(e.key=='Enter')chatSend()};
+function oqSet(n){OQC=Math.max(1,Math.min(4,+n||1));oqTick()}
+function oqTick(){const now=Date.now();if(OQ){const s=(now-OQ)/1000|0,c=Math.min(4,1+Object.values(PR).filter(p=>p.st=='search'&&now-p.ts<25000).length);$('oqt').textContent=(s/60|0)+':'+String(s%60).padStart(2,'0');$('oqc').textContent=Math.max(OQC,c)+'/4'}
+ if(RC&&$('crc').classList.contains('on')){const s=(now-(RC.t0||now))/1000|0;$('crt').textContent='⏱ '+(s/60|0)+':'+String(s%60).padStart(2,'0')+' · 👥 '+Object.keys(RM).length+'/'+OCF.mx}}
+function oqStop(){OQ=0;OQC=1;$('oFind').textContent='🔍 Buscar partida (4 jogadores)';$('oFind').disabled=false;$('oq').style.display='none';$('oCancel').style.display='none';presSend()}
+setInterval(oqTick,1000);
+$('oFind').onclick=()=>{if(OQ)return;const n=netConn();if(!n)return;n.emit('find_match',{gameId:'supercar-circuit',playerName:myNick()});OQ=Date.now();OQC=1;$('oFind').textContent='Procurando partida...';$('oFind').disabled=true;$('oq').style.display='block';$('oCancel').style.display='';onSt('Procurando oponentes...');presSend();oqTick()};
+$('oCancel').onclick=()=>{if(net)net.emit('cancel_matchmaking');oqStop()};
 const SKD=[18,22,14];
 function skUse(i){if(!run||pz||skc[i]>0)return;skc[i]=S.inf?3:SKD[i];
  if(i==0){shT=6;tt('🛡️ Escudo!')}
@@ -430,10 +478,10 @@ function skStep(dt){skc=skc.map(c=>Math.max(0,c-dt));shT=Math.max(0,shT-dt);shM.
  oils=oils.filter(o=>{o.t-=dt;if(o.t<=0){sc.remove(o.m);return false}AI.concat(PL).forEach(a=>{if(!(a.slow>0)&&Math.hypot(a.g.position.x-o.m.position.x,a.g.position.z-o.m.position.z)<4.5){a.slow=2;a.sf=.4}});return true});
  [...$('sk').children].forEach((b,i)=>b.lastChild.style.height=skc[i]/SKD[i]*100+'%')}
 Q('#sk button').forEach((b,i)=>b.onpointerdown=e=>{e.preventDefault();skUse(i)});
-function go2(){trInit();polInit();$('ld').classList.remove('on');$('hud').classList.add('on');$('gs').textContent='⏸';run=1;pz=1;cd(()=>pz=0)}
+function go2(){trInit();polInit();presSend();$('ld').classList.remove('on');$('hud').classList.add('on');$('gs').textContent='⏸';run=1;pz=1;cd(()=>pz=0)}
 function fin(){if(!run)return;run=0;pz=1;if(PUR)return finPur();if(ONL&&net)net.emit('game_action',{t:'fin',tm});$('hud').classList.remove('on');$('gs').textContent='⚙️';const tot=AI.length+1,pos=FN+1,L=CR?LVS(CR):0,bw=L&&!AI[0].done,g=L?(L.gd*(bw?1:.3)*(pos==1?1.3:1))|0:((300+(tot-pos)*250)*(1+S.df*.5))|0,pt=(tot-pos+1)*40*(L?2:1+S.df);S.gd+=g;S.pts+=pt;enviarResultadoPartida(pt);let xt='';
 if(L){const st=bw?(pos==1?3:pos<=2?2:1):0,fr=bw&&!S.cs[CR];if(bw){S.cs[CR]=Math.max(S.cs[CR]||0,st);S.cr=Math.max(S.cr,Math.min(50,CR+1))}if(fr)S.gd+=L.bg;xt=`<div class=pos style='font-size:26px'>${bw?'👹 CHEFÃO DERROTADO!':'💀 O CHEFÃO VENCEU'}</div>${'⭐'.repeat(st)}<br>${fr?'🪙 +'+L.bg+' bônus<br>':''}`}sv();$('r1').innerHTML=`<div class=pos>${pos}º<small> / ${tot}</small></div>🤖 <b>${DF[S.df].n}</b><br>`+`⏱ Tempo: <b>${ft(tm)}</b><br>🚀 Vel. máx: <b>${mx*3.6|0} km/h</b><br>🪙 Ouro: <b>+${g}</b><br>🏅 Pontos: <b>+${pt}</b>`;$('r1').insertAdjacentHTML('afterbegin',xt);$('bNext').style.display=L&&bw&&CR<50?'':'none';$('res').classList.add('on')}
-function ui(){Q('.ao').forEach(e=>e.style.display=isAdm()?'':'none');menuUI();hstUI();mailTag();$('nk').textContent=S.nick;$('uid').textContent=S.id;$('gd').textContent=S.gd;$('dm').textContent=S.dm;$('rkn').textContent=rk(S.pts);$('bDaily').textContent=(S.dl!=td()?'🎁 ':'')+'Login Diário'}
+function ui(){Q('.ao').forEach(e=>e.style.display=isAdm()?'':'none');menuUI();hstUI();mailTag();$('vb').style.display=VMe?'inline-block':'none';$('nk').textContent=S.nick;$('uid').textContent=S.id;$('gd').textContent=S.gd;$('dm').textContent=S.dm;$('rkn').textContent=rk(S.pts);$('bDaily').textContent=(S.dl!=td()?'🎁 ':'')+'Login Diário'}
 function vw(v){$('pv').style.display=v=='pv'?'flex':'none';$('av').style.display=v=='av'?'flex':'none'}
 function gear(){if(run){pz=1;$('ps').innerHTML=`⏱ ${ft(tm)} · 🚀 ${Math.abs(C.v)*3.6|0} km/h · ⚡ ${C.n|0}%`;vw('pv')}else vw('av');$('set').classList.add('on')}
 
@@ -544,10 +592,10 @@ $('fpsT').checked=!!S.fps;$('fpsT').onchange=()=>{S.fps=+$('fpsT').checked;$('fp
 $('bSave').onclick=()=>{sv();if(run)vw('pv');else $('set').classList.remove('on')};
 $('bGar2').onclick=()=>{$('res').classList.remove('on');reset();if(ONL)netLeave();if(CR){lvUI();show('lv')}else{show('menu');ui()}};$('bAgain').onclick=()=>{$('res').classList.remove('on');if(ONL){netLeave();show('menu');ui()}else go()};$('bNext').onclick=()=>{$('res').classList.remove('on');CR=Math.min(50,CR+1);go()};
 const KM={ArrowUp:'up',w:'up',ArrowDown:'dn',s:'dn',ArrowLeft:'l',a:'l',ArrowRight:'r',d:'r',' ':'sp',Shift:'sp'},kk=e=>KM[e.key.length>1?e.key:e.key.toLowerCase()];
-addEventListener('keydown',e=>{if(e.key.length==1&&'123'.includes(e.key))skUse(+e.key-1);const k=kk(e);if(k){K[k]=1;e.preventDefault()}if((e.key=='Escape'||e.key=='p')&&run&&!pz)gear()});
+addEventListener('keydown',e=>{if(/INPUT|TEXTAREA|SELECT/.test((e.target&&e.target.tagName)||''))return;if(e.key.length==1&&'123'.includes(e.key))skUse(+e.key-1);const k=kk(e);if(k){K[k]=1;e.preventDefault()}if((e.key=='Escape'||e.key=='p')&&run&&!pz)gear()});
 addEventListener('keyup',e=>{const k=kk(e);if(k)K[k]=0});
 Q('#tc button').forEach(b=>{const k=b.dataset.k;b.onpointerdown=e=>{K[k]=1;e.preventDefault()};['pointerup','pointerleave','pointercancel'].forEach(n=>b.addEventListener(n,()=>K[k]=0))});
 build();thUI();dfUI();$('rp').innerHTML='<i></i>'.repeat(20);addEventListener('pointerdown',()=>{aud();musOn()},{once:true});addEventListener('resize',rs);$('fps').style.display=S.fps?'block':'none';ui();requestAnimationFrame(fr);
 addEventListener('message',e=>{const d=e.data;if(!d||typeof d!='object'||!(d.wavecombat||d.tipo=='wavecombat')||(HUB.origem&&e.origin!=HUB.origem))return;['id','nick','diamantes'].forEach(k=>d[k]!=null&&(HM[k]=d[k]));dmPull()});try{parent!==window&&parent.postMessage({tipo:'wc_pedir_dados'},'*')}catch(e){}
-dmPull();setInterval(dmPull,HUB.poll);addEventListener('focus',dmPull);addEventListener('storage',e=>e.key&&e.key.indexOf('wavecombat')==0&&dmPull());
+dmPull();hubSync();if(HUB.socket)dirConn();setInterval(dmPull,HUB.poll);addEventListener('focus',dmPull);addEventListener('storage',e=>e.key&&e.key.indexOf('wavecombat')==0&&dmPull());
 </script></body></html>
