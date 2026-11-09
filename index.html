@@ -625,7 +625,7 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.420 (Realtime Chat & Robust Sync)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.430 (Cloud Realtime & Global Verified)</strong>
     </footer>
 
     <script>
@@ -649,6 +649,7 @@
         let siteConfigGlobal = { url: "", ativa: false, logo: "" };
         let audioSfxAtivo = true;
         let ultimaMensagemChatTempo = 0;
+        let cacheVerificadosNuvem = {};
 
         let bgmInterval = null;
         let bgmActive = false;
@@ -669,19 +670,33 @@
             return num.toLocaleString('pt-BR');
         }
 
-        function verificarBanimentoAtual() {
+        async function carregarVerificadosNuvem() {
+            try {
+                const { data } = await supabaseClient.from('wavecombat_verificados').select('*');
+                if (data && data.length > 0) {
+                    data.forEach(item => {
+                        cacheVerificadosNuvem[String(item.id_jogador)] = true;
+                        if (item.nick) cacheVerificadosNuvem[item.nick.toLowerCase()] = true;
+                    });
+                }
+            } catch(e) {}
+        }
+
+        async function verificarBanimentoAtual() {
             if (!usuarioLogado) return false;
             try {
-                let banidos = JSON.parse(localStorage.getItem('wavecombat_banidos') || '{}');
-                let banInfo = banidos[usuarioLogado.id];
+                const { data: banInfo } = await supabaseClient
+                    .from('wavecombat_banidos')
+                    .select('*')
+                    .eq('id_jogador', String(usuarioLogado.id))
+                    .maybeSingle();
+
                 if (banInfo) {
-                    if (Date.now() < banInfo.expiraEm) {
-                        alert(`⚠️ Sua conta está banida até ${new Date(banInfo.expiraEm).toLocaleString('pt-BR')}.`);
+                    let expira = new Date(banInfo.expira_em).getTime();
+                    if (Date.now() < expira) {
+                        alert(`⚠️ Sua conta está banida até ${new Date(expira).toLocaleString('pt-BR')}.`);
                         fazerLogout();
                         return true;
-                    } else {
-                        delete banidos[usuarioLogado.id];
-                        localStorage.setItem('wavecombat_banidos', JSON.stringify(banidos));
                     }
                 }
             } catch(e){}
@@ -690,10 +705,11 @@
 
         function obterHtmlNickVerificado(nick, id) {
             if (!nick) return '';
-            let verificados = {};
-            try { verificados = JSON.parse(localStorage.getItem('wavecombat_verificados') || '{}'); } catch(e){}
-            let isVerif = verificados[id];
-            let isStaff = (nick.toLowerCase() === 'capudo7' || (usuarioLogado && usuarioLogado.isAdm && id === MEU_ID_MESTRE));
+            let n = nick.toLowerCase();
+            let isStaff = (n === 'capudo7' || (usuarioLogado && usuarioLogado.isAdm && String(id) === MEU_ID_MESTRE));
+            
+            // Regra Global de Verificado via Nuvem + Exceção Conhecida
+            let isVerif = cacheVerificadosNuvem[String(id)] || cacheVerificadosNuvem[n] || n === 'rocky' || n === 'capudo7';
 
             let html = '';
             if (isStaff) {
@@ -832,7 +848,6 @@
 
         function toggleThemeOLED(ativo) {
             document.getElementById('mainBody').classList.toggle('theme-oled', ativo);
-            localStorage.setItem('wavecombat_oled', ativo ? 'true' : 'false');
             mostrarToast(ativo ? "⚫ Tema OLED ativado" : "🌙 Tema padrão ativado");
         }
 
@@ -855,18 +870,8 @@
             }
         }
 
-        function inicializarIdentidadeLocal() {
-            if (!localStorage.getItem('wavecombat_id') && usuarioLogado) {
-                localStorage.setItem('wavecombat_id', usuarioLogado.id);
-            }
-        }
-
-        function carregarSessaoSalva() {
-            if (localStorage.getItem('wavecombat_oled') === 'true') {
-                document.getElementById('checkThemeOLED').checked = true;
-                document.getElementById('mainBody').classList.add('theme-oled');
-            }
-
+        async function carregarSessaoSalva() {
+            await carregarVerificadosNuvem();
             try {
                 const sessaoSalva = localStorage.getItem('wavecombat_sessao_ativa');
                 if(sessaoSalva) {
@@ -875,11 +880,9 @@
                         usuarioLogado.id = MEU_ID_MESTRE;
                         usuarioLogado.isAdm = true;
                     }
-                    if (verificarBanimentoAtual()) return;
+                    if (await verificarBanimentoAtual()) return;
 
                     document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(usuarioLogado.nick, usuarioLogado.id);
-                    localStorage.setItem('wavecombat_nick', usuarioLogado.nick);
-                    localStorage.setItem('wavecombat_id', usuarioLogado.id);
                     if(usuarioLogado.isAdm) {
                         document.getElementById('btnToggleAdmNav').style.display = 'inline-block';
                     }
@@ -911,15 +914,6 @@
             carregarCorreioUsuario();
         }
 
-        function registrarHistoricoJogo(nomeJogo) {
-            try {
-                let hist = JSON.parse(localStorage.getItem('wavecombat_historico') || '[]');
-                hist.unshift({ nome: nomeJogo, data: new Date().toLocaleDateString('pt-BR') });
-                if (hist.length > 5) hist.pop();
-                localStorage.setItem('wavecombat_historico', JSON.stringify(hist));
-            } catch(e) {}
-        }
-
         function toggleMenuMobile() { document.getElementById('navLinks').classList.toggle('active'); }
         function fecharMenuMobile() { document.getElementById('navLinks').classList.remove('active'); }
 
@@ -947,50 +941,48 @@
         }
 
         async function carregarSaldoDiamantesSite() {
-            const idJogador = localStorage.getItem('wavecombat_id');
-            if (!idJogador) {
+            if (!usuarioLogado || !usuarioLogado.id) {
                 document.getElementById('userDiamondBalance').textContent = '0';
                 return;
             }
             try {
-                const { data } = await supabaseClient.from('carteira_diamantes').select('diamantes').eq('id_jogador', idJogador).single();
+                const { data } = await supabaseClient.from('carteira_diamantes').select('diamantes').eq('id_jogador', String(usuarioLogado.id)).single();
                 if (data) {
                     document.getElementById('userDiamondBalance').textContent = formatarNumero(data.diamantes || 0);
                 } else {
-                    const nick = localStorage.getItem('wavecombat_nick') || 'Jogador';
-                    await supabaseClient.from('carteira_diamantes').insert([{ id_jogador: idJogador, nick: nick, diamantes: 0 }]);
+                    await supabaseClient.from('carteira_diamantes').insert([{ id_jogador: String(usuarioLogado.id), nick: usuarioLogado.nick, diamantes: 0 }]);
                     document.getElementById('userDiamondBalance').textContent = '0';
                 }
             } catch (e) {}
         }
 
         async function gerarPixMercadoPago(valor, quantDiamantes) {
-            const idJogador = localStorage.getItem('wavecombat_id');
-            const nick = localStorage.getItem('wavecombat_nick') || 'Jogador';
-
-            if (!usuarioLogado || !idJogador) {
+            if (!usuarioLogado || !usuarioLogado.id) {
                 alert("⚠️ Você precisa criar uma conta ou fazer login para comprar diamantes!");
                 abrirModalAuth(true);
                 return;
             }
 
+            const idJogador = String(usuarioLogado.id);
+            const nick = usuarioLogado.nick;
             const cupomDigitado = (document.getElementById('inputCupomRecarga')?.value || '').trim().toUpperCase();
             let bonusDiamantes = 0;
 
             if (cupomDigitado) {
                 try {
-                    let influenciadores = JSON.parse(localStorage.getItem('wavecombat_influenciadores') || '{}');
-                    let infEncontradoKey = Object.keys(influenciadores).find(k => influenciadores[k].codigo === cupomDigitado);
-                    if (infEncontradoKey) {
+                    const { data: infData } = await supabaseClient.from('influenciadores').select('*').eq('cupom', cupomDigitado).maybeSingle();
+                    if (infData) {
                         bonusDiamantes = Math.round(quantDiamantes * 0.05);
                         quantDiamantes += bonusDiamantes;
                         let comissao = valor * 0.30;
-                        influenciadores[infEncontradoKey].saldoReceber = (influenciadores[infEncontradoKey].saldoReceber || 0) + comissao;
-                        influenciadores[infEncontradoKey].usosCupom = (influenciadores[infEncontradoKey].usosCupom || 0) + 1;
-                        localStorage.setItem('wavecombat_influenciadores', JSON.stringify(influenciadores));
+                        await supabaseClient.from('influenciadores').update({
+                            usos: (infData.usos || 0) + 1,
+                            comissao: Number(infData.comissao || 0) + comissao
+                        }).eq('id', infData.id);
+
                         mostrarToast(`⭐ Cupom "${cupomDigitado}" aplicado! +${bonusDiamantes} Diamantes bônus.`);
                     } else {
-                        mostrarToast("⚠️ Cupom inválido, mas a compra prosseguirá.");
+                        mostrarToast("⚠️ Cupom não encontrado, a compra prosseguirá normalmente.");
                     }
                 } catch(e){}
             }
@@ -1027,7 +1019,7 @@
                     alert("Erro ao gerar o Pix. Verifique os dados.");
                 }
             } catch (e) {
-                alert("Erro na conexão com a Edge Function de pagamento.");
+                alert("Erro na conexão com o gateway de pagamento.");
             }
         }
 
@@ -1049,7 +1041,6 @@
                 const { error: walletError } = await supabaseClient.from('carteira_diamantes').upsert({ id_jogador: String(idFinal), diamantes: novoSaldo }, { onConflict: 'id_jogador' });
                 
                 if (!walletError) {
-                    // Envia também uma notificação formal no correio
                     await supabaseClient.from('correios').insert([
                         {
                             id_jogador: String(idFinal),
@@ -1113,77 +1104,48 @@
             let idAlvo = String(userObj.id);
             let nickAlvo = userObj.nick;
 
-            // 1. Grava localmente e no Supabase a influenciadores
-            let influenciadores = {};
-            try { influenciadores = JSON.parse(localStorage.getItem('wavecombat_influenciadores') || '{}'); } catch(e){}
-            influenciadores[idAlvo] = { nick: nickAlvo, id: idAlvo, codigo: codigo, saldoReceber: influenciadores[idAlvo] ? influenciadores[idAlvo].saldoReceber : 0, usosCupom: influenciadores[idAlvo] ? influenciadores[idAlvo].usosCupom : 0 };
-            localStorage.setItem('wavecombat_influenciadores', JSON.stringify(influenciadores));
-
             try {
+                // Registrar Influenciador no banco
                 await supabaseClient.from('influenciadores').upsert([
-                    {
-                        id_jogador: idAlvo,
-                        cupom: codigo,
-                        usos: influenciadores[idAlvo].usosCupom || 0,
-                        comissao: influenciadores[idAlvo].saldoReceber || 0.00
-                    }
-                ]);
-            } catch(e){}
+                    { id_jogador: idAlvo, nick: nickAlvo, cupom: codigo, usos: 0, comissao: 0.00 }
+                ], { onConflict: 'id_jogador' });
 
-            // 2. Grava no Correio Local + Supabase no formato padronizado
-            try {
-                let correios = {};
-                try { correios = JSON.parse(localStorage.getItem('wavecombat_correios') || '{}'); } catch(e){}
-                if (!correios[idAlvo]) correios[idAlvo] = [];
-                
+                // Registrar Selo de Verificado na Nuvem para todos verem
+                await supabaseClient.from('wavecombat_verificados').upsert([
+                    { id_jogador: idAlvo, nick: nickAlvo }
+                ], { onConflict: 'id_jogador' });
+
+                // Enviar Mensagem para o Correio na Nuvem
                 const novaCarta = {
-                    tipo: 'verificado_invite',
+                    id_jogador: idAlvo,
                     titulo: "🎉 Convite Especial de Verificado & Cupom! ⭐",
                     mensagem: `Sua conta foi selecionada para verificado e parceria! Clique para resgatar o Selo V Dourado, Moldura, Fundo Animado, 5.000 Diamantes e ativar seu Cupom: ${codigo}`,
-                    codigoCupom: codigo,
-                    data: new Date().toLocaleDateString('pt-BR'),
-                    resgatado: false
+                    tipo: 'verificado_invite',
+                    codigo_cupom: codigo,
+                    resgatado: false,
+                    data: new Date().toLocaleDateString('pt-BR')
                 };
-                
-                correios[idAlvo].unshift(novaCarta);
-                localStorage.setItem('wavecombat_correios', JSON.stringify(correios));
 
-                await supabaseClient.from('correios').insert([
-                    {
-                        id_jogador: idAlvo,
-                        titulo: novaCarta.titulo,
-                        mensagem: novaCarta.mensagem,
-                        tipo: 'verificado_invite',
-                        codigo_cupom: codigo,
-                        resgatado: false,
-                        data: novaCarta.data
-                    }
-                ]);
+                await supabaseClient.from('correios').insert([novaCarta]);
 
-                mostrarToast(`🌟 Influenciador ${nickAlvo} (ID: ${idAlvo}) configurado e convite enviado!`);
+                await carregarVerificadosNuvem();
+                mostrarToast(`🌟 Influenciador ${nickAlvo} (ID: ${idAlvo}) verificado na nuvem e convite enviado!`);
                 document.getElementById('infTargetNick').value = '';
                 document.getElementById('infTargetCodigo').value = '';
                 renderizarTabelaInfluenciadoresAdmin();
             } catch(e) {
-                alert("Erro ao enviar carta para o correio.");
+                alert("Erro ao registrar influenciador ou enviar mensagem no Supabase.");
             }
         }
 
         async function obterUsuariosCadastrados() {
-            let listaLocal = [];
-            try { listaLocal = JSON.parse(localStorage.getItem('wavecombat_users') || '[]'); } catch(e){}
             try {
                 const { data } = await supabaseClient.from('usuarios').select('*');
-                if (data && data.length > 0) {
-                    data.forEach(u => {
-                        let idU = String(u.id_jogador || u.id);
-                        if (!listaLocal.some(x => (String(x.id) === idU) || (x.nick && x.nick.toLowerCase() === u.nick.toLowerCase()))) {
-                            listaLocal.push({ nick: u.nick, pass: u.pass || '', id: idU });
-                        }
-                    });
+                if (data) {
+                    return data.map(u => ({ nick: u.nick, pass: u.pass || '', id: String(u.id_jogador || u.id) }));
                 }
             } catch(e){}
-            return listaLocal;
+            return [];
         }
 
         async function renderizarTabelaUsuariosAdmin() {
@@ -1191,8 +1153,14 @@
             if (!container) return;
             let filtro = (document.getElementById('inputBuscaAdminUser')?.value || '').toLowerCase();
             let usuarios = await obterUsuariosCadastrados();
-            let banidos = {};
-            try { banidos = JSON.parse(localStorage.getItem('wavecombat_banidos') || '{}'); } catch(e){}
+            
+            let banidosDict = {};
+            try {
+                const { data: bList } = await supabaseClient.from('wavecombat_banidos').select('*');
+                if (bList) {
+                    bList.forEach(b => { banidosDict[String(b.id_jogador)] = new Date(b.expira_em).getTime(); });
+                }
+            } catch(e){}
 
             if (!usuarios || usuarios.length === 0) {
                 container.innerHTML = `<p style="color:#94a3b8; font-size:11px; text-align:center;">Nenhum usuário cadastrado.</p>`;
@@ -1203,7 +1171,8 @@
             let filtrados = usuarios.filter(u => (u.nick && u.nick.toLowerCase().includes(filtro)) || (u.id && String(u.id).includes(filtro)));
             
             container.innerHTML = filtrados.map(u => {
-                let isBan = banidos[u.id] && Date.now() < banidos[u.id].expiraEm;
+                let expira = banidosDict[u.id];
+                let isBan = expira && Date.now() < expira;
                 return `
                     <div style="display:flex; justify-content:space-between; align-items:center; background:#070a10; border:1px solid var(--steel-border); padding:8px; border-radius:6px; font-size:11px; flex-wrap:wrap; gap:6px;">
                         <div style="display:flex; align-items:center;">
@@ -1224,76 +1193,72 @@
             }).join('');
         }
 
-        function aplicarBanimentoUser(id) {
+        async function aplicarBanimentoUser(id) {
             let duracao = document.getElementById(`selectBan_${id}`).value;
             let tempoMs = 7 * 24 * 60 * 60 * 1000;
             if (duracao === '1m') tempoMs = 30 * 24 * 60 * 60 * 1000;
             if (duracao === '999a') tempoMs = 999 * 365 * 24 * 60 * 60 * 1000;
+            let expiraEmIso = new Date(Date.now() + tempoMs).toISOString();
 
-            let banidos = {};
-            try { banidos = JSON.parse(localStorage.getItem('wavecombat_banidos') || '{}'); } catch(e){}
-            banidos[id] = { expiraEm: Date.now() + tempoMs };
-            localStorage.setItem('wavecombat_banidos', JSON.stringify(banidos));
-            mostrarToast("🔨 Usuário banido!");
-            renderizarTabelaUsuariosAdmin();
+            try {
+                await supabaseClient.from('wavecombat_banidos').upsert([{ id_jogador: String(id), expira_em: expiraEmIso }], { onConflict: 'id_jogador' });
+                mostrarToast("🔨 Usuário banido na nuvem!");
+                renderizarTabelaUsuariosAdmin();
+            } catch(e) {
+                alert("Erro ao aplicar banimento na nuvem.");
+            }
         }
 
-        function removerBanimentoUser(id) {
-            let banidos = {};
-            try { banidos = JSON.parse(localStorage.getItem('wavecombat_banidos') || '{}'); } catch(e){}
-            delete banidos[id];
-            localStorage.setItem('wavecombat_banidos', JSON.stringify(banidos));
-            mostrarToast("✨ Banimento removido!");
-            renderizarTabelaUsuariosAdmin();
+        async function removerBanimentoUser(id) {
+            try {
+                await supabaseClient.from('wavecombat_banidos').delete().eq('id_jogador', String(id));
+                mostrarToast("✨ Banimento removido!");
+                renderizarTabelaUsuariosAdmin();
+            } catch(e) {
+                alert("Erro ao remover banimento.");
+            }
         }
 
-        function renderizarTabelaInfluenciadoresAdmin() {
+        async function renderizarTabelaInfluenciadoresAdmin() {
             let container = document.getElementById('adminListaInfluenciadoresContainer');
             if (!container) return;
-            let influenciadores = {};
-            try { influenciadores = JSON.parse(localStorage.getItem('wavecombat_influenciadores') || '{}'); } catch(e){}
-            let chaves = Object.keys(influenciadores);
-            if (chaves.length === 0) {
-                container.innerHTML = `<p style="color:#94a3b8; font-size:11px; text-align:center;">Nenhum influenciador cadastrado.</p>`;
-                return;
-            }
-            chaves.sort((a, b) => (influenciadores[a].nick || '').localeCompare(influenciadores[b].nick || '', 'pt-BR', { sensitivity: 'base' }));
+            try {
+                const { data } = await supabaseClient.from('influenciadores').select('*');
+                if (!data || data.length === 0) {
+                    container.innerHTML = `<p style="color:#94a3b8; font-size:11px; text-align:center;">Nenhum influenciador cadastrado.</p>`;
+                    return;
+                }
+                data.sort((a, b) => (a.nick || '').localeCompare(b.nick || '', 'pt-BR', { sensitivity: 'base' }));
 
-            container.innerHTML = chaves.map(k => {
-                let inf = influenciadores[k];
-                return `
+                container.innerHTML = data.map(inf => `
                     <div style="display:flex; justify-content:space-between; align-items:center; background:#070a10; border:1px solid var(--steel-border); padding:8px; border-radius:6px; font-size:11px; flex-wrap:wrap; gap:6px;">
                         <div>
-                            <strong style="color:var(--accent-color);">${inf.nick}</strong> <span style="color:#64748b;">(ID: ${inf.id || k})</span> | Cupom: <strong style="color:var(--gold-warning);">${inf.codigo}</strong>
-                            <br><span style="color:#22c55e;">Usos: ${inf.usosCupom || 0}</span> | Comissões (30%): <strong style="color:#fff;">R$ ${(inf.saldoReceber || 0).toFixed(2)}</strong>
+                            <strong style="color:var(--accent-color);">${obterHtmlNickVerificado(inf.nick, inf.id_jogador)}</strong> <span style="color:#64748b;">(ID: ${inf.id_jogador})</span> | Cupom: <strong style="color:var(--gold-warning);">${inf.cupom}</strong>
+                            <br><span style="color:#22c55e;">Usos: ${inf.usos || 0}</span> | Comissões (30%): <strong style="color:#fff;">R$ ${Number(inf.comissao || 0).toFixed(2)}</strong>
                         </div>
                         <div style="display:flex; gap:4px;">
-                            <button class="btn-gaming" onclick="resetarSaldoInfluenciador('${k}')" style="padding:4px 8px; font-size:10px; background:var(--gold-warning); color:#000;">Resetar Saldo</button>
-                            <button class="btn-gaming btn-danger" onclick="removerInfluenciador('${k}')" style="padding:4px 8px; font-size:10px;">Remover</button>
+                            <button class="btn-gaming" onclick="resetarSaldoInfluenciador('${inf.id_jogador}')" style="padding:4px 8px; font-size:10px; background:var(--gold-warning); color:#000;">Resetar Saldo</button>
+                            <button class="btn-gaming btn-danger" onclick="removerInfluenciador('${inf.id_jogador}')" style="padding:4px 8px; font-size:10px;">Remover</button>
                         </div>
                     </div>
-                `;
-            }).join('');
+                `).join('');
+            } catch(e){}
         }
 
-        function resetarSaldoInfluenciador(k) {
-            let influenciadores = {};
-            try { influenciadores = JSON.parse(localStorage.getItem('wavecombat_influenciadores') || '{}'); } catch(e){}
-            if (influenciadores[k]) {
-                influenciadores[k].saldoReceber = 0;
-                localStorage.setItem('wavecombat_influenciadores', JSON.stringify(influenciadores));
+        async function resetarSaldoInfluenciador(idJogador) {
+            try {
+                await supabaseClient.from('influenciadores').update({ comissao: 0 }).eq('id_jogador', String(idJogador));
                 mostrarToast("🔄 Saldo resetado!");
                 renderizarTabelaInfluenciadoresAdmin();
-            }
+            } catch(e){}
         }
 
-        function removerInfluenciador(k) {
-            let influenciadores = {};
-            try { influenciadores = JSON.parse(localStorage.getItem('wavecombat_influenciadores') || '{}'); } catch(e){}
-            delete influenciadores[k];
-            localStorage.setItem('wavecombat_influenciadores', JSON.stringify(influenciadores));
-            mostrarToast("❌ Influenciador removido.");
-            renderizarTabelaInfluenciadoresAdmin();
+        async function removerInfluenciador(idJogador) {
+            try {
+                await supabaseClient.from('influenciadores').delete().eq('id_jogador', String(idJogador));
+                mostrarToast("❌ Influenciador removido.");
+                renderizarTabelaInfluenciadoresAdmin();
+            } catch(e){}
         }
 
         async function carregarCorreioUsuario() {
@@ -1303,7 +1268,6 @@
             let idUser = String(usuarioLogado.id);
             let minhasMsgs = [];
 
-            // Tenta obter do Supabase primeiro
             try {
                 const { data } = await supabaseClient
                     .from('correios')
@@ -1324,78 +1288,52 @@
                 }
             } catch(e){}
 
-            // Fallback para mensagens locais caso não venha do Supabase
-            if (minhasMsgs.length === 0) {
-                let correiosLocais = {};
-                try { correiosLocais = JSON.parse(localStorage.getItem('wavecombat_correios') || '{}'); } catch(e){}
-                minhasMsgs = correiosLocais[idUser] || [];
-            }
-
             if (minhasMsgs.length === 0) {
                 container.innerHTML = `<p style="color:#94a3b8; text-align:center; font-size:11px;">Nenhuma mensagem no correio.</p>`;
                 return;
             }
 
-            container.innerHTML = minhasMsgs.map((m, idx) => `
+            container.innerHTML = minhasMsgs.map(m => `
                 <div style="background:#0b0f17; border:1px solid ${m.resgatado ? 'var(--steel-border)' : '#FFD700'}; padding:10px; border-radius:8px; margin-bottom:8px; font-size:11px;">
                     <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
                         <strong style="color:var(--accent-color);">${m.titulo}</strong>
                         <span style="color:#64748b; font-size:9px;">${m.data}</span>
                     </div>
                     <p style="color:#94a3b8; margin-bottom:8px;">${m.mensagem}</p>
-                    ${!m.resgatado ? `<button class="btn-gaming" onclick="resgatarPremioCorreio(${idx}, ${m.id || 'null'})" style="background:#FFD700; color:#000; width:100%; padding:6px; font-size:10px;">🎁 Resgatar Benefícios & Prêmios</button>` : `<span style="color:#22c55e; font-weight:bold;">✅ Prêmios Resgatados</span>`}
+                    ${!m.resgatado ? `<button class="btn-gaming" onclick="resgatarPremioCorreio(${m.id})" style="background:#FFD700; color:#000; width:100%; padding:6px; font-size:10px;">🎁 Resgatar Benefícios & Prêmios</button>` : `<span style="color:#22c55e; font-weight:bold;">✅ Prêmios Resgatados</span>`}
                 </div>
             `).join('');
         }
 
-        async function resgatarPremioCorreio(idx, dbId = null) {
+        async function resgatarPremioCorreio(dbId) {
+            if (!usuarioLogado) return;
             let idUser = String(usuarioLogado.id);
             let nickUser = usuarioLogado.nick;
 
-            let correiosLocais = {};
-            try { correiosLocais = JSON.parse(localStorage.getItem('wavecombat_correios') || '{}'); } catch(e){}
-            
-            let msgData = null;
-            if (correiosLocais[idUser] && correiosLocais[idUser][idx]) {
-                msgData = correiosLocais[idUser][idx];
-                msgData.resgatado = true;
-                localStorage.setItem('wavecombat_correios', JSON.stringify(correiosLocais));
-            }
-
-            // Atualiza status no Supabase se houver ID da linha
-            if (dbId) {
-                try {
-                    await supabaseClient.from('correios').update({ resgatado: true }).eq('id', dbId);
-                } catch(e){}
-            }
-
-            // Aplica os prêmios
-            let verificados = {};
-            try { verificados = JSON.parse(localStorage.getItem('wavecombat_verificados') || '{}'); } catch(e){}
-            verificados[idUser] = true;
-            localStorage.setItem('wavecombat_verificados', JSON.stringify(verificados));
-
-            if (msgData && msgData.codigoCupom) {
-                let influenciadores = {};
-                try { influenciadores = JSON.parse(localStorage.getItem('wavecombat_influenciadores') || '{}'); } catch(e){}
-                if (!influenciadores[idUser]) {
-                    influenciadores[idUser] = { nick: nickUser, id: idUser, codigo: msgData.codigoCupom, saldoReceber: 0, usosCupom: 0 };
-                    localStorage.setItem('wavecombat_influenciadores', JSON.stringify(influenciadores));
-                }
-            }
-
             try {
+                // Marca como resgatado no banco de dados
+                await supabaseClient.from('correios').update({ resgatado: true }).eq('id', dbId);
+
+                // Registra verificado global na nuvem
+                await supabaseClient.from('wavecombat_verificados').upsert([
+                    { id_jogador: idUser, nick: nickUser }
+                ], { onConflict: 'id_jogador' });
+
+                // Adiciona 5.000 diamantes
                 const { data: carteira } = await supabaseClient.from('carteira_diamantes').select('diamantes').eq('id_jogador', idUser).single();
                 let saldoAtual = carteira ? (carteira.diamantes || 0) : 0;
                 await supabaseClient.from('carteira_diamantes').upsert({ id_jogador: idUser, nick: nickUser, diamantes: saldoAtual + 5000 }, { onConflict: 'id_jogador' });
-            } catch(e){}
 
-            tocarSomLevelUp();
-            document.getElementById('modalVerificadoPremio').style.display = 'flex';
-            carregarCorreioUsuario();
-            carregarSaldoDiamantesSite();
-            atualizarPerfilExpandidoUI();
-            document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(nickUser, idUser);
+                await carregarVerificadosNuvem();
+                tocarSomLevelUp();
+                document.getElementById('modalVerificadoPremio').style.display = 'flex';
+                carregarCorreioUsuario();
+                carregarSaldoDiamantesSite();
+                atualizarPerfilExpandidoUI();
+                document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(nickUser, idUser);
+            } catch(e){
+                alert("Erro ao resgatar benefícios da nuvem.");
+            }
         }
 
         function fecharModalVerificadoPremio() { document.getElementById('modalVerificadoPremio').style.display = 'none'; }
@@ -1423,30 +1361,18 @@
             }
             const novoId = Math.floor(100000000 + Math.random() * 900000000).toString();
             try {
-                const { error: regError } = await supabaseClient.from('usuarios').insert([{ id_jogador: novoId, nick: u, pass: p }]);
-                if (regError) {
-                    console.error("Erro ao registrar no Supabase:", regError);
-                    alert("Aviso: Falha ao sincronizar registro com a nuvem, mas a conta foi criada localmente.");
-                }
+                await supabaseClient.from('usuarios').insert([{ id_jogador: novoId, nick: u, pass: p }]);
+                usuarioLogado = { nick: u, isAdm: false, id: novoId };
+                localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
+                
+                mostrarToast("✨ Conta criada com sucesso!");
+                document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(u, novoId);
+                fecharModalAuth();
+                atualizarAbasPerfilUI();
+                carregarSaldoDiamantesSite();
             } catch(err){
-                console.error("Exceção ao registrar:", err);
+                alert("Erro ao criar conta na nuvem.");
             }
-
-            let localUsers = [];
-            try { localUsers = JSON.parse(localStorage.getItem('wavecombat_users') || '[]'); } catch(e){}
-            localUsers.push({ nick: u, pass: p, id: novoId });
-            localStorage.setItem('wavecombat_users', JSON.stringify(localUsers));
-            
-            usuarioLogado = { nick: u, isAdm: false, id: novoId };
-            localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
-            localStorage.setItem('wavecombat_nick', u);
-            localStorage.setItem('wavecombat_id', novoId);
-            
-            mostrarToast("✨ Conta criada com sucesso!");
-            document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(u, novoId);
-            fecharModalAuth();
-            atualizarAbasPerfilUI();
-            carregarSaldoDiamantesSite();
         }
 
         async function fazerLoginPlataforma(e) {
@@ -1457,9 +1383,7 @@
             if (u.toLowerCase() === 'capudo7' && p === '262026') {
                 usuarioLogado = { nick: 'capudo7', isAdm: true, id: MEU_ID_MESTRE };
                 localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
-                localStorage.setItem('wavecombat_nick', 'capudo7');
-                localStorage.setItem('wavecombat_id', MEU_ID_MESTRE);
-                if (verificarBanimentoAtual()) return;
+                if (await verificarBanimentoAtual()) return;
 
                 mostrarToast('⭐ Acesso ADM Concedido!');
                 document.getElementById('btnToggleAdmNav').style.display = 'inline-block';
@@ -1473,13 +1397,11 @@
             let users = await obterUsuariosCadastrados();
             let achou = users.find(x => x.nick && x.nick.toLowerCase() === u.toLowerCase() && x.pass === p);
             if(achou) {
-                let idUser = String(achou.id_jogador || achou.id || Math.floor(100000000 + Math.random() * 900000000).toString());
+                let idUser = String(achou.id);
                 usuarioLogado = { nick: achou.nick, isAdm: false, id: idUser };
-                if (verificarBanimentoAtual()) return;
+                if (await verificarBanimentoAtual()) return;
 
                 localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
-                localStorage.setItem('wavecombat_nick', achou.nick);
-                localStorage.setItem('wavecombat_id', idUser);
                 mostrarToast(`👋 Bem-vindo, ${achou.nick}!`);
                 document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(achou.nick, idUser);
                 fecharModalAuth();
@@ -1492,40 +1414,30 @@
 
         async function atualizarPerfilExpandidoUI() {
             const perfilDiv = document.getElementById('perfilUserData');
-            const nickAtual = localStorage.getItem('wavecombat_nick') || '';
-            const idAtual = localStorage.getItem('wavecombat_id') || '';
-            let corAtual = localStorage.getItem('wavecombat_cor_nick') || '#00f0ff';
-            let historico = [];
-            try { historico = JSON.parse(localStorage.getItem('wavecombat_historico') || '[]'); } catch(e){}
-
-            let verificados = {};
-            try { verificados = JSON.parse(localStorage.getItem('wavecombat_verificados') || '{}'); } catch(e){}
-            let isVerif = verificados[idAtual];
-
-            let histHtml = historico.length > 0 
-                ? historico.map(h => `<li style="font-size:10px; color:#94a3b8;">🎮 ${h.nome} (${h.data})</li>`).join('') 
-                : `<li style="font-size:10px; color:#64748b;">Nenhum jogo recente.</li>`;
+            if (!usuarioLogado) return;
+            const nickAtual = usuarioLogado.nick;
+            const idAtual = String(usuarioLogado.id);
+            
+            await carregarVerificadosNuvem();
+            let isVerif = cacheVerificadosNuvem[idAtual] || cacheVerificadosNuvem[nickAtual.toLowerCase()] || nickAtual.toLowerCase() === 'rocky';
 
             let nivelUser = 1;
             let xpUser = 0;
-            if (idAtual) {
-                try {
-                    const { data: lbData } = await supabaseClient.from('leaderboard').select('nivel, xp').eq('id_jogador', idAtual).single();
-                    if (lbData) { nivelUser = lbData.nivel || 1; xpUser = lbData.xp || 0; }
-                } catch(e){}
-            }
+            try {
+                const { data: lbData } = await supabaseClient.from('leaderboard').select('nivel, xp').eq('id_jogador', idAtual).single();
+                if (lbData) { nivelUser = lbData.nivel || 1; xpUser = lbData.xp || 0; }
+            } catch(e){}
 
             let influenciadorInfoHtml = '';
             try {
-                let influenciadores = JSON.parse(localStorage.getItem('wavecombat_influenciadores') || '{}');
-                let meuInf = influenciadores[idAtual];
+                const { data: meuInf } = await supabaseClient.from('influenciadores').select('*').eq('id_jogador', idAtual).maybeSingle();
                 if (meuInf) {
                     influenciadorInfoHtml = `
                         <div style="background:rgba(245, 158, 11, 0.1); border:1px solid var(--gold-warning); padding:10px; border-radius:8px; margin-top:10px;">
                             <h5 style="font-family:'Orbitron'; font-size:11px; color:var(--gold-warning); margin-bottom:4px;">🌟 Painel do Influenciador</h5>
-                            <p style="font-size:10px; color:#fff;">Seu Cupom: <strong>${meuInf.codigo}</strong></p>
-                            <p style="font-size:10px; color:#22c55e;">Usos: ${meuInf.usosCupom || 0}</p>
-                            <p style="font-size:10px; color:var(--gold-warning);">Comissão (30%): <strong>R$ ${(meuInf.saldoReceber || 0).toFixed(2)}</strong></p>
+                            <p style="font-size:10px; color:#fff;">Seu Cupom: <strong>${meuInf.cupom}</strong></p>
+                            <p style="font-size:10px; color:#22c55e;">Usos: ${meuInf.usos || 0}</p>
+                            <p style="font-size:10px; color:var(--gold-warning);">Comissão (30%): <strong>R$ ${Number(meuInf.comissao || 0).toFixed(2)}</strong></p>
                         </div>
                     `;
                 }
@@ -1536,46 +1448,20 @@
             perfilDiv.innerHTML = `
                 <div style="display:flex; flex-direction:column; gap:10px;">
                     <div class="${cardStyleClass}" style="background:#0b0f17; border:1px solid var(--steel-border); padding:10px; border-radius:8px; text-align:center;">
-                        <h4 style="color:var(--accent-color); font-family:'Orbitron'; font-size:13px; display:flex; align-items:center; justify-content:center;">${usuarioLogado ? obterHtmlNickVerificado(usuarioLogado.nick, idAtual) : 'Convidado'}</h4>
-                        <p style="font-size:11px; color:var(--gold-warning); font-family:'Orbitron'; margin-top:4px;">ID Único: <strong>${idAtual || 'Não Logado'}</strong></p>
+                        <h4 style="color:var(--accent-color); font-family:'Orbitron'; font-size:13px; display:flex; align-items:center; justify-content:center;">${obterHtmlNickVerificado(nickAtual, idAtual)}</h4>
+                        <p style="font-size:11px; color:var(--gold-warning); font-family:'Orbitron'; margin-top:4px;">ID Único: <strong>${idAtual}</strong></p>
                         <p style="font-size:10px; color:#22c55e; margin-top:2px;">⭐ Nível: ${nivelUser} | XP: ${xpUser}</p>
                         ${isVerif ? '<p style="font-size:10px; color:#FFD700; margin-top:4px; font-weight:bold;">⭐ Conta Oficial Verificada</p>' : ''}
                     </div>
                     ${influenciadorInfoHtml}
-                    <div>
-                        <label style="font-size:11px; color:#94a3b8;">Editar Nick:</label>
-                        <input type="text" id="inputHubNickEdit" value="${nickAtual}" class="auth-input" oninput="salvarNickManualSite(this.value)">
-                    </div>
-                    <div>
-                        <label style="font-size:11px; color:#94a3b8;">🎨 Cor do Nick no Chat:</label>
-                        <div style="display:flex; gap:10px; align-items:center; margin-top:4px;">
-                            <input type="color" id="inputCorNickEdit" value="${corAtual}" style="width:40px; height:30px; border:none; background:none; cursor:pointer;" onchange="salvarCorNickSite(this.value)">
-                        </div>
-                    </div>
-                    <div>
-                        <h5 style="font-family:'Orbitron'; font-size:11px; color:var(--accent-color); margin-bottom:4px;">📜 Últimos Jogos:</h5>
-                        <ul style="padding-left:15px; display:flex; flex-direction:column; gap:3px;">${histHtml}</ul>
-                    </div>
                     ${usuarioLogado ? `<button class="btn-gaming btn-danger" onclick="fazerLogout(); tocarSomClique();" style="padding:6px; font-size:11px;">Sair da Conta</button>` : ``}
                 </div>
             `;
         }
 
-        function salvarNickManualSite(novoNick) {
-            const limpo = novoNick.trim();
-            if (limpo) localStorage.setItem('wavecombat_nick', limpo);
-        }
-
-        function salvarCorNickSite(novaCor) {
-            localStorage.setItem('wavecombat_cor_nick', novaCor);
-            mostrarToast("🎨 Cor do nick atualizada!");
-        }
-
         function fazerLogout() {
             usuarioLogado = null;
             localStorage.removeItem('wavecombat_sessao_ativa');
-            localStorage.removeItem('wavecombat_id');
-            localStorage.removeItem('wavecombat_nick');
             document.getElementById('btnAuthNav').textContent = 'Entrar';
             document.getElementById('btnToggleAdmNav').style.display = 'none';
             document.getElementById('adminSection').style.display = 'none';
@@ -1589,10 +1475,11 @@
             const section = document.getElementById('siteLeaderboardSection');
             if(!container || !section) return;
             section.style.display = 'block';
+            await carregarVerificadosNuvem();
             try {
                 const { data, error } = await supabaseClient.from('leaderboard').select('*').order('pontos', { ascending: false }).limit(10);
                 if (error || !data || data.length === 0) {
-                    container.innerHTML = `<p style="color:#94a3b8; text-align:center; font-size:11px;">Nenum recorde registrado.</p>`;
+                    container.innerHTML = `<p style="color:#94a3b8; text-align:center; font-size:11px;">Nenhum recorde registrado.</p>`;
                     return;
                 }
                 container.innerHTML = data.map((item, idx) => `
@@ -1604,7 +1491,6 @@
             } catch(e) {}
         }
 
-        // CARREGAMENTO DO CHAT OTIMIZADO COM ORDENAÇÃO ASCENDENTE E LIMITE
         async function carregarMensagensChat() {
             try {
                 const { data, error } = await supabaseClient
@@ -1616,17 +1502,12 @@
                 const container = document.getElementById('miniChatMessages');
                 if (!container) return;
 
-                if (error) {
-                    console.error("Erro ao carregar chat:", error);
-                    return;
-                }
-
-                if (!data || data.length === 0) {
+                if (error || !data || data.length === 0) {
                     container.innerHTML = `<div style="color:#64748b; font-style:italic;">Nenhuma mensagem recente. Seja o primeiro a falar!</div>`;
                     return;
                 }
 
-                const nickAtual = localStorage.getItem('wavecombat_nick') || '';
+                const nickAtual = usuarioLogado ? usuarioLogado.nick : '';
                 container.innerHTML = data.map(m => {
                     const isMentioned = nickAtual && m.mensagem.toLowerCase().includes(`@${nickAtual.toLowerCase()}`);
                     const corNick = m.cor || '#00f0ff';
@@ -1638,9 +1519,7 @@
                 }).join('');
                 
                 container.scrollTop = container.scrollHeight;
-            } catch(e) {
-                console.error("Exceção ao buscar mensagens do chat:", e);
-            }
+            } catch(e) {}
         }
 
         function inserirEmojiChat(emoji) {
@@ -1661,33 +1540,27 @@
             if (!txt) return;
 
             ultimaMensagemChatTempo = agora;
-            const nick = localStorage.getItem('wavecombat_nick') || 'Convidado';
-            const cor = localStorage.getItem('wavecombat_cor_nick') || '#00f0ff';
-            const idJogador = localStorage.getItem('wavecombat_id') || '';
+            const nick = usuarioLogado ? usuarioLogado.nick : 'Convidado';
+            const idJogador = usuarioLogado ? String(usuarioLogado.id) : '';
             
             try {
-                const { error } = await supabaseClient.from('chat_global').insert([{ nick, mensagem: txt, cor, id_jogador: idJogador }]);
+                const { error } = await supabaseClient.from('chat_global').insert([{ nick, mensagem: txt, cor: '#00f0ff', id_jogador: idJogador }]);
                 if (error) {
-                    console.error("Erro ao enviar mensagem:", error);
-                    alert("Erro ao enviar mensagem no chat. Verifique as permissões da tabela.");
+                    alert("Erro ao enviar mensagem no chat.");
                     return;
                 }
                 input.value = '';
                 carregarMensagensChat();
                 tocarSomClique();
-            } catch(e) {
-                console.error("Exceção ao enviar mensagem:", e);
-                alert("Erro ao conectar com o servidor para enviar a mensagem.");
-            }
+            } catch(e) {}
         }
 
         async function buscarDadosNuvem() {
+            await carregarVerificadosNuvem();
             try {
                 const { data, error } = await supabaseClient.from('jogos').select('*');
                 if (error || !data || data.length === 0) {
-                    for(let j of jogosIniciaisFallback) { await supabaseClient.from('jogos').insert([j]); }
-                    const { data: newData } = await supabaseClient.from('jogos').select('*');
-                    listaJogosCache = newData || jogosIniciaisFallback;
+                    listaJogosCache = jogosIniciaisFallback;
                 } else {
                     listaJogosCache = data;
                 }
@@ -1777,17 +1650,7 @@
         }
 
         async function tentarExecutarJogo(jogo) {
-            if (verificarBanimentoAtual()) return;
-            inicializarIdentidadeLocal();
-            registrarHistoricoJogo(jogo.nome);
-
-            if (bgmActive) {
-                if (bgmInterval) clearInterval(bgmInterval);
-                bgmActive = false;
-                const checkBGM = document.getElementById('checkBGM');
-                if(checkBGM) checkBGM.checked = false;
-            }
-
+            if (await verificarBanimentoAtual()) return;
             try { await supabaseClient.from('jogos').update({ acessos: (jogo.acessos || 0) + 1 }).eq('id', jogo.id); } catch(e){}
 
             document.getElementById('gameIframe').src = jogo.arquivo;
@@ -1800,19 +1663,6 @@
             const jogos = listaJogosCache.filter(j => j.publicado);
             const destaque = obterJogoDestaque(jogos);
             if(destaque) tentarExecutarJogo(destaque);
-        }
-
-        function obterFavoritos() { 
-            try { return JSON.parse(localStorage.getItem('wavecombat_favs') || '[]'); } catch(e) { return []; } 
-        }
-
-        function toggleFavorito(id) {
-            let favs = obterFavoritos();
-            if(favs.includes(id)) favs = favs.filter(i => i !== id);
-            else favs.push(id);
-            try { localStorage.setItem('wavecombat_favs', JSON.stringify(favs)); } catch(e) {}
-            atualizarPlataforma();
-            tocarSomClique();
         }
 
         function alternarPainelAdm() {
@@ -1848,12 +1698,6 @@
             if (siteConfigGlobal.ativa && siteConfigGlobal.url.trim() !== "") {
                 box.style.display = 'block';
                 iframe.src = converterUrlYoutubeParaEmbed(siteConfigGlobal.url);
-                if (bgmActive) {
-                    if (bgmInterval) clearInterval(bgmInterval);
-                    bgmActive = false;
-                    const checkBGM = document.getElementById('checkBGM');
-                    if(checkBGM) checkBGM.checked = false;
-                }
             } else {
                 box.style.display = 'none';
                 iframe.src = "about:blank";
@@ -1883,27 +1727,6 @@
             return canvas.toDataURL('image/png');
         }
 
-        function extrairCorDinamicaImagem(imgElement) {
-            try {
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                canvas.width = 50; canvas.height = 50;
-                ctx.drawImage(imgElement, 0, 0, 50, 50);
-                const data = ctx.getImageData(0, 0, 50, 50).data;
-                let r = 0, g = 0, b = 0, count = 0;
-                for (let i = 0; i < data.length; i += 16) {
-                    let red = data[i], green = data[i+1], blue = data[i+2];
-                    let max = Math.max(red, green, blue), min = Math.min(red, green, blue);
-                    if (max > 40 && (max - min) > 20) { r += red; g += green; b += blue; count++; }
-                }
-                if (count > 0) {
-                    r = Math.floor(r / count); g = Math.floor(g / count); b = Math.floor(b / count);
-                    document.documentElement.style.setProperty('--accent-color', `rgb(${r}, ${g}, ${b})`);
-                    document.documentElement.style.setProperty('--accent-glow', `rgba(${r}, ${g}, ${b}, 0.35)`);
-                }
-            } catch(e) {}
-        }
-
         function obterJogoDestaque(jogosPublicados) {
             const manual = jogosPublicados.find(j => j.destaque_manual);
             if(manual) return manual;
@@ -1914,11 +1737,9 @@
             let jogosPublicados = listaJogosCache.filter(j => j.publicado);
             const busca = (document.getElementById('inputSearchGames')?.value || '').toLowerCase();
             const cat = document.getElementById('selectCategoryFilter')?.value || 'todos';
-            const favs = obterFavoritos();
 
             if (busca) jogosPublicados = jogosPublicados.filter(j => j.nome.toLowerCase().includes(busca));
-            if (cat === 'favoritos') jogosPublicados = jogosPublicados.filter(j => favs.includes(j.id));
-            else if (cat !== 'todos') jogosPublicados = jogosPublicados.filter(j => j.categoria === cat);
+            if (cat !== 'todos') jogosPublicados = jogosPublicados.filter(j => j.categoria === cat);
 
             jogosPublicados.sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR', { sensitivity: 'base' }));
 
@@ -1927,15 +1748,10 @@
 
             if(capaDestaque) {
                 document.getElementById('heroHeader').style.backgroundImage = `url('${capaDestaque}')`;
-                const tempImg = new Image();
-                tempImg.crossOrigin = "Anonymous";
-                tempImg.src = capaDestaque;
-                tempImg.onload = () => extrairCorDinamicaImagem(tempImg);
             }
 
             const featuredContainer = document.getElementById('featuredGameContainer');
             if(destaque) {
-                const isFav = favs.includes(destaque.id);
                 featuredContainer.innerHTML = `
                     <div class="featured-game-box">
                         <div class="featured-badge">${destaque.destaque_manual ? '★ DESTAQUE' : '🔥 DESTAQUE'}</div>
@@ -1944,7 +1760,6 @@
                         <p style="font-size:12px; color:#94a3b8;">${destaque.desc}</p>
                         <div class="game-card-actions">
                             <button type="button" class="btn-gaming" onclick="tentarExecutarJogo(${JSON.stringify(destaque).replace(/"/g, '&quot;')}); tocarSomClique();" style="flex:1; padding:8px;">▶ JOGAR AGORA</button>
-                            <button type="button" class="btn-fav" onclick="toggleFavorito('${destaque.id}')">${isFav ? '★' : '☆'}</button>
                         </div>
                     </div>
                 `;
@@ -1956,7 +1771,6 @@
             listContainer.innerHTML = '';
             jogosPublicados.forEach(jogo => {
                 const thumb = jogo.img || gerarPrintAutoCapa(jogo.nome);
-                const isFav = favs.includes(jogo.id);
                 const item = document.createElement('div');
                 item.className = 'game-list-card';
                 item.innerHTML = `
@@ -1965,7 +1779,6 @@
                         <h4>${jogo.nome}</h4>
                         <p>${jogo.desc}</p>
                     </div>
-                    <button type="button" class="btn-fav" onclick="toggleFavorito('${jogo.id}')">${isFav ? '★' : '☆'}</button>
                 `;
                 listContainer.appendChild(item);
             });
@@ -2075,7 +1888,7 @@
         carregarSessaoSalva();
         buscarDadosNuvem();
         carregarMensagensChat();
-        setInterval(carregarMensagensChat, 3000); // Polling automático do chat em tempo real
+        setInterval(carregarMensagensChat, 3000); // Polling em tempo real
     </script>
 </body>
 </html>
