@@ -116,7 +116,7 @@
             .nav-links {
                 position: fixed; top: 0; right: -100%; width: 250px; height: 100vh;
                 background: rgba(11, 15, 23, 0.98); border-left: 2px solid var(--accent-color);
-                flex-direction: column; justify-content: center; gap: 25px;
+                flex-direction: column; justify-center; gap: 25px;
                 transition: 0.3s ease-in-out; z-index: 1001; padding: 20px;
             }
             .nav-links.active { right: 0; }
@@ -644,7 +644,7 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.446 (Safe Upsert & Error Handled)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.447 (Instant Verified & Profile Apply)</strong>
     </footer>
 
     <script>
@@ -1167,7 +1167,6 @@
             let nickAlvo = userObj.nick;
 
             try {
-                // 1. Salvar na tabela influenciadores com tratamento explícito de erros
                 const { data: infData, error: infError } = await supabaseClient
                     .from('influenciadores')
                     .upsert({
@@ -1185,12 +1184,10 @@
                     return;
                 }
 
-                // 2. Registrar como verificado
                 await supabaseClient.from('wavecombat_verificados').upsert([
                     { id_jogador: idAlvo, nick: nickAlvo }
                 ], { onConflict: 'id_jogador' });
 
-                // 3. Enviar carta para o correio do jogador
                 const novaCarta = {
                     id_jogador: idAlvo,
                     titulo: "🎉 Convite Especial de Verificado & Cupom! ⭐",
@@ -1208,7 +1205,6 @@
                 document.getElementById('infTargetNick').value = '';
                 document.getElementById('infTargetCodigo').value = '';
                 
-                // Atualiza a listagem na tela imediatamente
                 renderizarTabelaInfluenciadoresAdmin();
             } catch(e) {
                 alert("Erro de conexão ao processar influenciador.");
@@ -1411,27 +1407,36 @@
             let cupomFinal = (codigoCupomMsg && codigoCupomMsg.trim() !== '') ? codigoCupomMsg : (nickUser.toUpperCase() + '7');
 
             try {
+                // 1. Marcar correio como resgatado
                 await supabaseClient.from('correios').update({ resgatado: true }).eq('id', dbId);
 
+                // 2. Inserir na tabela de verificados
                 await supabaseClient.from('wavecombat_verificados').upsert([
                     { id_jogador: idUser, nick: nickUser }
                 ], { onConflict: 'id_jogador' });
 
+                // 3. Cadastrar ou atualizar influenciador
                 await supabaseClient.from('influenciadores').upsert([
                     { id_jogador: idUser, nick: nickUser, cupom: cupomFinal, usos: 0, comissao: 0.00 }
                 ], { onConflict: 'id_jogador' });
 
+                // 4. Adicionar 5000 diamantes à carteira
                 const { data: carteira } = await supabaseClient.from('carteira_diamantes').select('diamantes').eq('id_jogador', idUser).single();
                 let saldoAtual = carteira ? (carteira.diamantes || 0) : 0;
                 await supabaseClient.from('carteira_diamantes').upsert({ id_jogador: idUser, nick: nickUser, diamantes: saldoAtual + 5000 }, { onConflict: 'id_jogador' });
 
+                // Recarrega o cache de verificados imediatamente
                 await carregarVerificadosNuvem();
+                
                 tocarSomLevelUp();
                 document.getElementById('modalVerificadoPremio').style.display = 'flex';
-                carregarCorreioUsuario();
-                carregarSaldoDiamantesSite();
-                atualizarPerfilExpandidoUI();
-                renderizarTabelaInfluenciadoresAdmin();
+                
+                // Atualiza todas as exibições na tela imediatamente
+                await carregarCorreioUsuario();
+                await carregarSaldoDiamantesSite();
+                await atualizarPerfilExpandidoUI();
+                await renderizarTabelaInfluenciadoresAdmin();
+                
                 document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(nickUser, idUser);
             } catch(e){
                 alert("Erro ao resgatar benefícios da nuvem.");
