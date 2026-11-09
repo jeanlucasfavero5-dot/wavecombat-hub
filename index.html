@@ -721,7 +721,7 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.450 (Stable Session Fix)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.451 (Strict Auth Fix)</strong>
     </footer>
 
     <script>
@@ -801,7 +801,7 @@
         }
 
         function obterHtmlNickVerificado(nick, id) {
-            if (!nick) return '';
+            if (!nick) return 'Entrar';
             let n = nick.toLowerCase();
             let isStaff = (n === 'capudo7' || (usuarioLogado && usuarioLogado.isAdm && String(id) === MEU_ID_MESTRE));
             
@@ -1176,10 +1176,16 @@
                         }
                     } else {
                         localStorage.removeItem('wavecombat_sessao_ativa');
+                        document.getElementById('btnAuthNav').innerHTML = 'Entrar';
                     }
+                } else {
+                    usuarioLogado = null;
+                    document.getElementById('btnAuthNav').innerHTML = 'Entrar';
                 }
             } catch(e) {
                 localStorage.removeItem('wavecombat_sessao_ativa');
+                usuarioLogado = null;
+                document.getElementById('btnAuthNav').innerHTML = 'Entrar';
             }
             atualizarAbasPerfilUI();
             carregarSaldoDiamantesSite();
@@ -1846,7 +1852,11 @@
 
         async function atualizarPerfilExpandidoUI() {
             const perfilDiv = document.getElementById('perfilUserData');
-            if (!usuarioLogado) return;
+            if (!perfilDiv) return;
+            if (!usuarioLogado) {
+                perfilDiv.innerHTML = `<p style="color:#94a3b8; text-align:center;">Faça login para ver seu perfil expandido.</p>`;
+                return;
+            }
             const nickAtual = usuarioLogado.nick;
             const idAtual = String(usuarioLogado.id);
             
