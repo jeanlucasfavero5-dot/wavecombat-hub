@@ -644,7 +644,7 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.445 (Influencers Fixed & Safe)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.446 (Safe Upsert & Error Handled)</strong>
     </footer>
 
     <script>
@@ -996,7 +996,7 @@
                         await supabaseClient.from('influenciadores').update({
                             usos: (infData.usos || 0) + 1,
                             comissao: Number(infData.comissao || 0) + comissao
-                        }).eq('id', infData.id);
+                        }).eq('id_jogador', infData.id_jogador);
 
                         mostrarToast(`⭐ Cupom "${cupomDigitado}" aplicado! +${bonusDiamantes} Diamantes bônus.`);
                     } else {
@@ -1151,6 +1151,7 @@
         async function adicionarInfluenciadorEEnviarCorreio() {
             let termo = document.getElementById('infTargetNick').value.trim();
             let codigo = document.getElementById('infTargetCodigo').value.trim().toUpperCase();
+            
             if (!termo || !codigo) {
                 alert("Preencha o Nick/ID e o Cupom Personalizado.");
                 return;
@@ -1166,13 +1167,21 @@
             let nickAlvo = userObj.nick;
 
             try {
-                // 1. Salvar ou atualizar na tabela influenciadores com colunas completas
-                const { error: infError } = await supabaseClient.from('influenciadores').upsert([
-                    { id_jogador: idAlvo, nick: nickAlvo, cupom: codigo, usos: 0, comissao: 0.00 }
-                ], { onConflict: 'id_jogador' });
+                // 1. Salvar na tabela influenciadores com tratamento explícito de erros
+                const { data: infData, error: infError } = await supabaseClient
+                    .from('influenciadores')
+                    .upsert({
+                        id_jogador: idAlvo,
+                        nick: nickAlvo,
+                        cupom: codigo,
+                        usos: 0,
+                        comissao: 0.00
+                    }, { onConflict: 'id_jogador' })
+                    .select();
 
                 if (infError) {
-                    alert("Erro ao salvar influenciador: " + infError.message);
+                    console.error("Erro Supabase:", infError);
+                    alert("ERRO DO BANCO: " + infError.message + "\nDetalhes: " + (infError.details || 'Sem detalhes'));
                     return;
                 }
 
@@ -1195,7 +1204,7 @@
                 await supabaseClient.from('correios').insert([novaCarta]);
 
                 await carregarVerificadosNuvem();
-                mostrarToast(`⭐ Influenciador ${nickAlvo} cadastrado e convite enviado!`);
+                mostrarToast(`⭐ Influenciador ${nickAlvo} gravado com sucesso!`);
                 document.getElementById('infTargetNick').value = '';
                 document.getElementById('infTargetCodigo').value = '';
                 
@@ -1307,7 +1316,7 @@
                 const { data, error } = await supabaseClient.from('influenciadores').select('*');
                 
                 if (error) {
-                    container.innerHTML = `<p style="color:#ef4444; font-size:11px; text-align:center;">Erro ao carregar tabela.</p>`;
+                    container.innerHTML = `<p style="color:#ef4444; font-size:11px; text-align:center;">Erro ao carregar tabela: ${error.message}</p>`;
                     return;
                 }
 
@@ -1337,7 +1346,7 @@
 
         async function resetarSaldoInfluenciador(idJogador) {
             try {
-                await supabaseClient.from('influenciadores').update({ comissao: 0 }).eq('id_jogador', String(idJogador));
+                await supabaseClient.from('influenciadores').update({ comissao: 0, usos: 0 }).eq('id_jogador', String(idJogador));
                 mostrarToast("🔄 Saldo resetado!");
                 renderizarTabelaInfluenciadoresAdmin();
             } catch(e){}
