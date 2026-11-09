@@ -85,6 +85,15 @@ body:not(.play) #sBack{display:none}
 #mk .row .mb{flex:1;margin:0;padding:7px 6px;font-size:11px;letter-spacing:1px}
 #toast{z-index:1100}
 .cmd{flex-wrap:wrap;justify-content:center;white-space:normal;max-width:calc(100% - 16px)}
+.cmd{width:max-content;bottom:calc(env(safe-area-inset-bottom,0px) + 30px)}
+@media (max-width:700px){
+ .cmd{gap:5px 6px;padding:5px 8px;font-size:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 40px);max-width:calc(100% - 12px);box-sizing:border-box}
+ .cmd b{font-size:14px;letter-spacing:.5px}
+ .cmd .badge{padding:2px 6px;font-size:11px}
+ .cmd .mb.sm{padding:4px 7px;font-size:10px;letter-spacing:0;margin:0}
+ #ver{font-size:9px;letter-spacing:1px;bottom:calc(env(safe-area-inset-bottom,0px) + 2px);left:auto;right:6px;transform:none;text-align:right;white-space:nowrap}
+ #srv{display:none}
+}
 .tg{color:#d5ee3a}
 .vf{color:#ffd34d;font-weight:700}
 #md{position:fixed;z-index:1003;left:50%;top:50%;transform:translate(-50%,-50%);width:min(580px,calc(100% - 16px));max-height:calc(100% - 24px);overflow:auto;box-sizing:border-box;display:none;padding:16px}
@@ -164,18 +173,6 @@ body.play #mkBtn{display:flex}
 <!-- Fundo (imagem do jogo) -->
 <div id="bg"></div>
 
-<!-- Tela de acesso -->
-<div id="login" class="scr on"><div class="card">
- <h1>Riverbed Warfare</h1><div class="sub">Comando Militar</div>
- <label for="nick">Usuário / Nick</label><input id="nick" maxlength="16" autocomplete="username" placeholder="Digite seu nick...">
- <label for="pw">Senha de acesso</label><input id="pw" type="password" autocomplete="current-password" placeholder="••••••••">
- <div id="pw2w" hidden><label for="pw2">Confirmar senha</label><input id="pw2" type="password" autocomplete="new-password" placeholder="••••••••"></div>
- <div id="err" class="err" role="alert"></div>
- <button id="goL" class="mb">Entrar no jogo</button>
- <div class="swap"><span id="swT">Novo no comando?</span> <button id="swB" class="link">Criar Conta (Gerar ID)</button></div>
- <div id="srv" class="sub" style="margin:12px 0 0"></div>
-</div></div>
-
 <!-- Tela inicial: modos de jogo em tela dividida -->
 <div id="hq" class="scr"><div class="split">
  <div class="half l">
@@ -190,7 +187,7 @@ body.play #mkBtn{display:flex}
   <button id="goOn" class="mb alt" disabled>Em breve</button>
  </div>
 </div>
-<div class="cmd"><span>Comandante <b id="hqNick"></b></span><span class="badge" id="hqId"></span><button data-o="perfil" class="mb alt sm">👤 Perfil</button><button data-o="rank" class="mb alt sm">🏆 Ranking</button><button data-o="cla" class="mb alt sm">🛡️ Clã</button><button id="out" class="mb alt sm">Sair da conta</button></div>
+<div class="cmd"><span>Comandante <b id="hqNick"></b></span><span class="badge" id="hqId"></span><span class="badge" id="hqDia">💎 0</span><button data-o="perfil" class="mb alt sm">👤 Perfil</button><button data-o="rank" class="mb alt sm">🏆 Ranking</button><button data-o="cla" class="mb alt sm">🛡️ Clã</button><button id="admBtn" data-o="admin" class="mb alt sm" hidden>🛠 Admin</button></div>
 </div>
 
 <div id="bd"></div>
@@ -204,7 +201,7 @@ body.play #mkBtn{display:flex}
 <button id="mkBtn" class="mb sm">🏪 Mercado</button>
 <div id="end"><div class="card"><h1 id="endT">Você foi derrotado</h1><p id="endS"></p><button id="rst" class="mb">Reiniciar Combate</button><button id="mnu" class="mb alt">Retornar ao Menu Principal</button></div></div>
 <!-- Atalhos fixos -->
-<div id="ver">v0.0008</div>
+<div id="ver">v0.0009 <span id="srv"></span></div>
 <a id="yt" href="https://www.youtube.com/@capudooficial7" target="_blank" rel="noopener noreferrer"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><rect x="1" y="5" width="22" height="14" rx="4" fill="#f00"/><path d="M10 9l5 3-5 3z" fill="#fff"/></svg><span>Siga o criador do jogo aqui</span></a>
 <button id="gear" class="mb" aria-label="Configurações" aria-expanded="false" title="Configurações">⚙️</button>
 <div id="set" role="dialog" aria-label="Configurações">
@@ -214,6 +211,7 @@ body.play #mkBtn{display:flex}
  <label>Efeitos <b id="vE"></b><input id="sE" type="range" min="0" max="100"></label>
  <label>Qualidade gráfica<select id="sQ"><option value="0">Baixa</option><option value="1">Média</option><option value="2">Alta</option></select></label>
  <button id="sF" class="mb alt">Tela cheia</button>
+ <button id="sAdm" class="mb alt" hidden>🛠 Administração</button>
  <button id="sBack" class="mb alt">Voltar ao Quartel General</button>
  <div id="sMsg" class="err"></div>
 </div>
@@ -437,7 +435,7 @@ function panelHTML(){
  return '';
 }
 function hud(){
- $('top').innerHTML=Object.keys(res).map(k=>`<span>${EM[k]} ${res[k]}</span>`).join('')+`<span>👥 ${pop0()}/${cap}</span><span>⭐ Nível ${LV[0]}</span><span>🎚️ ${DF().n}</span><span>💎 ${me?me.dia:0}</span><span class="h">Esq: selecionar · Dir: ordens · WASD: câmera · Roda: zoom · H: base</span>`;
+ $('top').innerHTML=Object.keys(res).map(k=>`<span>${EM[k]} ${res[k]}</span>`).join('')+`<span>👥 ${pop0()}/${cap}</span><span>⭐ Nível ${LV[0]}</span><span>🎚️ ${DF().n}</span><span>💎 ${me?me.dia:0}</span><span>👤 ${esc(player.name)} #${player.id}</span><span class="h">Esq: selecionar · Dir: ordens · WASD: câmera · Roda: zoom · H: base</span>`;
  const h=panelHTML();if(h!==lastP){lastP=h;$('panel').innerHTML=h}$('panel').style.display=h?'':'none';const hb=bdHTML();if(hb!==lastB){lastB=hb;$('bd').innerHTML=hb}rndUpd();
 }
 $('panel').onclick=e=>{const b=e.target.closest('button');if(!b||b.disabled)return;const d=b.dataset;
@@ -803,7 +801,7 @@ $('mk').onclick=async e=>{const b=e.target.closest('button');if(!b||b.disabled)r
  if(d.x){$('mk').classList.remove('on');return}
  if(d.s&&res[d.s]>=100){res[d.s]-=100;res.gold+=PR[d.s];sfx('coin');bump('trades')}
  if(d.b&&res.gold>=buyP(d.b)){res.gold-=buyP(d.b);res[d.b]+=100;sfx('coin');bump('trades')}
- if(d.a==='card'){const r=SERVER?await srvAct('card',d.p):buyCard(d.p);if(r)toast(r)}$('mk').innerHTML=mkHTML();hud()};
+ if(d.a==='card'){const r=SERVER?await srvAct('card',d.p):await buyCard(d.p);if(r)toast(r)}$('mk').innerHTML=mkHTML();hud()};
 
 /* ===== IA: economia, nível, tropas e ataques ===== */
 function aiSpot(tc,w,h){for(let r=5;r<16;r++)for(let k=0;k<30;k++){const a=Math.random()*6.283,x=Math.round(tc.x+1+Math.cos(a)*r),y=Math.round(tc.y+1+Math.sin(a)*r);let ok2=true;for(let i=-1;i<=w&&ok2;i++)for(let j=-1;j<=h&&ok2;j++)if(!walk(x+i,y+j)||bAt[(y+j)*W+x+i])ok2=false;if(ok2)return[x,y]}return null}
@@ -860,38 +858,32 @@ let mTimer=null,mStep=0;const NOTES=[110,0,165,0,147,0,98,0,110,0,165,0,196,0,14
 function music(on){clearInterval(mTimer);mTimer=null;if(!on||!AU.c)return;mTimer=setInterval(()=>{const f=NOTES[mStep++%NOTES.length];if(f){tone(f,.9,'triangle',.5,AU.mu);tone(f*2,.5,'sine',.15,AU.mu)}if(mStep%4===1)tone(60,.18,'sine',.9,AU.mu)},420)}
 addEventListener('pointerdown',e=>{auInit();if(AU.c&&AU.c.state==='suspended')AU.c.resume();if(e.target.closest&&e.target.closest('button'))sfx('click')},true);
 
-/* ===== Telas e contas locais ===== */
-let me=null,mode='in',running=false,started=false,raf=0,last=0,acc=0;
-function show(w){$('login').classList.toggle('on',w==='login');$('hq').classList.toggle('on',w==='hq');document.body.classList.toggle('play',w==='play');document.body.classList.toggle('li',w!=='login')}
-function showHQ(u){if(u)me=u;if(!me)return show('login');$('hqNick').innerHTML=dn(me);$('hqId').textContent=me.id;showDif();$('go').textContent=started&&curMode==='sk'&&S.diff===curDiff?'⚔️ Retomar Batalha':'⚔️ Batalha contra IA';$('goZ').textContent=started&&curMode==='zb'&&S.diff===curDiff?'🧟 Retomar Invasão':'🧟 Invasão Zumbi';show('hq')}
-function tab(m){mode=m;$('pw2w').hidden=m==='in';$('goL').textContent=m==='in'?'Entrar no jogo':'Criar conta';$('swT').textContent=m==='in'?'Novo no comando?':'Já tem conta?';$('swB').textContent=m==='in'?'Criar Conta (Gerar ID)':'Entrar';$('err').textContent=''}
-async function hash(s){try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}catch(e){let h=5381;for(const c of s)h=((h<<5)+h+c.charCodeAt(0))>>>0;return 'x'+h.toString(16)}}
-function enter(u){SS.set('rg_session',u.id);boot(u);showHQ(u)}
-async function register(nick,pw,pw2){
- if(!/^[A-Za-z0-9_]{3,16}$/.test(nick))return 'O nick deve ter de 3 a 16 caracteres: letras, números ou _.';
- if(RESERVED.includes(nick.toLowerCase()))return 'Este nick é reservado.';
- if(pw.length<6)return 'A senha deve ter pelo menos 6 caracteres.';
- if(pw!==pw2)return 'As senhas não coincidem.';
- if(SERVER)return srvAuth('register',nick,pw);
- const us=users();if(us.some(u=>u.nick.toLowerCase()===nick.toLowerCase()))return 'Este nick já está em uso.';
- const id=String(us.reduce((m,u)=>Math.max(m,+u.id),0)+1).padStart(9,'0'),salt=Math.random().toString(36).slice(2);
- const u=Object.assign(newAcc(),{id,nick,salt,h:await hash(salt+pw)});us.push(u);
- if(!LS.set('rg_users',us))return 'Não foi possível salvar a conta neste navegador.';
- enter(u);return '';
-}
-async function login(nick,pw){if(SERVER)return srvAuth('login',nick,pw);
- const u=users().find(x=>x.nick.toLowerCase()===nick.toLowerCase());
- if(!u||u.h!==await hash(u.salt+pw))return 'Nick ou senha incorretos.';
- enter(u);return '';
-}
-async function submitAuth(){
- const n=$('nick').value.trim(),p=$('pw').value;$('err').textContent='';$('goL').disabled=true;
- const e=mode==='in'?await login(n,p):await register(n,p,$('pw2').value);
- $('goL').disabled=false;if(e)$('err').textContent=e;else{$('pw').value='';$('pw2').value=''}
-}
-$('swB').onclick=()=>tab(mode==='in'?'up':'in');$('goL').onclick=submitAuth;
-['nick','pw','pw2'].forEach(i=>$(i).onkeydown=e=>{if(e.key==='Enter')submitAuth()});
-$('out').onclick=()=>{SS.del('rg_session');if(SERVER){flushStats();api('/api/logout',{});TOKEN=null;SS.del('rg_token')}me=null;stopGame();show('login');tab('in')};
+/* ===== Identificação (WaveCombat Hub): sem login. ID e nick vêm do localStorage ou da sessão ativa do Hub ===== */
+let me=null,running=false,started=false,raf=0,last=0,acc=0;
+const MASTER_ID='577082415',ADMIN_ID='162028398',ADMIN_NICK='capudo7';
+const player={name:'',id:'',guest:false};
+const lsGet=k=>{try{return localStorage.getItem(k)}catch(e){return null}},lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+const cleanNick=n=>{n=String(n||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Za-z0-9_]/g,'_').slice(0,16);return n.length>=3?n:(n+'___').slice(0,3)};
+function sessionData(){ // 'wavecombat_sessao_ativa': JSON com id/nick (aceita objetos aninhados) ou só o nick
+ const raw=lsGet('wavecombat_sessao_ativa');if(!raw)return{};
+ let o;try{o=JSON.parse(raw)}catch(e){return{nick:String(raw)}}
+ if(typeof o==='string')return{nick:o};if(!o||typeof o!=='object')return{};
+ const pk=(x,ks)=>{for(const k of ks)if(x&&x[k]!==undefined&&x[k]!==null&&x[k]!=='')return x[k]};
+ let id,nick;for(const s of [o,o.user,o.usuario,o.jogador,o.player,o.perfil].filter(x=>x&&typeof x==='object')){id=id??pk(s,['id','wavecombat_id','player_id','jogador_id','userId','uid']);nick=nick??pk(s,['nick','nickname','apelido','nome','name','username'])}
+ return{id:id!==undefined?String(id):undefined,nick:nick!==undefined?String(nick):undefined}}
+function initIdentity(){
+ const ss=sessionData();let id=lsGet('wavecombat_id')||ss.id,nick=lsGet('wavecombat_nick')||ss.nick;
+ if(!/^\d{9}$/.test(id||'')){id=String(Math.floor(100000000+Math.random()*900000000));player.guest=true;lsSet('wavecombat_id',id)} // visitante: ID de 9 dígitos salvo para a próxima vez
+ if(!nick){nick='Player_'+id.substring(0,4);lsSet('wavecombat_nick',nick)}
+ player.name=nick;player.id=id;document.body.classList.add('li')}
+const isAdminIdent=()=>player.id===MASTER_ID||(player.id===ADMIN_ID&&cleanNick(player.name)===ADMIN_NICK);
+function admVis(){const v=!!(me&&me.isAdmin===true);$('admBtn').hidden=!v;$('sAdm').hidden=!v}
+function show(w){$('hq').classList.toggle('on',w==='hq');document.body.classList.toggle('play',w==='play')}
+function showHQ(u){if(u)me=u;$('hqNick').innerHTML=me?dn(me):esc(player.name);$('hqId').textContent=player.id;$('hqDia').textContent='💎 '+(me?me.dia:0);admVis();showDif();$('go').textContent=started&&curMode==='sk'&&S.diff===curDiff?'⚔️ Retomar Batalha':'⚔️ Batalha contra IA';$('goZ').textContent=started&&curMode==='zb'&&S.diff===curDiff?'🧟 Retomar Invasão':'🧟 Invasão Zumbi';show('hq')}
+function localEnter(){ // conta local ligada ao ID do jogador (sem senha)
+ const us=users();let u=us.find(x=>x.id===player.id);
+ if(!u){u=Object.assign(newAcc(),{id:player.id});us.push(u)}
+ u.nick=cleanNick(player.name);u.isAdmin=isAdminIdent();LS.set('rg_users',us);boot(u);if(WAL.on)u.dia=WAL.bal;showHQ(u)}
 $('go').onclick=()=>startGame('sk');$('goZ').onclick=()=>startGame('zb');
 $('sBack').onclick=()=>{$('set').classList.remove('on');stopGame();showHQ()};
 
@@ -917,7 +909,7 @@ function startGame(m,force){
 function stopGame(){if(SERVER)flushStats();document.body.classList.remove('alarm');running=false;cancelAnimationFrame(raf);music(false);keys.clear();placing=null;ms.down=ms.pan=false}
 
 /* ===== Conta: perfil, mensagens, conquistas, clãs, cupons e cartões (tudo local neste navegador) ===== */
-const INFL={capudo7:'capudo'}; // cupom → nick do influenciador (em servidor isto viria de um painel admin)
+const INFL={capudo7:'capudo7'},INFL_ID={capudo7:'162028398'}; // cupom → nick do influenciador (em servidor isto viria de um painel admin)
 const PROMO={diamanteteste:99}; // cupom TEMPORÁRIO de teste (1 vez por conta): apague esta linha para desativar
 const RESERVED=['admin','administrador','suporte','support','moderador','sistema','riverbed','gm'];
 const DAY=864e5,CARD_PRICE=20,MED={ouro:'🥇',prata:'🥈',bronze:'🥉'};
@@ -926,7 +918,7 @@ const CARDS={coleta:['Coleta de recursos','+10% de taxa de coleta'],dano:['Dano 
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt=t=>new Date(t).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'});
 const left=t=>{const m=Math.max(0,Math.floor((t-Date.now())/6e4));return Math.floor(m/60)+'h '+m%60+'min'};
-const newAcc=()=>({born:Date.now(),last:Date.now(),dia:0,cartoesMercado:{coleta:0,dano:0,velocidade:0},isInfluencer:false,couponCode:null,medalhaRank:null,score:0,monthScore:0,stats:{},ach:{},msgs:[],clanId:null,redeemed:null,welcomed:false,cardNote:{},wc:false,promo:{}});
+const newAcc=()=>({born:Date.now(),last:Date.now(),dia:0,cartoesMercado:{coleta:0,dano:0,velocidade:0},isInfluencer:false,couponCode:null,medalhaRank:null,score:0,monthScore:0,stats:{},ach:{},msgs:[],clanId:null,redeemed:null,welcomed:false,cardNote:{},wc:false,promo:{},isAdmin:false});
 function save(){if(!me||SERVER)return;const us=users(),i=us.findIndex(x=>x.id===me.id);if(i>=0){us[i]=me;LS.set('rg_users',us)}}
 function other(id,fn){if(me&&id===me.id){fn(me);save();return}const us=users(),a=us.find(x=>x.id===id);if(!a)return;fn(a);LS.set('rg_users',us)}
 function sendMsg(id,m){if(SERVER)return;other(id,a=>{(a.msgs=a.msgs||[]).unshift({id:Date.now()+Math.random(),t:m.t,title:m.title,body:m.body,ts:Date.now(),read:false,claim:m.claim?{n:m.claim,done:false}:null});a.msgs.length=Math.min(a.msgs.length,100)});updBadge()}
@@ -970,7 +962,7 @@ function boot(u){
  me=u;const nl=u.nick.toLowerCase();
  for(const [c,n] of Object.entries(INFL))if(n===nl){u.isInfluencer=true;u.couponCode=c}
  const cr=LS.get('rg_credits',{});
- if(u.couponCode&&cr[u.couponCode]){const v=5*cr[u.couponCode];u.dia+=v;delete cr[u.couponCode];LS.set('rg_credits',cr);sendMsg(u.id,{t:'sistema',title:'Créditos de influenciador',body:'Você recebeu +'+v+' 💎 de cupons resgatados.'})}
+ if(u.couponCode&&cr[u.couponCode]){const v=5*cr[u.couponCode];if(WAL.on)walletAdd(v).then(b=>{if(b!==null)u.dia=b});else u.dia+=v;delete cr[u.couponCode];LS.set('rg_credits',cr);sendMsg(u.id,{t:'sistema',title:'Créditos de influenciador',body:'Você recebeu +'+v+' 💎 de cupons resgatados.'})}
  if(!u.welcomed){u.welcomed=true;u.wc=true;sendMsg(u.id,{t:'suporte',title:'Bem-vindo ao Riverbed Warfare',body:'Aqui chegam avisos do suporte, confirmações de recarga e compras, validade dos seus cartões e mensagens do seu clã. Seu presente: 50 diamantes!',claim:50})}
  else if(!u.wc){u.wc=true;sendMsg(u.id,{t:'sistema',title:'Presente de boas-vindas',body:'Resgate 50 💎 de presente pela sua conta.',claim:50})}
  save();checkAch();maint();updBadge()}
@@ -993,21 +985,20 @@ function maint(){
  save();updBadge()}
 
 /* cupons e cartões */
-function redeem(code){
+async function redeem(code){
  code=code.trim().toLowerCase();if(!code)return 'Digite um cupom';
- const pr=PROMO[code];if(pr){me.promo=me.promo||{};if(me.promo[code])return 'Você já resgatou este cupom';me.promo[code]=Date.now();me.dia+=pr;save();bump('coupon');sendMsg(me.id,{t:'sistema',title:'Cupom resgatado',body:'Cupom '+code.toUpperCase()+': +'+pr+' 💎.'});toast('+'+pr+' 💎 recebidos!',2500);return ''}
+ const pr=PROMO[code];if(pr){me.promo=me.promo||{};if(me.promo[code])return 'Você já resgatou este cupom';me.promo[code]=Date.now();save();if(!await diaAdd(pr)){delete me.promo[code];save();return 'Não foi possível creditar na carteira'}bump('coupon');sendMsg(me.id,{t:'sistema',title:'Cupom resgatado',body:'Cupom '+code.toUpperCase()+': +'+pr+' 💎.'});toast('+'+pr+' 💎 recebidos!',2500);return ''}
  if(me.redeemed)return 'Você já resgatou um cupom de influenciador';
- const nk=INFL[code];if(!nk)return 'Cupom inválido';if(nk===me.nick.toLowerCase())return 'Você não pode usar o seu próprio cupom';
- me.dia+=50;me.redeemed=code;save();bump('coupon');
- const inf=users().find(u=>u.nick.toLowerCase()===nk);
- if(inf)other(inf.id,a=>{a.dia=(a.dia||0)+5});else{const cr=LS.get('rg_credits',{});cr[code]=(cr[code]||0)+1;LS.set('rg_credits',cr)}
- if(inf)sendMsg(inf.id,{t:'sistema',title:'Cupom resgatado',body:me.nick+' usou o seu cupom: +5 💎 para você.'});
+ const nk=INFL[code];if(!nk)return 'Cupom inválido';if(nk===me.nick.toLowerCase()||INFL_ID[code]===player.id)return 'Você não pode usar o seu próprio cupom';
+ me.redeemed=code;save();if(!await diaAdd(50)){me.redeemed=null;save();return 'Não foi possível creditar na carteira'}bump('coupon');
+ if(WAL.on&&INFL_ID[code])walletAdd(5,INFL_ID[code]);else{const inf=users().find(u=>u.nick.toLowerCase()===nk);if(inf)other(inf.id,a=>{a.dia=(a.dia||0)+5});else{const cr=LS.get('rg_credits',{});cr[code]=(cr[code]||0)+1;LS.set('rg_credits',cr)}}
  sendMsg(me.id,{t:'sistema',title:'Cupom resgatado',body:'Você recebeu +50 💎 com o cupom '+code+'.'});
  toast('+50 💎 recebidos!',2500);return ''}
-function claimMsg(id){const m=(me.msgs||[]).find(x=>String(x.id)===id);if(!m||!m.claim)return 'Mensagem inválida';if(m.claim.done)return 'Prêmio já resgatado';m.claim.done=true;me.dia+=m.claim.n;save();toast('+'+m.claim.n+' 💎 resgatados!',2500);return ''}
-function buyCard(k){
+async function claimMsg(id){const m=(me.msgs||[]).find(x=>String(x.id)===id);if(!m||!m.claim)return 'Mensagem inválida';if(m.claim.done)return 'Prêmio já resgatado';m.claim.done=true;save();if(!await diaAdd(m.claim.n)){m.claim.done=false;save();return 'Não foi possível creditar na carteira'}toast('+'+m.claim.n+' 💎 resgatados!',2500);return ''}
+async function buyCard(k){
  if(!CARDS[k])return 'Cartão inválido';if(me.dia<CARD_PRICE)return 'Diamantes insuficientes';
- me.dia-=CARD_PRICE;const e=Math.max(Date.now(),me.cartoesMercado[k]||0)+DAY;me.cartoesMercado[k]=e;save();
+ if(!await diaAdd(-CARD_PRICE))return 'Diamantes insuficientes';
+ const e=Math.max(Date.now(),me.cartoesMercado[k]||0)+DAY;me.cartoesMercado[k]=e;save();
  sendMsg(me.id,{t:'compra',title:'Compra confirmada: '+CARDS[k][0],body:'Cartão de '+CARDS[k][1]+' por '+CARD_PRICE+' 💎. Válido até '+fmt(e)+'.'});
  toast('Compra confirmada!',2500);return ''}
 const cardsH=()=>Object.entries(CARDS).map(([k,[n,d]])=>{const e=me.cartoesMercado[k]||0,on=e>Date.now();return `<div class="row"><span>🃏 <b>${n}</b> <small>${d} · ${on?'ativo, restam '+left(e):'inativo'}</small></span><button class="mb" data-a="card" data-p="${k}"${me.dia>=CARD_PRICE?'':' disabled'}>${on?'Renovar':'Comprar'} (${CARD_PRICE} 💎)</button></div>`}).join('');
@@ -1082,10 +1073,11 @@ function clanH(){
  if(isL){h+='<h3>Aviso do clã</h3><div class="row"><input id="nt" maxlength="200" placeholder="Mensagem para todos os membros (1 por dia)"><button class="mb" data-a="notice">Enviar</button></div>';if(!c.dis)h+='<div class="row"><button class="mb alt" data-a="dissolve">Dissolver clã (leva 3 dias)</button></div>'}
  else h+='<div class="row"><button class="mb alt" data-a="leave">Sair do clã</button></div>';
  return h+'<div class="row"><button class="mb alt" data-a="close">Fechar</button></div>'}
-$('md').oninput=e=>{const t=e.target;if(t.id==='cn')draft.name=t.value;if(t.id==='ct'){t.value=t.value.toUpperCase().replace(/[^A-Z]/g,'');draft.tag=t.value}};
+$('md').oninput=e=>{const t=e.target;if(t.id&&t.id.startsWith('ad-'))ADMS[t.id.slice(3)]=t.value;if(t.id==='cn')draft.name=t.value;if(t.id==='ct'){t.value=t.value.toUpperCase().replace(/[^A-Z]/g,'');draft.tag=t.value}};
 $('md').onclick=async e=>{const b=e.target.closest('button');if(!b||b.disabled)return;const a=b.dataset.a,p=b.dataset.p;let r='';
  if(a==='close'){$('md').classList.remove('on');mdFn=null;return}
- if(SERVER&&SRVACT.includes(a))r=await srvAct(a,p);
+ if(a.startsWith('adm'))r=await admAct(a,p);
+ else if(SERVER&&SRVACT.includes(a))r=await srvAct(a,p);
  else if(a==='redeem')r=redeem($('cup').value);
  else if(a==='card')r=buyCard(p);
  else if(a==='claim')r=claimMsg(p);
@@ -1097,17 +1089,14 @@ $('md').onclick=async e=>{const b=e.target.closest('button');if(!b||b.disabled)r
  else if(a==='accept')r=accept(p);else if(a==='ban')r=ban(p);else if(a==='promote')r=promote(p);else if(a==='demote')r=demote(p);else if(a==='transfer')r=transfer(p);
  else if(a==='dissolve')r=dissolve();else if(a==='restore')r=restore();else if(a==='leave')r=leave();
  else if(a==='notice'){r=notice($('nt').value);if(!r)toast('Aviso enviado aos membros',2500)}
- if(r)toast(r);if(mdFn)rd();if(me)$('hqNick').innerHTML=dn(me);hud()};
+ r=await r;if(r)toast(r);if(mdFn)rd();if(me)$('hqNick').innerHTML=dn(me);hud()};
 $('hq').addEventListener('click',async e=>{const b=e.target.closest('[data-o]');if(!b)return;const o=b.dataset.o;
- if(o==='perfil'){if(SERVER)await refreshMe();openMd(profileH)}
+ if(o==='perfil'){if(SERVER)await refreshMe();else await walletSync();openMd(profileH)}
  else if(o==='rank'){if(SERVER)await refreshRank();openMd(rankH)}
- else if(o==='cla'){if(SERVER)await refreshClans();else maint();openMd(clanH)}});
+ else if(o==='cla'){if(SERVER)await refreshClans();else maint();openMd(clanH)}
+ else if(o==='admin')await openAdmin()});
 $('inb').onclick=async()=>{if(SERVER)await refreshMe();openMd(inboxH)};
-let nT=0;
-$('nick').oninput=()=>{clearTimeout(nT);const v=$('nick').value.trim().toLowerCase();
- if(mode!=='up'||!v){$('err').textContent='';return}
- nT=setTimeout(async()=>{if(SERVER){const j=await api('/api/nick?n='+encodeURIComponent(v));$('err').textContent=j.available===false?j.reason:''}
-  else $('err').textContent=(users().some(u=>u.nick.toLowerCase()===v)||RESERVED.includes(v))?'Este nick já está em uso ou é reservado.':''},SERVER?300:0)};
+
 
 /* ===== Modo Invasão Zumbi, névoa de guerra, torres, muros e fim de jogo ===== */
 Object.assign(UT,{
@@ -1213,7 +1202,7 @@ function upgrade(b,quiet){if(!b||!UPG(b))return;const c=upCost(b);if(!afford(c))
 function loot(b){ // saque de 30% ao destruir bases e farms inimigas
  if(!b.team||b.team>2)return;const got=[];
  if(b.k==='farm'&&b.amt>0){const v=Math.floor(b.amt*.3);if(v>0){res.food+=v;got.push('🍖'+v)}}
- if(b.k==='tc'){const r=TR[b.team];for(const k in r){const v=Math.floor(r[k]*.3);if(v>0){r[k]-=v;res[k]+=v;got.push(EM[k]+v)}}if(SERVER)srvEvent('baseKill');else{me.dia+=5;sendMsg(me.id,{t:'sistema',title:'Base inimiga derrotada',body:'Você ganhou +5 💎 por destruir uma base inimiga.'});got.push('💎5')}}
+ if(b.k==='tc'){const r=TR[b.team];for(const k in r){const v=Math.floor(r[k]*.3);if(v>0){r[k]-=v;res[k]+=v;got.push(EM[k]+v)}}if(SERVER)srvEvent('baseKill');else{diaAdd(5);sendMsg(me.id,{t:'sistema',title:'Base inimiga derrotada',body:'Você ganhou +5 💎 por destruir uma base inimiga.'});got.push('💎5')}}
  if(got.length)toast('💰 Saque de 30%: '+got.join(' '),4000)}
 function endGame(win){
  if(over)return;over=true;started=false;stopGame();
@@ -1229,14 +1218,14 @@ $('mkBtn').onclick=mkOpen;
 /* ===== Modo servidor: se o jogo for aberto pelo servidor (ou com ?api=URL), contas e dados passam a viver nele.
    Sem servidor, tudo continua local, como antes. ===== */
 let API_BASE='';const DEFAULT_API='https://riverbed-server.onrender.com'; // servidor no Render
-let SERVER=false,TOKEN=SS.get('rg_token');
+let SERVER=false,SRVERR='',TOKEN=lsGet('wavecombat_token')||'';
 const SRV={clans:[],users:[],rank:[]},PEND={d:{},mx:{},sc:0};
 const SRVACT=['redeem','card','claim','delall','mkclan','join','accept','ban','promote','demote','transfer','dissolve','restore','leave','notice'];
 const SRVPATH={redeem:'/api/redeem',card:'/api/card',claim:'/api/claim',delall:'/api/msgs/clear',mkclan:'/api/clan/create',join:'/api/clan/join',accept:'/api/clan/accept',ban:'/api/clan/ban',promote:'/api/clan/promote',demote:'/api/clan/demote',transfer:'/api/clan/transfer',dissolve:'/api/clan/dissolve',restore:'/api/clan/restore',leave:'/api/clan/leave',notice:'/api/clan/notice'};
 async function api(p,body){
  try{const r=await fetch(API_BASE+p,{method:body===undefined?'GET':'POST',headers:{'Content-Type':'application/json',...(TOKEN?{Authorization:'Bearer '+TOKEN}:{})},body:body===undefined?undefined:JSON.stringify(body)});
   const j=await r.json().catch(()=>({err:'Resposta inválida do servidor'}));
-  if(r.status===401&&TOKEN&&p!=='/api/login'){TOKEN=null;SS.del('rg_token');me=null;stopGame();show('login');toast('Sessão expirada. Entre novamente.',3000)}
+  if(r.status===401&&TOKEN&&p!=='/api/identify'){TOKEN='';try{localStorage.removeItem('wavecombat_token')}catch(e){}identify()}
   return j}catch(e){return{err:'Sem conexão com o servidor'}}}
 const applyMe=m=>{me=m;if(!me.msgs)me.msgs=[];updBadge();$('hqNick').innerHTML=dn(me)};
 function mergeUsers(list){for(const x of list){const i=SRV.users.findIndex(u=>u.id===x.id);if(i>=0)Object.assign(SRV.users[i],x);else SRV.users.push(x)}}
@@ -1244,8 +1233,12 @@ async function refreshMe(){const j=await api('/api/me');if(j.me)applyMe(j.me)}
 async function refreshClans(){const j=await api('/api/clans');if(j.clans){SRV.clans=j.clans;mergeUsers(j.users||[]);if(j.me)applyMe(j.me)}}
 async function refreshRank(){const j=await api('/api/rank');if(j.list){SRV.rank=j.list;SRV.clans=j.clans||SRV.clans;mergeUsers(j.list)}}
 async function enterServer(m){applyMe(m);await refreshClans();showHQ(me)}
-async function srvAuth(kind,nick,pw){const j=await api('/api/'+kind,{nick,pw});if(j.err)return j.err;TOKEN=j.token;SS.set('rg_token',TOKEN);await enterServer(j.me);return ''}
-async function restoreServer(){if(!TOKEN){show('login');return}const j=await api('/api/me');if(j.err||!j.me){TOKEN=null;SS.del('rg_token');show('login');return}await enterServer(j.me)}
+async function identify(){
+ const k=new URLSearchParams(location.search).get('adminkey')||'';
+ const j=await api('/api/identify',{id:player.id,nick:cleanNick(player.name),token:TOKEN||'',adminKey:k});
+ if(k)try{const u=new URL(location.href);u.searchParams.delete('adminkey');history.replaceState(null,'',u)}catch(e){}
+ if(j.err){SRVERR=j.err;return false}
+ TOKEN=j.token;lsSet('wavecombat_token',TOKEN);player.name=j.me.nick;await enterServer(j.me);return true}
 async function srvAct(a,p){
  const body={redeem:{code:$('cup')?$('cup').value:''},card:{k:p},claim:{id:p},mkclan:{name:draft.name,tag:draft.tag,logo:draft.logos&&draft.logos[draft.logo]},join:{id:p},accept:{uid:p},ban:{uid:p},promote:{uid:p},demote:{uid:p},transfer:{uid:p},notice:{text:$('nt')?$('nt').value:''}}[a]||{};
  const j=await api(SRVPATH[a],body);if(j.err)return j.err;
@@ -1263,11 +1256,10 @@ async function srvEvent(t){const j=await api('/api/event',{type:t});if(j.me)appl
 async function detectServer(){
  const qs=(new URLSearchParams(location.search).get('api')||'').replace(/\/$/,''),saved=LS.get('rg_api','');
  const cands=[...new Set([qs||null,location.protocol.startsWith('http')?'':null,saved||null,DEFAULT_API].filter(x=>x!==null&&x!==undefined))];
- $('goL').disabled=true;
- for(const c of cands){API_BASE=c;$('srv').textContent=c?'🟡 Conectando ao servidor… (no Render gratuito pode levar até 1 minuto)':'🟡 Conectando…';
+ for(const c of cands){API_BASE=c;$('srv').textContent=c?'🟡 Conectando ao servidor…':'🟡 Conectando…';
   const j=await Promise.race([api('/api/ping'),new Promise(r=>setTimeout(()=>r(null),c?50000:2500))]);
-  if(j&&j.ok&&j.name==='riverbed'){SERVER=true;LS.set('rg_api',c);$('srv').textContent='🟢 Servidor conectado'+(c?' ('+c.replace(/^https?:\/\//,'')+')':'');$('goL').disabled=false;return}}
- API_BASE='';SERVER=false;$('srv').textContent='⚪ Modo local (sem servidor)';$('goL').disabled=false}
+  if(j&&j.ok&&j.name==='riverbed'){SERVER=true;LS.set('rg_api',c);$('srv').textContent='🟢 Servidor conectado';return}}
+ API_BASE='';SERVER=false;$('srv').textContent='⚪ Modo local'}
 setInterval(flushStats,6000);setInterval(()=>{if(SERVER&&TOKEN&&me)refreshMe()},30000);
 
 /* ===== Painel de administração ao vivo: BroadcastChannel 'riverbed_admin_channel' (mesma origem e mesmo navegador) =====
@@ -1275,9 +1267,9 @@ setInterval(flushStats,6000);setInterval(()=>{if(SERVER&&TOKEN&&me)refreshMe()},
    ADD_GOLD{amount} · SPAWN{unit:'soldier'|'tank'|'zombie',count} · SET_SPEED{mult,who} · SET_DAMAGE{mult,who} · GOD_MODE{on} · FOG{on} · PAUSE{on} · PING
    Só são executados se o jogo for aberto com ?admin=1 (ou localStorage rg_admin=true / conta com isAdmin). */
 let adminChannel=null;
-const adminOn=()=>{try{return new URLSearchParams(location.search).get('admin')==='1'||LS.get('rg_admin',false)===true||!!(me&&me.isAdmin===true)}catch(e){return false}};
+const adminOn=()=>!!(me&&me.isAdmin===true);
 const adminSend=m=>{try{if(adminChannel)adminChannel.postMessage(m)}catch(e){}};
-function telemetry(){adminSend({type:'TELEMETRY',data:{fps,entities:visEnt,entitiesTotal:units.length+buildings.length,units:units.length,zombies:units.filter(u=>u.team===3).length,gold:res.gold,mode:curMode,round:Z.round,difficulty:DF().n,paused:ADM.pause,god:ADM.god,fog:ADM.fog,ts:Date.now(),version:'v0.0008'}})}
+function telemetry(){adminSend({type:'TELEMETRY',data:{fps,entities:visEnt,entitiesTotal:units.length+buildings.length,units:units.length,zombies:units.filter(u=>u.team===3).length,gold:res.gold,mode:curMode,round:Z.round,difficulty:DF().n,paused:ADM.pause,god:ADM.god,fog:ADM.fog,ts:Date.now(),version:'v0.0009'}})}
 const AKEYS={ADD_GOLD:'GOLD',GOLD:'GOLD',INJECT_GOLD:'GOLD',GIVE_GOLD:'GOLD',SPAWN:'SPAWN',SPAWN_UNIT:'SPAWN',SPAWN_UNITS:'SPAWN',SET_SPEED:'SPEED',SPEED:'SPEED',TROOP_SPEED:'SPEED',SET_DAMAGE:'DAMAGE',DAMAGE:'DAMAGE',TROOP_DAMAGE:'DAMAGE',GOD_MODE:'GOD',GOD:'GOD',GODMODE:'GOD',FOG:'FOG',FOG_OF_WAR:'FOG',TOGGLE_FOG:'FOG',PAUSE:'PAUSE',TOGGLE_PAUSE:'PAUSE',REMOTE_PAUSE:'PAUSE',PING:'PING',HELLO:'PING'};
 const UALIAS={soldier:'esp',soldado:'esp',esp:'esp',tank:'tnk',tanque:'tnk',tnk:'tnk',zombie:'zc',zumbi:'zc',zc:'zc'};
 const pick=(d,...ks)=>{for(const k of ks)if(d&&d[k]!==undefined)return d[k];return undefined};
@@ -1289,7 +1281,7 @@ function adminCmd(msg){
  const ack=(ok2,detail)=>adminSend({type:'ACK',event:raw,ok:ok2,detail});
  if(!key){console.warn('[admin] evento desconhecido:',msg);return ack(false,'evento desconhecido')}
  if(key==='PING'){adminSend({type:'HELLO_ACK',client:'riverbed-warfare',admin:adminOn(),playing:!!running,mode:curMode});return}
- if(!adminOn())return ack(false,'comandos desativados: abra o jogo com ?admin=1');
+ if(!adminOn())return ack(false,'comandos disponíveis só para a conta administradora');
  if(!started||!me)return ack(false,'sem partida ativa');
  const bool=(v,cur)=>v===undefined?!cur:(v===true||v==='true'||v===1||v==='on'||v==='1');
  const mult=()=>Math.max(.1,Math.min(10,+pick(d,'mult','multiplier','value','factor')||1)),who=String(pick(d,'who','target','team')||'player').toLowerCase();
@@ -1362,12 +1354,72 @@ joy.onpointermove=e=>{if(e.pointerId===joyId)joyMove(e)};
 joy.onpointerup=joy.onpointercancel=e=>{if(e.pointerId!==joyId)return;joyId=null;JOY.x=JOY.y=0;knob.style.transform=''};
 joy.oncontextmenu=e=>e.preventDefault();
 
+/* ===== Carteira de diamantes: Supabase · tabela carteira_diamantes (saldo central do Hub) ===== */
+const SB_URL='https://ipqjeacdfiomcxfuixdj.supabase.co',SB_KEY='sb_publishable_EWW84q_43YbOvMwB_Rua-A_X465PbLP',SB_TABLE='carteira_diamantes';
+const WAL={on:false,idCol:null,balCol:null,bal:0,diag:''};
+const ID_COLS=['wavecombat_id','jogador_id','player_id','id_jogador','user_id','id'],BAL_COLS=['diamantes','diamonds','saldo_diamantes','saldo','balance','quantidade','total'];
+async function sb(path,opt={}){
+ const r=await fetch(SB_URL+'/rest/v1/'+path,{...opt,headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,'Content-Type':'application/json',...(opt.headers||{})}});
+ const t=await r.text();let j=null;try{j=t?JSON.parse(t):null}catch(e){}
+ if(!r.ok)throw new Error((j&&(j.message||j.hint))||('HTTP '+r.status));return j}
+async function findCol(cands){for(const c of cands){try{await sb(SB_TABLE+'?select='+c+'&limit=1');return c}catch(e){}}return null}
+async function walletInit(){
+ try{
+  const q=new URLSearchParams(location.search);
+  WAL.idCol=q.get('sbid')||lsGet('wc_col_id')||await findCol(ID_COLS);WAL.balCol=q.get('sbbal')||lsGet('wc_col_bal')||await findCol(BAL_COLS);
+  if(!WAL.idCol||!WAL.balCol){WAL.diag='Colunas não encontradas na tabela '+SB_TABLE+' (use ?sbid=COLUNA_ID&sbbal=COLUNA_SALDO)';WAL.on=false;return}
+  const rows=await sb(SB_TABLE+'?select='+WAL.balCol+'&'+WAL.idCol+'=eq.'+encodeURIComponent(player.id)+'&limit=1');
+  WAL.bal=rows.length?Number(rows[0][WAL.balCol])||0:0;WAL.on=true;WAL.diag=''
+ }catch(e){WAL.on=false;WAL.diag='Carteira indisponível: '+e.message}}
+async function walletRead(pid=player.id){const rows=await sb(SB_TABLE+'?select='+WAL.balCol+'&'+WAL.idCol+'=eq.'+encodeURIComponent(pid)+'&limit=1');return rows.length?Number(rows[0][WAL.balCol])||0:0}
+async function walletAdd(delta,pid=player.id){ // soma/subtrai com comparação do saldo anterior (evita sobrescrever alterações da loja do Hub)
+ if(!WAL.on)return null;
+ for(let i=0;i<4;i++){
+  try{
+   const rows=await sb(SB_TABLE+'?select='+WAL.balCol+'&'+WAL.idCol+'=eq.'+encodeURIComponent(pid)+'&limit=1');
+   if(!rows.length){if(delta<0)return null;await sb(SB_TABLE,{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify({[WAL.idCol]:String(pid),[WAL.balCol]:delta})});if(pid===player.id)WAL.bal=delta;return delta}
+   const cur=Number(rows[0][WAL.balCol])||0,nb=cur+delta;if(nb<0)return null;
+   const upd=await sb(SB_TABLE+'?'+WAL.idCol+'=eq.'+encodeURIComponent(pid)+'&'+WAL.balCol+'=eq.'+cur,{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify({[WAL.balCol]:nb})});
+   if(Array.isArray(upd)&&upd.length){if(pid===player.id)WAL.bal=nb;return nb}
+  }catch(e){WAL.diag='Erro na carteira: '+e.message;return null}}
+ WAL.diag='Sem permissão para atualizar a carteira';return null}
+async function diaAdd(n){if(WAL.on){const nb=await walletAdd(n);if(nb===null)return false;me.dia=nb;$('hqDia').textContent='💎 '+nb;return true}if(me.dia+n<0)return false;me.dia+=n;save();$('hqDia').textContent='💎 '+me.dia;return true}
+async function walletSync(){if(!WAL.on||!me)return;try{const b=await walletRead();if(b!==me.dia){me.dia=b;WAL.bal=b;$('hqDia').textContent='💎 '+b;if(mdFn)rd()}}catch(e){WAL.diag='Erro na carteira: '+e.message}}
+setInterval(()=>{if(document.visibilityState!=='hidden')walletSync()},20000);addEventListener('focus',walletSync);
+
+/* ===== Console do administrador (conta mestre) ===== */
+const ADMS={id:'',n:'100',to:'',t:'',b:'',note:''};
+async function openAdmin(){if(WAL.on)await walletSync();openMd(adminH)}
+function adminH(){
+ const live=started&&me;let h='<h2>🛠 Administração</h2><small>'+esc(player.name)+' · ID '+player.id+(ADMS.note?' · '+esc(ADMS.note):'')+'</small><h3>Partida atual</h3>';
+ h+=live?`<div class="row"><button class="mb" data-a="admc" data-p="gold">+1000 🪙</button><button class="mb" data-a="admc" data-p="soldier">+5 soldados</button><button class="mb" data-a="admc" data-p="tank">+2 tanques</button><button class="mb" data-a="admc" data-p="zombie">+5 zumbis</button></div><div class="row"><button class="mb alt" data-a="admc" data-p="god">God mode: ${ADM.god?'ON':'OFF'}</button><button class="mb alt" data-a="admc" data-p="fog">Névoa: ${ADM.fog?'ON':'OFF'}</button><button class="mb alt" data-a="admc" data-p="pause">Pausa: ${ADM.pause?'ON':'OFF'}</button><button class="mb alt" data-a="admc" data-p="spd">Velocidade ×${ADM.spd}</button><button class="mb alt" data-a="admc" data-p="dmg">Dano ×${ADM.dmg}</button></div>`:'<small>Inicie uma partida para usar estas opções.</small>';
+ h+=`<h3>Carteira de diamantes (Supabase)</h3>`+(WAL.on?`<small>Seu saldo: 💎 ${WAL.bal}</small><div class="row"><input id="ad-id" placeholder="ID do jogador (9 dígitos)" maxlength="9" value="${esc(ADMS.id)}"><input id="ad-n" type="number" style="max-width:110px" value="${esc(ADMS.n)}"><button class="mb" data-a="admw">Creditar / debitar 💎</button></div>`:`<small>${esc(WAL.diag||'Carteira indisponível')}</small>`);
+ if(SERVER)h+=`<h3>Servidor do Riverbed</h3><div class="row"><input id="ad-t" placeholder="Título" value="${esc(ADMS.t)}"><input id="ad-b" placeholder="Mensagem para todos" value="${esc(ADMS.b)}"><button class="mb" data-a="admm">Enviar a todos</button></div><div class="row"><input id="ad-to" placeholder="ID para suspender/liberar" maxlength="9" value="${esc(ADMS.to)}"><button class="mb alt" data-a="admb" data-p="1">Suspender</button><button class="mb alt" data-a="admb" data-p="0">Liberar</button></div>`;
+ return h+'<div class="row"><button class="mb alt" data-a="close">Fechar</button></div>'}
+async function admAct(a,p){
+ if(!me||me.isAdmin!==true)return 'Acesso negado';
+ if(a==='admc'){
+  if(p==='spd')ADM.spd=ADM.spd>=4?1:ADM.spd*2;else if(p==='dmg')ADM.dmg=ADM.dmg>=5?1:ADM.dmg===1?2:5;
+  else adminCmd({gold:{type:'ADD_GOLD',data:{amount:1000}},soldier:{type:'SPAWN',data:{unit:'soldier',count:5}},tank:{type:'SPAWN',data:{unit:'tank',count:2}},zombie:{type:'SPAWN',data:{unit:'zombie',count:5}},god:{type:'GOD_MODE',data:{}},fog:{type:'FOG',data:{}},pause:{type:'PAUSE',data:{}}}[p]);
+  return ''}
+ if(a==='admw'){const id=String(ADMS.id).trim(),n=Math.round(+ADMS.n);if(!/^\d{9}$/.test(id)||!n)return 'Informe um ID de 9 dígitos e um valor';if(!WAL.on)return 'Carteira Supabase indisponível';
+  const r=await walletAdd(n,id);if(r===null)return 'Falhou: '+(WAL.diag||'sem permissão ou saldo insuficiente');ADMS.note='ID '+id+' → saldo '+r;if(id===player.id){me.dia=r;$('hqDia').textContent='💎 '+r}return ''}
+ if(a==='admm'&&SERVER){const j=await api('/api/admin/msg',{to:'all',title:ADMS.t,body:ADMS.b});ADMS.note=j.err||('enviada a '+j.enviadas);return ''}
+ if(a==='admb'&&SERVER){const j=await api('/api/admin/ban',{who:ADMS.to,on:p==='1'});ADMS.note=j.err||((j.banned?'suspenso: ':'liberado: ')+j.nick);return ''}
+ return ''}
+$('sAdm').onclick=async()=>{$('set').classList.remove('on');await openAdmin()};
+
 /* ===== Início ===== */
-tab('in');applyS();
+applyS();
 try{const lk=document.createElement('link');lk.rel='stylesheet';lk.href='https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap';document.head.appendChild(lk)}catch(e){} // fonte carregada sem bloquear a tela
-detectServer().then(async()=>{
- if(SERVER)await restoreServer();
- else{const u0=users().find(x=>x.id===SS.get('rg_session'));if(u0){boot(u0);showHQ(u0)}else show('login')}});
+async function startApp(){ // DOMContentLoaded: lê a identidade do Hub e conecta a carteira
+ initIdentity();showHQ();$('go').disabled=$('goZ').disabled=true;$('srv').textContent='🟡 Conectando à carteira…';
+ await walletInit();
+ if(WAL.on){SERVER=false;$('srv').textContent='🟢 Carteira Supabase conectada'}
+ else{await detectServer();if(SERVER&&!await identify()){SERVER=false;$('srv').textContent='⚪ Modo local ('+SRVERR+')'}else if(!SERVER&&WAL.diag)$('srv').textContent='⚪ Modo local · '+WAL.diag}
+ if(!SERVER)localEnter();
+ $('go').disabled=$('goZ').disabled=false}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',startApp);else startApp();
 setInterval(maint,60000);
 })();
 </script>
