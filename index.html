@@ -721,7 +721,7 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.449 (Stable Fix)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.450 (Stable Session Fix)</strong>
     </footer>
 
     <script>
@@ -1160,20 +1160,27 @@
             await carregarVerificadosNuvem();
             try {
                 const sessaoSalva = localStorage.getItem('wavecombat_sessao_ativa');
-                if(sessaoSalva) {
-                    usuarioLogado = JSON.parse(sessaoSalva);
-                    if (usuarioLogado.nick.toLowerCase() === 'capudo7') {
-                        usuarioLogado.id = MEU_ID_MESTRE;
-                        usuarioLogado.isAdm = true;
-                    }
-                    if (await verificarBanimentoAtual()) return;
+                if (sessaoSalva) {
+                    const parsed = JSON.parse(sessaoSalva);
+                    if (parsed && parsed.nick && parsed.id) {
+                        usuarioLogado = parsed;
+                        if (String(usuarioLogado.id) === MEU_ID_MESTRE || usuarioLogado.nick.toLowerCase() === 'capudo7') {
+                            usuarioLogado.id = MEU_ID_MESTRE;
+                            usuarioLogado.isAdm = true;
+                        }
+                        if (await verificarBanimentoAtual()) return;
 
-                    document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(usuarioLogado.nick, usuarioLogado.id);
-                    if(usuarioLogado.isAdm) {
-                        document.getElementById('btnToggleAdmNav').style.display = 'inline-block';
+                        document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(usuarioLogado.nick, usuarioLogado.id);
+                        if (usuarioLogado.isAdm) {
+                            document.getElementById('btnToggleAdmNav').style.display = 'inline-block';
+                        }
+                    } else {
+                        localStorage.removeItem('wavecombat_sessao_ativa');
                     }
                 }
-            } catch(e) {}
+            } catch(e) {
+                localStorage.removeItem('wavecombat_sessao_ativa');
+            }
             atualizarAbasPerfilUI();
             carregarSaldoDiamantesSite();
             verificarEstadoNotificacao();
