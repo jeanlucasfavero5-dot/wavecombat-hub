@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WAVECOMBAT - Painel de Controle</title>
-    <!-- Supabase JS Client -->
+    <title>WAVECOMBAT - Painel & Plataforma</title>
+    <!-- Supabase SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
-            --bg-color: #0b0d19;
+            --bg-dark: #070913;
             --panel-bg: rgba(18, 22, 41, 0.95);
             --border-color: #1e2640;
             --accent-green: #00e676;
@@ -27,11 +27,32 @@
         }
 
         body {
-            background-color: var(--bg-color);
+            background-color: var(--bg-dark);
             color: var(--text-main);
-            padding: 20px;
+            min-height: 100vh;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+        }
+
+        header {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0 20px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            letter-spacing: 1.5px;
+            color: #fff;
         }
 
         .container {
@@ -39,14 +60,14 @@
             max-width: 500px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 15px;
         }
 
         .card {
             background: var(--panel-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 20px;
+            padding: 18px;
             box-shadow: 0 8px 24px rgba(0,0,0,0.5);
         }
 
@@ -55,11 +76,12 @@
             background: rgba(255, 179, 0, 0.03);
         }
 
-        h2, h3 {
-            margin-bottom: 15px;
+        h3 {
+            margin-bottom: 12px;
+            font-size: 1rem;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.8px;
         }
 
         .gold-title {
@@ -70,16 +92,16 @@
         }
 
         .subtitle {
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             color: var(--text-muted);
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             line-height: 1.4;
         }
 
         .form-group {
             display: flex;
-            gap: 10px;
-            margin-bottom: 12px;
+            gap: 8px;
+            margin-bottom: 10px;
         }
 
         input, select {
@@ -87,9 +109,9 @@
             background: #131729;
             border: 1px solid var(--border-color);
             border-radius: 6px;
-            padding: 10px 14px;
+            padding: 10px 12px;
             color: #fff;
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             outline: none;
         }
 
@@ -103,6 +125,7 @@
             border: none;
             border-radius: 6px;
             font-weight: bold;
+            font-size: 0.9rem;
             text-transform: uppercase;
             cursor: pointer;
             transition: 0.2s;
@@ -112,43 +135,21 @@
             gap: 8px;
         }
 
-        .btn-green {
-            background: var(--accent-green);
-            color: #000;
-        }
+        .btn-green { background: var(--accent-green); color: #000; }
+        .btn-green:hover { background: #00c853; }
 
-        .btn-green:hover {
-            background: #00c853;
-        }
+        .btn-gold { background: var(--accent-gold); color: #000; }
+        .btn-gold:hover { background: #ffa000; }
 
-        .btn-gold {
-            background: var(--accent-gold);
-            color: #000;
-        }
-
-        .btn-gold:hover {
-            background: #ffa000;
-        }
-
-        .btn-danger {
-            background: var(--accent-danger);
-            color: #fff;
-            padding: 6px 12px;
-            font-size: 0.8rem;
-        }
-
-        .btn-small-gold {
-            background: var(--accent-gold);
-            color: #000;
-            padding: 6px 12px;
-            font-size: 0.8rem;
-        }
+        .btn-danger { background: var(--accent-danger); color: #fff; padding: 6px 12px; font-size: 0.8rem; }
+        .btn-small-gold { background: var(--accent-gold); color: #000; padding: 6px 12px; font-size: 0.8rem; }
+        .btn-secondary { background: #1e2640; color: #fff; }
 
         .influencer-item {
             background: rgba(0, 0, 0, 0.3);
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            padding: 12px;
+            padding: 10px;
             margin-top: 10px;
             font-size: 0.85rem;
         }
@@ -169,23 +170,25 @@
             gap: 8px;
         }
 
-        /* Modal Perfil / Correio */
+        /* Modal Correio / Perfil */
         .modal {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.85);
             justify-content: center;
             align-items: center;
             z-index: 1000;
         }
+
+        .modal.active { display: flex; }
 
         .modal-content {
             background: var(--panel-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
             width: 90%;
-            max-width: 400px;
+            max-width: 420px;
             padding: 20px;
             position: relative;
         }
@@ -198,19 +201,39 @@
             color: var(--text-muted);
         }
 
+        .mail-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+
         .mail-item {
-            background: rgba(255,255,255,0.05);
+            background: rgba(255,255,255,0.04);
             border-left: 3px solid var(--accent-gold);
             padding: 10px;
             margin-bottom: 8px;
             border-radius: 4px;
         }
+
+        .mail-title { font-weight: bold; font-size: 0.9rem; color: #fff; }
+        .mail-body { font-size: 0.8rem; color: var(--text-muted); margin: 4px 0; }
+        .mail-date { font-size: 0.7rem; color: #666; text-align: right; }
     </style>
 </head>
 <body>
 
+    <header>
+        <div class="logo">⚡ WAVECOMBAT</div>
+        <button class="btn btn-secondary" style="width: auto; padding: 6px 12px;" onclick="abrirModalCorreio()">📬 Correio</button>
+    </header>
+
     <div class="container">
         
+        <!-- Salvar Live na Nuvem -->
+        <div class="card">
+            <button class="btn btn-secondary">💾 SALVAR LIVE NA NUVEM</button>
+        </div>
+
         <!-- Envio Manual de Diamantes -->
         <div class="card">
             <h3>💎 Envio Manual de Diamantes (ADM)</h3>
@@ -223,12 +246,12 @@
 
         <!-- Gestão de Usuários -->
         <div class="card">
-            <h3>👥 Lista e Gestão de Usuários</h3>
+            <h3>👥 Lista e Gestão de Usuários Cadastrados</h3>
             <div class="form-group">
                 <input type="text" id="search-user" placeholder="Pesquisar por Nick ou ID...">
             </div>
             <div class="form-group" style="align-items: center;">
-                <span id="user-found-name" style="font-weight: bold; flex: 1;">Aguardando busca...</span>
+                <span id="user-found-name" style="font-weight: bold; flex: 1;">ROCKY (ID: 963487998)</span>
                 <select id="ban-duration" style="flex: 0.8;">
                     <option value="7">Ban 7 Dias</option>
                     <option value="30">Ban 30 Dias</option>
@@ -240,7 +263,7 @@
 
         <!-- Painel de Influenciadores -->
         <div class="card card-gold">
-            <h3 class="gold-title">★ PAINEL ÚNICO: INFLUENCIADORES & PARCERIAS</h3>
+            <h3 class="gold-title">★ PAINEL ÚNICO: INFLUENCIADORES, VERIFICADOS & PARCERIAS</h3>
             <p class="subtitle">Defina o influenciador, o cupom e envie tudo para o correio com um único clique.</p>
 
             <div class="form-group">
@@ -251,24 +274,37 @@
             <button class="btn btn-gold" onclick="salvarEEnviarInfluenciador()">★ SALVAR INFLUENCIADOR & ENVIAR CONVITE</button>
 
             <div id="lista-influenciadores">
-                <!-- Influenciadores carregados dinamicamente -->
+                <!-- Carregado via JS -->
             </div>
         </div>
 
     </div>
 
+    <!-- Modal do Correio -->
+    <div class="modal" id="modal-correio">
+        <div class="modal-content">
+            <span class="close-btn" onclick="fecharModalCorreio()">&times;</span>
+            <h3>📬 Caixa de Entrada / Correio</h3>
+            <div class="mail-list" id="mail-list-container">
+                <p style="font-size: 0.85rem; color: var(--text-muted);">Carregando mensagens...</p>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Configuração do Supabase (Substitua se necessário)
+        // Configuração do Supabase (Ajuste a URL e KEY se necessário)
         const SUPABASE_URL = 'https://sua-url-supabase.supabase.co';
         const SUPABASE_KEY = 'sua-chave-anon-supabase';
         const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // Função auxiliar para buscar usuário por Nick ou ID
+        // ID do usuário logado no momento (Exemplo: seu ID 577082415)
+        let idUsuarioLogado = "577082415";
+
+        // Busca Inteligente: Identifica Nick ou ID na tabela de usuários
         async function buscarUsuario(termo) {
             termo = termo.trim();
             if (!termo) return null;
 
-            // Busca por ID numérico ou Nick exato
             let { data, error } = await supabase
                 .from('usuarios')
                 .select('*')
@@ -277,7 +313,7 @@
 
             if (data) return data;
 
-            // Se for apenas dígitos, assume o próprio ID informado
+            // Se for número puro, assume o ID informado
             if (/^\d+$/.test(termo)) {
                 return { id: termo, nick: termo };
             }
@@ -285,7 +321,7 @@
             return null;
         }
 
-        // 1. Envio Manual de Diamantes
+        // 1. Envio de Diamantes ADM
         async function enviarDiamantesADM() {
             const idInput = document.getElementById('adm-id-jogador').value.trim();
             const qtd = parseInt(document.getElementById('adm-qtd-diamantes').value);
@@ -311,8 +347,7 @@
             ]);
 
             if (error) {
-                console.error(error);
-                alert('Erro ao enviar diamantes: ' + error.message);
+                alert('Erro ao enviar: ' + error.message);
             } else {
                 alert(`Sucesso! ${qtd} Diamantes enviados para o ID ${idFinal}.`);
                 document.getElementById('adm-id-jogador').value = '';
@@ -320,7 +355,7 @@
             }
         }
 
-        // 2. Salvar Influenciador e Enviar Convite para o ID Correto
+        // 2. Salvar Influenciador & Enviar para Correio (Corrigido para usar ID Real)
         async function salvarEEnviarInfluenciador() {
             const targetInput = document.getElementById('inf-target').value.trim();
             const cupom = document.getElementById('inf-cupom').value.trim().toUpperCase();
@@ -330,18 +365,17 @@
                 return;
             }
 
-            // Busca a conta real no Supabase
             const user = await buscarUsuario(targetInput);
             
             if (!user) {
-                alert('Jogador não encontrado no sistema!');
+                alert('Jogador não encontrado!');
                 return;
             }
 
             const idJogadorReal = String(user.id);
 
-            // Grava na tabela de influenciadores
-            const { error: infError } = await supabase.from('influenciadores').upsert([
+            // Tenta registrar na tabela de influenciadores
+            await supabase.from('influenciadores').upsert([
                 {
                     id_jogador: idJogadorReal,
                     cupom: cupom,
@@ -350,17 +384,12 @@
                 }
             ]);
 
-            if (infError) {
-                console.error(infError);
-                // Se der erro por falta da tabela de influenciadores, prossegue com o envio do correio
-            }
-
-            // Envia a mensagem direta para a conta do usuário
+            // Envia a carta para o ID real no correio
             const { error: mailError } = await supabase.from('correios').insert([
                 {
                     id_jogador: idJogadorReal,
                     titulo: '⭐ Parceria de Influenciador Aprovada!',
-                    mensagem: `Parabéns! Sua conta foi verificada como Influenciador Oficial. Seu cupom exclusivo é: ${cupom}`,
+                    mensagem: `Parabéns! Sua conta foi aprovada como Influenciador Oficial. Seu cupom exclusivo é: ${cupom}`,
                     tipo: 'parceria',
                     codigo_cupom: cupom,
                     resgatado: false,
@@ -369,17 +398,16 @@
             ]);
 
             if (mailError) {
-                console.error(mailError);
-                alert('Erro ao enviar carta no correio: ' + mailError.message);
+                alert('Erro ao enviar mensagem para o correio: ' + mailError.message);
             } else {
-                alert(`Sucesso! Parceria ativada e convite enviado no correio para o ID: ${idJogadorReal}`);
+                alert(`Sucesso! Parceria registrada e convite enviado ao correio do ID ${idJogadorReal}.`);
                 document.getElementById('inf-target').value = '';
                 document.getElementById('inf-cupom').value = '';
                 carregarInfluenciadores();
             }
         }
 
-        // Carregar Lista de Influenciadores
+        // 3. Carregar Lista de Influenciadores no Painel
         async function carregarInfluenciadores() {
             const container = document.getElementById('lista-influenciadores');
             const { data, error } = await supabase.from('influenciadores').select('*');
@@ -402,7 +430,40 @@
             });
         }
 
-        // Inicialização
+        // 4. Modal do Correio
+        async function abrirModalCorreio() {
+            document.getElementById('modal-correio').classList.add('active');
+            const container = document.getElementById('mail-list-container');
+            container.innerHTML = '<p style="font-size: 0.85rem; color: var(--text-muted);">Buscando mensagens...</p>';
+
+            const { data, error } = await supabase
+                .from('correios')
+                .select('*')
+                .eq('id_jogador', String(idUsuarioLogado))
+                .order('created_at', { ascending: false });
+
+            if (error || !data || data.length === 0) {
+                container.innerHTML = '<p style="font-size: 0.85rem; color: var(--text-muted);">Nenhuma mensagem encontrada.</p>';
+                return;
+            }
+
+            container.innerHTML = '';
+            data.forEach(mail => {
+                container.innerHTML += `
+                    <div class="mail-item">
+                        <div class="mail-title">${mail.titulo}</div>
+                        <div class="mail-body">${mail.mensagem}</div>
+                        <div class="mail-date">${mail.data || ''}</div>
+                    </div>
+                `;
+            });
+        }
+
+        function fecharModalCorreio() {
+            document.getElementById('modal-correio').classList.remove('active');
+        }
+
+        // Inicializar
         window.onload = () => {
             carregarInfluenciadores();
         };
