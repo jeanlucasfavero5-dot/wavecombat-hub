@@ -960,7 +960,7 @@
                 <button id="btn-start-fullscreen" class="sv-mini">🔲 Expandir Tela Cheia</button>
                 <a href="https://youtube.com/@capudooficial7?si=0pe1kJfQaeM4orgV" target="_blank" rel="noopener" class="sv-mini sv-yt">▶️ Siga o Criador</a>
             </div>
-            <div class="inicio-versao">Versão: <b>v0.013</b></div>
+            <div class="inicio-versao">Versão: <b>v0.014</b></div>
         </div>
     </div>
 
@@ -1292,7 +1292,7 @@
 
     <script>
         /* =========================================================
-           ESQUADRÃO DE TANQUES  (v0.013)
+           ESQUADRÃO DE TANQUES  (v0.014)
            ========================================================= */
 
         /* --- BALANCEAMENTO (ajuste aqui sem mexer no resto) --- */
@@ -1526,6 +1526,7 @@
                 try { antigo = JSON.parse(localStorage.getItem(SAVE_KEY)) || {}; } catch (e) { antigo = {}; }
                 localStorage.setItem(SAVE_KEY, JSON.stringify({ ...antigo, dadosGaragem, nomeJogador, playerId: player.id, configJogo }));
             } catch (e) { /* modo privado ou storage cheio: ignora */ }
+            wcAoSalvar();   // 💎 mudaram? envia ao Hub (Supabase)
         }
 
         function carregarJogo() {
@@ -1592,39 +1593,257 @@
         }
 
         /* =========================================================
-           IDENTIDADE DO JOGADOR (WaveCombat Hub) E CONTA ADM
-           Nick e ID vêm do localStorage do navegador. Se o jogo for aberto direto
-           (sem passar pelo site), eles são criados sozinhos. Não existe tela de login/senha.
+           WAVECOMBAT HUB: identidade do jogador, 💎 (Supabase) e Ranking Global
+           ID e nick vêm do localStorage do Hub (wavecombat_id / wavecombat_nick) ou da sessão
+           ativa (wavecombat_sessao_ativa). Sem tela de login e sem gerar ID/nick aleatório:
+           aberto fora do Hub o jogo roda como Convidado (sem 💎 e sem ranking online).
            ========================================================= */
-        const ADM_CONTA = { nick: 'capudo7', id: '162028398' };
-        const player = { name: 'Comandante', id: '', adm: false };
+        const WC_HUB = {
+            supabaseUrl: 'https://ipqjeacdfiomcxfuixdj.supabase.co',
+            supabaseKey: 'sb_publishable_EWW84q_43YbOvMwB_Rua-A_X465PbLP',
+            tabela: 'carteira_diamantes',            // id_jogador, nick, diamantes
+            rpcPontuacao: 'atualizar_pontuacao',     // p_id_jogador, p_nick, p_pontos
+            socket: 'https://riverbed-server.onrender.com',   // servidor Socket.io (este jogo é solo: não conecta)
+            idMestre: '577082415',
+            pollMs: 15000
+        };
+        const WC_SERVER = window.WC_SERVER = WC_HUB.socket;
+        const ADM_CONTA = { nick: 'capudo7', ids: ['162028398', WC_HUB.idMestre] };
+        const player = { name: 'Convidado', nickHub: '', id: 'CONVIDADO', adm: false, convidado: true };
 
         function lerLS(chave) { try { return localStorage.getItem(chave); } catch (e) { return null; } }
         function gravarLS(chave, valor) { try { localStorage.setItem(chave, valor); } catch (e) { /* storage bloqueado: vale só nesta sessão */ } }
 
-        function identificarJogador() {
-            const playerNick = lerLS('wavecombat_nick');
-            const playerId = lerLS('wavecombat_id');
-            let id = (playerId || '').trim() || player.id;
-            let nick = (playerNick || '').trim() || (player.name !== 'Comandante' ? player.name : '');
+        // Sessão do Hub: JSON ({id, nick, ...}, às vezes dentro de "user") ou texto simples
+        function lerSessaoHub() {
+            const raw = lerLS('wavecombat_sessao_ativa');
+            if (!raw) return { id: '', nick: '' };
+            let s = raw;
+            try { s = JSON.parse(raw); } catch (e) { /* texto simples */ }
+            if (s && typeof s === 'object') {
+                const u = s.user && typeof s.user === 'object' ? s.user : s;
+                const pega = (...ks) => { for (const k of ks) if (u[k] != null && String(u[k]).trim()) return String(u[k]).trim(); return ''; };
+                return { id: pega('id', 'id_jogador', 'idJogador', 'playerId', 'userId'), nick: pega('nick', 'nome', 'name', 'username', 'apelido') };
+            }
+            const t = s == null ? '' : String(s).trim();
+            return /^\d{6,}$/.test(t) ? { id: t, nick: '' } : { id: '', nick: t };
+        }
 
-            if (!id) {   // aberto direto: gera um ID de 9 dígitos
-                id = String(Math.floor(100000000 + Math.random() * 900000000));
-                gravarLS('wavecombat_id', id);
-            }
-            if (!nick) {
-                nick = 'Player_' + id.substring(0, 4);
-                gravarLS('wavecombat_nick', nick);
-            }
-            player.name = nick.slice(0, 16);
-            player.id = id.slice(0, 32);
-            player.adm = player.name.toLowerCase() === ADM_CONTA.nick && player.id === ADM_CONTA.id;
+        const wc = { base: null, ultimoLocal: null, pronto: false, ocupado: false, repetir: false, timer: null, poll: null, nickPendente: false };
+
+        function identificarJogador() {
+            const sessao = lerSessaoHub();
+            const id = String(lerLS('wavecombat_id') || sessao.id || '').trim().slice(0, 32);
+            const nickHub = String(lerLS('wavecombat_nick') || sessao.nick || '').trim().slice(0, 40);
+            const nick = nickHub.slice(0, 16);   // na tela cabe menos que o nick completo do Hub
+            const idAntes = player.id;
+
+            player.convidado = !id;
+            player.id = id || 'CONVIDADO';
+            player.name = nick || (id ? 'Jogador' : 'Convidado');
+            player.nickHub = nickHub;
+            wc.nickPendente = !!id && !nick;   // nick real vem da carteira do Supabase
+            player.adm = !player.convidado && player.name.toLowerCase() === ADM_CONTA.nick && ADM_CONTA.ids.includes(player.id);
             nomeJogador = player.name;
             if (jogadorTanquePrincipal) {
                 jogadorTanquePrincipal.name = player.name;
                 jogadorTanquePrincipal.id = player.id;
             }
             aplicarIdentidadeNaInterface();
+            if (wc.pronto && player.id !== idAntes) wcAposCarregar();   // o Hub trocou de conta
+        }
+
+        /* --- Cliente Supabase: usa o do Hub (window.supabaseClient) ou cria um leve (REST) --- */
+
+        function wcClienteLeve(url, key) {
+            const base = url.replace(/\/+$/, '') + '/rest/v1/';
+            async function chamar(caminho, opcoes) {
+                const ctl = new AbortController();
+                const t = setTimeout(() => ctl.abort(), 10000);
+                try {
+                    const r = await fetch(base + caminho, { ...opcoes, signal: ctl.signal, headers: { apikey: key, 'Content-Type': 'application/json', ...(opcoes.headers || {}) } });
+                    const txt = await r.text();
+                    let corpo = null;
+                    try { corpo = txt ? JSON.parse(txt) : null; } catch (e) { corpo = txt; }
+                    if (!r.ok) return { data: null, error: { message: (corpo && corpo.message) || r.statusText || 'erro', code: corpo && corpo.code, status: r.status } };
+                    return { data: corpo, error: null };
+                } catch (e) {
+                    return { data: null, error: { message: String((e && e.message) || e) } };
+                } finally { clearTimeout(t); }
+            }
+            return {
+                leve: true,
+                rpc: (fn, args) => chamar('rpc/' + fn, { method: 'POST', body: JSON.stringify(args || {}) }),
+                from: tabela => ({
+                    select: colunas => {
+                        const filtros = [];
+                        const q = {
+                            eq: (col, v) => { filtros.push(encodeURIComponent(col) + '=eq.' + encodeURIComponent(v)); return q; },
+                            maybeSingle: async () => {
+                                const r = await chamar(tabela + '?select=' + encodeURIComponent(colunas || '*') + '&' + filtros.join('&') + '&limit=1', { method: 'GET' });
+                                return r.error ? r : { data: (r.data && r.data[0]) || null, error: null };
+                            }
+                        };
+                        return q;
+                    },
+                    upsert: (linha, opc) => chamar(tabela + '?on_conflict=' + encodeURIComponent((opc && opc.onConflict) || 'id'),
+                        { method: 'POST', headers: { Prefer: 'resolution=merge-duplicates,return=minimal' }, body: JSON.stringify(linha) })
+                })
+            };
+        }
+
+        function wcCliente() {
+            if (window.supabaseClient) return window.supabaseClient;
+            try {
+                if (window.parent && window.parent !== window && window.parent.supabaseClient) return (window.supabaseClient = window.parent.supabaseClient);
+            } catch (e) { /* Hub em outro domínio: segue com o próprio cliente */ }
+            const url = window.SUPABASE_URL || WC_HUB.supabaseUrl;
+            const key = window.SUPABASE_KEY || window.SUPABASE_ANON_KEY || WC_HUB.supabaseKey;
+            if (window.supabase && typeof window.supabase.createClient === 'function') return (window.supabaseClient = window.supabase.createClient(url, key));
+            return (window.supabaseClient = wcClienteLeve(url, key));
+        }
+
+        /* --- 💎: o saldo do Supabase (carteira_diamantes) manda; o que mudou aqui é somado a ele --- */
+
+        function wcLerBase(id) {
+            try { const o = JSON.parse(lerLS('esquadrao_wc_base')); return o && o.id === id && Number.isFinite(o.v) ? o.v : null; } catch (e) { return null; }
+        }
+
+        function wcGravarBase() {
+            gravarLS('esquadrao_wc_base', JSON.stringify({ id: player.id, v: wc.base }));
+            gravarLS('wavecombat_diamonds', String(dadosGaragem.diamantes | 0));   // a loja do Hub lê o mesmo saldo
+        }
+
+        function wcAtualizarTela() {
+            const el = document.getElementById('menu-diamantes');
+            if (el) el.innerText = fmtNum(dadosGaragem.diamantes);
+            const adm = document.getElementById('adm-overlay');
+            if (adm && !adm.classList.contains('hidden')) atualizarPainelAdm();
+        }
+
+        // Junta o saldo da nuvem com o que mudou aqui desde a última sincronização. Devolve esse pendente.
+        function wcMesclar(remoto) {
+            remoto = Math.max(0, Math.floor(Number(remoto) || 0));
+            const pendente = wc.base === null ? 0 : (dadosGaragem.diamantes | 0) - wc.base;
+            dadosGaragem.diamantes = Math.max(0, remoto + pendente);
+            wc.base = remoto;
+            wc.ultimoLocal = dadosGaragem.diamantes | 0;
+            return pendente;
+        }
+
+        async function wcSincronizar() {
+            if (player.convidado || !wc.pronto) return;
+            if (wc.ocupado) { wc.repetir = true; return; }
+            wc.ocupado = true;
+            const conta = player.id;
+            try {
+                const sb = wcCliente();
+                const { data, error } = await sb.from(WC_HUB.tabela).select('diamantes,nick').eq('id_jogador', conta).maybeSingle();
+                if (error) throw error;
+                if (conta !== player.id) return;   // o Hub trocou de conta durante a consulta
+                let enviar = false;
+                if (!data) {   // primeira vez deste ID: cria a carteira com o saldo do jogo
+                    enviar = true;
+                } else {
+                    enviar = wcMesclar(data.diamantes) !== 0;
+                    if (wc.nickPendente && data.nick) {   // o Hub não guardou o nick no navegador: usa o da carteira
+                        player.nickHub = String(data.nick).slice(0, 40);
+                        player.name = player.nickHub.slice(0, 16);
+                        nomeJogador = player.name;
+                        if (jogadorTanquePrincipal) jogadorTanquePrincipal.name = player.name;
+                        wc.nickPendente = false;
+                        aplicarIdentidadeNaInterface();
+                    }
+                }
+                if (enviar) {
+                    const enviado = dadosGaragem.diamantes | 0;
+                    // carteira já existente: só o saldo muda (o nick continua o que o Hub guardou)
+                    const linha = data ? { id_jogador: conta, diamantes: enviado } : { id_jogador: conta, nick: player.nickHub || player.name, diamantes: enviado };
+                    const r = await sb.from(WC_HUB.tabela).upsert(linha, { onConflict: 'id_jogador' });
+                    if (r && r.error) throw r.error;
+                    wc.base = enviado;   // o que mudar durante o envio continua pendente
+                }
+                wcGravarBase();
+                wcAtualizarTela();
+                salvarJogo();
+                wcDescarregarFila();
+            } catch (e) {
+                console.warn('[WC] 💎 sem sincronizar (continua com o saldo local):', (e && e.message) || e);
+            } finally {
+                wc.ocupado = false;
+                if (wc.repetir) { wc.repetir = false; wcAgendar(300); }
+            }
+        }
+
+        function wcAgendar(ms) {
+            if (player.convidado) return;
+            clearTimeout(wc.timer);
+            wc.timer = setTimeout(wcSincronizar, ms == null ? 1200 : ms);
+        }
+
+        // chamado a cada salvarJogo(): se os 💎 mudaram aqui, envia ao Supabase
+        function wcAoSalvar() {
+            if (player.convidado || !wc.pronto) return;
+            if ((dadosGaragem.diamantes | 0) !== wc.ultimoLocal) { wc.ultimoLocal = dadosGaragem.diamantes | 0; wcAgendar(); }
+        }
+
+        // a loja do Hub (outra aba) gravou um novo saldo em wavecombat_diamonds
+        function wcAoHubMudar(valor) {
+            const v = Number(valor);
+            if (player.convidado || !wc.pronto || valor === null || valor === '' || !Number.isFinite(v)) return;
+            const pendente = wcMesclar(v);
+            wcAtualizarTela();
+            salvarJogo();
+            if (pendente !== 0) wcAgendar();
+        }
+
+        // depois de carregar o save (e quando o Hub troca de conta): liga a sincronização
+        function wcAposCarregar() {
+            wc.pronto = true;
+            wc.base = player.convidado ? null : wcLerBase(player.id);
+            wc.ultimoLocal = dadosGaragem.diamantes | 0;
+            clearInterval(wc.poll);
+            if (player.convidado) return;
+            const dica = lerLS('wavecombat_diamonds');   // último saldo que o Hub conhece (vale até a nuvem responder)
+            if (dica !== null && dica !== '' && Number.isFinite(Number(dica))) { wcMesclar(Number(dica)); wcAtualizarTela(); salvarJogo(); }
+            wc.poll = setInterval(() => { if (!document.hidden) wcSincronizar(); }, WC_HUB.pollMs);
+            wcSincronizar();
+        }
+
+        /* --- Ranking Global: envia a pontuação ao fim da partida (procedure atualizar_pontuacao) --- */
+
+        function wcFila() {
+            try { const f = JSON.parse(lerLS('esquadrao_wc_fila')); return Array.isArray(f) ? f : []; } catch (e) { return []; }
+        }
+
+        async function wcEnviarPontos(e) {
+            const sb = wcCliente();
+            if (!sb) { console.warn('Cliente do Supabase não encontrado no escopo global.'); return false; }
+            try {
+                const { error } = await sb.rpc(WC_HUB.rpcPontuacao, { p_id_jogador: e.id, p_nick: e.nick, p_pontos: e.pontos });
+                if (error) { console.error('Erro ao enviar pontuação para o Leaderboard:', error); return false; }
+                console.log('Pontuação registrada com sucesso no Leaderboard!');
+                if (typeof carregarLeaderboard === 'function') carregarLeaderboard();
+                return true;
+            } catch (err) {
+                console.error('Exceção ao tentar salvar pontuação:', err);
+                return false;
+            }
+        }
+
+        async function enviarResultadoPartida(pontosAlcancados) {
+            if (player.convidado) { console.warn('[WC] Sem ID do Hub: pontuação não enviada ao Ranking Global.'); return; }
+            const envio = { id: player.id, nick: player.nickHub || player.name, pontos: Math.max(0, Math.floor(Number(pontosAlcancados) || 0)) };
+            if (!(await wcEnviarPontos(envio))) gravarLS('esquadrao_wc_fila', JSON.stringify(wcFila().concat(envio).slice(-20)));   // tenta de novo na próxima sincronização
+        }
+
+        async function wcDescarregarFila() {
+            const fila = wcFila();
+            if (!fila.length || player.convidado) return;
+            gravarLS('esquadrao_wc_fila', '[]');   // evita enviar em dobro se rodar duas vezes
+            const falhas = [];
+            for (const e of fila) if (!(await wcEnviarPontos(e))) falhas.push(e);
+            if (falhas.length) gravarLS('esquadrao_wc_fila', JSON.stringify(wcFila().concat(falhas).slice(-20)));
         }
 
         // Mostra nick e ID na tela inicial, garagem, HUD da partida, pausa e painel ADM
@@ -1728,7 +1947,7 @@
                 case 'recordes': g.recordes = { infinito: 0, relampago: 0, cacada: 0 }; msg = '🏅 Recordes zerados'; break;
                 case 'zerar':
                     Object.assign(g, {
-                        ouro: 200, diamantes: 0, precoCompra: 1000, rondaAtual: 1,
+                        ouro: 200, precoCompra: 1000, rondaAtual: 1,   // 💎 ficam: são a carteira do Hub
                         slots: [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], melhorias: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                         pontosRank: 0, partidasJogadas: 0, sequenciaLogin: 0, dataUltimoLogin: null,
                         modoSelecionado: 'sobrevivencia', recordes: { infinito: 0, relampago: 0, cacada: 0 }
@@ -1752,7 +1971,9 @@
                     try {
                         localStorage.setItem(SAVE_KEY, JSON.stringify({ ...antigo, dadosGaragem: obj.dadosGaragem, configJogo: obj.configJogo || antigo.configJogo }));
                     } catch (e) { mostrarAviso('Não foi possível gravar o save'); return; }
+                    const diamantesHub = g.diamantes;   // o save importado não altera a carteira do Hub
                     carregarJogo();
+                    g.diamantes = diamantesHub;
                     sincronizarCamposConfig();
                     msg = '📥 Save importado';
                     break;
@@ -3621,7 +3842,8 @@
             }
             vibrar(vitoria ? [60, 40, 60] : 300);
             salvarJogo();
-
+            // Ranking Global do Hub: abates + chefões + tempo sobrevivido + bônus de vitória
+            enviarResultadoPartida(inimigosMortos * 10 + chefoesMortos * 100 + Math.floor(tempoSobrevivido) + (vitoria ? 100 : 0));
 
             document.getElementById('hud').classList.add('hidden');
             const stats = document.getElementById('stats-overlay');
@@ -5869,8 +6091,9 @@
         /* --- INICIALIZAÇÃO E EVENTOS --- */
 
         function inicializar() {
-            identificarJogador();   // nick + ID do Hub (ou criados sozinhos)
+            identificarJogador();   // nick + ID do Hub (ou Convidado)
             carregarJogo();
+            wcAposCarregar();       // liga a sincronização dos 💎 com o Supabase
             atualizarTelaInicio();
             sincronizarCamposConfig();
             resizeCanvas();
@@ -5946,11 +6169,15 @@
 
             // O Hub pode trocar nick/ID em outra aba: o jogo acompanha
             window.addEventListener('storage', e => {
-                if (e.key === 'wavecombat_nick' || e.key === 'wavecombat_id') {
+                if (['wavecombat_nick', 'wavecombat_id', 'wavecombat_sessao_ativa'].includes(e.key)) {
                     identificarJogador();
                     if (!player.adm) admFechar();
-                }
+                } else if (e.key === 'wavecombat_diamonds') wcAoHubMudar(e.newValue);
             });
+            // volta para a aba / reconecta: atualiza os 💎 com a loja do Hub
+            window.addEventListener('online', wcSincronizar);
+            window.addEventListener('focus', wcSincronizar);
+            document.addEventListener('visibilitychange', () => { if (!document.hidden) wcSincronizar(); });
 
             // Login diário (recompensa) e Ranking ficam na tela inicial
             document.getElementById('btn-open-daily').onclick = abrirDailyLogin;
