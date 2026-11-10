@@ -142,6 +142,32 @@ body.gl .bg{display:none}
 #gear{width:38px;height:38px;font-size:18px;top:6px;right:8px}
 .pill{padding:7px 12px;font-size:13px}
 .pills{margin-bottom:8px;gap:6px}}
+#chat{left:8px;bottom:calc(10px + env(safe-area-inset-bottom));width:min(150px,14vw);min-height:30px;max-height:42px;padding:5px 8px;font-size:10px;border-radius:14px}
+@media(max-width:760px){.bot{justify-content:flex-end;padding-right:14px}}
+.vb{display:inline-grid;place-items:center;width:15px;height:15px;border-radius:50%;background:linear-gradient(135deg,#fff3b0,#ffc400,#b8860b);color:#3a2a00;font:900 10px/1 Impact,sans-serif;font-style:normal;margin-left:4px;vertical-align:middle}
+.vb[hidden]{display:none}
+#yt{font-size:11px;font-weight:800;padding:6px 12px;white-space:nowrap;color:#fff;text-decoration:none;border-color:#ff5252;background:linear-gradient(135deg,#ff000088,#8a000088);min-width:0;overflow:hidden;text-overflow:ellipsis;gap:6px}
+#yt:before{content:'';flex:none;border-left:9px solid #fff;border-top:5px solid transparent;border-bottom:5px solid transparent}
+#fbtn{position:fixed;top:calc(62px + env(safe-area-inset-top));right:14px;z-index:30;width:46px;height:46px;border-radius:50%;color:#fff;font-size:20px;cursor:pointer;display:grid;place-items:center;padding:0}
+#fbd{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;border-radius:9px;background:#69f0ae;color:#06260f;font:800 11px/18px sans-serif;font-style:normal;text-align:center;padding:0 4px}
+#drw{position:fixed;top:0;right:0;bottom:0;width:min(300px,72vw);z-index:28;background:linear-gradient(#2a1460f2,#140834f2);border-left:1px solid var(--gb);transform:translateX(105%);transition:transform .25s;padding:calc(64px + env(safe-area-inset-top)) 12px 12px;display:flex;flex-direction:column;gap:8px}
+#drw.on{transform:none}
+.dh{display:flex;justify-content:space-between;align-items:center;font-weight:900}
+.db{flex:1;overflow:auto}
+.fh{font-weight:800;font-size:12px;opacity:.8;margin:8px 0 4px}
+.fr{display:flex;align-items:center;gap:10px;padding:6px 4px}
+.fr .pf{width:34px;height:34px;font-size:16px}
+.fr b{display:block;font-size:13px}.fr small{opacity:.75}
+.fr .dot{margin-left:auto;background:#777;box-shadow:none}.fr .dot.ok{background:#69f0ae;box-shadow:0 0 8px #69f0ae}
+#mh.on~#fbtn,#mh.on~#drw,body.dopen #fbtn{display:none}
+#mmq{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);z-index:7;display:none;flex-direction:column;align-items:center;gap:6px;padding:16px 26px;text-align:center;min-width:250px;border-color:var(--n1)}
+#mmq.on{display:flex}
+#mmq b{font:900 22px Impact,'Arial Black',sans-serif;letter-spacing:.03em}
+.mmn{font-size:14px}.mmn span{font:900 34px Impact,sans-serif;color:var(--n1)}
+#mmt{font:800 20px 'Trebuchet MS',sans-serif;font-variant-numeric:tabular-nums}
+#mmq small{opacity:.8;max-width:260px}
+.btn.busy{animation:pls 1.2s infinite}
+@media(max-height:520px){#fbtn{top:48px;right:10px;width:34px;height:34px;font-size:16px}#drw{padding-top:54px}.squad{top:57%}}
 </style></head><body>
 
 <canvas id="gl3d"></canvas>
@@ -154,26 +180,29 @@ body.gl .bg{display:none}
 <div class="ver" id="ver"></div><div id="snd">🔊 Toque na tela para ligar a música</div></div>
 
 <div id="lobby" class="scr"><div class="bg"><b class="tag">STREET KINGS</b></div>
-<div class="top"><div class="g chip" style="padding:6px 18px 6px 6px;cursor:pointer" onclick="abrir('perfil')"><span class="pf" id="pi"></span><div><b id="pn"></b><i class="adm" id="pa" hidden>ADM</i><br><small id="pid"></small></div></div>
-<i class="dot" id="net"></i><span style="flex:1"></span>
+<div class="top"><div class="g chip" style="padding:6px 18px 6px 6px;cursor:pointer" onclick="abrir('perfil')"><span class="pf" id="pi"></span><div><b id="pn"></b><i class="adm" id="pa" hidden>ADM</i><i class="vb" id="vbd" hidden>V</i><br><small id="pid"></small></div></div>
+<i class="dot" id="net"></i><a id="yt" class="g chip" href="https://youtube.com/@capudooficial7?si=NSvfxpSzswVEStdu" target="_blank" rel="noopener noreferrer">siga o criador do jogo aqui</a><span style="flex:1"></span>
 <div class="g chip">💎 <b id="dia">…</b></div><div class="g chip">🪙 <b id="gold">1.250</b></div></div>
 <div class="mid"><div class="side g" id="tabs"></div>
 <div class="squad"><div class="slot me">⭐</div><button class="slot" onclick="abrir('soc')">+</button><button class="slot" onclick="abrir('soc')">+</button></div></div>
+<div id="mmq" class="g"><b id="mmh">Procurando partida...</b><div class="mmn"><span id="mmc">1/4</span> jogadores</div><div id="mmt">00:00</div><small id="mmx"></small><div class="pills" style="justify-content:center;margin:0"><button class="btn sm mi" onclick="achou(true)">Treinar com bots agora</button><button class="btn sm mi" style="background:#ff5252;box-shadow:0 3px 0 #8a1c1c;color:#fff" onclick="cancelarFila()">Cancelar</button></div></div>
 <div id="chat" class="g" onclick="abrir('chat')"><div id="cpv"></div></div><div class="bot"><button class="pill g" style="padding:14px 22px" onclick="abrirTime()">🛡️ Time</button><button class="pill g" id="bm" style="padding:14px 22px"></button><button class="btn" id="play">⚽ JOGAR</button><button class="pill g" style="padding:14px 22px" onclick="abrir('passe')">🎟️ Passe</button></div></div>
 
 <div id="modal"><div class="box g"><div class="hd"><span id="mt"></span><button class="x" onclick="fechar()">✕</button></div><div class="bd" id="mb"></div></div></div>
 <button id="gear" class="g" onclick="abrir('cfg')">⚙️</button>
 <div id="mh" class="scr"><div id="sb">0 × 0</div><button id="sx" class="pill g" onclick="sairPartida()">✕ Sair</button><div id="joy"><i id="jk"></i></div><button id="bpa" class="act">PASSE</button><button id="bsh" class="act">CHUTE</button><button id="bdr" class="act">DRIBLE</button><button id="bsl" class="act">CARRINHO</button><div id="sty"><i id="stf"></i><b id="stt">ESTILO</b></div><div id="pop"></div><div id="gl2">GOL!</div></div>
+<button id="fbtn" class="g" onclick="abrirAmigos()" aria-label="Amigos">👥<i id="fbd" hidden>0</i></button>
+<div id="drw"><div class="dh"><b>Amigos</b><button class="x" onclick="abrirAmigos()">✕</button></div><div id="drwb" class="db"></div><button class="btn sm mi" onclick="amigosAtualizar()">Atualizar</button></div>
 <div id="rot"><i>📱</i><b style="font:900 28px Impact,'Arial Black',sans-serif">Deite a tela</b><span>O jogo roda na horizontal em todos os aparelhos.<br>Gire o aparelho para continuar.</span></div>
 <div id="toast"></div>
 
 <script>
-const VERSAO='0.008',ADMIN_IDS=['162028398','577082415'];
+const VERSAO='0.009',ADMIN_IDS=['162028398','577082415'];
 // Hub: credenciais podem vir da página (window.SUPABASE_*); senão usa os padrões abaixo
 const SB_URL=window.SUPABASE_URL||'https://ipqjeacdfiomcxfuixdj.supabase.co';
 const SB_KEY=window.SUPABASE_KEY||window.SUPABASE_ANON_KEY||'sb_publishable_EWW84q_43YbOvMwB_Rua-A_X465PbLP';
-const T=window.SUPABASE_TABLE||'carteira_diamantes',CID='id_jogador',CD='diamantes'; // ajuste CID/CD se as colunas tiverem outros nomes
-window.WC_SERVER=window.WC_SERVER||'https://riverbed-server.onrender.com';
+let T=window.SUPABASE_TABLE||'carteira_diamantes',CID='id_jogador',CD='diamantes'; // ajuste CID/CD se as colunas tiverem outros nomes
+window.WC_SERVER=window.WC_SERVER||'https://wavecombat-hub.onrender.com';
 window.HUB=window.HUB||{};HUB.socket=HUB.socket||WC_SERVER;
 const $=s=>document.querySelector(s);
 let player={dia:0},sb=null,sock=null,st='Conectando…',nt='Conectando…',cur='',lt='Roupas';
@@ -191,14 +220,14 @@ const TIT={loja:'🛒 Loja',pers:'👕 Personagem',modos:'🎮 Modos de jogo',co
 
 function salvar(){localStorage.setItem('sc_save',JSON.stringify(S))}
 function initPlayer(){
- let id=localStorage.getItem('wavecombat_id'),nick=localStorage.getItem('wavecombat_nick'),o={};
- try{const r=localStorage.getItem('wavecombat_sessao_ativa');o=r?JSON.parse(r):{}}catch(e){o={nick:localStorage.getItem('wavecombat_sessao_ativa')}}
+ const g=k=>{try{return localStorage.getItem(k)||sessionStorage.getItem(k)}catch(e){return null}};
+ let id=g('wavecombat_id'),nick=g('wavecombat_nick'),o={};
+ try{const r=g('wavecombat_sessao_ativa');o=r?JSON.parse(r):{}}catch(e){o={nick:g('wavecombat_sessao_ativa')}}
  if(!o||typeof o!='object')o={nick:String(o)};
- id=id||String(o.id||o.id_jogador||o.userId||'');
- nick=nick||o.nick||o.nome||o.username||o.name||'';
- if(!id){id=String(Math.floor(100000000+Math.random()*900000000));localStorage.setItem('wavecombat_id',id)}
- if(!nick){nick=id=='162028398'?'capudo7':'Player_'+id.substring(0,4);localStorage.setItem('wavecombat_nick',nick)}
- player={id:String(id),name:String(nick),dia:0,adm:ADMIN_IDS.includes(String(id))};
+ const u=o.user||o.usuario||o;
+ id=id||String(u.id||u.id_jogador||u.userId||u.uid||'');
+ nick=nick||u.nick||u.nome||u.username||u.apelido||u.name||'';
+ player={id:String(id||'visitante'),name:String(nick||(id?'Jogador':'Visitante')),dia:0,guest:!id,adm:ADMIN_IDS.includes(String(id))};
 }
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('on'),2200)}
 function beat(){try{const a=new(window.AudioContext||window.webkitAudioContext)(),t=a.currentTime,v=Math.max(S.vol*.6,.0001);[0,.25,.5,.75].forEach((d,i)=>{const o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.type=i%2?'square':'sine';o.frequency.setValueAtTime(i%2?220:140,t+d);o.frequency.exponentialRampToValueAtTime(40,t+d+.2);g.gain.setValueAtTime(v,t+d);g.gain.exponentialRampToValueAtTime(.001,t+d+.22);o.start(t+d);o.stop(t+d+.25)})}catch(e){}}
@@ -219,11 +248,11 @@ function setDia(n){player.dia=n;$('#dia').textContent=n.toLocaleString('pt-BR')}
 function sync(t){st=t;const e=$('#ns2');if(e)e.textContent=t}
 function net(t,ok){nt=t;$('#net').className='dot'+(ok?' ok':'');const e=$('#ns');if(e)e.textContent=t}
 async function carteira(){
- if(!sb)return sync('Offline');
+ if(!sb||player.guest)return sync(player.guest?'Visitante: abra pelo Hub':'Offline');await walletInit();
  try{const{data,error}=await sb.from(T).select(CD).eq(CID,player.id).maybeSingle();if(error)throw error;
   if(data)setDia(+data[CD]);else{const u=await sb.from(T).upsert({[CID]:player.id,[CD]:0},{onConflict:CID});if(u.error)throw u.error;setDia(0)}
   sync('Sincronizada ✔')}catch(e){console.error(e);sync('Erro de sincronização')}}
-async function gravar(n){if(!sb)return false;const u=await sb.from(T).upsert({[CID]:player.id,[CD]:n},{onConflict:CID});if(u.error){console.error(u.error);return false}setDia(n);return true}
+async function gravar(n){if(!sb||player.guest)return false;const u=await sb.from(T).upsert({[CID]:player.id,[CD]:n},{onConflict:CID});if(u.error){console.error(u.error);return false}setDia(n);return true}
 async function comprar(id,cb){const i=ITENS.find(x=>x.id==id);if(!i||S.inv.includes(id))return;
  await carteira();
  if(player.dia<i.p)return toast('💎 Diamantes insuficientes');
@@ -239,7 +268,7 @@ function conectar(){
 // ---- Ranking global: chamar no fim da partida / Game Over (Etapa 5: apito final) ----
 async function enviarResultadoPartida(pontos){
  const idUsuario=player.id,nickJogador=player.full||player.name;
- if(window.supabaseClient){
+ if(window.supabaseClient&&!player.guest){
   try{const{error}=await window.supabaseClient.rpc('atualizar_pontuacao',{p_id_jogador:idUsuario,p_nick:nickJogador,p_pontos:pontos});
    if(error){console.error('Erro ao enviar pontuação para o Leaderboard:',error);toast('Erro ao salvar pontuação')}
    else{console.log('Pontuação registrada com sucesso no Leaderboard!');toast('🏅 Pontuação enviada: '+pontos);if(typeof carregarLeaderboard==='function')carregarLeaderboard()}
@@ -265,7 +294,7 @@ P.pers=()=>CAT.map(([n,v])=>`<div style="margin-bottom:12px"><b>${n}</b><div cla
 P.modos=()=>`<div class="grid">${[['🏟️','3v3 Jaula'],['🌆','4v4 Praça'],['🏙️','3v3 Telhado'],['🎨','3v3 Favela'],['🎯','Treino livre']].map(([e,n])=>`<div class="card ${S.modo==n?'sel':''}"><div class="e">${e}</div><b>${n}</b><button class="btn sm" onclick="modo('${n}')">Selecionar</button></div>`).join('')}</div>`;
 P.conq=()=>[['Primeiro drible','Faça 1 drible de efeito',0,1],['Humilhação total','Aplique 10 elásticos',0,10],['Rei da grade','5 tabelinhas na parede',0,5],['Gamebreaker','3 gols com a barra cheia',0,3],['A rua é minha','Vença 10 partidas',0,10]].map(([n,d,a,b])=>`<div class="card" style="flex-direction:row;text-align:left;margin-bottom:10px"><span style="font-size:34px">🏆</span><div style="flex:1"><b>${n}</b><br><small>${d}</small><div class="bar"><i style="width:${a/b*100}%"></i></div></div><small>${a}/${b}</small></div>`).join('');
 P.soc=()=>`<div class="card" style="margin-bottom:12px"><small>Seu ID</small><b style="font-size:26px;letter-spacing:.08em">${player.id}</b><button class="btn sm" onclick="copiar()">Copiar ID</button></div><p style="margin-bottom:10px">Servidor: <b id="ns">${nt}</b></p><div class="card" style="opacity:.8">👥 Nenhum amigo ainda. Convide pelo ID.</div>`;
-P.cfg=()=>`<p><b>Volume da música</b></p><input type="range" min="0" max="100" value="${S.vol*100}" oninput="S.vol=this.value/100;salvar();volume()" style="margin:8px 0 16px"><p><b>Qualidade gráfica</b></p><div class="pills" style="margin-top:8px">${['Baixa','Média','Alta'].map(q=>`<button class="pill ${S.q==q?'on':''}" onclick="S.q='${q}';salvar();qual();abrir('cfg')">${q}</button>`).join('')}</div><div class="card" style="align-items:flex-start;text-align:left;margin:10px 0 16px"><b>Conta WaveCombat</b><small>Nick: ${player.name}</small><small>ID: ${player.id}</small><small>Carteira: <span id="ns2">${st}</span></small><small>Street Soccer v${VERSAO}</small></div>${player.adm?`<button class="btn" onclick="abrir('adm')">🛡️ Painel admin</button>`:''}`;
+P.cfg=()=>`<p><b>Volume da música</b></p><input type="range" min="0" max="100" value="${S.vol*100}" oninput="S.vol=this.value/100;salvar();volume()" style="margin:8px 0 16px"><p><b>Qualidade gráfica</b></p><div class="pills" style="margin-top:8px">${['Baixa','Média','Alta'].map(q=>`<button class="pill ${S.q==q?'on':''}" onclick="S.q='${q}';salvar();qual();abrir('cfg')">${q}</button>`).join('')}</div><div class="card" style="align-items:flex-start;text-align:left;margin:10px 0 16px"><b>Conta WaveCombat</b><small>Nick: ${player.name}</small><small>ID: ${player.id}</small><small>Carteira: <span id="ns2">${st}</span></small><small>Street Soccer v${VERSAO}</small></div><a class="btn sm" style="display:inline-block;text-decoration:none;margin-bottom:12px" href="https://youtube.com/@capudooficial7?si=NSvfxpSzswVEStdu" target="_blank" rel="noopener noreferrer">siga o criador do jogo aqui</a>${player.adm?`<button class="btn" onclick="abrir('adm')">🛡️ Painel admin</button>`:''}`;
 P.adm=()=>!player.adm?'Acesso negado':`<div class="card" style="align-items:stretch;text-align:left"><small>ID alvo (vazio = o seu)</small><input id="aid" placeholder="${player.id}"><small>Quantidade de diamantes</small><input id="aq" type="number" value="100"><div class="pills"><button class="pill on" onclick="adm('add')">+ Adicionar</button><button class="pill on" onclick="adm('sub')">− Remover</button><button class="pill on" onclick="adm('set')">Definir saldo</button><button class="pill on" onclick="adm('get')">Consultar</button></div></div><div class="card" style="align-items:stretch;text-align:left;margin-top:10px"><small>Ranking (RPC atualizar_pontuacao) usa a quantidade acima</small><div class="pills" style="margin:6px 0 0"><button class="pill on" onclick="enviarResultadoPartida(parseInt($('#aq').value)||10)">Enviar pontuação teste</button><button class="pill on" onclick="ganharXP(100);toast('+100 XP do passe')">+100 XP passe</button><button class="pill" onclick="localStorage.removeItem('sc_save');location.reload()">Limpar dados locais</button></div></div><pre id="al">Pronto.</pre>`;
 
 document.addEventListener('DOMContentLoaded',()=>{
@@ -642,7 +671,7 @@ const ouro=()=>S.ouro==null?1250:S.ouro;
 function setOuro(n){S.ouro=n;salvar();const e=$('#gold');if(e)e.textContent=n.toLocaleString('pt-BR')}
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>'&#'+c.charCodeAt(0)+';');
 const san=v=>v.replace(/[<>&"']/g,'');
-function atualizaNome(){player.full=player.tag?'['+player.tag+'] '+player.name:player.name;$('#pn').textContent=player.full;$('#sn').textContent=player.full;$('#pi').textContent=player.name[0].toUpperCase();const fi=pfr();$('#pi').style.border='4px solid transparent';$('#pi').style.background='linear-gradient(135deg,#ff2e93,#7c4dff) padding-box,'+FR[fi][1]+' border-box';if(window.eng)eng.ap()}
+function atualizaNome(){player.full=player.tag?'['+player.tag+'] '+player.name:player.name;$('#pn').textContent=player.full;$('#sn').textContent=player.full;$('#pi').textContent=player.name[0].toUpperCase();const vb=$('#vbd');if(vb)vb.hidden=!isVer(player.id);const fi=pfr();$('#pi').style.border='4px solid transparent';$('#pi').style.background='linear-gradient(135deg,#ff2e93,#7c4dff) padding-box,'+FR[fi][1]+' border-box';if(window.eng)eng.ap()}
 Object.assign(TIT,{timeb:'🛡️ Time',time:'🛡️ Meu time',timec:'🛡️ Criar time',passe:'🎟️ Passe do mês'});
 [['p1','Boné Verdão','🧢'],['p2','Tênis Verdão','👟'],['p3','Bola Verdão','⚽'],['q1','Óculos Verde','🕶️'],['q2','Boné Elite','🧢'],['q3','Tênis Dourado','👟'],['q4','Bermuda Elite','🩳'],['q5','Corrente Esmeralda','📿'],['q6','Cabelo Platinado','💈'],['q7','Bola Dourada','🏆'],['q8','Camisa Elite','👕'],['q9','Óculos Ouro','🕶️'],['q10','Bola Elite','⚽'],['q11','Camisa Lendária','👑'],['q12','Moletom Lendário','🧥']].forEach(([id,n,e])=>ITENS.push({id,n,e,p:0,pas:1}));
 SL.camisa[1].push(['Verdão','#006437'],['Elite','#00c853','','q8'],['Lendária','#ffd54f','','q11'],['Moletom Lendário','#00a550','hood','q12']);
@@ -660,7 +689,7 @@ const DB={off:0,
  sav:(t,a)=>localStorage.setItem('sc_db_'+t,JSON.stringify(a)),
  m:(r,f)=>Object.keys(f).every(k=>r[k]==f[k]),
  async run(op,t,f,p){
-  if(sb&&!DB.off)try{let q=sb.from(t);
+  if(sb&&!DB.off&&!player.guest)try{let q=sb.from(t);
    q=op=='sel'?q.select('*'):op=='ins'?q.insert(f):op=='upd'?q.update(p):q.delete();
    if(op!='ins')for(const k in f)q=q.eq(k,f[k]);
    const r=await q;if(r.error)throw r.error;return r.data||[]}
@@ -825,5 +854,120 @@ P.passe=()=>{const p=ps(),l=lvl(),n=new Date(),dias=Math.ceil((new Date(n.getFul
  return`<div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:10px"><div style="flex:1;min-width:200px"><b style="font-size:17px">Nível ${l}/30 ${p.pr?'👑 Premium':''}</b><br><small>Termina em ${dias} dias · ${l>=30?'máximo':p.xp%100+'/100 XP'}</small><div class="bar" style="margin-top:4px"><i style="width:${l>=30?100:p.xp%100}%"></i></div></div><div class="pills" style="margin:0">${p.pr?'':'<button class="btn sm mi" onclick="comprarPasse()">Passe 💎 600</button>'}<button class="btn sm mi" onclick="comprarNiveis()">Todos os níveis 💎 150</button><button class="btn sm mi" onclick="resgatarTudo()">Resgatar tudo</button></div></div><div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:6px"><div style="display:flex;flex-direction:column;gap:6px;padding-top:20px;font-size:12px"><b style="height:104px;display:grid;place-items:center">Grátis</b><b style="height:104px;display:grid;place-items:center">👑 Premium</b></div>${PP.map((c,i)=>`<div style="display:flex;flex-direction:column;gap:6px;align-items:center"><b style="height:14px;font-size:12px">Nv ${i+1}</b>${PF[i+1]?cell2(PF[i+1],i+1,0):'<div style="width:84px;height:104px"></div>'}${cell2(c,i+1,1)}</div>`).join('')}</div>`};
 P.perfil=()=>{const st=STN(),pct=st.pj?Math.round(st.v/st.pj*100):0,bi=pbg(),fi=pfr(),tile=(l,v)=>`<div class="card tl"><b>${v}</b><small>${l}</small></div>`,
  opts=(pc=='bg'?BG:FR).map((x,i)=>{const ok=own(pc+i),on=(pc=='bg'?bi:fi)==i&&S[pc]!='t';return`<div class="card ${on?'sel':''}" style="cursor:pointer;opacity:${ok?1:.5};padding:5px" onclick="escolher('${pc}',${i})"><div style="width:60px;height:36px;border-radius:8px;border:3px solid transparent;background:${pc=='bg'?bgCSS(i,4):`linear-gradient(#2a1460,#2a1460) padding-box,${x[1]} border-box`}"></div><small style="font-size:10px">${x[0]}${ok?'':' 🔒'}</small></div>`}).join('');
- return`<div class="pf2"><div><div style="border:5px solid transparent;border-radius:20px;background:${bgCSS(bi,fi)};padding:12px;display:flex;gap:12px;align-items:center;margin-bottom:10px"><span class="pf" style="width:52px;height:52px;font-size:24px;border:4px solid transparent;background:linear-gradient(135deg,#ff2e93,#7c4dff) padding-box,${FR[fi][1]} border-box">${esc(player.name[0]).toUpperCase()}</span><div style="text-shadow:0 2px 6px #000"><b style="font-size:19px">${esc(player.full||player.name)}</b><br><small>ID ${esc(player.id)} · Nível ${lvl()} do passe</small></div></div><div class="card" style="flex-direction:row;text-align:left;padding:8px">${TM?`${flag(TM.bandeira||{},TM.tag,46)}<div style="flex:1"><b>${esc(TM.nome)}</b> <i class="adm">${esc(TM.tag)}</i><br><small>ID ${esc(TM.id)}</small></div><button class="btn sm mi" onclick="abrirTime()">Ver time</button>`:`<span style="font-size:28px">🛡️</span><div style="flex:1"><b>Sem time</b><br><small>Entre ou crie um time.</small></div><button class="btn sm mi" onclick="abrirTime()">Procurar</button>`}</div></div><div><div class="grid" style="grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px">${tile('Partidas',st.pj)+tile('Vitórias',st.v)+tile('Derrotas',st.d)+tile('% vitórias',pct+'%')+tile('Gols',st.g)+tile('Assist.',st.a)+tile('Dribles',st.dr)}</div><div class="pills"><button class="pill ${pc=='bg'?'on':''}" onclick="pc='bg';abrir('perfil')">Fundo</button><button class="pill ${pc=='fr'?'on':''}" onclick="pc='fr';abrir('perfil')">Moldura</button>${TM?`<button class="pill ${S[pc]=='t'?'on':''}" onclick="escolher('${pc}','t')">Do time</button>`:''}</div><div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:6px">${opts}</div></div></div><button class="btn sm" style="margin-top:10px" onclick="fechar()">← Voltar para o lobby</button>`};
+ return`<div class="pf2"><div><div style="border:5px solid transparent;border-radius:20px;background:${bgCSS(bi,fi)};padding:12px;display:flex;gap:12px;align-items:center;margin-bottom:10px"><span class="pf" style="width:52px;height:52px;font-size:24px;border:4px solid transparent;background:linear-gradient(135deg,#ff2e93,#7c4dff) padding-box,${FR[fi][1]} border-box">${esc(player.name[0]).toUpperCase()}</span><div style="text-shadow:0 2px 6px #000"><b style="font-size:19px">${esc(player.full||player.name)}${isVer(player.id)?'<i class="vb">V</i>':''}</b><br><small>ID ${esc(player.id)} · Nível ${lvl()} do passe</small></div></div><div class="card" style="flex-direction:row;text-align:left;padding:8px">${TM?`${flag(TM.bandeira||{},TM.tag,46)}<div style="flex:1"><b>${esc(TM.nome)}</b> <i class="adm">${esc(TM.tag)}</i><br><small>ID ${esc(TM.id)}</small></div><button class="btn sm mi" onclick="abrirTime()">Ver time</button>`:`<span style="font-size:28px">🛡️</span><div style="flex:1"><b>Sem time</b><br><small>Entre ou crie um time.</small></div><button class="btn sm mi" onclick="abrirTime()">Procurar</button>`}</div></div><div><div class="grid" style="grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px">${tile('Partidas',st.pj)+tile('Vitórias',st.v)+tile('Derrotas',st.d)+tile('% vitórias',pct+'%')+tile('Gols',st.g)+tile('Assist.',st.a)+tile('Dribles',st.dr)}</div><div class="pills"><button class="pill ${pc=='bg'?'on':''}" onclick="pc='bg';abrir('perfil')">Fundo</button><button class="pill ${pc=='fr'?'on':''}" onclick="pc='fr';abrir('perfil')">Moldura</button>${TM?`<button class="pill ${S[pc]=='t'?'on':''}" onclick="escolher('${pc}','t')">Do time</button>`:''}</div><div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:6px">${opts}</div></div></div><button class="btn sm" style="margin-top:10px" onclick="fechar()">← Voltar para o lobby</button>`};
+</script>
+<script>
+// ===== v0.009: integração com o hub (Socket.io + Supabase) =====
+const HUB_URL='https://wavecombat-hub.onrender.com',JOGO='street-soccer';
+window.WC_SERVER=HUB_URL;window.HUB=window.HUB||{};HUB.socket=HUB_URL;
+const AM=Object.assign({T:'wavecombat_amigos'},window.WC_AMIGOS||{}),VER=new Set(),AMP={},MM={on:0,t0:0,n:1,h:0,go:0,to:0,max:4};
+let AMGL=[],AMG_ERR='',estadoAtual='lobby',ROOM={cod:'',host:'',mem:[]},wOK=0;
+const sockOK=()=>!!(sock&&sock.connected),isVer=id=>VER.has(String(id));
+function statusJogo(e){estadoAtual=e;if(sockOK())sock.emit('street:status',{estado:e})}
+Object.assign(TIT,{sala:'🚪 Sala personalizada'});
+CH.r={n:'',m:[],c:null};
+const _ci=chInit;window.chInit=(k,n)=>{if(k=='g'&&n&&sockOK())return;_ci(k,n)};
+
+// ---- Servidor central (Socket.io) ----
+window.conectar=()=>{
+ if(!window.io){net('Offline',0);return}
+ net('Conectando…',0);
+ try{sock=io(HUB_URL,{transports:['websocket','polling'],auth:{id:player.id,nick:player.full||player.name,jogo:JOGO,ver:isVer(player.id)},query:{id:player.id,nick:player.name,jogo:JOGO}});
+  sock.on('connect',()=>{net('Online ✔',1);sock.emit('street:ident',{nick:player.full||player.name,ver:isVer(player.id)});sock.emit('street:status',{estado:estadoAtual});chInit('g','');amigosAtualizar()});
+  sock.on('disconnect',()=>{net('Desconectado',0);chInit('g','sc-global')});
+  sock.on('connect_error',()=>net('Servidor acordando…',0));
+  sock.on('street:presenca',p=>{if(p&&p.id!=null){if(p.estado)AMP[p.id]=p.estado;else delete AMP[p.id];amigosBadge();drwRender()}});
+  sock.on('street:fila',d=>{if(d&&d.n!=null){MM.n=d.n;mmRender()}});
+  sock.on('street:partida',()=>{MM.n=MM.max;mmRender();achou(false)});
+  sock.on('street:chat',m=>chPush('g',m));
+  sock.on('street:sala:chat',m=>chPush('r',m));
+  sock.on('street:sala',r=>{ROOM=r&&r.cod?r:{cod:'',host:'',mem:[]};if(cur=='sala')abrir('sala')});
+ }catch(e){net('Offline',0)}};
+
+// ---- Carteira, nick e selo V (Supabase) ----
+async function walletInit(){if(wOK||!sb||player.guest)return;wOK=1;
+ try{const r=await sb.from(T).select('*').limit(1);if(r.error||!r.data||!r.data[0])return;const k=Object.keys(r.data[0]);
+  if(!k.includes(CID)){const c=k.find(x=>/^(id_?jogador|jogador_?id|user_?id|usuario_?id|id_?usuario|player_?id|id)$/i.test(x))||k.find(x=>/jogador|user|usuario|player/i.test(x));if(c)CID=c}
+  if(!k.includes(CD)){const d=k.find(x=>/diamante|diamond|gem|saldo|balance|valor/i.test(x));if(d)CD=d}}catch(e){}}
+async function resolverNick(){if(!sb||player.guest||player.name!=='Jogador')return;
+ try{await walletInit();const r=await sb.from(T).select('*').eq(CID,player.id).limit(1),row=(r.data||[])[0];
+  if(row){const k=Object.keys(row).find(c=>/nick|nome|apelido|username/i.test(c));if(k&&row[k]){player.name=String(row[k]);atualizaNome()}}}catch(e){}}
+async function verCarregar(){if(!sb)return;
+ try{const r=await sb.from('wavecombat_verificados').select('*').limit(2000);if(r.error)throw r.error;VER.clear();
+  (r.data||[]).forEach(row=>{const ks=Object.keys(row);if(ks.some(k=>/verificad|verified|ativo|active/i.test(k)&&row[k]===false))return;ks.forEach(k=>{if(/id|jogador|user|usuario|player/i.test(k)&&row[k]!=null)VER.add(String(row[k]))})})}catch(e){console.warn('verificados',e)}
+ atualizaNome();drwRender();if(sockOK())sock.emit('street:ident',{nick:player.full||player.name,ver:isVer(player.id)})}
+
+// ---- Amigos (tabela wavecombat_amigos) ----
+const estTxt=e=>!e?'Offline':String(e).indexOf(JOGO)==0?'🎮 Jogando Street Soccer':'Online'+(e!=='hub'?' · '+esc(e):'');
+async function amigosCarregar(){AMG_ERR='';
+ if(!sb||player.guest){AMGL=[];return}
+ try{
+  const pr=await sb.from(AM.T).select('*').limit(1);if(pr.error)throw pr.error;
+  const k=Object.keys((pr.data||[])[0]||{});if(!k.length){AMGL=[];return}
+  const pk=(L,re)=>L.find(c=>k.includes(c))||k.find(c=>re.test(c)),
+   oc=AM.o||pk(['jogador_id','id_jogador','user_id','usuario_id','id_usuario','player_id','dono_id'],/jogador|user|usuario|player|dono/i),
+   fc=AM.f||pk(['amigo_id','id_amigo','friend_id','amigo'],/amig|friend/i),
+   nc=AM.nk||pk(['amigo_nick','nick_amigo','nome_amigo','friend_nick','friend_name','nick','nome'],/nick|nome|name/i),
+   sc=k.find(c=>/^status$|situacao|aceit/i.test(c)),me=player.id;
+  if(!oc&&!fc){AMG_ERR='Colunas da tabela de amigos não reconhecidas (ajuste window.WC_AMIGOS).';AMGL=[];return}
+  let q=sb.from(AM.T).select('*');q=oc&&fc?q.or(oc+'.eq.'+me+','+fc+'.eq.'+me):q.eq(oc||fc,me);
+  const r=await q.limit(500);if(r.error)throw r.error;
+  const seen={};AMGL=[];
+  (r.data||[]).forEach(row=>{
+   if(sc){const v=String(row[sc]).toLowerCase();if(/pend|recus|bloq|false|^0$/.test(v))return}
+   const mine=!oc||String(row[oc])==me,other=oc&&fc?(mine?row[fc]:row[oc]):row[fc||oc];
+   if(other==null||String(other)==me||seen[other])return;seen[other]=1;
+   AMGL.push({id:String(other),nick:String((mine?row[nc]:null)||'Jogador '+other)})})
+ }catch(e){console.warn('amigos',e);AMG_ERR='Não foi possível carregar os amigos ('+(e.message||e.code||'erro')+').';AMGL=[]}}
+function amigosBadge(){const n=AMGL.filter(f=>AMP[f.id]).length,b=$('#fbd');if(b){b.textContent=n;b.hidden=!n}}
+function drwRender(){const el=$('#drwb');if(!el)return;
+ const on=AMGL.filter(f=>AMP[f.id]),off=AMGL.filter(f=>!AMP[f.id]),
+ row=f=>`<div class="fr"><span class="pf">${esc((f.nick||'?')[0]).toUpperCase()}</span><div><b>${esc(f.nick)}${isVer(f.id)?'<i class="vb">V</i>':''}</b><small>${estTxt(AMP[f.id])}</small></div><i class="dot ${AMP[f.id]?'ok':''}"></i></div>`;
+ el.innerHTML=player.guest?'<small>Abra o jogo pelo WaveCombat Hub para ver seus amigos.</small>':`<div class="fh">Online (${on.length})</div>${on.map(row).join('')||'<small>Ninguém online agora.</small>'}<div class="fh">Offline (${off.length})</div>${off.map(row).join('')||'<small>Nenhum amigo offline.</small>'}${AMG_ERR?'<small style="color:#ff8a80">'+esc(AMG_ERR)+'</small>':''}`}
+async function amigosAtualizar(){await amigosCarregar();
+ if(sockOK()&&AMGL.length)sock.timeout(4000).emit('street:amigos',{ids:AMGL.map(f=>f.id)},(e,r)=>{if(!e&&r&&r.online){Object.keys(AMP).forEach(k=>delete AMP[k]);Object.assign(AMP,r.online)}amigosBadge();drwRender()});
+ amigosBadge();drwRender()}
+function abrirAmigos(){const d=$('#drw'),on=d.classList.toggle('on');document.body.classList.toggle('dopen',on);if(on)amigosAtualizar()}
+
+// ---- Partida online: fila com contador X/4 e cronômetro ----
+const mmFmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+function mmRender(){const c=$('#mmc');if(c)c.textContent=MM.n+'/'+MM.max}
+function iniciarOffline(){if(window.matchStart)matchStart();else toast('3D indisponível neste aparelho')}
+function procurarPartida(){if(MM.on)return;Object.assign(MM,{on:1,t0:Date.now(),n:1,go:0});
+ const b=$('#play');b.textContent='Procurando partida...';b.classList.add('busy');
+ $('#mmq').classList.add('on');$('#mmh').textContent='Procurando partida...';$('#mmt').textContent='00:00';mmRender();statusJogo('fila');
+ if(sockOK())sock.emit('street:fila:entrar',{id:player.id,nick:player.full||player.name,modo:S.modo,max:MM.max});else $('#mmx').textContent='Sem conexão com o servidor: a partida será completada com bots.';
+ MM.h=setInterval(()=>{const s=Math.floor((Date.now()-MM.t0)/1000);$('#mmt').textContent=mmFmt(s);if(!MM.go&&MM.n>=MM.max)achou(false);else if(!MM.go&&s>=30)achou(true)},500)}
+function achou(bots){if(!MM.on||MM.go)return;MM.go=1;clearInterval(MM.h);$('#mmh').textContent=bots?'Completando com bots...':'Partida encontrada!';MM.to=setTimeout(()=>{if(!MM.on)return;fimFila();iniciarOffline()},1500)}
+function fimFila(){clearInterval(MM.h);clearTimeout(MM.to);if(sockOK())sock.emit('street:fila:sair',{id:player.id});MM.on=0;MM.go=0;const b=$('#play');b.textContent='⚽ JOGAR';b.classList.remove('busy');$('#mmq').classList.remove('on');$('#mmx').textContent='';statusJogo('lobby')}
+function cancelarFila(){fimFila()}
+
+// ---- Salas personalizadas/privadas ----
+function salaCriar(){if(!sockOK())return toast('Sem conexão com o servidor');sock.timeout(5000).emit('street:sala:criar',{priv:true},(e,r)=>{if(e||!r||!r.ok)return toast('Não foi possível criar a sala');ROOM=r.sala;statusJogo('sala');abrir('sala')})}
+function salaEntrar(c){c=String(c||'').trim().toUpperCase();if(c.length<4)return toast('Digite o código da sala');if(!sockOK())return toast('Sem conexão com o servidor');sock.timeout(5000).emit('street:sala:entrar',{cod:c},(e,r)=>{if(e||!r||!r.ok)return toast('Sala não encontrada');ROOM=r.sala;statusJogo('sala');abrir('sala')})}
+function salaSair(){if(sockOK())sock.emit('street:sala:sair',{cod:ROOM.cod});ROOM={cod:'',host:'',mem:[]};CH.r.m=[];statusJogo('lobby');abrir('sala')}
+P.sala=()=>ROOM.cod?`<div class="card" style="margin-bottom:10px"><small>Código da sala</small><b style="font-size:28px;letter-spacing:.15em">${esc(ROOM.cod)}</b><div class="pills" style="justify-content:center;margin:0"><button class="btn sm mi" onclick="navigator.clipboard&&navigator.clipboard.writeText(ROOM.cod);toast('Código copiado!')">Copiar</button><button class="btn sm mi" onclick="ct='r';abrir('chat')">Chat da sala</button><button class="btn sm mi" ${RED} onclick="salaSair()">Sair</button></div></div><div class="card" style="align-items:stretch;text-align:left"><b>Jogadores (${ROOM.mem.length})</b>${ROOM.mem.map(m=>`<div>${esc(m.nick)}${m.id==ROOM.host?' 👑':''}${m.ver?'<i class="vb">V</i>':''}</div>`).join('')}</div>`:`<div class="card" style="align-items:stretch;text-align:left"><b>Sala personalizada</b><small>Crie uma sala privada e passe o código para seus amigos, ou entre com um código.</small><div class="pills" style="margin:6px 0"><button class="btn sm" onclick="salaCriar()">Criar sala privada</button></div><input id="scod" maxlength="6" placeholder="Código da sala" oninput="this.value=this.value.toUpperCase()"><button class="btn sm" onclick="salaEntrar($('#scod').value)">Entrar na sala</button></div>`;
+P.soc=()=>`<div class="card" style="margin-bottom:10px"><small>Seu ID</small><b style="font-size:24px;letter-spacing:.08em">${esc(player.id)}</b><button class="btn sm mi" onclick="copiar()">Copiar ID</button></div><p style="margin-bottom:8px">Servidor: <b id="ns">${nt}</b></p><div class="pills"><button class="btn sm" onclick="fechar();abrirAmigos()">👥 Amigos (${AMGL.filter(f=>AMP[f.id]).length} online)</button><button class="btn sm" onclick="abrir('sala')">🚪 Sala personalizada</button></div>`;
+
+// ---- Chat duplo: geral (hub) e sala; Time continua pelo Supabase ----
+function chPush(k,m){const o=CH[k];o.m.push({n:m.nick||m.n||'?',id:m.id,t:m.txt||m.t||'',v:m.v});if(o.m.length>60)o.m.shift();chRender()}
+function chRender(){const pv=$('#cpv'),lg=$('#clog'),f=x=>`<div><b style="color:${x.id==player.id?'#c6ff00':'#7cf'}">${esc(x.n)}${x.v?'<i class="vb">V</i>':''}</b>: ${esc(x.t)}</div>`;
+ if(pv)pv.innerHTML=CH.g.m.slice(-2).map(f).join('')||'<div style="opacity:.6">Toque para abrir o chat</div>';
+ if(lg){lg.innerHTML=CH[ct].m.map(f).join('')||'<div style="opacity:.6">'+(ct=='r'&&!ROOM.cod?'Entre em uma sala para usar este chat.':'Sem mensagens ainda.')+'</div>';lg.scrollTop=1e9}}
+function chSend(){const i=$('#cin');if(!i)return;const t=san(i.value).trim().slice(0,120);if(!t||Date.now()-lastMsg<1200)return;lastMsg=Date.now();i.value='';
+ const me={n:player.full||player.name,id:player.id,t,v:isVer(player.id)};
+ if(ct=='r'){if(!ROOM.cod||!sockOK())return toast('Entre em uma sala primeiro');sock.emit('street:sala:chat',{cod:ROOM.cod,txt:t});return}
+ if(ct=='g'&&sockOK()){sock.emit('street:chat',{txt:t});return}
+ const o=CH[ct];if(o.c)o.c.send({type:'broadcast',event:'msg',payload:me});else{o.m.push(me);chRender()}}
+P.chat=()=>{if(ct=='t'&&!TM)ct='g';setTimeout(chRender,0);return`<div class="pills"><button class="pill ${ct=='g'?'on':''}" onclick="ct='g';abrir('chat')">Geral</button><button class="pill ${ct=='r'?'on':''}" onclick="ct='r';abrir('chat')">Sala${ROOM.cod?' '+esc(ROOM.cod):''}</button>${TM?`<button class="pill ${ct=='t'?'on':''}" onclick="ct='t';abrir('chat')">Time</button>`:''}</div><div id="clog" style="height:36vh;overflow:auto;background:#0005;border-radius:14px;padding:10px;font-size:14px;user-select:text"></div><div style="display:flex;gap:8px;margin-top:8px"><input id="cin" maxlength="120" placeholder="Digite uma mensagem" onkeydown="if(event.key=='Enter')chSend()" style="margin:0"><button class="btn sm" onclick="chSend()">Enviar</button></div>`};
+
+document.addEventListener('DOMContentLoaded',()=>{
+ $('#play').onclick=()=>{if(MM.on)return;if(S.modo=='Treino livre')iniciarOffline();else procurarPartida()};
+ verCarregar();amigosAtualizar();resolverNick();
+ setInterval(()=>{if(sockOK())sock.emit('street:status',{estado:estadoAtual})},25000);
+ setInterval(amigosAtualizar,30000);
+ const ms=window.matchStart,sp=window.sairPartida;
+ if(ms)window.matchStart=()=>{ms();statusJogo('partida')};
+ if(sp)window.sairPartida=()=>{sp();statusJogo('lobby')};
+});
 </script></body></html>
