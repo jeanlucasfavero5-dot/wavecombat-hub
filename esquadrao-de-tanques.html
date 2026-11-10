@@ -920,6 +920,108 @@
         .hidden {
             display: none !important;
         }
+
+        /* =========================================================
+           SOCIAL DO HUB (amigos, chat, partida online) + selo V
+           ========================================================= */
+        .wc-v {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 1.15em; height: 1.15em; margin-left: 0.3em; vertical-align: middle;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 25%, #fff3a8, #f5b81c 55%, #b9780a);
+            color: #3b2300; font: 900 0.7em/1 system-ui, sans-serif;
+            box-shadow: 0 0 6px rgba(250, 204, 21, 0.75);
+        }
+        .wc-v.hidden { display: none; }
+        .sv-mini.sv-yt { text-transform: none; }
+        .sv-mini.sv-yt::before { content: "▶️"; }
+
+        .wc-fab {
+            position: fixed; left: 12px; bottom: 44px; z-index: 98;
+            width: 48px; height: 48px; border-radius: 50%;
+            background: rgba(13, 16, 36, 0.95); border: 2px solid #10b981; color: #7dffb0;
+            font-size: 1.35rem; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; box-shadow: 0 0 14px rgba(16, 185, 129, 0.45);
+        }
+        .wc-fab:active { transform: scale(0.93); }
+        .wc-fab-pt {
+            position: absolute; top: -4px; right: -4px; min-width: 18px; height: 18px; padding: 0 4px;
+            border-radius: 9px; background: #ef4444; color: #fff; font: 800 0.65rem/18px system-ui, sans-serif; text-align: center;
+        }
+        .wc-fab.hidden, .wc-fab-pt.hidden { display: none; }
+
+        .wc-social { position: fixed; inset: 0; z-index: 130; display: flex; justify-content: flex-end; }
+        .wc-social.hidden { display: none; }
+        .wc-social-fundo { position: absolute; inset: 0; background: rgba(2, 5, 4, 0.6); }
+        .wc-social-painel {
+            position: relative; display: flex; flex-direction: column; gap: 8px;
+            width: min(94vw, 390px); height: 100%; box-sizing: border-box; padding: 12px;
+            background: rgba(9, 14, 12, 0.98); border-left: 2px solid #10b981; color: #e5e7eb;
+            font-size: 0.8rem; overflow: hidden;
+            padding-bottom: max(12px, env(safe-area-inset-bottom));
+        }
+        .wc-social-topo { display: flex; align-items: center; gap: 8px; font-size: 1rem; }
+        .wc-con { flex: 1; font-size: 0.68rem; color: #9ca3af; }
+        .wc-x { background: none; border: 1px solid #374151; color: #e5e7eb; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; }
+        .wc-perfil { display: flex; align-items: center; gap: 10px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 12px; padding: 8px; }
+        .wc-avatar {
+            width: 42px; height: 42px; flex: none; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, #065f46, #0f766e); border: 2px solid #10b981; font-weight: 900; font-size: 1.1rem;
+        }
+        .wc-avatar-p { width: 34px; height: 34px; font-size: 0.9rem; }
+        .wc-avatar-v { border-color: #f5b81c; box-shadow: 0 0 8px rgba(250, 204, 21, 0.6); }
+        .wc-perfil-nick { font-size: 0.95rem; color: #7dffb0; }
+        .wc-perfil-id { font-size: 0.68rem; color: #ffcf99; font-family: ui-monospace, Menlo, Consolas, monospace; }
+        .wc-yt {
+            display: block; text-align: center; text-decoration: none; color: #ffd0d0; background: rgba(127, 29, 29, 0.55);
+            border: 1px solid #ff4d4d; border-radius: 10px; padding: 8px; font-weight: 800; font-size: 0.78rem;
+        }
+        .wc-yt::before { content: "▶️ "; }
+        .wc-abas { display: flex; gap: 6px; }
+        .wc-aba { flex: 1; padding: 8px 4px; border-radius: 8px; border: 1px solid #374151; background: #111827; color: #d1d5db; font-weight: 800; font-size: 0.74rem; cursor: pointer; }
+        .wc-aba.ativa { border-color: #10b981; background: rgba(16, 185, 129, 0.22); color: #7dffb0; }
+        .wc-aba-conteudo { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 6px; }
+        .wc-aba-conteudo.hidden { display: none; }
+        .wc-lista { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; -webkit-overflow-scrolling: touch; }
+        .wc-vazio { color: #9ca3af; text-align: center; padding: 14px 6px; font-size: 0.74rem; }
+        .wc-amigo { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 10px; background: rgba(17, 24, 39, 0.85); border: 1px solid #1f2937; }
+        .wc-amigo-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+        .wc-amigo-txt b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .wc-amigo-txt small { color: #9ca3af; font-size: 0.62rem; font-family: ui-monospace, Menlo, Consolas, monospace; }
+        .wc-st { font-size: 0.66rem; font-weight: 800; white-space: nowrap; }
+        .wc-st-online { color: #4ade80; } .wc-st-jogando { color: #fbbf24; } .wc-st-offline { color: #6b7280; }
+        .wc-linha { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 0.7rem; color: #9ca3af; }
+        .wc-btn { padding: 7px 10px; border-radius: 8px; border: 1px solid #10b981; background: rgba(16, 185, 129, 0.18); color: #7dffb0; font-weight: 800; font-size: 0.72rem; cursor: pointer; }
+        .wc-btn.hidden { display: none; }
+        .wc-msgs { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; padding: 6px; border-radius: 10px; background: rgba(0, 0, 0, 0.35); border: 1px solid #1f2937; }
+        .wc-msg { font-size: 0.74rem; line-height: 1.3; word-break: break-word; }
+        .wc-msg b { color: #67e8f9; } .wc-msg-meu b { color: #7dffb0; }
+        .wc-msg i { margin-left: 6px; color: #6b7280; font-size: 0.6rem; font-style: normal; }
+        .wc-form { display: flex; gap: 6px; }
+        .wc-form input { flex: 1; min-width: 0; padding: 9px 10px; border-radius: 8px; border: 1px solid #374151; background: #0b1210; color: #fff; font-size: 16px; }
+        .wc-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+        .wc-chip { padding: 2px 8px; border-radius: 10px; background: #111827; border: 1px solid #374151; font-size: 0.68rem; }
+
+        .wc-espera { position: fixed; inset: 0; z-index: 126; display: flex; align-items: center; justify-content: center; padding: 12px; background: rgba(2, 5, 4, 0.9); }
+        .wc-espera.hidden { display: none; }
+        .wc-espera-card { width: min(92vw, 360px); max-height: 94vh; overflow-y: auto; text-align: center; padding: 16px; border-radius: 16px; background: rgba(9, 14, 12, 0.98); border: 2px solid #10b981; box-shadow: 0 0 30px rgba(16, 185, 129, 0.35); }
+        .wc-espera h2 { font: 900 1.25rem/1.2 system-ui, sans-serif; color: #7dffb0; margin: 6px 0; }
+        .wc-radar { width: 64px; height: 64px; margin: 0 auto; border-radius: 50%; border: 2px solid #10b981; background: radial-gradient(circle, rgba(16, 185, 129, 0.35), transparent 65%); animation: wcPulso 1.4s ease-out infinite; }
+        @keyframes wcPulso { 0% { transform: scale(0.6); opacity: 1; } 100% { transform: scale(1.25); opacity: 0.15; } }
+        .wc-espera-contador { font: 900 2.4rem/1 ui-monospace, Menlo, Consolas, monospace; color: #fff; }
+        .wc-espera-tempo { font: 800 1.1rem/1.4 ui-monospace, Menlo, Consolas, monospace; color: #fbbf24; }
+        .wc-espera ul { list-style: none; margin: 8px 0; padding: 0; display: flex; flex-direction: column; gap: 4px; font-size: 0.8rem; }
+        .wc-espera li { padding: 5px 8px; border-radius: 8px; background: rgba(17, 24, 39, 0.9); border: 1px solid #1f2937; }
+        .wc-espera-dica { min-height: 1.1em; font-size: 0.7rem; color: #9ca3af; margin-bottom: 8px; }
+        #btn-online.wc-buscando { animation: wcPiscar 1s ease-in-out infinite; }
+        @keyframes wcPiscar { 50% { opacity: 0.55; } }
+        @media (max-height: 460px) {
+            .wc-social-painel { gap: 5px; padding: 8px; }
+            .wc-perfil { padding: 4px 8px; }
+            .wc-social .wc-avatar { width: 32px; height: 32px; font-size: 0.9rem; }
+            .wc-yt { padding: 5px; }
+            .wc-aba { padding: 5px 4px; }
+        }
     </style>
 </head>
 <body>
@@ -947,7 +1049,7 @@
 
         <div class="inicio-base">
             <!-- JOGADOR: nick e ID vêm do WaveCombat Hub (localStorage), sem login -->
-            <div id="welcome-box" class="sv-boasvindas">🪖 <strong id="welcome-name"></strong><span class="sv-id">ID <span id="welcome-id"></span></span><span class="adm-tag adm-so hidden">ADM</span></div>
+            <div id="welcome-box" class="sv-boasvindas">🪖 <strong id="welcome-name"></strong><span class="wc-v hidden" data-wcv title="Verificado">V</span><span class="sv-id">ID <span id="welcome-id"></span></span><span class="adm-tag adm-so hidden">ADM</span></div>
 
             <div class="inicio-cta inicio-cta-sv piscar">
                 <button id="btn-start-to-lobby" class="sv-iniciar"><span>▶ INICIAR</span></button>
@@ -958,9 +1060,9 @@
                 <button id="btn-open-ranking" class="sv-mini">🏆 Ranking</button>
                 <button class="sv-mini adm-abrir adm-so hidden">🛠️ Painel ADM</button>
                 <button id="btn-start-fullscreen" class="sv-mini">🔲 Expandir Tela Cheia</button>
-                <a href="https://youtube.com/@capudooficial7?si=0pe1kJfQaeM4orgV" target="_blank" rel="noopener" class="sv-mini sv-yt">▶️ Siga o Criador</a>
+                <a href="https://youtube.com/@capudooficial7?si=NSvfxpSzswVEStdu" target="_blank" rel="noopener" class="sv-mini sv-yt">siga o criador do jogo aqui</a>
             </div>
-            <div class="inicio-versao">Versão: <b>v0.014</b></div>
+            <div class="inicio-versao">Versão: <b>v0.015</b></div>
         </div>
     </div>
 
@@ -970,7 +1072,7 @@
             <h1 class="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-200 mb-1">
                 GARAGEM DE GUERRA
             </h1>
-            <p class="jogador-linha">🪖 <b id="menu-jogador-nick"></b> · ID <span id="menu-jogador-id"></span><span class="adm-tag adm-so hidden">ADM</span></p>
+            <p class="jogador-linha">🪖 <b id="menu-jogador-nick"></b><span class="wc-v hidden" data-wcv title="Verificado">V</span> · ID <span id="menu-jogador-id"></span><span class="adm-tag adm-so hidden">ADM</span></p>
             <p class="text-xs text-gray-300 mb-1">Toque em um tanque para selecioná-lo: melhore com moedas ou funda com outro igual!</p>
             <p class="text-[11px] text-yellow-300 mb-1">👑 O tanque de maior nível lidera a batalha. Os níveis não têm limite!</p>
             <div id="leader-info" class="text-[11px] text-gray-200 bg-gray-900/70 rounded-lg p-2 mb-2 border border-yellow-500/30"></div>
@@ -1007,6 +1109,7 @@
                 <button id="btn-sell-lowest" class="btn btn-secondary text-xs" style="background:#dc2626; border:none;">💰 Vender</button>
                 <button id="btn-back-to-start" class="btn btn-secondary text-xs">⬅️ Início</button>
                 <button class="btn btn-secondary text-xs adm-abrir adm-so hidden">🛠️ ADM</button>
+                <button id="btn-online" class="btn btn-secondary text-sm font-black w-full mt-2 py-2">🌐 PARTIDA ONLINE · 4 JOGADORES</button>
                 <button id="btn-start-battle" class="btn text-sm font-black w-full mt-2 py-3">🔥 INICIAR RONDA 🔥</button>
             </div>
         </div>
@@ -1049,7 +1152,7 @@
             <div class="hud-badge">🪙 <span id="hud-gold-session">0</span> <span style="font-size:0.7rem; opacity:0.85;">→ 💰 <span id="hud-gold-recebe">0</span></span></div>
             <div class="hud-badge">❤️ <span id="hud-hp">0</span></div>
             <div class="hud-badge">⬆️ Nv <span id="hud-level">1</span></div>
-            <div id="hud-jogador" class="hud-badge hud-jogador">🪖 <b id="hud-nick"></b> · #<span id="hud-id"></span><span id="hud-adm-estado"></span><span class="adm-tag adm-so hidden">ADM</span></div>
+            <div id="hud-jogador" class="hud-badge hud-jogador">🪖 <b id="hud-nick"></b><span class="wc-v hidden" data-wcv title="Verificado">V</span> · #<span id="hud-id"></span><span id="hud-adm-estado"></span><span class="adm-tag adm-so hidden">ADM</span></div>
             <div id="boss-hud-badge" class="hud-badge hidden" style="border-color:#ef4444; background:rgba(239,68,68,0.2); color:#ef4444;">
                 👹 CHEFÃO ATIVO!
             </div>
@@ -1173,7 +1276,7 @@
                     <div class="pausa-ico">⏸</div>
                     <h1 class="pausa-titulo">PAUSADO</h1>
                     <div id="pausa-modo" class="pausa-chip">🛡️ Sobrevivência</div>
-                    <div class="pausa-jogador">🪖 <b id="pausa-nick"></b> · ID <span id="pausa-id"></span><span class="adm-tag adm-so hidden">ADM</span></div>
+                    <div class="pausa-jogador">🪖 <b id="pausa-nick"></b><span class="wc-v hidden" data-wcv title="Verificado">V</span> · ID <span id="pausa-id"></span><span class="adm-tag adm-so hidden">ADM</span></div>
                 </div>
                 <div class="pausa-corpo">
                     <div class="pausa-grid">
@@ -1290,9 +1393,76 @@
         </div>
     </div>
 
+    <!-- SOCIAL DO HUB: botão flutuante de amigos, painel (amigos / chat geral / chat da sala) e espera de partida online -->
+    <button id="wc-fab" class="wc-fab hidden" aria-label="Amigos e chat">👥<span id="wc-fab-pt" class="wc-fab-pt hidden">0</span></button>
+
+    <div id="wc-social" class="wc-social hidden" role="dialog" aria-label="Amigos e chat">
+        <div id="wc-social-fundo" class="wc-social-fundo"></div>
+        <aside class="wc-social-painel">
+            <div class="wc-social-topo">
+                <strong>👥 Social</strong>
+                <span id="wc-con" class="wc-con">⚪ Desconectado</span>
+                <button id="wc-reconectar" class="wc-btn hidden">Tentar de novo</button>
+                <button id="wc-social-fechar" class="wc-x" aria-label="Fechar">✕</button>
+            </div>
+            <div class="wc-perfil">
+                <div id="wc-avatar" class="wc-avatar">?</div>
+                <div>
+                    <div class="wc-perfil-nick"><b id="wc-p-nick"></b><span class="wc-v hidden" data-wcv title="Verificado">V</span></div>
+                    <div class="wc-perfil-id">ID <span id="wc-p-id"></span> · 💎 <span id="wc-p-dia">0</span></div>
+                </div>
+            </div>
+            <a class="wc-yt" href="https://youtube.com/@capudooficial7?si=NSvfxpSzswVEStdu" target="_blank" rel="noopener">siga o criador do jogo aqui</a>
+            <div class="wc-abas">
+                <button class="wc-aba ativa" data-aba="amigos">👥 Amigos</button>
+                <button class="wc-aba" data-aba="geral">💬 Geral</button>
+                <button class="wc-aba" data-aba="sala">🔒 Sala</button>
+            </div>
+
+            <section id="wc-aba-amigos" class="wc-aba-conteudo">
+                <div class="wc-linha"><span id="wc-amigos-resumo"></span><button id="wc-amigos-atualizar" class="wc-btn">🔄 Atualizar</button></div>
+                <div id="wc-amigos-lista" class="wc-lista"></div>
+            </section>
+
+            <section id="wc-aba-geral" class="wc-aba-conteudo hidden">
+                <div id="wc-msgs-geral" class="wc-msgs"></div>
+                <form id="wc-form-geral" class="wc-form"><input maxlength="200" placeholder="Mensagem para todos" autocomplete="off"><button class="wc-btn">Enviar</button></form>
+            </section>
+
+            <section id="wc-aba-sala" class="wc-aba-conteudo hidden">
+                <div id="wc-sala-fora" class="wc-lista">
+                    <p class="wc-vazio">Sala privada: crie uma e passe o código para seus amigos, ou entre com o código que recebeu.</p>
+                    <button id="wc-sala-criar" class="wc-btn">➕ Criar sala privada</button>
+                    <form id="wc-sala-form" class="wc-form"><input id="wc-sala-cod" maxlength="8" placeholder="Código da sala" autocomplete="off" autocapitalize="characters"><button class="wc-btn">Entrar</button></form>
+                </div>
+                <div id="wc-sala-dentro" class="wc-aba-conteudo hidden">
+                    <div class="wc-linha"><b id="wc-sala-codigo"></b><button id="wc-sala-sair" class="wc-btn">Sair da sala</button></div>
+                    <div id="wc-sala-membros" class="wc-chips"></div>
+                    <div id="wc-msgs-sala" class="wc-msgs"></div>
+                    <form id="wc-form-sala" class="wc-form"><input maxlength="200" placeholder="Mensagem para a sala" autocomplete="off"><button class="wc-btn">Enviar</button></form>
+                </div>
+            </section>
+        </aside>
+    </div>
+
+    <div id="wc-espera" class="wc-espera hidden">
+        <div class="wc-espera-card">
+            <div class="wc-radar"></div>
+            <h2 id="wc-espera-titulo">Procurando partida...</h2>
+            <div class="wc-espera-contador"><span id="wc-espera-n">1</span>/<span id="wc-espera-max">4</span></div>
+            <div id="wc-espera-tempo" class="wc-espera-tempo">00:00</div>
+            <ul id="wc-espera-jogadores"></ul>
+            <div id="wc-espera-dica" class="wc-espera-dica"></div>
+            <div class="flex gap-2">
+                <button id="wc-espera-chat" class="btn btn-secondary w-1/2 text-xs py-2">💬 Chat</button>
+                <button id="wc-espera-cancelar" class="btn w-1/2 text-xs py-2" style="background:#dc2626;">✖ Cancelar</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         /* =========================================================
-           ESQUADRÃO DE TANQUES  (v0.014)
+           ESQUADRÃO DE TANQUES  (v0.015)
            ========================================================= */
 
         /* --- BALANCEAMENTO (ajuste aqui sem mexer no resto) --- */
@@ -1601,15 +1771,20 @@
         const WC_HUB = {
             supabaseUrl: 'https://ipqjeacdfiomcxfuixdj.supabase.co',
             supabaseKey: 'sb_publishable_EWW84q_43YbOvMwB_Rua-A_X465PbLP',
-            tabela: 'carteira_diamantes',            // id_jogador, nick, diamantes
-            rpcPontuacao: 'atualizar_pontuacao',     // p_id_jogador, p_nick, p_pontos
-            socket: 'https://riverbed-server.onrender.com',   // servidor Socket.io (este jogo é solo: não conecta)
+            tabela: 'carteira_diamantes',                 // id_jogador, nick, diamantes
+            tabelaAmigos: 'wavecombat_amigos',            // lista oficial de amigos do site
+            tabelaVerificados: 'wavecombat_verificados',  // selo "V" dourado
+            rpcPontuacao: 'atualizar_pontuacao',          // p_id_jogador, p_nick, p_pontos
+            socket: 'https://wavecombat-hub.onrender.com',   // servidor central (Socket.io)
+            gameId: 'esquadrao-de-tanques',               // isola os eventos/salas deste jogo no servidor
+            maxJogadores: 4,
+            youtube: 'https://youtube.com/@capudooficial7?si=NSvfxpSzswVEStdu',
             idMestre: '577082415',
             pollMs: 15000
         };
         const WC_SERVER = window.WC_SERVER = WC_HUB.socket;
         const ADM_CONTA = { nick: 'capudo7', ids: ['162028398', WC_HUB.idMestre] };
-        const player = { name: 'Convidado', nickHub: '', id: 'CONVIDADO', adm: false, convidado: true };
+        const player = { name: 'Convidado', nickHub: '', id: 'CONVIDADO', adm: false, convidado: true, verificado: false };
 
         function lerLS(chave) { try { return localStorage.getItem(chave); } catch (e) { return null; } }
         function gravarLS(chave, valor) { try { localStorage.setItem(chave, valor); } catch (e) { /* storage bloqueado: vale só nesta sessão */ } }
@@ -1629,7 +1804,7 @@
             return /^\d{6,}$/.test(t) ? { id: t, nick: '' } : { id: '', nick: t };
         }
 
-        const wc = { base: null, ultimoLocal: null, pronto: false, ocupado: false, repetir: false, timer: null, poll: null, nickPendente: false };
+        const wc = { base: null, ultimoLocal: null, pronto: false, ocupado: false, repetir: false, timer: null, poll: null, nickPendente: false, ultimaTentativa: 0 };
 
         function identificarJogador() {
             const sessao = lerSessaoHub();
@@ -1668,7 +1843,7 @@
                     if (!r.ok) return { data: null, error: { message: (corpo && corpo.message) || r.statusText || 'erro', code: corpo && corpo.code, status: r.status } };
                     return { data: corpo, error: null };
                 } catch (e) {
-                    return { data: null, error: { message: String((e && e.message) || e) } };
+                    return { data: null, error: { message: String((e && e.message) || e), timeout: true } };
                 } finally { clearTimeout(t); }
             }
             return {
@@ -1677,12 +1852,19 @@
                 from: tabela => ({
                     select: colunas => {
                         const filtros = [];
+                        let limite = 0;
+                        const lista = () => chamar(tabela + '?select=' + encodeURIComponent(colunas || '*') + (filtros.length ? '&' + filtros.join('&') : '') + (limite ? '&limit=' + limite : ''), { method: 'GET' });
                         const q = {
                             eq: (col, v) => { filtros.push(encodeURIComponent(col) + '=eq.' + encodeURIComponent(v)); return q; },
+                            in: (col, vs) => { filtros.push(encodeURIComponent(col) + '=in.(' + vs.map(v => encodeURIComponent('"' + String(v).replace(/"/g, '') + '"')).join(',') + ')'); return q; },
+                            or: expr => { filtros.push('or=(' + expr + ')'); return q; },
+                            limit: n => { limite = n; return q; },
                             maybeSingle: async () => {
-                                const r = await chamar(tabela + '?select=' + encodeURIComponent(colunas || '*') + '&' + filtros.join('&') + '&limit=1', { method: 'GET' });
+                                limite = 1;
+                                const r = await lista();
                                 return r.error ? r : { data: (r.data && r.data[0]) || null, error: null };
-                            }
+                            },
+                            then: (ok, falha) => lista().then(ok, falha)   // await direto na consulta
                         };
                         return q;
                     },
@@ -1701,6 +1883,34 @@
             const key = window.SUPABASE_KEY || window.SUPABASE_ANON_KEY || WC_HUB.supabaseKey;
             if (window.supabase && typeof window.supabase.createClient === 'function') return (window.supabaseClient = window.supabase.createClient(url, key));
             return (window.supabaseClient = wcClienteLeve(url, key));
+        }
+
+        // Toda consulta ao Supabase/Hub passa por aqui: se o servidor não responder em 10 s a chamada
+        // termina com erro (antes, um cliente do Hub pendurado travava a sincronização para sempre).
+        function wcComTimeout(promessa, ms) {
+            let t;
+            const limite = new Promise(res => { t = setTimeout(() => res({ data: null, error: { message: 'tempo esgotado', timeout: true } }), ms || 10000); });
+            return Promise.race([Promise.resolve(promessa).catch(e => ({ data: null, error: { message: String((e && e.message) || e) } })), limite])
+                .finally(() => clearTimeout(t));
+        }
+
+        // Saúde de cada recurso (carteira, amigos, selo V, ranking): erro repetido espera cada vez mais
+        // (15 s, 30 s, 60 s... até 5 min) e erro permanente (400/401/403/404: tabela, coluna ou permissão
+        // erradas) desiste depois de 3 tentativas em vez de consultar para sempre.
+        const wcSaude = {};
+        function wcPodeTentar(k) { const s = wcSaude[k]; return !s || (!s.morta && Date.now() >= s.ate); }
+        function wcReviver(k) { delete wcSaude[k]; }
+        function wcRegistrar(k, erro) {
+            if (!erro) { delete wcSaude[k]; return; }
+            const s = wcSaude[k] || (wcSaude[k] = { falhas: 0, ate: 0, morta: false });
+            s.falhas++;
+            const permanente = erro.status >= 400 && erro.status < 500 && erro.status !== 408 && erro.status !== 429;
+            if (permanente && s.falhas >= 3) {
+                s.morta = true;
+                console.warn(`[WC] ${k}: desisti depois de ${s.falhas} erros (${erro.status} ${erro.code || ''} ${erro.message || ''}). Confira tabela, colunas e permissões (RLS) no Supabase.`);
+                return;
+            }
+            s.ate = Date.now() + Math.min(300000, 15000 * 2 ** (s.falhas - 1));
         }
 
         /* --- 💎: o saldo do Supabase (carteira_diamantes) manda; o que mudou aqui é somado a ele --- */
@@ -1731,14 +1941,20 @@
             return pendente;
         }
 
-        async function wcSincronizar() {
+        // forcar === true: ação do jogador (ganhou 💎, abriu o painel). Sem isso (timer, foco da aba) respeita
+        // o intervalo mínimo de 5 s e a espera por erros.
+        async function wcSincronizar(forcar) {
             if (player.convidado || !wc.pronto) return;
+            const agora = Date.now();
+            if (forcar === true) wcReviver('carteira');
+            else if (!wcPodeTentar('carteira') || agora - wc.ultimaTentativa < 5000) return;
             if (wc.ocupado) { wc.repetir = true; return; }
             wc.ocupado = true;
+            wc.ultimaTentativa = agora;
             const conta = player.id;
             try {
                 const sb = wcCliente();
-                const { data, error } = await sb.from(WC_HUB.tabela).select('diamantes,nick').eq('id_jogador', conta).maybeSingle();
+                const { data, error } = await wcComTimeout(sb.from(WC_HUB.tabela).select('diamantes,nick').eq('id_jogador', conta).maybeSingle());
                 if (error) throw error;
                 if (conta !== player.id) return;   // o Hub trocou de conta durante a consulta
                 let enviar = false;
@@ -1759,15 +1975,17 @@
                     const enviado = dadosGaragem.diamantes | 0;
                     // carteira já existente: só o saldo muda (o nick continua o que o Hub guardou)
                     const linha = data ? { id_jogador: conta, diamantes: enviado } : { id_jogador: conta, nick: player.nickHub || player.name, diamantes: enviado };
-                    const r = await sb.from(WC_HUB.tabela).upsert(linha, { onConflict: 'id_jogador' });
+                    const r = await wcComTimeout(sb.from(WC_HUB.tabela).upsert(linha, { onConflict: 'id_jogador' }));
                     if (r && r.error) throw r.error;
                     wc.base = enviado;   // o que mudar durante o envio continua pendente
                 }
+                wcRegistrar('carteira', null);
                 wcGravarBase();
                 wcAtualizarTela();
                 salvarJogo();
                 wcDescarregarFila();
             } catch (e) {
+                wcRegistrar('carteira', e);
                 console.warn('[WC] 💎 sem sincronizar (continua com o saldo local):', (e && e.message) || e);
             } finally {
                 wc.ocupado = false;
@@ -1778,7 +1996,7 @@
         function wcAgendar(ms) {
             if (player.convidado) return;
             clearTimeout(wc.timer);
-            wc.timer = setTimeout(wcSincronizar, ms == null ? 1200 : ms);
+            wc.timer = setTimeout(() => wcSincronizar(true), ms == null ? 1200 : ms);
         }
 
         // chamado a cada salvarJogo(): se os 💎 mudaram aqui, envia ao Supabase
@@ -1800,14 +2018,16 @@
         // depois de carregar o save (e quando o Hub troca de conta): liga a sincronização
         function wcAposCarregar() {
             wc.pronto = true;
+            for (const k in wcSaude) delete wcSaude[k];   // conta nova (ou jogo recém-aberto): recomeça as tentativas
             wc.base = player.convidado ? null : wcLerBase(player.id);
             wc.ultimoLocal = dadosGaragem.diamantes | 0;
             clearInterval(wc.poll);
+            if (typeof wcSocialAposConta === 'function') wcSocialAposConta();   // amigos, chat, selo V e Socket.io da conta atual
             if (player.convidado) return;
             const dica = lerLS('wavecombat_diamonds');   // último saldo que o Hub conhece (vale até a nuvem responder)
             if (dica !== null && dica !== '' && Number.isFinite(Number(dica))) { wcMesclar(Number(dica)); wcAtualizarTela(); salvarJogo(); }
             wc.poll = setInterval(() => { if (!document.hidden) wcSincronizar(); }, WC_HUB.pollMs);
-            wcSincronizar();
+            wcSincronizar(true);
         }
 
         /* --- Ranking Global: envia a pontuação ao fim da partida (procedure atualizar_pontuacao) --- */
@@ -1820,7 +2040,7 @@
             const sb = wcCliente();
             if (!sb) { console.warn('Cliente do Supabase não encontrado no escopo global.'); return false; }
             try {
-                const { error } = await sb.rpc(WC_HUB.rpcPontuacao, { p_id_jogador: e.id, p_nick: e.nick, p_pontos: e.pontos });
+                const { error } = await wcComTimeout(sb.rpc(WC_HUB.rpcPontuacao, { p_id_jogador: e.id, p_nick: e.nick, p_pontos: e.pontos }));
                 if (error) { console.error('Erro ao enviar pontuação para o Leaderboard:', error); return false; }
                 console.log('Pontuação registrada com sucesso no Leaderboard!');
                 if (typeof carregarLeaderboard === 'function') carregarLeaderboard();
@@ -1846,11 +2066,671 @@
             if (falhas.length) gravarLS('esquadrao_wc_fila', JSON.stringify(wcFila().concat(falhas).slice(-20)));
         }
 
+
+        /* =========================================================
+           SOCIAL DO HUB: amigos (wavecombat_amigos), selo V (wavecombat_verificados),
+           Socket.io central, partida online (X/4) e chat duplo (geral + sala).
+           O servidor é falado só pelos eventos que o Hub já tem (find_match, cancel_matchmaking,
+           join_room, game_action, player_joined, player_left). Tudo deste jogo leva gameId
+           'esquadrao-de-tanques' e usa salas com esse prefixo; chat e presença vão dentro de game_action.
+           Nada disso roda na inicialização: o Socket.io é carregado e conectado depois, em segundo plano.
+           ========================================================= */
+        const WC_SALA_GERAL = WC_HUB.gameId + ':geral';
+        const wcNet = {
+            sock: null, estado: 'desligado',          // desligado | conectando | conectado | falhou
+            watchdog: null, presenca: new Map(),      // id -> {nick, status, t}
+            chat: { geral: [], sala: [] }, vistos: new Set(), naoLidas: 0, ultimoChat: 0,
+            sala: null,                               // { id, codigo, tipo: 'privada' | 'partida', membros: Map }
+            busca: null,                              // { t0, jogadores: Map, sala, enviada, timer, contagem }
+            amigos: { lista: [], carregando: false, erro: '', t: 0 },
+            statusEnviado: '', aba: 'amigos', aberto: false
+        };
+        const wcVerif = new Map();                    // id -> true/false (consulta em wavecombat_verificados)
+
+        const wcEl = id => document.getElementById(id);
+        function wcTexto(v, max) { return String(v == null ? '' : v).replace(/[\u0000-\u001f\u007f]/g, ' ').trim().slice(0, max); }
+        function wcMeuNick() { return player.nickHub || player.name; }
+        function wcIdSeguro(v) { return String(v == null ? '' : v).replace(/[^A-Za-z0-9_-]/g, '').slice(0, 32); }
+
+        /* --- Selo V (wavecombat_verificados) --- */
+
+        async function wcVerificarIds(ids) {
+            ids = [...new Set(ids.map(wcIdSeguro))].filter(id => id && !wcVerif.has(id)).slice(0, 100);
+            if (!ids.length || !wcPodeTentar('verificados')) return;
+            const r = await wcComTimeout(wcCliente().from(WC_HUB.tabelaVerificados).select('*').in('id_jogador', ids));
+            if (r.error) { wcRegistrar('verificados', r.error); return; }
+            wcRegistrar('verificados', null);
+            const ok = new Set((r.data || []).filter(l => l.verificado !== false && l.ativo !== false).map(l => String(l.id_jogador)));
+            ids.forEach(id => wcVerif.set(id, ok.has(id)));
+        }
+
+        function wcSeloV(ativo) {
+            const v = document.createElement('span');
+            v.className = 'wc-v';
+            v.title = 'Verificado';
+            v.textContent = 'V';
+            return ativo ? v : document.createTextNode('');
+        }
+
+        async function wcCarregarVerificado() {
+            if (player.convidado) return;
+            const conta = player.id;
+            await wcVerificarIds([conta]);
+            if (conta !== player.id || !wcVerif.has(conta)) return;
+            player.verificado = wcVerif.get(conta);
+            gravarLS('esquadrao_wc_verif', JSON.stringify({ id: conta, v: player.verificado }));
+            aplicarIdentidadeNaInterface();
+        }
+
+        /* --- Socket.io (carregado só quando precisa; nunca trava o jogo) --- */
+
+        function wcCarregarScript(url, ms) {
+            return new Promise((ok, falha) => {
+                const s = document.createElement('script');
+                const t = setTimeout(() => { s.remove(); falha(new Error('tempo esgotado')); }, ms);
+                s.onload = () => { clearTimeout(t); ok(); };
+                s.onerror = () => { clearTimeout(t); s.remove(); falha(new Error('falha ao carregar')); };
+                s.src = url;
+                document.head.appendChild(s);
+            });
+        }
+
+        async function wcGarantirSocketIO() {
+            if (typeof window.io === 'function') return true;
+            // 1º o cliente servido pelo próprio servidor do Hub (mesma versão); 2º um CDN como reserva
+            for (const url of [WC_HUB.socket + '/socket.io/socket.io.js', 'https://cdn.jsdelivr.net/npm/socket.io-client@4.7.5/dist/socket.io.min.js']) {
+                try { await wcCarregarScript(url, 25000); if (typeof window.io === 'function') return true; } catch (e) { /* tenta o próximo */ }
+            }
+            return false;
+        }
+
+        function wcFalhouConexao(motivo) {
+            clearTimeout(wcNet.watchdog);
+            if (wcNet.estado === 'conectado') return;
+            wcNet.estado = 'falhou';
+            try { if (wcNet.sock) wcNet.sock.disconnect(); } catch (e) { /* já fechado */ }
+            console.warn('[WC] Socket.io indisponível:', motivo);
+            wcRenderConexao();
+            if (wcNet.busca) wcRenderBusca();
+        }
+
+        async function wcConectar(forcar) {
+            if (player.convidado || wcNet.estado === 'conectando' || wcNet.estado === 'conectado') return;
+            if (wcNet.estado === 'falhou' && !forcar) return;
+            wcNet.estado = 'conectando';
+            wcRenderConexao();
+            clearTimeout(wcNet.watchdog);
+            wcNet.watchdog = setTimeout(() => wcFalhouConexao('sem resposta em 90 s'), 90000);   // servidor do Render dormindo
+            if (!(await wcGarantirSocketIO())) { wcFalhouConexao('biblioteca socket.io não carregou'); return; }
+            if (player.convidado || wcNet.estado !== 'conectando') return;
+            try { if (wcNet.sock) wcNet.sock.disconnect(); } catch (e) { /* ok */ }
+            const s = window.io(WC_HUB.socket, {
+                reconnectionAttempts: 5, reconnectionDelay: 2000, reconnectionDelayMax: 15000, timeout: 20000,
+                auth: { gameId: WC_HUB.gameId, playerId: player.id, nick: wcMeuNick() }
+            });
+            wcNet.sock = s;
+            s.on('connect', () => {
+                clearTimeout(wcNet.watchdog);
+                wcNet.estado = 'conectado';
+                s.emit('join_room', { gameId: WC_HUB.gameId, roomId: WC_SALA_GERAL, playerId: player.id, nick: wcMeuNick() });
+                if (wcNet.sala) s.emit('join_room', { gameId: WC_HUB.gameId, roomId: wcNet.sala.id, playerId: player.id, nick: wcMeuNick() });
+                if (wcNet.busca) wcNet.busca.enviada = false;
+                wcEmitirPresenca(true);
+                wcTentarEnviarBusca();
+                wcRenderConexao();
+                if (wcNet.busca) wcRenderBusca();
+            });
+            s.on('disconnect', motivo => {
+                if (wcNet.estado === 'conectado') { wcNet.estado = 'conectando'; wcRenderConexao(); }
+                if (motivo === 'io server disconnect') setTimeout(() => { try { s.connect(); } catch (e) { /* ok */ } }, 3000);
+            });
+            s.on('connect_error', e => console.warn('[WC] conexão com o Hub falhou (nova tentativa em seguida):', (e && e.message) || e));
+            if (s.io && s.io.on) s.io.on('reconnect_failed', () => wcFalhouConexao('tentativas esgotadas'));
+            s.on('player_joined', wcAoEntrar);
+            s.on('player_left', wcAoSair);
+            s.on('game_action', wcAoAcao);
+            ['match_found', 'matchFound', 'match_ready', 'room_ready', 'game_start'].forEach(ev => s.on(ev, wcAoPartidaPronta));
+        }
+
+        function wcDesconectar() {
+            clearTimeout(wcNet.watchdog);
+            try { if (wcNet.sock) wcNet.sock.disconnect(); } catch (e) { /* ok */ }
+            wcNet.sock = null;
+            wcNet.estado = 'desligado';
+        }
+
+        function wcEmitirJogo(tipo, dados, sala) {
+            if (!wcNet.sock || wcNet.estado !== 'conectado') return false;
+            wcNet.sock.emit('game_action', { gameId: WC_HUB.gameId, roomId: sala || WC_SALA_GERAL, tipo, de: { id: player.id, nick: wcMeuNick() }, ...dados });
+            return true;
+        }
+
+        /* --- leitura tolerante dos eventos do servidor --- */
+
+        function wcLerJogador(p) {
+            if (!p || typeof p !== 'object') return null;
+            const j = p.player || p.jogador || p;
+            const id = wcIdSeguro(j.id != null ? j.id : (j.playerId != null ? j.playerId : j.id_jogador));
+            return id ? { id, nick: wcTexto(j.nick != null ? j.nick : (j.name != null ? j.name : j.nome), 24) } : null;
+        }
+        function wcLerLista(p) {
+            const arr = p && (p.players || p.jogadores || (p.room && p.room.players));
+            return Array.isArray(arr) ? arr.map(wcLerJogador).filter(Boolean) : [];
+        }
+        function wcLerSala(p) {
+            if (!p || typeof p !== 'object') return '';
+            const r = p.roomId || p.room_id || p.sala || (p.room && (p.room.id || (typeof p.room === 'string' ? p.room : '')));
+            return r ? String(r).slice(0, 80) : '';
+        }
+        const wcDoJogo = p => !p || !p.gameId || p.gameId === WC_HUB.gameId;
+
+        /* --- presença / amigos online --- */
+
+        function wcStatusAtual() {
+            if (wcNet.busca) return 'procurando';
+            return estadoJogo === 'JOGANDO' || estadoJogo === 'PAUSADO' ? 'jogando' : 'menu';
+        }
+
+        function wcEmitirPresenca(pedir) {
+            if (wcEmitirJogo('presenca', { status: wcStatusAtual(), pedir: !!pedir }, WC_SALA_GERAL)) wcNet.statusEnviado = wcStatusAtual();
+        }
+
+        function wcMarcarPresenca(jogador, status) {
+            if (!jogador || jogador.id === player.id) return;
+            wcNet.presenca.set(jogador.id, { nick: jogador.nick, status: status || 'menu', t: Date.now() });
+            if (wcNet.aberto && wcNet.aba === 'amigos') wcRenderAmigos();
+        }
+
+        function wcSituacao(id) {
+            const p = wcNet.presenca.get(id);
+            if (!p || Date.now() - p.t > 60000) return { chave: 'offline', rotulo: '⚫ Offline' };
+            if (p.status === 'jogando') return { chave: 'jogando', rotulo: '🎮 Jogando este jogo' };
+            if (p.status === 'procurando') return { chave: 'online', rotulo: '🔎 Procurando partida' };
+            return { chave: 'online', rotulo: '🟢 Online' };
+        }
+
+        function wcAoEntrar(p) {
+            if (!wcDoJogo(p)) return;
+            const sala = wcLerSala(p), lista = wcLerLista(p), um = wcLerJogador(p);
+            const entrou = lista.length ? lista : (um ? [um] : []);
+            if (!sala || sala === WC_SALA_GERAL) {
+                entrou.forEach(j => wcMarcarPresenca(j, 'menu'));
+                wcEmitirPresenca(false);   // quem acabou de chegar passa a me ver
+            } else if (wcNet.sala && sala === wcNet.sala.id) {
+                entrou.forEach(j => wcNet.sala.membros.set(j.id, j.nick));
+                wcRenderSala();
+            } else if (wcNet.busca) wcAoEntrarPartida(sala, entrou);
+        }
+
+        function wcAoSair(p) {
+            if (!wcDoJogo(p)) return;
+            const sala = wcLerSala(p), j = wcLerJogador(p);
+            if (!j) return;
+            if (!sala || sala === WC_SALA_GERAL) wcNet.presenca.delete(j.id);
+            if (wcNet.sala && (!sala || sala === wcNet.sala.id)) wcNet.sala.membros.delete(j.id);
+            if (wcNet.busca && !wcNet.busca.contagem && (!sala || sala === wcNet.busca.sala)) { wcNet.busca.jogadores.delete(j.id); wcRenderBusca(); }
+            wcRenderSala();
+            if (wcNet.aberto && wcNet.aba === 'amigos') wcRenderAmigos();
+        }
+
+        function wcAoAcao(p) {
+            if (!p || typeof p !== 'object' || !wcDoJogo(p) || !p.de || typeof p.de !== 'object') return;
+            const de = { id: wcIdSeguro(p.de.id), nick: wcTexto(p.de.nick, 24) };
+            if (!de.id || de.id === player.id) return;
+            const sala = wcLerSala(p);
+            if (p.tipo === 'presenca') {
+                wcMarcarPresenca(de, wcTexto(p.status, 12));
+                if (p.pedir) wcEmitirPresenca(false);
+            } else if (p.tipo === 'chat') {
+                wcReceberChat(p, de, sala);
+            } else if (p.tipo === 'entrei' && wcNet.sala && sala === wcNet.sala.id) {
+                const novo = !wcNet.sala.membros.has(de.id);
+                wcNet.sala.membros.set(de.id, de.nick);
+                if (novo && !p.resp) wcEmitirJogo('entrei', { resp: true }, wcNet.sala.id);
+                wcRenderSala();
+            } else if (p.tipo === 'sair' && wcNet.sala && sala === wcNet.sala.id) {
+                wcNet.sala.membros.delete(de.id);
+                wcRenderSala();
+            }
+        }
+
+        /* --- amigos (wavecombat_amigos) --- */
+
+        function wcAmigoDaLinha(l, eu) {
+            const outro = [l.id_amigo, l.amigo_id, l.friend_id, l.id_amigo_jogador].find(v => v != null);
+            const aceito = l.status == null ? true : ['aceito', 'accepted', 'amigos', 'ativo', 'ok'].includes(String(l.status).toLowerCase());
+            if (l.aceito === false || !aceito) return null;
+            let id = '';
+            if (String(l.id_jogador) === eu && outro != null) id = String(outro);
+            else if (outro != null && String(outro) === eu && l.id_jogador != null) id = String(l.id_jogador);
+            id = wcIdSeguro(id);
+            return id && id !== eu ? { id, nick: wcTexto(l.nick_amigo || l.amigo_nick || l.nome_amigo || '', 24) } : null;
+        }
+
+        async function wcCarregarAmigos(forcar) {
+            if (player.convidado) return;
+            if (forcar) wcReviver('amigos'); else if (!wcPodeTentar('amigos')) return;
+            const A = wcNet.amigos;
+            if (A.carregando) return;
+            A.carregando = true; A.erro = '';
+            wcRenderAmigos();
+            const conta = player.id, eu = wcIdSeguro(conta), sb = wcCliente();
+            try {
+                let r = await wcComTimeout(sb.from(WC_HUB.tabelaAmigos).select('*').or(`id_jogador.eq.${eu},id_amigo.eq.${eu}`).limit(200));
+                if (r.error) r = await wcComTimeout(sb.from(WC_HUB.tabelaAmigos).select('*').eq('id_jogador', conta).limit(200));
+                if (conta !== player.id) return;
+                if (r.error) { wcRegistrar('amigos', r.error); A.erro = 'Não consegui carregar a lista de amigos agora.'; return; }
+                wcRegistrar('amigos', null);
+                const linhas = r.data || [];
+                const vistos = new Map();
+                linhas.forEach(l => { const a = wcAmigoDaLinha(l, eu); if (a && !vistos.has(a.id)) vistos.set(a.id, a); });
+                if (linhas.length && !vistos.size) {
+                    console.warn('[WC] wavecombat_amigos: não reconheci as colunas. Recebi:', Object.keys(linhas[0]));
+                    A.erro = 'Lista de amigos em formato desconhecido (veja o console).';
+                }
+                const ids = [...vistos.keys()];
+                if (ids.length) {
+                    const n = await wcComTimeout(sb.from(WC_HUB.tabela).select('id_jogador,nick').in('id_jogador', ids));
+                    (n.data || []).forEach(l => { const a = vistos.get(String(l.id_jogador)); if (a && l.nick) a.nick = wcTexto(l.nick, 24); });
+                    await wcVerificarIds(ids);
+                }
+                A.lista = [...vistos.values()];
+                A.t = Date.now();
+            } catch (e) {
+                A.erro = 'Não consegui carregar a lista de amigos agora.';
+                console.warn('[WC] amigos:', (e && e.message) || e);
+            } finally {
+                A.carregando = false;
+                wcRenderAmigos();
+            }
+        }
+
+        /* --- chat duplo: geral do jogo + sala (privada ou da partida) --- */
+
+        function wcAdicionarMsg(canal, msg) {
+            const a = wcNet.chat[canal];
+            a.push(msg);
+            if (a.length > 100) a.shift();
+            if (!msg.meu && !(wcNet.aberto && wcNet.aba === canal)) { wcNet.naoLidas++; wcAtualizarFab(); }
+            wcRenderChat(canal);
+        }
+
+        function wcReceberChat(p, de, sala) {
+            const canal = p.canal === 'sala' ? 'sala' : 'geral';
+            if (canal === 'geral' && sala && sala !== WC_SALA_GERAL) return;
+            if (canal === 'sala' && (!wcNet.sala || sala !== wcNet.sala.id)) return;
+            const mid = wcTexto(p.mid, 40);
+            if (mid) { if (wcNet.vistos.has(mid)) return; wcNet.vistos.add(mid); if (wcNet.vistos.size > 400) wcNet.vistos.clear(); }
+            const texto = wcTexto(p.texto, 200);
+            if (!texto) return;
+            wcAdicionarMsg(canal, { de, texto, t: Date.now() });
+            wcVerificarIds([de.id]).then(() => wcRenderChat(canal));   // o V vem do banco, nunca da mensagem
+        }
+
+        function wcEnviarChat(canal, texto) {
+            texto = wcTexto(texto, 200);
+            if (!texto) return false;
+            if (Date.now() - wcNet.ultimoChat < 700) return false;
+            if (wcNet.estado !== 'conectado') { mostrarAviso('Sem conexão com o servidor do Hub'); return false; }
+            const sala = canal === 'geral' ? WC_SALA_GERAL : (wcNet.sala && wcNet.sala.id);
+            if (!sala) { mostrarAviso('Entre em uma sala primeiro'); return false; }
+            wcNet.ultimoChat = Date.now();
+            const mid = player.id + '-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+            wcEmitirJogo('chat', { canal, mid, texto }, sala);
+            wcAdicionarMsg(canal, { de: { id: player.id, nick: wcMeuNick() }, texto, t: Date.now(), meu: true });
+            return true;
+        }
+
+        function wcEntrarSala(codigo) {
+            codigo = String(codigo || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8);
+            if (codigo.length < 4) { mostrarAviso('Código da sala: 4 a 8 letras ou números'); return; }
+            if (wcNet.estado !== 'conectado') { mostrarAviso('Aguarde: conectando ao servidor do Hub'); wcConectar(); return; }
+            wcSairSala();
+            const id = WC_HUB.gameId + ':sala:' + codigo;
+            wcNet.sala = { id, codigo, tipo: 'privada', membros: new Map([[player.id, wcMeuNick()]]) };
+            wcNet.chat.sala = [];
+            wcNet.sock.emit('join_room', { gameId: WC_HUB.gameId, roomId: id, playerId: player.id, nick: wcMeuNick() });
+            wcEmitirJogo('entrei', {}, id);
+            wcRenderSala(); wcRenderChat('sala');
+        }
+
+        function wcCriarSala() {
+            const alfabeto = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            const v = new Uint32Array(5);
+            (window.crypto || window.msCrypto).getRandomValues(v);
+            wcEntrarSala(Array.from(v, n => alfabeto[n % alfabeto.length]).join(''));
+        }
+
+        function wcSairSala() {
+            const s = wcNet.sala;
+            if (!s) return;
+            wcEmitirJogo('sair', {}, s.id);
+            if (wcNet.sock) {
+                const dados = { gameId: WC_HUB.gameId, roomId: s.id, playerId: player.id };
+                wcNet.sock.emit('leave_room', dados);
+            }
+            wcNet.sala = null;
+            wcNet.chat.sala = [];
+            wcRenderSala(); wcRenderChat('sala');
+        }
+
+        /* --- partida online: "Procurando partida...", contador X/4 e cronômetro --- */
+
+        function wcTentarEnviarBusca() {
+            const b = wcNet.busca;
+            if (!b || b.enviada || wcNet.estado !== 'conectado') return;
+            b.enviada = true;
+            // se o servidor responder pelo retorno do evento (ack), aproveita a sala e os jogadores dele
+            wcNet.sock.emit('find_match', { gameId: WC_HUB.gameId, playerId: player.id, nick: wcMeuNick(), maxPlayers: WC_HUB.maxJogadores, modo: dadosGaragem.modoSelecionado }, resp => {
+                if (wcNet.busca !== b || !resp || typeof resp !== 'object') return;
+                wcAoEntrarPartida(wcLerSala(resp), wcLerLista(resp));
+            });
+        }
+
+        function wcBuscarPartida() {
+            if (player.convidado) { mostrarAviso('Abra o jogo pelo WaveCombat Hub para jogar online'); return; }
+            if (wcNet.busca) return;
+            wcNet.busca = { t0: Date.now(), jogadores: new Map([[player.id, wcMeuNick()]]), sala: '', enviada: false, contagem: 0, timer: null };
+            wcNet.busca.timer = setInterval(wcTickBusca, 1000);
+            wcRenderBusca();
+            wcConectar(true);
+            wcTentarEnviarBusca();
+            wcEmitirPresenca(false);
+        }
+
+        function wcAoEntrarPartida(sala, jogadores) {
+            const b = wcNet.busca;
+            if (!b || b.contagem) return;
+            if (sala) b.sala = sala;
+            jogadores.forEach(j => b.jogadores.set(j.id, j.nick));
+            wcRenderBusca();
+            if (b.jogadores.size >= WC_HUB.maxJogadores) wcComecarContagem();
+        }
+
+        function wcAoPartidaPronta(p) {
+            const b = wcNet.busca;
+            if (!b || !wcDoJogo(p)) return;
+            const sala = wcLerSala(p);
+            if (sala) b.sala = sala;
+            wcLerLista(p).forEach(j => b.jogadores.set(j.id, j.nick));
+            wcComecarContagem();
+        }
+
+        function wcComecarContagem() {
+            const b = wcNet.busca;
+            if (!b || b.contagem) return;
+            b.contagem = 3;
+            wcRenderBusca();
+        }
+
+        function wcTickBusca() {
+            const b = wcNet.busca;
+            if (!b) return;
+            if (b.contagem) {
+                b.contagem--;
+                if (b.contagem <= 0) { wcIniciarPartidaOnline(); return; }
+            }
+            wcRenderBusca();
+        }
+
+        function wcIniciarPartidaOnline() {
+            const b = wcNet.busca;
+            if (!b) return;
+            clearInterval(b.timer);
+            wcNet.sala = { id: b.sala || (WC_HUB.gameId + ':partida'), codigo: 'PARTIDA', tipo: 'partida', membros: b.jogadores };
+            wcNet.chat.sala = [];
+            wcNet.busca = null;
+            wcRenderBusca(); wcRenderSala(); wcRenderChat('sala');
+            wcEmitirPresenca(false);
+            iniciarPartida();
+        }
+
+        function wcCancelarBusca() {
+            const b = wcNet.busca;
+            if (!b) return;
+            clearInterval(b.timer);
+            if (wcNet.sock && b.enviada) {
+                wcNet.sock.emit('cancel_matchmaking', { gameId: WC_HUB.gameId, playerId: player.id });
+                if (b.sala) wcNet.sock.emit('leave_room', { gameId: WC_HUB.gameId, roomId: b.sala, playerId: player.id });
+            }
+            wcNet.busca = null;
+            wcRenderBusca();
+            wcEmitirPresenca(false);
+        }
+
+        /* --- telas --- */
+
+        function wcFmtTempo(ms) {
+            const s = Math.max(0, Math.floor(ms / 1000));
+            return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+        }
+
+        function wcRenderBusca() {
+            const b = wcNet.busca;
+            const btn = wcEl('btn-online');
+            if (btn) {
+                btn.textContent = b ? 'Procurando partida...' : '🌐 PARTIDA ONLINE · 4 JOGADORES';
+                btn.classList.toggle('wc-buscando', !!b);
+            }
+            const ov = wcEl('wc-espera');
+            if (!ov) return;
+            ov.classList.toggle('hidden', !b);
+            if (!b) return;
+            wcEl('wc-espera-titulo').textContent = b.contagem ? 'Partida encontrada!' : 'Procurando partida...';
+            wcEl('wc-espera-n').textContent = String(Math.min(WC_HUB.maxJogadores, b.jogadores.size));
+            wcEl('wc-espera-max').textContent = String(WC_HUB.maxJogadores);
+            wcEl('wc-espera-tempo').textContent = b.contagem ? 'Começando em ' + b.contagem + '...' : wcFmtTempo(Date.now() - b.t0);
+            const dica = wcEl('wc-espera-dica');
+            if (wcNet.estado === 'falhou') dica.textContent = 'Servidor do Hub indisponível agora. Cancele e tente de novo em instantes.';
+            else if (wcNet.estado !== 'conectado') dica.textContent = 'Conectando ao servidor do Hub (se estiver dormindo, pode levar cerca de 1 minuto)...';
+            else if (!b.contagem && Date.now() - b.t0 > 60000) dica.textContent = 'Poucos jogadores procurando agora. Que tal criar uma sala privada e chamar amigos?';
+            else dica.textContent = b.contagem ? '' : 'Aguardando jogadores...';
+            const ul = wcEl('wc-espera-jogadores');
+            ul.textContent = '';
+            [...b.jogadores].forEach(([id, nick]) => {
+                const li = document.createElement('li');
+                li.textContent = (id === player.id ? '🪖 ' : '👤 ') + (nick || id);
+                li.appendChild(wcSeloV(wcVerif.get(id)));
+                ul.appendChild(li);
+            });
+        }
+
+        function wcRenderConexao() {
+            const el = wcEl('wc-con');
+            if (!el) return;
+            const t = { conectado: '🟢 Conectado ao Hub', conectando: '🟡 Conectando...', falhou: '🔴 Servidor indisponível', desligado: '⚪ Desconectado' }[wcNet.estado];
+            el.textContent = t;
+            wcEl('wc-reconectar').classList.toggle('hidden', wcNet.estado !== 'falhou');
+        }
+
+        function wcRenderPerfil() {
+            const n = wcEl('wc-p-nick');
+            if (!n) return;
+            n.textContent = player.name;
+            wcEl('wc-p-id').textContent = player.id;
+            wcEl('wc-p-dia').textContent = fmtNum(dadosGaragem.diamantes);
+            wcEl('wc-avatar').textContent = (player.name || '?').charAt(0).toUpperCase();
+            wcEl('wc-avatar').classList.toggle('wc-avatar-v', !!player.verificado);
+        }
+
+        function wcLinhaJogador(nick, id, extra) {
+            const d = document.createElement('div');
+            d.className = 'wc-amigo';
+            const av = document.createElement('div');
+            av.className = 'wc-avatar wc-avatar-p';
+            av.textContent = (nick || id || '?').charAt(0).toUpperCase();
+            const meio = document.createElement('div');
+            meio.className = 'wc-amigo-txt';
+            const nome = document.createElement('b');
+            nome.textContent = nick || id;
+            nome.appendChild(wcSeloV(wcVerif.get(id)));
+            const idv = document.createElement('small');
+            idv.textContent = 'ID ' + id;
+            meio.append(nome, idv);
+            d.append(av, meio, extra);
+            return d;
+        }
+
+        function wcRenderAmigos() {
+            const box = wcEl('wc-amigos-lista');
+            if (!box) return;
+            const A = wcNet.amigos;
+            box.textContent = '';
+            const msg = t => { const p = document.createElement('p'); p.className = 'wc-vazio'; p.textContent = t; box.appendChild(p); };
+            if (A.carregando && !A.lista.length) { msg('Carregando amigos...'); return; }
+            if (A.erro) msg(A.erro);
+            if (!A.erro && !A.lista.length) { msg('Você ainda não tem amigos no Hub. Adicione amigos pelo site do WaveCombat!'); return; }
+            const ord = { jogando: 0, online: 1, offline: 2 };
+            const lista = A.lista.map(a => ({ ...a, s: wcSituacao(a.id) })).sort((x, y) => ord[x.s.chave] - ord[y.s.chave] || x.nick.localeCompare(y.nick));
+            const on = lista.filter(a => a.s.chave !== 'offline').length;
+            wcEl('wc-amigos-resumo').textContent = lista.length ? `Online: ${on} · Offline: ${lista.length - on}` : '';
+            lista.forEach(a => {
+                const st = document.createElement('span');
+                st.className = 'wc-st wc-st-' + a.s.chave;
+                st.textContent = a.s.rotulo;
+                box.appendChild(wcLinhaJogador(a.nick, a.id, st));
+            });
+        }
+
+        function wcRenderChat(canal) {
+            const box = wcEl('wc-msgs-' + canal);
+            if (!box) return;
+            box.textContent = '';
+            if (!wcNet.chat[canal].length) {
+                const p = document.createElement('p');
+                p.className = 'wc-vazio';
+                p.textContent = canal === 'geral' ? 'Chat geral do Esquadrão de Tanques. Diga oi!' : 'Ninguém falou na sala ainda.';
+                box.appendChild(p);
+            }
+            wcNet.chat[canal].forEach(m => {
+                const d = document.createElement('div');
+                d.className = 'wc-msg' + (m.meu ? ' wc-msg-meu' : '');
+                const n = document.createElement('b');
+                n.textContent = m.de.nick || m.de.id;
+                n.appendChild(wcSeloV(wcVerif.get(m.de.id)));
+                const t = document.createElement('span');
+                t.textContent = ' ' + m.texto;
+                const h = document.createElement('i');
+                h.textContent = new Date(m.t).toTimeString().slice(0, 5);
+                d.append(n, t, h);
+                box.appendChild(d);
+            });
+            box.scrollTop = box.scrollHeight;
+        }
+
+        function wcRenderSala() {
+            const s = wcNet.sala;
+            const fora = wcEl('wc-sala-fora'), dentro = wcEl('wc-sala-dentro');
+            if (!fora) return;
+            fora.classList.toggle('hidden', !!s);
+            dentro.classList.toggle('hidden', !s);
+            if (!s) return;
+            wcEl('wc-sala-codigo').textContent = s.tipo === 'partida' ? 'Sala da partida' : 'Sala ' + s.codigo;
+            const m = wcEl('wc-sala-membros');
+            m.textContent = '';
+            [...s.membros].forEach(([id, nick]) => {
+                const c = document.createElement('span');
+                c.className = 'wc-chip';
+                c.textContent = (id === player.id ? 'Você' : (nick || id));
+                c.appendChild(wcSeloV(wcVerif.get(id)));
+                m.appendChild(c);
+            });
+        }
+
+        function wcAtualizarFab() {
+            const pt = wcEl('wc-fab-pt');
+            if (!pt) return;
+            pt.textContent = wcNet.naoLidas > 9 ? '9+' : String(wcNet.naoLidas);
+            pt.classList.toggle('hidden', !wcNet.naoLidas);
+        }
+
+        function wcMostrarAba(aba) {
+            wcNet.aba = aba;
+            document.querySelectorAll('.wc-aba').forEach(b => b.classList.toggle('ativa', b.dataset.aba === aba));
+            ['amigos', 'geral', 'sala'].forEach(a => wcEl('wc-aba-' + a).classList.toggle('hidden', a !== aba));
+            if (aba !== 'amigos') { wcNet.naoLidas = 0; wcAtualizarFab(); wcRenderChat(aba); }
+            if (aba === 'amigos') { wcRenderAmigos(); if (Date.now() - wcNet.amigos.t > 30000) wcCarregarAmigos(); }
+            if (aba === 'sala') wcRenderSala();
+        }
+
+        function wcAbrirSocial(aba) {
+            if (player.convidado) { mostrarAviso('Abra o jogo pelo WaveCombat Hub para usar amigos e chat'); return; }
+            wcNet.aberto = true;
+            wcEl('wc-social').classList.remove('hidden');
+            wcRenderPerfil(); wcRenderConexao();
+            wcConectar();
+            wcMostrarAba(aba || wcNet.aba);
+        }
+
+        function wcFecharSocial() {
+            wcNet.aberto = false;
+            wcEl('wc-social').classList.add('hidden');
+        }
+
+        function wcSocialTick() {
+            const fab = wcEl('wc-fab');
+            if (!fab) return;
+            const jogando = estadoJogo === 'JOGANDO';
+            fab.classList.toggle('hidden', player.convidado || jogando || !!wcNet.busca);
+            if (jogando && wcNet.aberto) wcFecharSocial();
+            if (wcNet.estado === 'conectado' && wcStatusAtual() !== wcNet.statusEnviado) wcEmitirPresenca(false);
+            if (wcNet.aberto && wcNet.aba === 'amigos') wcRenderAmigos();
+            if (wcNet.busca) wcRenderBusca();
+        }
+
+        // chamado por wcAposCarregar: conta nova (ou jogo recém-aberto) recomeça amigos, chat, selo V e conexão
+        function wcSocialAposConta() {
+            wcCancelarBusca();
+            wcDesconectar();
+            wcNet.presenca.clear();
+            wcNet.chat = { geral: [], sala: [] };
+            wcNet.sala = null;
+            wcNet.amigos = { lista: [], carregando: false, erro: '', t: 0 };
+            wcNet.naoLidas = 0;
+            wcNet.statusEnviado = '';
+            try { const o = JSON.parse(lerLS('esquadrao_wc_verif')); player.verificado = !!(o && o.id === player.id && o.v); } catch (e) { player.verificado = false; }
+            wcRenderPerfil(); wcRenderSala(); wcRenderChat('geral'); wcRenderChat('sala'); wcAtualizarFab(); wcRenderConexao();
+            aplicarIdentidadeNaInterface();
+            clearTimeout(wcNet.inicio);
+            if (!player.convidado) {
+                // fora do caminho da inicialização: o jogo já está na tela quando começa a falar com o Hub
+                wcNet.inicio = setTimeout(() => { wcCarregarVerificado(); wcConectar(); }, 2500);
+            }
+        }
+
+        function wcSocialIniciar() {
+            wcEl('wc-fab').onclick = () => wcAbrirSocial();
+            wcEl('wc-social-fechar').onclick = wcFecharSocial;
+            wcEl('wc-social-fundo').onclick = wcFecharSocial;
+            document.querySelectorAll('.wc-aba').forEach(b => { b.onclick = () => wcMostrarAba(b.dataset.aba); });
+            wcEl('wc-reconectar').onclick = () => { wcNet.estado = 'desligado'; wcConectar(true); };
+            wcEl('wc-amigos-atualizar').onclick = () => wcCarregarAmigos(true);
+            ['geral', 'sala'].forEach(canal => {
+                const f = wcEl('wc-form-' + canal);
+                f.onsubmit = e => {
+                    e.preventDefault();
+                    const inp = f.querySelector('input');
+                    if (wcEnviarChat(canal, inp.value)) inp.value = '';
+                };
+            });
+            wcEl('wc-sala-criar').onclick = wcCriarSala;
+            wcEl('wc-sala-form').onsubmit = e => { e.preventDefault(); wcEntrarSala(wcEl('wc-sala-cod').value); };
+            wcEl('wc-sala-sair').onclick = wcSairSala;
+            wcEl('btn-online').onclick = wcBuscarPartida;
+            wcEl('wc-espera-cancelar').onclick = wcCancelarBusca;
+            wcEl('wc-espera-chat').onclick = () => wcAbrirSocial('geral');
+            setInterval(wcSocialTick, 400);
+            setInterval(() => wcEmitirPresenca(false), 20000);
+            window.addEventListener('pagehide', () => { try { if (wcNet.sock) wcNet.sock.disconnect(); } catch (e) { /* ok */ } });
+        }
+
         // Mostra nick e ID na tela inicial, garagem, HUD da partida, pausa e painel ADM
         function aplicarIdentidadeNaInterface() {
             const txt = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
             ['welcome-name', 'menu-jogador-nick', 'hud-nick', 'pausa-nick', 'adm-nick'].forEach(id => txt(id, player.name));
             ['welcome-id', 'menu-jogador-id', 'hud-id', 'pausa-id', 'adm-id'].forEach(id => txt(id, player.id));
+            document.querySelectorAll('[data-wcv]').forEach(el => el.classList.toggle('hidden', !player.verificado));
+            wcRenderPerfil();
             document.querySelectorAll('.adm-so').forEach(el => el.classList.toggle('hidden', !player.adm));
             if (!player.adm) { admDeus = false; admVelocidade = 1; }
         }
@@ -6094,6 +6974,7 @@
             identificarJogador();   // nick + ID do Hub (ou Convidado)
             carregarJogo();
             wcAposCarregar();       // liga a sincronização dos 💎 com o Supabase
+            wcSocialIniciar();      // amigos, chat e partida online (a conexão só começa depois, em segundo plano)
             atualizarTelaInicio();
             sincronizarCamposConfig();
             resizeCanvas();

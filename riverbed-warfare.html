@@ -140,6 +140,7 @@ body.li #fbtn,body.li #cbtn{display:flex}
 #lb ul{list-style:none;margin:10px 0 0;padding:0;text-align:left}
 #lb li{padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.08)}
 #top .vb,.fr .vb{padding:0;border:0;min-width:15px;flex:none}
+.vb{font-size:10px}
 #goOn.busy{animation:pls 1.2s infinite}
 @keyframes pls{50%{opacity:.55}}
 
@@ -251,7 +252,7 @@ body.play #mkBtn{display:flex}
 <button id="mkBtn" class="mb sm">🏪 Mercado</button>
 <div id="end"><div class="card"><h1 id="endT">Você foi derrotado</h1><p id="endS"></p><button id="rst" class="mb">Reiniciar Combate</button><button id="mnu" class="mb alt">Retornar ao Menu Principal</button></div></div>
 <!-- Atalhos fixos -->
-<div id="ver">v0.0010 <span id="srv"></span></div>
+<div id="ver">v0.0011 <span id="srv"></span></div>
 <a id="yt" href="https://youtube.com/@capudooficial7?si=NSvfxpSzswVEStdu" target="_blank" rel="noopener noreferrer"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><rect x="1" y="5" width="22" height="14" rx="4" fill="#f00"/><path d="M10 9l5 3-5 3z" fill="#fff"/></svg><span>siga o criador do jogo aqui</span></a>
 <button id="fbtn" class="mb" aria-label="Amigos" title="Amigos">👥<i id="fbtnN"></i></button>
 <button id="cbtn" class="mb" aria-label="Chat" title="Chat">💬<i id="cbtnN"></i></button>
@@ -490,7 +491,7 @@ function panelHTML(){
  return '';
 }
 function hud(){
- $('top').innerHTML=Object.keys(res).map(k=>`<span>${EM[k]} ${res[k]}</span>`).join('')+`<span>👥 ${pop0()}/${cap}</span><span>⭐ Nível ${LV[0]}</span><span>🎚️ ${DF().n}</span><span>💎 ${me?me.dia:0}</span><span>👤 ${esc(player.name)}${player.verified?'<span class="vb" title="Verificado">V</span>':''} #${player.id}</span><span class="h">Esq: selecionar · Dir: ordens · WASD: câmera · Roda: zoom · H: base</span>`;
+ $('top').innerHTML=Object.keys(res).map(k=>`<span>${EM[k]} ${res[k]}</span>`).join('')+`<span>👥 ${pop0()}/${cap}</span><span>⭐ Nível ${LV[0]}</span><span>🎚️ ${DF().n}</span><span>💎 ${me?me.dia:0}</span><span>👤 ${esc(player.name)}${player.verified?'<span class="vb" title="Verificado">✔︎</span>':''} #${player.id}</span><span class="h">Esq: selecionar · Dir: ordens · WASD: câmera · Roda: zoom · H: base</span>`;
  const h=panelHTML();if(h!==lastP){lastP=h;$('panel').innerHTML=h}$('panel').style.display=h?'':'none';const hb=bdHTML();if(hb!==lastB){lastB=hb;$('bd').innerHTML=hb}rndUpd();
 }
 $('panel').onclick=e=>{const b=e.target.closest('button');if(!b||b.disabled)return;const d=b.dataset;
@@ -884,8 +885,9 @@ const AI={teams:[],t:0,w:0,update(dt){
 }};
 
 /* ===== Armazenamento (localStorage / sessionStorage, sempre com try/catch) ===== */
-const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}}};
-const SS={get(k){try{return sessionStorage.getItem(k)}catch(e){return null}},set(k,v){try{sessionStorage.setItem(k,v)}catch(e){}},del(k){try{sessionStorage.removeItem(k)}catch(e){}}};
+const MEM={}; // iframe com armazenamento bloqueado (cookies de terceiros): guarda na memória da sessão
+const LS={get(k,d){let v=null;try{v=localStorage.getItem(k)}catch(e){v=k in MEM?MEM[k]:null}try{return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){const s=JSON.stringify(v);try{localStorage.setItem(k,s);return true}catch(e){MEM[k]=s;return false}}};
+const SS={get(k){try{return sessionStorage.getItem(k)}catch(e){return 's:'+k in MEM?MEM['s:'+k]:null}},set(k,v){try{sessionStorage.setItem(k,v)}catch(e){MEM['s:'+k]=v}},del(k){try{sessionStorage.removeItem(k)}catch(e){delete MEM['s:'+k]}}};
 const users=()=>{if(SERVER)return SRV.users;const a=LS.get('rg_users',[]);return Array.isArray(a)?a:[]};
 
 /* ===== Configurações ===== */
@@ -917,7 +919,7 @@ addEventListener('pointerdown',e=>{auInit();if(AU.c&&AU.c.state==='suspended')AU
 let me=null,running=false,started=false,raf=0,last=0,acc=0;
 const MASTER_ID='577082415',ADMIN_ID='162028398',ADMIN_NICK='capudo7';
 const player={name:'',id:'',guest:false};
-const lsGet=k=>{try{return localStorage.getItem(k)}catch(e){return null}},lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+const lsGet=k=>{try{return localStorage.getItem(k)}catch(e){return k in MEM?MEM[k]:null}},lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){MEM[k]=v}};
 const cleanNick=n=>{n=String(n||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Za-z0-9_]/g,'_').slice(0,16);return n.length>=3?n:(n+'___').slice(0,3)};
 function sessionData(){ // 'wavecombat_sessao_ativa': JSON com id/nick (aceita objetos aninhados) ou só o nick
  const raw=lsGet('wavecombat_sessao_ativa');if(!raw)return{};
@@ -927,7 +929,8 @@ function sessionData(){ // 'wavecombat_sessao_ativa': JSON com id/nick (aceita o
  let id,nick;for(const s of [o,o.user,o.usuario,o.jogador,o.player,o.perfil].filter(x=>x&&typeof x==='object')){id=id??pk(s,['id','wavecombat_id','player_id','jogador_id','userId','uid']);nick=nick??pk(s,['nick','nickname','apelido','nome','name','username'])}
  return{id:id!==undefined?String(id):undefined,nick:nick!==undefined?String(nick):undefined}}
 function initIdentity(){
- const ss=sessionData();let id=String(lsGet('wavecombat_id')||ss.id||'').trim(),nick=String(lsGet('wavecombat_nick')||ss.nick||'').trim();
+ const qid=new URLSearchParams(location.search).get('id'),ss=sessionData(),lid=lsGet('wavecombat_id')||ss.id; // o Hub abre o jogo num iframe: seujogo.html?id=ID
+ let id=String(qid||lid||'').trim(),nick=(qid&&String(lid||'')!==String(qid))?'':String(lsGet('wavecombat_nick')||ss.nick||'').trim();
  if(!/^[\w-]{3,40}$/.test(id)){id=lsGet('rg_guest_id')||String(Math.floor(100000000+Math.random()*900000000));lsSet('rg_guest_id',id);player.guest=true} // visitante: ID só do jogo (nunca grava nas chaves wavecombat_*)
  player.nickDef=!nick;if(!nick)nick='Player_'+id.substring(0,4);
  player.name=nick;player.id=id;document.body.classList.add('li')}
@@ -981,7 +984,7 @@ function updBadge(){const n=me?(me.msgs||[]).filter(m=>!m.read).length:0;$('inbN
 const clans=()=>{if(SERVER)return SRV.clans;const a=LS.get('rg_clans',[]);return Array.isArray(a)?a:[]};
 const clanOf=a=>a&&a.clanId?clans().find(c=>c.id===a.clanId):null;
 const BF=n=>me&&me.cartoesMercado&&me.cartoesMercado[n]>Date.now()?1.1:1; // lê o objeto cartoesMercado
-const dn=a=>{const c=clanOf(a);return (c?`<b class="tg">[${c.tag}]</b> `:'')+(a.medalhaRank&&MED[a.medalhaRank]?MED[a.medalhaRank]+' ':'')+(a.isInfluencer===true?'<span class="vf" title="Verificado">✔</span> ':'')+esc(a.nick)+(a.verified?'<span class="vb" title="Verificado">V</span>':'')};
+const dn=a=>{const c=clanOf(a);return (c?`<b class="tg">[${c.tag}]</b> `:'')+(a.medalhaRank&&MED[a.medalhaRank]?MED[a.medalhaRank]+' ':'')+(a.isInfluencer===true?'<span class="vf" title="Verificado">✔</span> ':'')+esc(a.nick)+(a.verified?'<span class="vb" title="Verificado">✔︎</span>':'')};
 function tcLabel(b,px,py,w){
  let txt,inf=false;if(!b.team&&me){const c=clanOf(me);txt=(c?'['+c.tag+'] ':'')+me.nick;inf=me.isInfluencer===true}else txt='IA '+b.team;
  ctx.font='bold 13px "Rajdhani",system-ui,sans-serif';ctx.textBaseline='bottom';ctx.textAlign='left';
@@ -1322,7 +1325,7 @@ setInterval(flushStats,6000);setInterval(()=>{if(SERVER&&TOKEN&&me)refreshMe()},
 let adminChannel=null;
 const adminOn=()=>!!(me&&me.isAdmin===true);
 const adminSend=m=>{try{if(adminChannel)adminChannel.postMessage(m)}catch(e){}};
-function telemetry(){adminSend({type:'TELEMETRY',data:{fps,entities:visEnt,entitiesTotal:units.length+buildings.length,units:units.length,zombies:units.filter(u=>u.team===3).length,gold:res.gold,mode:curMode,round:Z.round,difficulty:DF().n,paused:ADM.pause,god:ADM.god,fog:ADM.fog,ts:Date.now(),version:'v0.0010'}})}
+function telemetry(){adminSend({type:'TELEMETRY',data:{fps,entities:visEnt,entitiesTotal:units.length+buildings.length,units:units.length,zombies:units.filter(u=>u.team===3).length,gold:res.gold,mode:curMode,round:Z.round,difficulty:DF().n,paused:ADM.pause,god:ADM.god,fog:ADM.fog,ts:Date.now(),version:'v0.0011'}})}
 const AKEYS={ADD_GOLD:'GOLD',GOLD:'GOLD',INJECT_GOLD:'GOLD',GIVE_GOLD:'GOLD',SPAWN:'SPAWN',SPAWN_UNIT:'SPAWN',SPAWN_UNITS:'SPAWN',SET_SPEED:'SPEED',SPEED:'SPEED',TROOP_SPEED:'SPEED',SET_DAMAGE:'DAMAGE',DAMAGE:'DAMAGE',TROOP_DAMAGE:'DAMAGE',GOD_MODE:'GOD',GOD:'GOD',GODMODE:'GOD',FOG:'FOG',FOG_OF_WAR:'FOG',TOGGLE_FOG:'FOG',PAUSE:'PAUSE',TOGGLE_PAUSE:'PAUSE',REMOTE_PAUSE:'PAUSE',PING:'PING',HELLO:'PING'};
 const UALIAS={soldier:'esp',soldado:'esp',esp:'esp',tank:'tnk',tanque:'tnk',tnk:'tnk',zombie:'zc',zumbi:'zc',zc:'zc'};
 const pick=(d,...ks)=>{for(const k of ks)if(d&&d[k]!==undefined)return d[k];return undefined};
@@ -1412,7 +1415,7 @@ const SB_URL='https://ipqjeacdfiomcxfuixdj.supabase.co',SB_KEY='sb_publishable_E
 const SB_T={car:'carteira_diamantes',ami:'wavecombat_amigos',ver:'wavecombat_verificados'};
 const SBM=LS.get('rg_sbmap',{}); // colunas detectadas; para forçar: ?sbmap={"car":{"id":"COL","bal":"COL"},"ami":{"a":"COL","b":"COL","st":"COL"},"ver":{"id":"COL"},"pre":{"t":"TABELA","id":"COL","nick":"COL","on":"COL","st":"COL","seen":"COL","game":"COL"}}
 try{const q=new URLSearchParams(location.search).get('sbmap');if(q){Object.assign(SBM,JSON.parse(q));LS.set('rg_sbmap',SBM)}}catch(e){}
-const DIAG={car:'carregando…',ver:'carregando…',ami:'carregando…',pre:'carregando…',hub:'conectando…'};
+const DIAG={lib:'carregando…',car:'carregando…',usr:'carregando…',ver:'carregando…',ami:'carregando…',pre:'carregando…',hub:'conectando…'};
 const sleep=ms=>new Promise(r=>setTimeout(r,ms)),q1=encodeURIComponent,saveMap=()=>LS.set('rg_sbmap',SBM),badMap=(e,k)=>{if(e&&e.status===400){delete SBM[k];saveMap()}};
 async function sb(path,opt={},ms=8000){ // a chave sb_publishable_ NÃO é JWT: vai só no header apikey (em Authorization dá 401 "Expected 3 parts in JWT")
  const ac=new AbortController(),tm=setTimeout(()=>ac.abort(),ms),h={apikey:SB_KEY,...(opt.body?{'Content-Type':'application/json'}:{}),...(opt.headers||{})};
@@ -1422,24 +1425,56 @@ async function sb(path,opt={},ms=8000){ // a chave sb_publishable_ NÃO é JWT: 
  catch(e){if(e.name==='AbortError'){e.message='tempo esgotado';e.status=0}else if(e.status===undefined)e.status=0;throw e}
  finally{clearTimeout(tm)}}
 const errTxt=e=>e.status===401||e.status===403?'sem permissão ('+e.message+')':e.status===404?'tabela não encontrada':e.message;
-async function tbl(t){try{const r=await sb(t+'?select=*&limit=1');return r&&r.length?{keys:Object.keys(r[0]),row:r[0]}:{keys:null,row:null}}catch(e){if(e.status===400)return{keys:null,row:null};throw e}}
+async function tbl(t){try{const r=await DB.sel(t,{limit:1});return r&&r.length?{keys:Object.keys(r[0]),row:r[0]}:{keys:null,row:null}}catch(e){if(e.status===400)return{keys:null,row:null};throw e}}
 async function pickCol(t,cands,tb,rx,skip=[]){ // 1ª coluna existente; sem linhas visíveis, testa os nomes em paralelo
  if(tb.keys)return cands.find(c=>tb.keys.includes(c))||(rx&&tb.keys.find(k=>rx.test(k)&&!skip.includes(k)))||null;
- const ok=await Promise.all(cands.map(c=>sb(t+'?select='+q1(c)+'&limit=1').then(()=>true,e=>{if(e.status===400)return false;throw e})));
+ const ok=await Promise.all(cands.map(c=>DB.sel(t,{cols:c,limit:1}).then(()=>true,e=>{if(e.status===400)return false;throw e})));
  return cands.find((c,i)=>ok[i])||null}
 const noCols=(w,tb)=>Object.assign(new Error(w+' não reconhecida'+(tb.keys?' (colunas: '+tb.keys.join(', ')+')':' (tabela vazia ou oculta: use ?sbmap=)')),{status:-1});
 
+/* ----- Camada de dados: cliente @supabase/supabase-js (v2); se a biblioteca não carregar, usa REST direto ----- */
+const SB_CDN='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.js';
+let SBC=null;
+const loadScript=(src,ms)=>new Promise((res,rej)=>{const s=document.createElement('script'),t=setTimeout(()=>{s.remove();rej(new Error('tempo esgotado'))},ms);s.src=src;s.onload=()=>{clearTimeout(t);res()};s.onerror=()=>{clearTimeout(t);s.remove();rej(new Error('não carregou'))};document.head.appendChild(s)});
+const sbFetch=(u,o={})=>{ // a chave pública não é JWT: sem "Authorization: Bearer <chave>"; toda chamada tem timeout
+ const h=new Headers(o.headers||{});if(h.get('Authorization')==='Bearer '+SB_KEY)h.delete('Authorization');
+ const ac=new AbortController(),tm=setTimeout(()=>ac.abort(),8000);if(o.signal)o.signal.addEventListener('abort',()=>ac.abort());
+ return fetch(u,{...o,headers:h,signal:ac.signal}).finally(()=>clearTimeout(tm))};
+const dbReady=(async()=>{
+ try{if(!window.supabase)await loadScript(SB_CDN,8000);
+  SBC=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false},global:{fetch:sbFetch}});DIAG.lib='supabase-js v2'
+ }catch(e){SBC=null;DIAG.lib='REST direto ('+e.message+')'}})();
+async function libRun(kind,t,o,patch){
+ let q=SBC.from(t);q=kind==='sel'?q.select(o.cols||'*'):kind==='upd'?q.update(patch):q.insert(patch);
+ for(const [k,v] of o.eq||[])q=q.eq(k,v);
+ if(o.inn)q=q.in(o.inn[0],o.inn[1]);
+ if(o.or)q=q.or(o.or.map(([k,v])=>k+'.eq.'+v).join(','));
+ if(kind!=='sel')q=q.select();
+ if(o.limit)q=q.limit(o.limit);
+ const r=await q;
+ if(r.error){const m=String(r.error.message||'erro'),e=new Error(/abort/i.test(m)?'tempo esgotado':m);e.status=r.status||(r.error.code==='42703'||r.error.code==='PGRST204'?400:r.error.code==='PGRST205'?404:0);e.code=r.error.code;throw e}
+ return r.data||[]}
+async function restRun(kind,t,o,patch,ka){
+ const P=[];if(kind==='sel')P.push('select='+q1(o.cols||'*'));
+ for(const [k,v] of o.eq||[])P.push(k+'=eq.'+q1(v));
+ if(o.inn)P.push(o.inn[0]+'=in.('+o.inn[1].map(q1).join(',')+')');
+ if(o.or)P.push('or=('+o.or.map(([k,v])=>k+'.eq.'+q1(v)).join(',')+')');
+ if(o.limit)P.push('limit='+o.limit);
+ const path=t+(P.length?'?'+P.join('&'):'');
+ if(kind==='sel')return await sb(path)||[];
+ return await sb(path,{method:kind==='upd'?'PATCH':'POST',keepalive:!!ka,headers:{Prefer:'return=representation'},body:JSON.stringify(patch)})||[]}
+const DB={async run(kind,t,o={},patch,ka){await dbReady;return SBC&&!ka?libRun(kind,t,o,patch):restRun(kind,t,o,patch,ka)},sel:(t,o)=>DB.run('sel',t,o),upd:(t,o,p,ka)=>DB.run('upd',t,o,p,ka),ins:(t,row)=>DB.run('ins',t,{},row)};
+
 /* ----- Carteira de diamantes ----- */
 const WAL={on:false,st:'init',idCol:null,balCol:null,nickCol:null,bal:0,p:null};
-const ID_COLS=['wavecombat_id','jogador_id','player_id','id_jogador','user_id','usuario_id','id'],BAL_COLS=['diamantes','diamonds','saldo_diamantes','saldo','balance','quantidade','total'],NICK_COLS=['nick','nickname','apelido','nome','username'];
-const walletRow=async pid=>{const r=await sb(SB_T.car+'?select=*&'+WAL.idCol+'=eq.'+q1(pid)+'&limit=1');return r&&r[0]||null};
+const ID_COLS=['id_jogador','wavecombat_id','jogador_id','player_id','user_id','usuario_id','id'],BAL_COLS=['diamantes','diamonds','saldo_diamantes','saldo','balance','quantidade','total'];
+const walletRow=async pid=>{const r=await DB.sel(SB_T.car,{eq:[[WAL.idCol,pid]],limit:1});return r&&r[0]||null};
 function walletInit(){return WAL.p||(WAL.p=(async()=>{
  try{const T=SB_T.car,tb=await tbl(T),m=SBM.car||{};
   WAL.idCol=m.id||await pickCol(T,ID_COLS,tb,/(^|_)id(_|$)/,['id']);WAL.balCol=m.bal||await pickCol(T,BAL_COLS,tb,/diam|saldo|bal|gem|coin/i,[WAL.idCol]);
   if(!WAL.idCol||!WAL.balCol)throw noCols('coluna de ID/saldo',tb);
-  WAL.nickCol=m.nick||(tb.keys&&NICK_COLS.find(c=>tb.keys.includes(c)))||null;SBM.car={id:WAL.idCol,bal:WAL.balCol,nick:WAL.nickCol||''};saveMap();
+  SBM.car={id:WAL.idCol,bal:WAL.balCol};saveMap();
   const row=await walletRow(player.id);WAL.bal=row?Number(row[WAL.balCol])||0:0;
-  if(row&&WAL.nickCol&&row[WAL.nickCol]&&player.nickDef){player.name=String(row[WAL.nickCol]);player.nickDef=false}
   WAL.on=true;WAL.st='on';DIAG.car='ok · '+T+' ('+WAL.idCol+' / '+WAL.balCol+') · saldo '+WAL.bal
  }catch(e){WAL.on=false;WAL.st='off';badMap(e,'car');DIAG.car='falhou: '+errTxt(e)}})())}
 async function walletRead(pid=player.id){const r=await walletRow(pid);return r?Number(r[WAL.balCol])||0:0}
@@ -1447,9 +1482,9 @@ async function walletAdd(delta,pid=player.id){ // soma/subtrai conferindo o sald
  if(!WAL.on)return null;
  for(let i=0;i<4;i++){
   try{const row=await walletRow(pid);
-   if(!row){if(delta<0)return null;await sb(SB_T.car,{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify({[WAL.idCol]:String(pid),[WAL.balCol]:delta})});if(pid===player.id)WAL.bal=delta;return delta}
+   if(!row){if(delta<0)return null;await DB.ins(SB_T.car,{[WAL.idCol]:String(pid),[WAL.balCol]:delta});if(pid===player.id)WAL.bal=delta;return delta}
    const cur=Number(row[WAL.balCol])||0,nb=cur+delta;if(nb<0)return null;
-   const upd=await sb(SB_T.car+'?'+WAL.idCol+'=eq.'+q1(pid)+'&'+WAL.balCol+'=eq.'+cur,{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify({[WAL.balCol]:nb})});
+   const upd=await DB.upd(SB_T.car,{eq:[[WAL.idCol,pid],[WAL.balCol,cur]]},{[WAL.balCol]:nb});
    if(Array.isArray(upd)&&upd.length){if(pid===player.id)WAL.bal=nb;return nb}
   }catch(e){DIAG.car='falhou: '+errTxt(e);return null}}
  DIAG.car='falhou: sem permissão para atualizar o saldo';return null}
@@ -1457,27 +1492,53 @@ async function diaAdd(n){
  if(WAL.st==='init')await Promise.race([walletInit(),sleep(15000)]);
  if(WAL.on){const nb=await walletAdd(n);if(nb===null)return false;me.dia=nb;$('hqDia').textContent='💎 '+nb;if(started)hud();return true}
  if(me.dia+n<0)return false;me.dia+=n;save();$('hqDia').textContent='💎 '+me.dia;return true}
-function refreshIdent(){if(!me)return;me.verified=!!player.verified;me.nick=player.name;$('hqNick').innerHTML=dn(me);if(started)hud()}
+function refreshIdent(){if(!me)return;player.verified=!!(VSET[player.id]||player.verUsr);me.verified=player.verified;me.nick=player.name;$('hqNick').innerHTML=dn(me);if(started)hud()}
 function applyWallet(){if(me&&WAL.on){me.dia=WAL.bal;save();$('hqDia').textContent='💎 '+me.dia;refreshIdent()}}
-async function walletSync(){if(!WAL.on||!me)return;try{const b=await walletRead();if(b!==me.dia){me.dia=b;WAL.bal=b;$('hqDia').textContent='💎 '+b;if(started)hud();if(mdFn)rd()}}catch(e){DIAG.car='falhou: '+errTxt(e)}}
-setInterval(()=>{if(document.visibilityState!=='hidden')walletSync()},20000);addEventListener('focus',walletSync);
+function setBal(v){if(!me||!WAL.on)return;WAL.bal=v;if(me.dia!==v){me.dia=v;$('hqDia').textContent='💎 '+v;if(started)hud();if(mdFn)rd()}}
+async function walletSync(){if(!WAL.on||!me)return;try{setBal(await walletRead())}catch(e){DIAG.car='falhou: '+errTxt(e)}}
+async function usrSync(){if(USR.st!=='on')return;try{const r=(await DB.sel(USR.t,{eq:[[USR.idCol,player.id]],limit:1}))[0];if(r)applyUsr(r)}catch(e){DIAG.usr='falhou: '+errTxt(e)}}
+const syncAll=()=>{if(document.visibilityState!=='hidden'){walletSync();usrSync()}};
+setInterval(syncAll,10000);addEventListener('focus',syncAll);
+
+/* ----- Perfil oficial: tabela usuarios (filtra por id_jogador: nick e selo) + tempo real ----- */
+const USR={t:'usuarios',idCol:null,nickCol:null,verCol:null,st:'init',p:null},RTS={};
+const USR_ID=['id_jogador','wavecombat_id','jogador_id','player_id','user_id','usuario_id','id'],USR_NICK=['nick','nickname','apelido','nome','username','nome_usuario'],USR_VER=['verificado','verified','is_verified','verificada','selo_verificado'];
+const flagOn=v=>v===true||/^(1|true|sim|s|yes|verificado)$/i.test(String(v));
+function applyUsr(r){
+ let ch=false;
+ if(USR.nickCol&&r[USR.nickCol]&&String(r[USR.nickCol])!==player.name){player.name=String(r[USR.nickCol]);player.nickDef=false;ch=true}
+ if(USR.verCol&&r[USR.verCol]!==undefined&&flagOn(r[USR.verCol])!==!!player.verUsr){player.verUsr=flagOn(r[USR.verCol]);ch=true}
+ if(ch)refreshIdent()}
+function usrInit(){return USR.p||(USR.p=(async()=>{
+ try{const T=USR.t,m=SBM.usr||{},tb=await tbl(T);
+  USR.idCol=m.id||await pickCol(T,USR_ID,tb,/(^|_)id(_|$)/,['id']);if(!USR.idCol)throw noCols('coluna de ID',tb);
+  const r=(await DB.sel(T,{eq:[[USR.idCol,player.id]],limit:1}))[0],k=r?Object.keys(r):tb.keys||[];
+  USR.nickCol=m.nick||USR_NICK.find(c=>k.includes(c))||k.find(x=>/nick|apelido/i.test(x))||null;USR.verCol=m.ver||USR_VER.find(c=>k.includes(c))||null;
+  SBM.usr={id:USR.idCol,nick:USR.nickCol||'',ver:USR.verCol||''};saveMap();USR.st='on';if(r)applyUsr(r);
+  DIAG.usr=r?'ok · '+T+' ('+USR.idCol+') · nick "'+player.name+'"'+(USR.verCol?'':' · sem coluna de selo'):'ID '+player.id+' não encontrado em '+T+' (ou sem permissão de leitura/RLS)'
+ }catch(e){USR.st='off';badMap(e,'usr');DIAG.usr='falhou: '+errTxt(e)}})())}
+function rtWatch(table,col,cb){ // Realtime do supabase-js (postgres_changes); sem ele, vale a consulta a cada 10 s
+ if(!SBC||!SBC.channel||!col)return;
+ try{SBC.channel('rg-'+table+'-'+player.id).on('postgres_changes',{event:'*',schema:'public',table,filter:col+'=eq.'+player.id},p=>{try{if(p&&p.new)cb(p.new)}catch(e){}}).subscribe(s=>{RTS[table]=s})}
+ catch(e){RTS[table]='erro: '+e.message}}
+const rtTxt=()=>Object.keys(RTS).length?Object.entries(RTS).map(([k,v])=>k+' '+v).join(' · '):SBC?'aguardando':'indisponível (consulta a cada 10 s)';
 
 /* ----- Selo "V" dourado: tabela wavecombat_verificados ----- */
 const VER_ID=['wavecombat_id','jogador_id','player_id','user_id','usuario_id','id_jogador','id'],VSET={};
 const vOk=r=>{for(const k of ['verificado','verified','ativo','active','status'])if(k in r){const v=r[k];if(v===false||/^(0|false|nao|não|inativo|revogado|removido)$/i.test(String(v)))return false}return true};
-const vb=id=>VSET[id]?'<span class="vb" title="Verificado">V</span>':'';
+const vb=id=>VSET[id]?'<span class="vb" title="Verificado">✔︎</span>':'';
 async function verCheck(ids){
  ids=[...new Set(ids.filter(i=>i&&VSET[i]===undefined))];if(!ids.length)return;
  const T=SB_T.ver;let c=SBM.ver&&SBM.ver.id;
  if(!c){const tb=await tbl(T);c=await pickCol(T,VER_ID,tb,/(^|_)id(_|$)/,['id']);if(!c)throw noCols('coluna de ID',tb);SBM.ver={id:c};saveMap()}
  const r=await sb(T+'?select=*&'+c+'=in.('+ids.map(q1).join(',')+')&limit=500'),got=new Set();
  for(const x of r||[])if(vOk(x))got.add(String(x[c]));ids.forEach(i=>VSET[i]=got.has(String(i)))}
-async function verInit(){try{await verCheck([player.id]);player.verified=!!VSET[player.id];DIAG.ver='ok · '+(player.verified?'verificado':'não verificado')}catch(e){badMap(e,'ver');DIAG.ver='falhou: '+errTxt(e)}refreshIdent()}
+async function verInit(){try{await verCheck([player.id]);DIAG.ver='ok · '+SB_T.ver+': '+(VSET[player.id]?'verificado':'não consta')}catch(e){badMap(e,'ver');DIAG.ver='falhou: '+errTxt(e)}refreshIdent()}
 
 /* ----- Amigos: tabela wavecombat_amigos ----- */
 const FR={st:'init',list:[],t:0,busy:false,open:false,pm:undefined},PRESENT={};
 const A_COLS=['jogador_id','usuario_id','user_id','player_id','wavecombat_id','id_jogador','id_usuario','meu_id','solicitante_id','remetente_id','de_id','user1_id','jogador1_id','id1'],B_COLS=['amigo_id','friend_id','id_amigo','destinatario_id','alvo_id','para_id','user2_id','jogador2_id','id2','amigo'],S_COLS=['status','estado','situacao','aceito','accepted'];
-const PROF_T=['wavecombat_jogadores','wavecombat_usuarios','wavecombat_perfis','wavecombat_players','wavecombat_users','wavecombat_contas','wavecombat_presenca','wavecombat_status','wavecombat_online','jogadores','usuarios','perfis'];
+const PROF_T=['usuarios','wavecombat_jogadores','wavecombat_usuarios','wavecombat_perfis','wavecombat_players','wavecombat_users','wavecombat_contas','wavecombat_presenca','wavecombat_status','wavecombat_online','jogadores','perfis'];
 const P_ID=['wavecombat_id','jogador_id','player_id','user_id','usuario_id','id_jogador','id'],P_NICK=['nick','nickname','apelido','nome','username','name'],P_ON=['online','is_online','em_linha','conectado','esta_online'],P_ST=['status','estado','presenca','situacao','status_online'],P_SEEN=['ultimo_acesso','last_seen','ultima_atividade','last_active','ultimo_login','ultima_vez','atualizado_em','updated_at'],P_GAME=['jogo_atual','jogando','jogando_agora','jogo','game','playing'];
 const FR_NO=/^(pendente|pending|bloqueado|blocked|recusado|rejected|negado|cancelado|removido|0|false)$/i;
 const frOk=(r,st)=>{if(!st)return true;const v=r[st];return typeof v==='boolean'?v:v==null?true:!FR_NO.test(String(v))};
@@ -1503,11 +1564,11 @@ function onlineOf(r,m){
  if(!on)game='';return{on,game,seen}}
 async function friProfiles(L){
  const m=await preMap();if(!m||!L.length)return;
- const r=await sb(m.t+'?select=*&'+m.id+'=in.('+L.map(f=>q1(f.id)).join(',')+')&limit=500'),by={};for(const x of r||[])by[String(x[m.id])]=x;
- for(const f of L){const x=by[f.id];if(x){f.nick=String(x[m.nick]||'');Object.assign(f,onlineOf(x,m))}}}
+ const r=await DB.sel(m.t,{inn:[m.id,L.map(f=>f.id)],limit:500}),by={};for(const x of r||[])by[String(x[m.id])]=x;
+ for(const f of L){const x=by[f.id];if(x){f.nick=String(x[m.nick]||'');Object.assign(f,onlineOf(x,m));if(m.t===USR.t&&USR.verCol&&flagOn(x[USR.verCol]))VSET[f.id]=true}}}
 async function friLoad(){
  if(FR.busy)return;FR.busy=true;
- try{const m=await friMap(),rows=await sb(SB_T.ami+'?select=*&or=('+m.a+'.eq.'+q1(player.id)+','+m.b+'.eq.'+q1(player.id)+')&limit=500'),seen=new Set(),L=[];
+ try{const m=await friMap(),rows=await DB.sel(SB_T.ami,{or:[[m.a,player.id],[m.b,player.id]],limit:500}),seen=new Set(),L=[];
   for(const r of rows||[]){if(!frOk(r,m.st))continue;const x=String(r[m.a])===player.id?String(r[m.b]):String(r[m.a]);if(x&&x!==player.id&&!seen.has(x)){seen.add(x);L.push({id:x,nick:'',on:false,game:'',seen:0})}}
   try{await friProfiles(L)}catch(e){badMap(e,'pre');FR.pm=undefined;DIAG.pre='perfis: '+errTxt(e)}
   await verCheck(L.map(f=>f.id)).catch(()=>{});
@@ -1515,7 +1576,7 @@ async function friLoad(){
  }catch(e){FR.st='err';badMap(e,'ami');DIAG.ami='falhou: '+errTxt(e)}
  FR.busy=false;FR.t=Date.now();friUI()}
 const friState=f=>{const p=PRESENT[f.id];return p&&Date.now()-p.t<100000?{...f,on:true,game:GAME_NAME,nick:f.nick||p.nick}:f};
-const diagTxt=()=>'Carteira: '+DIAG.car+'\nVerificados: '+DIAG.ver+'\nAmigos: '+DIAG.ami+'\nStatus: '+DIAG.pre+'\nServidor central: '+DIAG.hub+'\nMapa: '+JSON.stringify(SBM);
+const diagTxt=()=>'Biblioteca: '+DIAG.lib+'\nTempo real: '+rtTxt()+'\nCarteira: '+DIAG.car+'\nPerfil (usuarios): '+DIAG.usr+'\nVerificados: '+DIAG.ver+'\nAmigos: '+DIAG.ami+'\nStatus: '+DIAG.pre+'\nServidor central: '+DIAG.hub+'\nMapa: '+JSON.stringify(SBM);
 function friUI(){
  const L=FR.list.map(friState).sort((a,b)=>(!!b.game-!!a.game)||(b.on-a.on)||String(a.nick).localeCompare(String(b.nick))),on=L.filter(f=>f.on||f.game),off=L.filter(f=>!(f.on||f.game));
  $('fbtnN').textContent=on.length||'';if(!FR.open)return;
@@ -1527,7 +1588,7 @@ async function prePush(off,ka){ // status "jogando Riverbed Warfare" na tabela d
   const b={},gb=m.gt==='boolean'||(!m.gt&&/^(jogando|playing|jogando_agora)$/.test(m.game));
   if(m.on)b[m.on]=!off;if(m.st)b[m.st]=off?'online':'jogando';if(m.game)b[m.game]=off?(gb?false:null):(gb?true:GAME_NAME);if(m.seen)b[m.seen]=new Date().toISOString();
   if(!Object.keys(b).length)return;
-  const r=await sb(m.t+'?'+m.id+'=eq.'+q1(player.id),{method:'PATCH',keepalive:!!ka,headers:{Prefer:'return=representation'},body:JSON.stringify(b)});
+  const r=await DB.upd(m.t,{eq:[[m.id,player.id]]},b,ka);
   DIAG.pre=Array.isArray(r)&&r.length?'ok · status "'+(off?'online':'jogando')+'" enviado ('+m.t+')':'sem linha para o seu ID em '+m.t
  }catch(e){badMap(e,'pre');FR.pm=undefined;DIAG.pre='falhou: '+errTxt(e)}}
 addEventListener('pagehide',()=>{prePush(true,true)});
@@ -1565,7 +1626,7 @@ async function mSock(){ // socket das partidas automáticas e das salas personal
  s.on('connect_error',()=>{lbUI()});
  s.on('waiting_for_match',d=>{const c=cnt(d);if(c)MM.n=c;lbUI()});
  s.on('queue_update',d=>{const c=cnt(d);if(c)MM.n=c;lbUI()});
- s.on('match_found',d=>{if(!MM.on)return;MM.on=false;MM.found=true;MM.show=true;MM.t1=Date.now();RM.id=d.roomId;RM.code=String(d.roomId).replace(/^auto_/,'').slice(-6);RM.kind='match';RM.players=d.players||{};CH.r=[];sysMsg('r','Partida encontrada com '+Object.keys(RM.players).length+' jogadores.');lbUI()});
+ s.on('match_found',d=>{if(!MM.on)return;MM.on=false;MM.found=true;MM.show=true;MM.t1=Date.now();RM.id=d.roomId;RM.code=String(d.roomId).replace(/^auto_/,'');RM.kind='match';RM.players=d.players||{};CH.r=[];sysMsg('r','Partida encontrada com '+Object.keys(RM.players).length+' jogadores.');lbUI()});
  s.on('player_joined',d=>{if(d&&d.players){RM.players=d.players;lbUI();chUI()}});
  s.on('player_left',d=>{if(d&&d.playerId&&RM.players[d.playerId]){const nm=RM.players[d.playerId].name;delete RM.players[d.playerId];sysMsg('r',(nm||'Jogador')+' saiu da sala.');lbUI()}});
  s.on('game_action',d=>onAct(d,'sala'));
@@ -1624,8 +1685,10 @@ $('goOn').onclick=findMatch;$('roomBtn').onclick=()=>{CH.tab='r';drToggle('ch',t
 function setSrv(){const s=[WAL.on?'💎✔':WAL.st==='init'?'💎…':'💎✖',FR.st==='ok'?'👥✔':FR.st==='err'?'👥✖':'👥…',NET.c&&NET.c.connected?'🌐✔':'🌐…'];$('srv').textContent=s.join(' ');$('srv').title=diagTxt()}
 function netBoot(){ // tudo em segundo plano: o jogo já está jogável
  const ok=p=>p.catch(()=>{}).then(setSrv);
- ok(walletInit().then(applyWallet));ok(verInit());ok(friLoad().then(()=>prePush(false)));
- ok((player.nickDef?walletInit():Promise.resolve()).then(hubBoot));
+ ok(walletInit().then(()=>{applyWallet();rtWatch(SB_T.car,WAL.idCol,r=>{if(WAL.balCol&&r[WAL.balCol]!==undefined)setBal(Number(r[WAL.balCol])||0)})}));
+ ok(usrInit().then(()=>rtWatch(USR.t,USR.idCol,applyUsr)));
+ ok(verInit());ok(friLoad().then(()=>prePush(false)));
+ ok(Promise.race([usrInit(),sleep(5000)]).then(hubBoot)); // o Hub recebe o nick oficial
  setInterval(()=>{if(document.visibilityState==='visible'){prePush(false);setSrv()}},45000);
  setInterval(()=>{if(document.visibilityState==='visible'&&FR.st!=='init'&&Date.now()-FR.t>(FR.open?14000:59000))friLoad().then(setSrv)},5000)}
 
