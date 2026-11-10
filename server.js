@@ -19,6 +19,13 @@ const io = new Server(server, {
   }
 });
 
+// [INTEGRAÇÃO] Módulo de socket do Pulse Fighter Hub adicionado aqui
+try {
+  require('./pulse-fighter-hub')(io);
+} catch (e) {
+  console.log('[Aviso] Módulo pulse-fighter-hub.js não encontrado ou opcional:', e.message);
+}
+
 const SUPPORTED_GAMES = [
   'gravitas-arena',
   'zombie-house',
@@ -151,7 +158,7 @@ io.on('connection', (socket) => {
     socket.join(fullRoomId);
 
     if (!gameRooms[gameId][roomId]) {
-      gameRooms[gameId][roomId] = {};
+    gameRooms[gameId][roomId] = {};
     }
 
     gameRooms[gameId][roomId][socket.id] = {
