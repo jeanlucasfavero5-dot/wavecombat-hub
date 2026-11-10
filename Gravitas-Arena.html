@@ -796,8 +796,11 @@ var HUB={
   ns:'/gravitas',                                 // namespace isolado deste jogo no servidor central
   game:'gravitas-arena',
   yt:'https://youtube.com/@capudooficial7?si=NSvfxpSzswVEStdu',
-  sb:{url:'https://ipqjeacdfiomcxfuixdj.supabase.co',key:''},   // COLE AQUI a chave anon/publishable do Supabase (ou use ?sbkey=...)
-  t:{wallet:'carteira_diamantes',friends:'wavecombat_amigos',ver:'wavecombat_verificados'},
+  sb: {
+        url: 'https://ipqjeacdfiomcxfuixdj.supabase.co',
+        key: 'sb_publishable_EWW84q_43YbOvMwB_Rua-A_X465PbLP'
+    },
+    t:{wallet:'carteira_diamantes',friends:'wavecombat_amigos',ver:'wavecombat_verificados'}, // COLE AQUI a chave anon/publishable do Supabase (ou use ?sbkey=...)
   // nomes de colunas: deixe '' para detectar sozinho; preencha só se a detecção errar
   col:{wallet:{id:'',nick:'',bal:''},friends:{a:'',b:'',st:'',list:''},ver:{id:''}},
   // status no banco (opcional): tabela onde cada jogador tem uma linha de presença. Vazio = só o servidor central guarda o status.
