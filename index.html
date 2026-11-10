@@ -721,7 +721,7 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.451 (Strict Auth Fix)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.452 (Multi-Repo Support)</strong>
     </footer>
 
     <script>
@@ -736,7 +736,8 @@
             { id: "2", nome: "tanque defence", categoria: "Estratégia", desc: "Combate veicular em tempo real, extração de recursos e defesa contra hordas.", arquivo: "tanque-defence.html", img: "", publicado: true, destaque_manual: false, acessos: 154 },
             { id: "3", nome: "Esquadrão de Tanques", categoria: "Arcade", desc: "Jogo de sobrevivência de tanques combate intenso.", arquivo: "esquadrao-de-tanques.html", img: "", publicado: true, destaque_manual: false, acessos: 93 },
             { id: "4", nome: "Gravitas Arena", categoria: "Estratégia", desc: "Jogo de guerra de tanques e estratégia tática.", arquivo: "Gravitas-Arena.html", img: "", publicado: true, destaque_manual: false, acessos: 64 },
-            { id: "5", nome: "Zombie House", categoria: "Multiplayer", desc: "Sobreviva ao apocalipse zumbi na casa florestal.", arquivo: "Zombie_House.html", img: "", publicado: true, destaque_manual: false, acessos: 120 }
+            { id: "5", nome: "Zombie House", categoria: "Multiplayer", desc: "Sobreviva ao apocalipse zumbi na casa florestal.", arquivo: "Zombie_House.html", img: "", publicado: true, destaque_manual: false, acessos: 120 },
+            { id: "6", nome: "Point Blank Web", categoria: "Multiplayer", desc: "Port web oficial do clássico jogo de tiro multiplayer em primeira pessoa.", arquivo: "https://jeanlucasfavero5-dot.github.io/teste/", img: "", publicado: true, destaque_manual: false, acessos: 210 }
         ];
 
         let listaJogosCache = [];
@@ -2103,7 +2104,10 @@
             // Passa o ID e o Nick do usuário logado diretamente via parâmetros na URL do jogo (Iframe)
             let idUsuarioLogado = usuarioLogado ? usuarioLogado.id : '';
             let nickUsuarioLogado = usuarioLogado ? encodeURIComponent(usuarioLogado.nick) : '';
-            let urlComSessao = `${jogo.arquivo}?id=${idUsuarioLogado}&nick=${nickUsuarioLogado}`;
+            
+            // Suporte para caminhos locais (ex: riverbed.html) e links externos (ex: https://.../teste/)
+            let separador = jogo.arquivo.includes('?') ? '&' : '?';
+            let urlComSessao = `${jogo.arquivo}${separador}id=${idUsuarioLogado}&nick=${nickUsuarioLogado}`;
 
             document.getElementById('gameIframe').src = urlComSessao;
             document.getElementById('player').style.display = 'block';
