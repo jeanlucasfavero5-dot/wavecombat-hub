@@ -721,7 +721,7 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.453 (Hybrid Cloud Sync)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.454 (Hybrid Cloud Sync + Multi-Param Session)</strong>
     </footer>
 
     <script>
@@ -2142,8 +2142,9 @@
             let idUsuarioLogado = usuarioLogado ? usuarioLogado.id : '';
             let nickUsuarioLogado = usuarioLogado ? encodeURIComponent(usuarioLogado.nick) : '';
             
+            // Injeta todas as variações possíveis para garantir que qualquer jogo capture o nick/ID corretamente
             let separador = jogo.arquivo.includes('?') ? '&' : '?';
-            let urlComSessao = `${jogo.arquivo}${separador}id=${idUsuarioLogado}&nick=${nickUsuarioLogado}`;
+            let urlComSessao = `${jogo.arquivo}${separador}id=${idUsuarioLogado}&userId=${idUsuarioLogado}&player_id=${idUsuarioLogado}&nick=${nickUsuarioLogado}&username=${nickUsuarioLogado}&playerName=${nickUsuarioLogado}&name=${nickUsuarioLogado}`;
 
             document.getElementById('gameIframe').src = urlComSessao;
             document.getElementById('player').style.display = 'block';
