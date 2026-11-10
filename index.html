@@ -721,7 +721,7 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.452 (Multi-Repo Support)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.453 (Hybrid Cloud Sync)</strong>
     </footer>
 
     <script>
@@ -737,7 +737,7 @@
             { id: "3", nome: "Esquadrão de Tanques", categoria: "Arcade", desc: "Jogo de sobrevivência de tanques combate intenso.", arquivo: "esquadrao-de-tanques.html", img: "", publicado: true, destaque_manual: false, acessos: 93 },
             { id: "4", nome: "Gravitas Arena", categoria: "Estratégia", desc: "Jogo de guerra de tanques e estratégia tática.", arquivo: "Gravitas-Arena.html", img: "", publicado: true, destaque_manual: false, acessos: 64 },
             { id: "5", nome: "Zombie House", categoria: "Multiplayer", desc: "Sobreviva ao apocalipse zumbi na casa florestal.", arquivo: "Zombie_House.html", img: "", publicado: true, destaque_manual: false, acessos: 120 },
-            { id: "6", nome: "Point Blank Web", categoria: "Multiplayer", desc: "Port web oficial do clássico jogo de tiro multiplayer em primeira pessoa.", arquivo: "https://jeanlucasfavero5-dot.github.io/teste/", img: "", publicado: true, destaque_manual: false, acessos: 210 }
+            { id: "6", nome: "Point Blank Web", categoria: "Multiplayer", desc: "Port web oficial do clássico jogo de tiro multiplayer em primeira pessoa.", arquivo: "https://jeanlucasfavero5.github.io/teste/", img: "", publicado: true, destaque_manual: false, acessos: 210 }
         ];
 
         let listaJogosCache = [];
@@ -801,12 +801,12 @@
             return false;
         }
 
+        // FUNÇÃO HÍBRIDA PARA NICK E VERIFICADO
         function obterHtmlNickVerificado(nick, id) {
             if (!nick) return 'Entrar';
             let n = nick.toLowerCase();
-            let isStaff = (n === 'capudo7' || (usuarioLogado && usuarioLogado.isAdm && String(id) === MEU_ID_MESTRE));
-            
-            let isVerif = cacheVerificadosNuvem[String(id)] || cacheVerificadosNuvem[n] || n === 'rocky' || n === 'capudo7';
+            let isStaff = (n === 'capudo7' || String(id) === MEU_ID_MESTRE || (usuarioLogado && usuarioLogado.isAdm));
+            let isVerif = isStaff || cacheVerificadosNuvem[String(id)] || cacheVerificadosNuvem[n] || n === 'rocky' || n === 'capudo7';
 
             let html = '';
             if (isStaff) {
@@ -817,6 +817,96 @@
             }
             html += `<span style="cursor:pointer;" onclick="abrirPerfilPublico('${id || ''}')">${nick}</span>`;
             return html;
+        }
+
+        // CARREGAMENTO HÍBRIDO DE SESSÃO (NAVEGADOR + NUVEM)
+        async function carregarSessaoSalva() {
+            try {
+                const sessaoSalva = localStorage.getItem('wavecombat_sessao_ativa');
+                if (sessaoSalva) {
+                    const parsed = JSON.parse(sessaoSalva);
+                    if (parsed && parsed.nick && parsed.id) {
+                        usuarioLogado = parsed;
+                        if (String(usuarioLogado.id) === MEU_ID_MESTRE || usuarioLogado.nick.toLowerCase() === 'capudo7') {
+                            usuarioLogado.id = MEU_ID_MESTRE;
+                            usuarioLogado.isAdm = true;
+                        }
+
+                        document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(usuarioLogado.nick, usuarioLogado.id);
+                        if (usuarioLogado.isAdm) {
+                            document.getElementById('btnToggleAdmNav').style.display = 'inline-block';
+                        }
+
+                        if (await verificarBanimentoAtual()) return;
+                        
+                        sincronizarUsuarioNuvem(usuarioLogado.id);
+                    } else {
+                        localStorage.removeItem('wavecombat_sessao_ativa');
+                        document.getElementById('btnAuthNav').innerHTML = 'Entrar';
+                    }
+                } else {
+                    usuarioLogado = null;
+                    document.getElementById('btnAuthNav').innerHTML = 'Entrar';
+                }
+            } catch(e) {
+                localStorage.removeItem('wavecombat_sessao_ativa');
+                usuarioLogado = null;
+                document.getElementById('btnAuthNav').innerHTML = 'Entrar';
+            }
+            
+            await carregarVerificadosNuvem();
+            atualizarAbasPerfilUI();
+            carregarSaldoDiamantesSite();
+            verificarEstadoNotificacao();
+        }
+
+        async function sincronizarUsuarioNuvem(idJogador) {
+            try {
+                const { data } = await supabaseClient.from('usuarios').select('*').eq('id_jogador', String(idJogador)).maybeSingle();
+                if (data && data.nick) {
+                    usuarioLogado.nick = data.nick;
+                    localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
+                    document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(usuarioLogado.nick, usuarioLogado.id);
+                }
+            } catch(e) {}
+        }
+
+        // CARREGAMENTO HÍBRIDO DE DIAMANTES (NAVEGADOR + NUVEM)
+        async function carregarSaldoDiamantesSite() {
+            const saldoEl = document.getElementById('userDiamondBalance');
+            if (!usuarioLogado || !usuarioLogado.id) {
+                if (saldoEl) saldoEl.textContent = '0';
+                return;
+            }
+
+            const cacheLocalDiamantes = localStorage.getItem(`diamantes_${usuarioLogado.id}`);
+            if (cacheLocalDiamantes && saldoEl) {
+                saldoEl.textContent = formatarNumero(cacheLocalDiamantes);
+            }
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('carteira_diamantes')
+                    .select('diamantes')
+                    .eq('id_jogador', String(usuarioLogado.id))
+                    .maybeSingle();
+
+                if (!error && data) {
+                    const qtdOficial = data.diamantes || 0;
+                    if (saldoEl) saldoEl.textContent = formatarNumero(qtdOficial);
+                    localStorage.setItem(`diamantes_${usuarioLogado.id}`, qtdOficial);
+                } else {
+                    await supabaseClient.from('carteira_diamantes').insert([{ 
+                        id_jogador: String(usuarioLogado.id), 
+                        nick: usuarioLogado.nick, 
+                        diamantes: cacheLocalDiamantes ? parseInt(cacheLocalDiamantes) : 0 
+                    }]);
+                }
+            } catch (e) {
+                if (cacheLocalDiamantes && saldoEl) {
+                    saldoEl.textContent = formatarNumero(cacheLocalDiamantes);
+                }
+            }
         }
 
         // --- SISTEMA DE AMIZADE E PERFIL PÚBLICO ---
@@ -1157,42 +1247,6 @@
             }
         }
 
-        async function carregarSessaoSalva() {
-            await carregarVerificadosNuvem();
-            try {
-                const sessaoSalva = localStorage.getItem('wavecombat_sessao_ativa');
-                if (sessaoSalva) {
-                    const parsed = JSON.parse(sessaoSalva);
-                    if (parsed && parsed.nick && parsed.id) {
-                        usuarioLogado = parsed;
-                        if (String(usuarioLogado.id) === MEU_ID_MESTRE || usuarioLogado.nick.toLowerCase() === 'capudo7') {
-                            usuarioLogado.id = MEU_ID_MESTRE;
-                            usuarioLogado.isAdm = true;
-                        }
-                        if (await verificarBanimentoAtual()) return;
-
-                        document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(usuarioLogado.nick, usuarioLogado.id);
-                        if (usuarioLogado.isAdm) {
-                            document.getElementById('btnToggleAdmNav').style.display = 'inline-block';
-                        }
-                    } else {
-                        localStorage.removeItem('wavecombat_sessao_ativa');
-                        document.getElementById('btnAuthNav').innerHTML = 'Entrar';
-                    }
-                } else {
-                    usuarioLogado = null;
-                    document.getElementById('btnAuthNav').innerHTML = 'Entrar';
-                }
-            } catch(e) {
-                localStorage.removeItem('wavecombat_sessao_ativa');
-                usuarioLogado = null;
-                document.getElementById('btnAuthNav').innerHTML = 'Entrar';
-            }
-            atualizarAbasPerfilUI();
-            carregarSaldoDiamantesSite();
-            verificarEstadoNotificacao();
-        }
-
         function atualizarAbasPerfilUI() {
             const tabLogin = document.getElementById('tabLoginBtn');
             const tabRegister = document.getElementById('tabRegisterBtn');
@@ -1238,22 +1292,6 @@
             input.select();
             document.execCommand('copy');
             mostrarToast("📋 Código Pix copiado!");
-        }
-
-        async function carregarSaldoDiamantesSite() {
-            if (!usuarioLogado || !usuarioLogado.id) {
-                document.getElementById('userDiamondBalance').textContent = '0';
-                return;
-            }
-            try {
-                const { data } = await supabaseClient.from('carteira_diamantes').select('diamantes').eq('id_jogador', String(usuarioLogado.id)).single();
-                if (data) {
-                    document.getElementById('userDiamondBalance').textContent = formatarNumero(data.diamantes || 0);
-                } else {
-                    await supabaseClient.from('carteira_diamantes').insert([{ id_jogador: String(usuarioLogado.id), nick: usuarioLogado.nick, diamantes: 0 }]);
-                    document.getElementById('userDiamondBalance').textContent = '0';
-                }
-            } catch (e) {}
         }
 
         async function gerarPixMercadoPago(valor, quantDiamantes) {
@@ -2101,11 +2139,9 @@
             if (await verificarBanimentoAtual()) return;
             try { await supabaseClient.from('jogos').update({ acessos: (jogo.acessos || 0) + 1 }).eq('id', jogo.id); } catch(e){}
 
-            // Passa o ID e o Nick do usuário logado diretamente via parâmetros na URL do jogo (Iframe)
             let idUsuarioLogado = usuarioLogado ? usuarioLogado.id : '';
             let nickUsuarioLogado = usuarioLogado ? encodeURIComponent(usuarioLogado.nick) : '';
             
-            // Suporte para caminhos locais (ex: riverbed.html) e links externos (ex: https://.../teste/)
             let separador = jogo.arquivo.includes('?') ? '&' : '?';
             let urlComSessao = `${jogo.arquivo}${separador}id=${idUsuarioLogado}&nick=${nickUsuarioLogado}`;
 
