@@ -295,7 +295,7 @@
 
     <!-- BARRA DE ALERTA GLOBAL (BROADCAST DO ADM) -->
     <div class="broadcast-ticker" id="broadcastTicker">
-        <marquee id="broadcastText">⚡ AVISO GLOBAL: Bem-vindos ao WaveCombat Hub v0.460!</marquee>
+        <marquee id="broadcastText">⚡ AVISO GLOBAL: Bem-vindos ao WaveCombat Hub v0.463!</marquee>
     </div>
 
     <div class="bg-particles" id="bgParticles"></div>
@@ -825,7 +825,7 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.462 (Correções de Som & Cancelamento de E-mail)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.463 (Full Clean & Stable Release)</strong>
     </footer>
 
     <script>
@@ -877,7 +877,7 @@
         async function carregarVerificadosNuvem() {
             try {
                 const { data } = await supabaseClient.from('wavecombat_verificados').select('*');
-                cacheVerificadosNuvem = {}; // Limpa o cache anterior
+                cacheVerificadosNuvem = {};
                 if (data && data.length > 0) {
                     data.forEach(item => {
                         if (item.id_jogador) cacheVerificadosNuvem[String(item.id_jogador)] = true;
@@ -908,15 +908,10 @@
             return false;
         }
 
-        // LÓGICA DE SELO DE VERIFICADO CORRIGIDA (SOMENTE VERIFICADOS REAIS)
         function obterHtmlNickVerificado(nick, id) {
             if (!nick) return 'Entrar';
             let n = nick.toLowerCase();
-            
-            // Verifica se o jogador é ADM/Staff
             let isStaff = (n === 'capudo7' || String(id) === MEU_ID_MESTRE || (usuarioLogado && usuarioLogado.isAdm && String(usuarioLogado.id) === String(id)));
-            
-            // Verifica se está explicitamente na tabela de verificados/influenciadores
             let isVerif = isStaff || cacheVerificadosNuvem[String(id)] || cacheVerificadosNuvem[n];
 
             let html = '';
@@ -1007,7 +1002,6 @@
             }
         }
 
-        // ADICIONADA NOVA FUNÇÃO: CANCELAMENTO E DESVINCULAÇÃO DE E-MAIL
         async function desvincularEmailConta() {
             if (!usuarioLogado || !usuarioLogado.id) return;
             if (confirm("Deseja realmente desvincular e remover o e-mail cadastrado desta conta?")) {
@@ -1064,7 +1058,6 @@
             }
         }
 
-        // --- RODA DA FORTUNA DIÁRIA ---
         const wheelSectors = [
             { label: "10 💎", color: "#3b82f6", type: "diamantes", val: 10 },
             { label: "Nada", color: "#1e293b", type: "nada", val: 0 },
@@ -1493,7 +1486,7 @@
             micAtivo = !micAtivo;
             const btn = document.getElementById('btnMicToggle');
             if(btn) {
-                btn.textContent = micAtivo ? "🎤 Mic: ON" : "0 Mic: OFF";
+                btn.textContent = micAtivo ? "🎤 Mic: ON" : "🎤 Mic: OFF";
                 btn.style.background = micAtivo ? "#22c55e" : "#ef4444";
                 btn.style.color = micAtivo ? "#000" : "#fff";
             }
@@ -1748,7 +1741,8 @@
             try {
                 const { data } = await supabaseClient.from('usuarios').select('*').eq('email', emailInput.trim()).maybeSingle();
                 if(data) {
-                    alert(`✅ Sua senha é: ${data.pass}\n(Dica: Anote em um lugar seguro!)`);
+                    alert(`✅ Sua senha é: ${data.pass}
+(Dica: Anote em um lugar seguro!)`);
                 } else {
                     alert("❌ Nenhum usuário encontrado com este e-mail.");
                 }
@@ -2316,12 +2310,10 @@
             }
         }
 
-        // FUNÇÃO ATUALIZADA: SILENCIA A MÚSICA DO SITE AO ABRIR UM JOGO
         async function tentarExecutarJogo(jogo) {
             if (await verificarBanimentoAtual()) return;
             try { await supabaseClient.from('jogos').update({ acessos: (jogo.acessos || 0) + 1 }).eq('id', jogo.id); } catch(e){}
 
-            // SILENCIA A MÚSICA TEMA DO SITE PARA NÃO SOBREPOR O SOM DO JOGO
             toggleBGM(false);
 
             let idUsuarioLogado = usuarioLogado ? usuarioLogado.id : '';
