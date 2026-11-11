@@ -96,7 +96,7 @@ body:not(.play) #sBack{display:none}
 }
 /* v0.0010: amigos, chat, lobby, selo V e botão do canal */
 #yt{text-transform:none;letter-spacing:.3px}
-.vb{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;margin-left:4px;border-radius:50%;background:linear-gradient(#ffe27a,#d9a21b);color:#3a2a00;font:800 10px/1 var(--ui);letter-spacing:0;vertical-align:middle;box-shadow:0 0 4px rgba(255,210,70,.6)}
+.vb{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;margin-left:4px;border-radius:50%;background:linear-gradient(#ffe27a,#d9a21b);color:#3a2a00;font:800 11px/1 var(--ui);letter-spacing:0;vertical-align:middle;box-shadow:0 0 4px rgba(255,210,70,.6)}
 #fbtn,#cbtn{position:fixed;z-index:950;right:8px;width:44px;height:44px;margin:0;padding:0;font-size:20px;letter-spacing:0;border-radius:50%;background:var(--card);border:2px solid #2f6b2f;cursor:pointer;display:none;align-items:center;justify-content:center}
 body.li #fbtn,body.li #cbtn{display:flex}
 #fbtn{top:calc(env(safe-area-inset-top,0px) + 64px)}
@@ -139,8 +139,8 @@ body.li #fbtn,body.li #cbtn{display:flex}
 #lb .tmr{font:700 22px ui-monospace,Menlo,Consolas,monospace;opacity:.9}
 #lb ul{list-style:none;margin:10px 0 0;padding:0;text-align:left}
 #lb li{padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.08)}
-#top .vb,.fr .vb{padding:0;border:0;min-width:15px;flex:none}
-.vb{font-size:10px}
+#top .vb,.fr .vb{padding:0;border:0;min-width:16px;flex:none}
+.vb{font-size:11px}
 #goOn.busy{animation:pls 1.2s infinite}
 @keyframes pls{50%{opacity:.55}}
 
@@ -915,7 +915,7 @@ let mTimer=null,mStep=0;const NOTES=[110,0,165,0,147,0,98,0,110,0,165,0,196,0,14
 function music(on){clearInterval(mTimer);mTimer=null;if(!on||!AU.c)return;mTimer=setInterval(()=>{const f=NOTES[mStep++%NOTES.length];if(f){tone(f,.9,'triangle',.5,AU.mu);tone(f*2,.5,'sine',.15,AU.mu)}if(mStep%4===1)tone(60,.18,'sine',.9,AU.mu)},420)}
 addEventListener('pointerdown',e=>{auInit();if(AU.c&&AU.c.state==='suspended')AU.c.resume();if(e.target.closest&&e.target.closest('button'))sfx('click')},true);
 
-/* ===== Identificação (WaveCombat Hub): sem login. ID e nick vêm do localStorage ou da sessão ativa do Hub ===== */
+/* ===== Identificação (WaveCombat Hub): sem login. O ID vem da URL do iframe (?id=); nick e selo oficiais vêm da tabela usuarios ===== */
 let me=null,running=false,started=false,raf=0,last=0,acc=0;
 const MASTER_ID='577082415',ADMIN_ID='162028398',ADMIN_NICK='capudo7';
 const player={name:'',id:'',guest:false};
@@ -1526,13 +1526,16 @@ const rtTxt=()=>Object.keys(RTS).length?Object.entries(RTS).map(([k,v])=>k+' '+v
 /* ----- Selo "V" dourado: tabela wavecombat_verificados ----- */
 const VER_ID=['wavecombat_id','jogador_id','player_id','user_id','usuario_id','id_jogador','id'],VSET={};
 const vOk=r=>{for(const k of ['verificado','verified','ativo','active','status'])if(k in r){const v=r[k];if(v===false||/^(0|false|nao|não|inativo|revogado|removido)$/i.test(String(v)))return false}return true};
-const vb=id=>VSET[id]?'<span class="vb" title="Verificado">✔︎</span>':'';
-async function verCheck(ids){
+const vb=id=>(id===player.id?player.verified:VSET[id])?'<span class="vb" title="Verificado">✔︎</span>':'';
+async function verCheck(ids){ // selo: tabela wavecombat_verificados OU coluna de selo da tabela usuarios
  ids=[...new Set(ids.filter(i=>i&&VSET[i]===undefined))];if(!ids.length)return;
- const T=SB_T.ver;let c=SBM.ver&&SBM.ver.id;
- if(!c){const tb=await tbl(T);c=await pickCol(T,VER_ID,tb,/(^|_)id(_|$)/,['id']);if(!c)throw noCols('coluna de ID',tb);SBM.ver={id:c};saveMap()}
- const r=await sb(T+'?select=*&'+c+'=in.('+ids.map(q1).join(',')+')&limit=500'),got=new Set();
- for(const x of r||[])if(vOk(x))got.add(String(x[c]));ids.forEach(i=>VSET[i]=got.has(String(i)))}
+ const T=SB_T.ver,got=new Set();let err=null;
+ try{let c=SBM.ver&&SBM.ver.id;
+  if(!c){const tb=await tbl(T);c=await pickCol(T,VER_ID,tb,/(^|_)id(_|$)/,['id']);if(!c)throw noCols('coluna de ID',tb);SBM.ver={id:c};saveMap()}
+  for(const x of await DB.sel(T,{inn:[c,ids],limit:500})||[])if(vOk(x))got.add(String(x[c]))}
+ catch(e){err=e;badMap(e,'ver')}
+ try{if(USR.st==='on'&&USR.verCol)for(const x of await DB.sel(USR.t,{inn:[USR.idCol,ids],limit:500})||[])if(flagOn(x[USR.verCol])&&String(x[USR.idCol])!==player.id)got.add(String(x[USR.idCol]))}catch(e){} // o próprio jogador usa o valor ao vivo (verUsr)
+ ids.forEach(i=>VSET[i]=got.has(String(i)));if(err)throw err}
 async function verInit(){try{await verCheck([player.id]);DIAG.ver='ok · '+SB_T.ver+': '+(VSET[player.id]?'verificado':'não consta')}catch(e){badMap(e,'ver');DIAG.ver='falhou: '+errTxt(e)}refreshIdent()}
 
 /* ----- Amigos: tabela wavecombat_amigos ----- */
