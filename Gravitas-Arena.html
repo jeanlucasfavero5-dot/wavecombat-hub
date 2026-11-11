@@ -156,7 +156,7 @@ th,td{padding:7px 8px;border-bottom:1px solid #55663d}th{color:var(--y);font-fam
 <button id="bagb">🎒<br>MOCHILA</button><button id="shopb">🛒<br>LOJA</button><div id="shop"><b>Loja <span id="sb"></span></b><div id="si"></div><div id="sm" class="sub"></div><button class="btn" id="sc" style="min-width:0">Fechar</button></div><div id="bag"><b>🎒 Mochila</b><div id="bi"></div><div id="bm" class="sub"></div><button class="btn" id="bc" style="min-width:0">Fechar</button></div>
 <button id="skb">⚡</button><div id="over"><h2 id="ot"></h2><div id="ost" class="sub" style="display:block"></div><button class="btn" id="nx"></button><button class="btn" id="mn">Voltar ao lobby</button></div></div>
 <button class="gear" id="gear" aria-label="Configurações">⚙️</button><button class="gear" id="mailb" style="top:10px;right:60px;display:none" aria-label="Correio">📬</button><button class="gear" id="evb" style="top:10px;right:110px;display:none" aria-label="Eventos">📅</button>
-<div id="ver">v0.026</div>
+<div id="ver">v0.027</div>
 <div id="fmd"><div class="pan"><b>🏳️ Nova bandeira (IA)</b><div id="fgl" style="display:flex;flex-wrap:wrap;justify-content:center"></div><div id="fme" class="sub" style="display:block"></div><button class="btn" id="fre">🎲 Gerar novas</button><button class="btn" id="fok">Confirmar (500 💎)</button><button class="btn" id="fcn">Cancelar</button></div></div><div id="nmd"><div class="pan"><b id="nmt"></b><input id="nmi" type="text"><div id="nme" class="sub" style="display:block"></div><button class="btn" id="nmo">Confirmar e pagar</button><button class="btn" id="nmc">Cancelar</button></div></div>
 <div id="rm"><div class="pan"><b>🔑 Redefinir senha</b><input id="rp1" type="password" placeholder="Senha atual"><input id="rp2" type="password" placeholder="Nova senha (mín. 3)"><div id="rme" class="sub" style="display:block"></div><button class="btn" id="rok">Salvar</button><button class="btn" id="rcn">Cancelar</button></div></div>
 <div id="dm"><div class="pan"><b id="dt"></b><input id="dp" type="password" placeholder="Senha da conta" style="display:none"><div id="de" class="sub" style="display:block"></div><button class="btn" id="dy">Confirmar</button><button class="btn" id="dn">Voltar</button></div></div>
@@ -788,7 +788,7 @@ for(let i=0;i<6;i++)fire(80+i*270,95,-310,1.6+R());const ex=[];for(let i=0;i<3;i
 for(let x=60;x<WW;x+=150)tree(x,110,-215,.9,0,0,1);for(let x=50;x<WW;x+=100)mm(new THREE.CylinderGeometry(1,1,22,5),mt(0x3a2f22),x,121,-205);mm(new THREE.CylinderGeometry(.3,.3,WW,4).rotateZ(Math.PI/2),mt(0x555555),WW/2,126,-205);[300,1100].forEach(x=>{[-1,1].forEach(s=>mm(new THREE.CylinderGeometry(1.5,1.5,40,6),mt(0x3a2f22),x+s*8,130,-210));mm(new THREE.CylinderGeometry(14,14,12,8),mt(0x4a3f30),x,155,-210);mm(new THREE.ConeGeometry(16,10,8),mt(0x2a241c),x,166,-210)})}
 if(B.ruin){for(let x=-20;x<WW+60;x+=60+R()*40){const hh=60+R()*150;bld(x,hh,36+R()*30,-250,'#3a3a40',1);if(R()<.5)fire(x,hh+115,-240,1.2)}smoke(300,-260);smoke(900,-260);smoke(1400,-260);heli(380,-270,0x2f3a2c,1.8,.9);for(let i=0;i<30;i++){const g3=new THREE.IcosahedronGeometry(3+R()*6,0),p=g3.attributes.position;for(let k=0;k<p.count;k++)p.setXYZ(k,p.getX(k)*(.8+R()*.5),p.getY(k)*(.6+R()*.5),p.getZ(k)*(.8+R()*.5));g3.computeVertexNormals();mm(g3,mt(0x4a453d),R()*WW,108,-225+R()*20)}for(let x=40;x<WW;x+=140+R()*90)tree(x,110,-215,.9,0,0,1)}}
 /* =====================================================================
-   v0.026 · HUB CENTRAL (Socket.io) + SUPABASE
+   v0.027 · HUB CENTRAL (Socket.io) + SUPABASE
    >>> CONFIGURAÇÃO: é só editar o bloco HUB logo abaixo <<<
    ===================================================================== */
 var HUB={
@@ -796,36 +796,36 @@ var HUB={
   ns:'/gravitas',                                 // namespace isolado deste jogo no servidor central
   game:'gravitas-arena',
   yt:'https://youtube.com/@capudooficial7?si=NSvfxpSzswVEStdu',
-  sb: {
-        url: 'https://ipqjeacdfiomcxfuixdj.supabase.co',
-        key: 'sb_publishable_EWW84q_43YbOvMwB_Rua-A_X465PbLP'
-    },
-    t:{wallet:'carteira_diamantes',friends:'wavecombat_amigos',ver:'wavecombat_verificados'}, // COLE AQUI a chave anon/publishable do Supabase (ou use ?sbkey=...)
-  // nomes de colunas: deixe '' para detectar sozinho; preencha só se a detecção errar
-  col:{wallet:{id:'',nick:'',bal:''},friends:{a:'',b:'',st:'',list:''},ver:{id:''}},
-  // status no banco (opcional): tabela onde cada jogador tem uma linha de presença. Vazio = só o servidor central guarda o status.
+  sb:{url:'https://ipqjeacdfiomcxfuixdj.supabase.co',key:'sb_publishable_EWW84q_43YbOvMwB_Rua-A_X465PbLP'},   // chave publishable (também aceita ?sbkey=...)
+  t:{users:'usuarios',wallet:'carteira_diamantes',friends:'wavecombat_amigos',ver:'wavecombat_verificados'},
+  // Colunas: deixe '' para o jogo descobrir sozinho (ele testa quais colunas realmente devolvem a linha do jogador).
+  // Preencha só se a descoberta errar. Para ver o que ele achou, abra o console (F12) e rode:  hubDiag()
+  col:{users:{pub:'',id:'',nick:''},wallet:{fk:'',bal:''},ver:{fk:''},friends:{a:'',b:'',st:''}},
+  // status no banco (opcional): tabela com uma linha de presença por jogador. Vazio = só o servidor central guarda o status.
   pres:{table:'',id:'',st:'status',game:'jogo_atual',seen:'ultimo_acesso'}
 };
-var SB={on:0,base:0,busy:0,t:0,cols:null,warn:{},sm:{}},IDN={id:'',nick:'',site:0,part:'',ov:'',idov:''};
+var SB={on:0,base:0,busy:0,t:0,wk:null,ctx:null,jwt:'',auid:'',warn:{},sm:{}},IDN={id:'',nick:'',site:0,part:'',rid:'',rnick:'',ov:'',idov:''};
 const enc=encodeURIComponent,sbN=v=>Math.max(0,Math.floor(Number(v)||0)),isVer=a=>!!(a&&(a.inf||a.vf));
-const WID=['wavecombat_id','player_id','jogador_id','user_id','uid','usuario_id','id_jogador','id'];
-const WNICK=['nick','nickname','nome','name','apelido','username'];
-const WBAL=['diamantes','diamonds','saldo','balance','saldo_diamantes','quantidade'];
-const pk=(sm,cfg,list)=>[cfg,...list].filter(Boolean).find(c=>sm.keys.includes(c))||cfg||list[0];
+const UUIDRE=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i,isNum=v=>typeof v==='number'||/^-?\d+(\.\d+)?$/.test(String(v));
+const kind=v=>v==null||v===''?'':isNum(v)?'n':UUIDRE.test(String(v))?'u':'t';           // n = número, u = uuid, t = texto
+const IDRE=/(^|_)(id|uid|uuid)$|^(id|uid)_|^(usuario|user|jogador|player|amigo|friend|owner|dono|conta|codigo|code|de|para|from|to|solicitante|destinatario|remetente)$/i;
+const SKIPRE=/(created|updated|criado|atualiz|data|date|time|hora)/i;
+const NICKS=['nick','nickname','apelido','username','nome','name'],WID=['wavecombat_id','player_id','jogador_id','public_id','id_publico','codigo','user_id','usuario_id','id'];
+const BALS=['diamantes','diamonds','saldo','balance','saldo_diamantes','quantidade','qtd','valor','total'];
 const sbWarn=(k,m)=>{if(!SB.warn[k]){SB.warn[k]=1;console.warn('[hub] '+m)}};
 function uiRefresh(){try{if(cur==='lobby')lobbyUI()}catch(e){}try{if(typeof frBadge==='function')frBadge()}catch(e){}}
 
-/* ---------- identidade: URL (?id=&nick=) → localStorage do site → visitante (chaves próprias, sem tocar nas do site) ---------- */
+/* ---------- identidade: o que o banco confirmar vale mais; senão URL (?id=&nick=) → localStorage do site → visitante ---------- */
 function readIdentity(){
   let id='',nick='';
   try{const q=new URLSearchParams(location.search);id=q.get('id')||q.get('wid')||q.get('uid')||'';nick=q.get('nick')||q.get('wnick')||q.get('nome')||''}catch(e){}
   try{id=id||localStorage.getItem('wavecombat_id')||'';nick=nick||localStorage.getItem('wavecombat_nick')||''}catch(e){}
-  id=String(id).trim();nick=String(nick).trim();IDN.part='';
+  id=String(id).trim();nick=String(nick).trim();IDN.rid=id;IDN.rnick=nick;IDN.part=(id||nick)?(!id?'nick':!nick?'id':''):'';
+  if(IDN.idov)id=IDN.idov;if(IDN.ov)nick=IDN.ov;
   const site=!!(id||nick);
   if(site){
-    if(IDN.idov&&!id)id=IDN.idov;if(IDN.ov&&!nick)nick=IDN.ov;
-    if(!id){IDN.part='nick';const k=U[nick];id=k&&k.id||String(Math.floor(100000000+Math.random()*900000000))}     // só o nick é conhecido: o ID vem do banco
-    else if(!nick){IDN.part='id';const k=Object.keys(U).find(x=>U[x].id===id);nick=k||'Player_'+id.slice(0,4)}      // só o ID é conhecido: o nick vem do banco
+    if(!id){const k=U[nick];id=k&&k.id||String(Math.floor(100000000+Math.random()*900000000))}
+    else if(!nick){const k=Object.keys(U).find(x=>U[x].id===id);nick=k||'Player_'+id.slice(0,4)}
   }else{
     try{id=localStorage.getItem('ga_gid')||'';nick=localStorage.getItem('ga_gnick')||'';
       if(!id){id=String(Math.floor(100000000+Math.random()*900000000));localStorage.setItem('ga_gid',id)}
@@ -835,97 +835,132 @@ function readIdentity(){
   IDN.id=id;IDN.nick=nick;IDN.site=site?1:0;return IDN
 }
 
-/* ---------- Supabase (PostgREST direto, sem biblioteca) ---------- */
+/* =====================================================================
+   SUPABASE · carregamento e sincronização (PostgREST direto, sem biblioteca)
+   Fluxo do sbBoot():  usuarios (ID e nick reais) → carteira + verificado em paralelo → amigos quando a gaveta abre.
+   As colunas são descobertas TESTANDO: o jogo consulta com o ID do jogador e usa a coluna que realmente devolveu a linha.
+   ===================================================================== */
+/* sessão do hub (Supabase Auth) no mesmo domínio: usa o JWT do usuário, assim as políticas RLS por auth.uid() funcionam */
+function sbAuth(){try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(!/^sb-.+-auth-token$/.test(k)&&k!=='supabase.auth.token')continue;
+  let v=localStorage.getItem(k);if(!v)continue;if(v.startsWith('base64-'))v=atob(v.slice(7));let j=JSON.parse(v);if(Array.isArray(j))j={access_token:j[0]};j=j.currentSession||j;
+  if(j&&j.access_token&&(!j.expires_at||j.expires_at*1000>Date.now()+60000)){SB.jwt=j.access_token;SB.auid=(j.user&&j.user.id)||'';return}}}catch(e){}
+  SB.jwt='';SB.auid=''}
 function sbKey(){let k=HUB.sb.key||'';try{const q=new URLSearchParams(location.search).get('sbkey');if(q)localStorage.setItem('ga_sbkey',q);k=k||localStorage.getItem('ga_sbkey')||''}catch(e){}return k}
 async function sbReq(method,path,body,keep){const key=sbKey();if(!key||!HUB.sb.url||typeof fetch!=='function')return null;
-  const ctl=typeof AbortController==='function'?new AbortController():null,to=setTimeout(()=>ctl&&ctl.abort(),8000);
-  const hd={apikey:key,'Content-Type':'application/json',Prefer:'return=representation'};if(/^eyJ/.test(key))hd.Authorization='Bearer '+key;
+  const ctl=typeof AbortController==='function'?new AbortController():null,to=setTimeout(()=>ctl&&ctl.abort(),9000);
+  const hd={apikey:key,'Content-Type':'application/json',Prefer:'return=representation'};
+  if(SB.jwt)hd.Authorization='Bearer '+SB.jwt;else if(/^eyJ/.test(key))hd.Authorization='Bearer '+key;
   try{const r=await fetch(HUB.sb.url+'/rest/v1/'+path,{method,headers:hd,body:body?JSON.stringify(body):undefined,signal:ctl?ctl.signal:undefined,keepalive:!!keep});clearTimeout(to);
     if(!r.ok)return{err:r.status};const t=await r.text();return{ok:1,data:t?JSON.parse(t):null}}catch(e){clearTimeout(to);return null}}
+/* amostra de uma tabela: colunas e o tipo de cada uma (n = número, u = uuid, t = texto) */
 async function sbSample(t){if(SB.sm[t]!==undefined)return SB.sm[t]||null;
-  const r=await sbReq('GET',t+'?select=*&limit=1');
-  if(!r)return null;                                               // sem rede/chave: tenta de novo depois
+  const r=await sbReq('GET',t+'?select=*&limit=5');if(!r)return null;
   if(r.err){SB.sm[t]=false;sbWarn('s'+t,'sem acesso à tabela '+t+' (HTTP '+r.err+')');return null}
-  const row=(r.data&&r.data[0])||null;return SB.sm[t]={row,keys:row?Object.keys(row):[]}}
-async function sbWalletCols(){if(SB.cols)return SB.cols;const sm=await sbSample(HUB.t.wallet);if(!sm)return null;const c=HUB.col.wallet;
-  return SB.cols={id:pk(sm,c.id,WID),nick:pk(sm,c.nick,WNICK),bal:pk(sm,c.bal,WBAL),hasNick:!!c.nick||sm.keys.some(k=>WNICK.includes(k))}}
+  const rows=r.data||[],keys=[],kinds={};
+  rows.forEach(x=>Object.keys(x).forEach(k=>{if(!keys.includes(k))keys.push(k);if(!kinds[k]&&x[k]!=null&&x[k]!=='')kinds[k]=kind(x[k])}));keys.forEach(k=>{kinds[k]=kinds[k]||''});
+  return SB.sm[t]={row:rows[0]||null,keys,kinds}}
+/* consulta "OR" por coluna=valor só com combinações de tipo compatível (evita erro 400 de uuid x número) */
+const compat=(ck,v)=>ck==='t'||(ck!==''&&ck===kind(v));
+const conds=(sm,cols,vals)=>{const o=[];cols.forEach(c=>vals.forEach(v=>{if(compat(sm.kinds[c],v))o.push(c+'.eq.'+enc(v))}));return o};
+async function probe(t,sm,cols,vals,lim){const cs=conds(sm,cols,vals).slice(0,40);if(!cs.length)return{rows:[]};
+  const r=await sbReq('GET',t+'?select=*&or=('+cs.join(',')+')&limit='+(lim||5));if(!r)return null;if(r.err)return{err:r.err,rows:[]};return{rows:r.data||[]}}
+const matchOf=(row,cols,vals)=>{for(const c of cols)for(const v of vals)if(row[c]!=null&&String(row[c])===String(v))return{col:c,val:String(v)};return null};
+const fkCols=(sm,cfg)=>{if(cfg)return[cfg];const k=sm.keys.filter(c=>c!=='id'&&IDRE.test(c)&&!SKIPRE.test(c));return k.length?k:sm.keys.filter(c=>c==='id')};
+const verOk=row=>{let v=true;Object.keys(row).forEach(k=>{if(/^(verificado|verified|ativo|active|aprovado|valido)$/i.test(k)&&(row[k]===false||row[k]==='false'||row[k]===0))v=false;if(/^(status|estado)$/i.test(k)&&/revog|inativ|remov|pend|neg/i.test(String(row[k])))v=false});return v};
 
-/* nick/ID reais quando o site só informou um dos dois */
-async function sbResolveIdentity(){if(!IDN.part||!sbKey())return;const cols=await sbWalletCols();if(!cols||!cols.hasNick)return;
-  const by=IDN.part==='id'?cols.id+'=eq.'+enc(IDN.id):cols.nick+'=eq.'+enc(IDN.nick);
-  const r=await sbReq('GET',HUB.t.wallet+'?select=*&'+by+'&limit=1');const row=r&&r.data&&r.data[0];if(!row)return;
-  if(IDN.part==='id'){const nk=String(row[cols.nick]||'').trim();if(nk){IDN.ov=nk;bootIdentity()}}
-  else{const id=String(row[cols.id]||'').trim();if(id){IDN.idov=id;bootIdentity()}}}
-
-/* ---------- carteira de diamantes ↔ tabela carteira_diamantes (com checagem de conflito) ---------- */
-async function sbLoad(){if(!sbKey()||SB.busy)return;SB.busy=1;
-  try{const cols=await sbWalletCols();if(!cols){SB.on=0;return}
-    const r=await sbReq('GET',HUB.t.wallet+'?select=*&'+cols.id+'=eq.'+enc(player.id)+'&limit=1');
-    if(!r||r.err){SB.on=0;return sbWarn('w','falha ao ler a carteira ('+(r?r.err:'rede')+'). Confira HUB.col.wallet')}
-    const row=r.data&&r.data[0];if(!row){SB.on=0;return sbWarn('w0','ID '+player.id+' sem linha em '+HUB.t.wallet+'; seguindo só local')}
-    const v=sbN(row[cols.bal]),first=!SB.on;SB.on=1;SB.base=v;A().dia=v;SV('ga_u',U);uiRefresh();if(first)toast('☁️ Carteira sincronizada: '+v+' 💎')}
-  finally{SB.busy=0}}
-async function sbPush(){if(!SB.on||SB.busy)return;const a=A(),sent=a.dia,delta=sent-SB.base;if(!delta)return;SB.busy=1;
+/* 1) usuarios: ID público, chave interna e nick reais do jogador */
+async function sbUser(){
+  const names=[HUB.t.users,'wavecombat_usuarios','perfis','profiles','jogadores','users',HUB.t.wallet].filter((v,i,a)=>v&&a.indexOf(v)===i);
+  let sm=null,T='';for(const n of names){const x=await sbSample(n);if(x&&x.row){sm=x;T=n;break}}
+  if(!sm)return null;
+  const C=HUB.col.users,K=sm.keys,raw=[IDN.rid,SB.auid].filter(Boolean),cols=(C.id||C.pub)?[C.id,C.pub].filter(Boolean):K.filter(c=>c==='id'||(IDRE.test(c)&&!SKIPRE.test(c)));
+  let rows=[];if(raw.length){const r=await probe(T,sm,cols,raw,3);rows=(r&&r.rows)||[]}
+  let row=rows.find(x=>NICKS.some(c=>String(x[c]||'')===IDN.rnick))||rows[0];
+  if(!row&&IDN.rnick){const nc=C.nick?[C.nick]:K.filter(c=>NICKS.includes(c));                  // ID do site não bateu: tenta pelo nick
+    for(const c of nc){if(!sm.kinds[c])continue;const q=await sbReq('GET',T+'?select=*&'+c+'=eq.'+enc(IDN.rnick)+'&limit=2');if(q&&q.data&&q.data[0]){row=q.data[0];break}}}
+  if(!row)return null;
+  const idv=K.filter(c=>(c==='id'||(IDRE.test(c)&&!SKIPRE.test(c)))&&row[c]!=null&&row[c]!==''),m=matchOf(row,cols,raw);
+  const pubCol=C.pub||(m&&m.val===IDN.rid?m.col:'')||WID.find(c=>c!=='id'&&K.includes(c)&&row[c]!=null&&row[c]!=='')||'id';
+  const nickCol=C.nick||NICKS.find(c=>K.includes(c)&&String(row[c]||'')===IDN.rnick)||NICKS.find(c=>K.includes(c)&&row[c]);
+  const src={},vals=[];idv.forEach(c=>{const v=String(row[c]);if(!(v in src)){src[v]=c;vals.push(v)}});raw.forEach(v=>{if(!(v in src)){src[v]='';vals.push(v)}});
+  return{T,row,pubCol,nickCol,pub:String(row[pubCol]??IDN.rid),nick:nickCol?String(row[nickCol]||''):'',vals,src}}
+/* 2) carteira_diamantes: saldo (e qual coluna liga a linha ao jogador) */
+async function sbWalletLoad(vals){const T=HUB.t.wallet,sm=await sbSample(T);if(!sm)return{st:'sem acesso'};if(!sm.row)return{st:'tabela vazia ou bloqueada por RLS'};
+  const C=HUB.col.wallet,cols=fkCols(sm,C.fk),r=await probe(T,sm,cols,vals,5);if(!r||r.err)return{st:'erro '+(r?r.err:'de rede')};
+  const row=r.rows[0];if(!row)return{st:'usuário novo (sem linha na carteira)'};if(r.rows.length>1)sbWarn('wm','mais de uma linha de carteira para o jogador; usando a primeira');
+  const m=matchOf(row,cols,vals),K=sm.keys,balc=C.bal||BALS.find(c=>K.includes(c)&&kind(row[c])==='n')||K.find(c=>kind(row[c])==='n'&&c!=='id'&&!IDRE.test(c)&&!SKIPRE.test(c));
+  if(!balc||!m){sbWarn('wb','não achei a coluna de saldo em '+T+' (preencha HUB.col.wallet.bal)');return{st:'coluna de saldo não encontrada'}}
+  SB.wk={col:m.col,val:m.val,bal:balc};SB.base=sbN(row[balc]);return{ok:1,v:SB.base}}
+/* 3) wavecombat_verificados: existe linha (e não está marcada como inativa) = selo V */
+async function sbVerLoad(vals){const T=HUB.t.ver,sm=await sbSample(T);if(!sm)return null;if(!sm.row)return false;
+  const cols=fkCols(sm,HUB.col.ver.fk),r=await probe(T,sm,cols,vals,3);if(!r||r.err)return null;const row=r.rows[0];return row?verOk(row):false}
+/* sessão: tudo de uma vez, sem conflito de IDs, e grava nas variáveis do jogo (me, player.id, A().dia, A().vf) */
+async function sbBoot(){if(!sbKey()||SB.busy)return;SB.busy=1;
+  try{sbAuth();await Promise.all(Object.values(HUB.t).map(sbSample));                       // amostras das 4 tabelas em paralelo (1 ida ao servidor)
+    const ctx=SB.ctx=await sbUser();
+    if(ctx&&((ctx.pub&&ctx.pub!==IDN.id)||(ctx.nick&&ctx.nick!==IDN.nick))){IDN.idov=ctx.pub||'';IDN.ov=ctx.nick||'';bootIdentity()}   // ID e nick do banco prevalecem
+    const vals=ctx?ctx.vals:[String(player.id)],[w,v]=await Promise.all([sbWalletLoad(vals),sbVerLoad(vals)]),a=A(),first=!SB.on;
+    if(w.ok){SB.on=1;a.dia=w.v;if(first)toast('☁️ Carteira sincronizada: '+w.v+' 💎')}else{SB.on=0;SB.wk=null;if(!/novo/.test(w.st))sbWarn('w0','carteira: '+w.st)}   // usuário novo / tabela vazia: segue só local
+    if(v!==null)a.vf=v?1:0;
+    SV('ga_u',U);HUB.me={id:player.id,nick:me,usuarios:ctx?ctx.T:null,carteira:w.ok?SB.wk:w.st,verificado:!!a.vf};uiRefresh()}
+  catch(e){console.warn('[hub] sbBoot',e)}finally{SB.busy=0}}
+/* gasto/ganho local → nuvem, com checagem de conflito (compare-and-swap no saldo) */
+async function sbPush(){if(!SB.on||SB.busy||!SB.wk)return;const a=A(),sent=a.dia,delta=sent-SB.base,W=SB.wk,T=HUB.t.wallet;if(!delta)return;SB.busy=1;
   try{for(let i=0;i<3;i++){const nv=Math.max(0,SB.base+delta);
-    const r=await sbReq('PATCH',HUB.t.wallet+'?'+SB.cols.id+'=eq.'+enc(player.id)+'&'+SB.cols.bal+'=eq.'+SB.base,{[SB.cols.bal]:nv});
+    const r=await sbReq('PATCH',T+'?'+W.col+'=eq.'+enc(W.val)+'&'+W.bal+'=eq.'+SB.base,{[W.bal]:nv});
     if(r&&r.data&&r.data.length){SB.base=nv;a.dia=Math.max(0,nv+(a.dia-sent));SV('ga_u',U);return}
     if(!r||r.err)return sbWarn('p','falha ao gravar o saldo ('+(r?r.err:'rede')+')');
-    const g=await sbReq('GET',HUB.t.wallet+'?select='+SB.cols.bal+'&'+SB.cols.id+'=eq.'+enc(player.id)+'&limit=1');   // conflito: o saldo mudou no site
-    if(!g||!g.data||!g.data[0])return;SB.base=sbN(g.data[0][SB.cols.bal])}}
+    const g=await sbReq('GET',T+'?select='+W.bal+'&'+W.col+'=eq.'+enc(W.val)+'&limit=1');                 // conflito: o saldo mudou no site
+    if(!g||!g.data||!g.data[0])return;SB.base=sbN(g.data[0][W.bal])}}
   finally{SB.busy=0;uiRefresh();if(A().dia!==SB.base)sbSoon()}}
-async function sbPull(){if(!SB.on||SB.busy||A().dia!==SB.base)return;
-  const r=await sbReq('GET',HUB.t.wallet+'?select='+SB.cols.bal+'&'+SB.cols.id+'=eq.'+enc(player.id)+'&limit=1');
-  if(!r||!r.data||!r.data[0])return;const v=sbN(r.data[0][SB.cols.bal]);if(v!==SB.base&&A().dia===SB.base){SB.base=v;A().dia=v;SV('ga_u',U);uiRefresh()}}
+async function sbPull(){if(!SB.on||SB.busy||!SB.wk||A().dia!==SB.base)return;const W=SB.wk;
+  const r=await sbReq('GET',HUB.t.wallet+'?select='+W.bal+'&'+W.col+'=eq.'+enc(W.val)+'&limit=1');
+  if(!r||!r.data||!r.data[0])return;const v=sbN(r.data[0][W.bal]);if(v!==SB.base&&A().dia===SB.base){SB.base=v;A().dia=v;SV('ga_u',U);uiRefresh()}}
 function sbSoon(){if(!SB||!SB.on)return;clearTimeout(SB.t);SB.t=setTimeout(sbPush,900)}
 
-/* ---------- selo V dourado ↔ tabela wavecombat_verificados ---------- */
-async function sbVer(){if(!sbKey())return;const sm=await sbSample(HUB.t.ver);if(!sm)return;
-  const idc=pk(sm,HUB.col.ver.id,WID),r=await sbReq('GET',HUB.t.ver+'?select=*&'+idc+'=eq.'+enc(player.id)+'&limit=1');
-  if(!r||r.err)return sbWarn('v','falha ao consultar '+HUB.t.ver+' ('+(r?r.err:'rede')+')');
-  const row=r.data&&r.data[0];let v=!!row;
-  if(row)Object.keys(row).forEach(k=>{if(/^(verificado|verified|ativo|active)$/.test(k)&&(row[k]===false||row[k]==='false'||row[k]===0))v=false});
-  const a=A(),was=a.vf;a.vf=v?1:0;SV('ga_u',U);if(was!==a.vf){uiRefresh();if(NET.up)hubHello()}}
-
-/* ---------- amigos ↔ tabela wavecombat_amigos (formato linha-por-amizade ou lista por jogador) ---------- */
+/* 4) wavecombat_amigos: amizades aceitas, com nick, ID público e selo V de cada amigo (a presença vem do servidor do hub) */
 const FACC=/^(aceito|aceita|accepted|amigos?|friends?|ativo|active|aprovado|confirmado|sim|true|1)$/i,FREJ=/pend|recus|bloq|block|negad|rejeit|declin/i;
 async function sbFriends(){
   const T=HUB.t.friends,sm=await sbSample(T);if(!sm)return null;if(!sm.row)return[];
-  const C=HUB.col.friends,K=sm.keys,me=String(player.id),skip=/(created|updated|criado|atualiz|data|date|time|hora)/;
-  let idc=[C.a,C.b].filter(Boolean);
-  if(!idc.length)idc=K.filter(k=>k!=='id'&&!skip.test(k)&&/(^|_)(id|uid)$|^id_|^(usuario|user|jogador|player|amigo|friend|solicitante|destinatario|remetente|de|para|from|to|owner|dono)$/.test(k));
-  const listc=C.list||K.find(k=>Array.isArray(sm.row[k])||(typeof sm.row[k]==='string'&&/^\s*\[/.test(sm.row[k])));
-  const stc=C.st||K.find(k=>/^(status|estado|situacao|aceito|accepted|aprovado|confirmado|pendente)$/.test(k));
-  const nkc=K.filter(k=>/nick|nome|name|apelido|username/.test(k)&&!/^(id|nome_tabela)$/.test(k));
-  const ok=row=>{if(!stc)return true;const v=row[stc];if(stc==='pendente')return !v;if(v===false||v==='false'||v===0)return false;if(v==null)return true;const s=String(v);return !FREJ.test(s)&&(v===true||FACC.test(s)||!/^(0|false)$/i.test(s))};
-  const out=new Map();
-  if(listc&&idc.length){                                           // formato: uma linha por jogador com a lista de amigos
-    const r=await sbReq('GET',T+'?select=*&'+idc[0]+'=eq.'+enc(me)+'&limit=5');if(!r||r.err)return null;
-    (r.data||[]).forEach(row=>{let L=row[listc];if(typeof L==='string'){try{L=JSON.parse(L)}catch(e){L=[]}}
-      (Array.isArray(L)?L:[]).forEach(x=>{const o=typeof x==='object'&&x?x:{id:x},id=String(o.id??o.user_id??o.player_id??o.jogador_id??o.wavecombat_id??'');if(id&&id!==me)out.set(id,{id,nick:String(o.nick||o.nome||o.name||'')})})});
-  }else if(idc.length>=2){                                          // formato: uma linha por amizade
-    const q=idc.slice(0,2).map(c=>c+'.eq.'+enc(me)).join(',');
-    const r=await sbReq('GET',T+'?select=*&or=('+q+')&limit=500');if(!r||r.err)return null;
-    (r.data||[]).forEach(row=>{if(!ok(row))return;const fc=idc.slice(0,2).find(c=>String(row[c]??'')&&String(row[c])!==me);if(!fc)return;const id=String(row[fc]);
-      const stem=fc.replace(/(^id_|_id$|^id$)/,''),nk=nkc.find(k=>stem&&k.includes(stem))||(nkc.length===1&&!idc.some(c=>c!==fc&&nkc[0].includes(c.replace(/(^id_|_id$)/,'')))?nkc[0]:'');
-      out.set(id,{id,nick:nk?String(row[nk]||''):''})})}
-  else return[];
-  const list=[...out.values()].slice(0,120),ids=list.map(f=>f.id);
-  if(ids.length){                                                   // nicks que faltam e selos V dos amigos
-    const wc=await sbWalletCols();
-    if(wc&&wc.hasNick&&list.some(f=>!f.nick)){const r=await sbReq('GET',HUB.t.wallet+'?select='+wc.id+','+wc.nick+'&'+wc.id+'=in.('+ids.map(enc).join(',')+')');
-      ((r&&r.data)||[]).forEach(x=>{const f=out.get(String(x[wc.id]));if(f&&!f.nick)f.nick=String(x[wc.nick]||'')})}
-    const vs=await sbSample(HUB.t.ver);
-    if(vs){const vc=pk(vs,HUB.col.ver.id,WID),r=await sbReq('GET',HUB.t.ver+'?select='+vc+'&'+vc+'=in.('+ids.map(enc).join(',')+')');
-      ((r&&r.data)||[]).forEach(x=>{const f=out.get(String(x[vc]));if(f)f.v=1})}
-    const P=HUB.pres;                                               // presença gravada no banco (opcional)
-    if(P.table){const r=await sbReq('GET',P.table+'?select=*&'+P.id+'=in.('+ids.map(enc).join(',')+')');
-      ((r&&r.data)||[]).forEach(x=>{const f=out.get(String(x[P.id]));if(!f)return;const s=String(x[P.st]??'').toLowerCase(),seen=x[P.seen]?Date.parse(x[P.seen]):0;
-        if((!seen||Date.now()-seen<150000)&&(x[P.st]===true||/online|jogando|playing|ativo|^1$|true/.test(s)))f.db={game:String(x[P.game]||'')}})}
-  }
-  list.forEach(f=>{if(!f.nick)f.nick='Jogador #'+f.id});return list}
+  const ctx=SB.ctx,vals=ctx?ctx.vals:[String(player.id)],C=HUB.col.friends,K=sm.keys,rc=(C.a||C.b)?[C.a,C.b].filter(Boolean):fkCols(sm,'');
+  const stc=C.st||K.find(k=>/^(status|estado|situacao|aceito|accepted|aprovado|confirmado|pendente)$/i.test(k));
+  const okRow=row=>{if(!stc)return true;const v=row[stc];if(/^pendente$/i.test(stc))return !v;if(v===false||v==='false'||v===0)return false;if(v==null)return true;const s=String(v);return !FREJ.test(s)&&(v===true||FACC.test(s)||!/^(0|false)$/i.test(s))};
+  const nkc=K.filter(k=>/nick|nome|name|apelido|username/i.test(k)&&k!=='id'),out=new Map();
+  const listc=K.find(k=>Array.isArray(sm.row[k])||(typeof sm.row[k]==='string'&&/^\s*\[/.test(sm.row[k])));
+  const r=await probe(T,sm,rc,vals,listc&&rc.length<2?5:500);if(!r||r.err)return null;
+  for(const row of r.rows){const mine=matchOf(row,rc,vals);if(!mine)continue;const sp=ctx?(ctx.src[mine.val]||ctx.pubCol):'';
+    if(listc&&rc.length<2){let L=row[listc];if(typeof L==='string'){try{L=JSON.parse(L)}catch(e){L=[]}}                       // formato: uma linha por jogador com a lista de amigos
+      (Array.isArray(L)?L:[]).forEach(x=>{const o=typeof x==='object'&&x?x:{id:x},id=String(o.id??o.user_id??o.usuario_id??o.wavecombat_id??'');if(id&&!vals.includes(id))out.set(id,{raw:id,sp,nick:String(o.nick||o.nome||o.name||'')})});continue}
+    if(!okRow(row))continue;                                                                                                // formato: uma linha por amizade
+    const oc=rc.find(c=>c!==mine.col&&row[c]!=null&&row[c]!==''&&!vals.includes(String(row[c])));if(!oc)continue;
+    const stem=oc.replace(/(^id_|_id$|^id$)/,''),nk=nkc.find(k=>stem&&k.includes(stem))||(nkc.length===1&&!rc.some(c=>c!==oc&&nkc[0].includes(c.replace(/(^id_|_id$)/,'')))?nkc[0]:'');
+    if(!out.has(String(row[oc])))out.set(String(row[oc]),{raw:String(row[oc]),sp,nick:nk?String(row[nk]||''):''})}
+  const list=[...out.values()].slice(0,120);
+  if(ctx&&list.length){const by={};list.forEach(f=>{const c=f.sp||ctx.pubCol;(by[c]=by[c]||[]).push(f)});                  // converte o valor da amizade (qualquer espaço de ID) em ID público + nick via usuarios
+    await Promise.all(Object.entries(by).map(async([c,arr])=>{const r2=await sbReq('GET',ctx.T+'?select=*&'+c+'=in.('+arr.map(f=>enc(f.raw)).join(',')+')&limit=300');
+      ((r2&&r2.data)||[]).forEach(u=>{const f=arr.find(x=>x.raw===String(u[c]));if(f){f.u=u;f.pub=String(u[ctx.pubCol]??f.raw);const n=ctx.nickCol&&u[ctx.nickCol];if(n)f.nick=String(n)}})}))}
+  const vsm=list.length?await sbSample(HUB.t.ver):null;                                                                      // selo V dos amigos
+  if(vsm&&vsm.row){const cols=fkCols(vsm,HUB.col.ver.fk),idx=new Map();
+    list.forEach(f=>{const vs=f.u?Object.keys(f.u).filter(c=>c==='id'||(IDRE.test(c)&&!SKIPRE.test(c))).map(c=>String(f.u[c])):[f.raw];vs.concat([f.raw]).forEach(v=>idx.set(v,f))});
+    const rv=await probe(HUB.t.ver,vsm,cols,[...idx.keys()],500);
+    ((rv&&rv.rows)||[]).forEach(row=>{if(!verOk(row))return;const m=matchOf(row,cols,[...idx.keys()]);if(m&&idx.get(m.val))idx.get(m.val).v=1})}
+  const P=HUB.pres;                                                                                                          // presença gravada no banco (opcional)
+  if(P.table&&list.length){const r3=await sbReq('GET',P.table+'?select=*&'+P.id+'=in.('+list.map(f=>enc(f.pub||f.raw)).join(',')+')');
+    ((r3&&r3.data)||[]).forEach(x=>{const f=list.find(y=>(y.pub||y.raw)===String(x[P.id]));if(!f)return;const s=String(x[P.st]??'').toLowerCase(),seen=x[P.seen]?Date.parse(x[P.seen]):0;
+      if((!seen||Date.now()-seen<150000)&&(x[P.st]===true||/online|jogando|playing|ativo|^1$|true/.test(s)))f.db={game:String(x[P.game]||'')}})}
+  return list.map(f=>({id:f.pub||f.raw,nick:f.nick||'Jogador #'+(f.pub||f.raw),v:f.v?1:0,db:f.db}))}
 /* grava o status "jogando este jogo" no banco (só se HUB.pres.table estiver preenchido) */
 async function sbPresence(st){const P=HUB.pres;if(!P.table||!sbKey()||!player.id)return;const body={[P.st]:st,[P.game]:st==='offline'?'':HUB.game};if(P.seen)body[P.seen]=new Date().toISOString();
   await sbReq('PATCH',P.table+'?'+P.id+'=eq.'+enc(player.id),body,st==='offline')}
+
+/* diagnóstico: no console (F12) rode  hubDiag()  — mostra o que o jogo enxerga em cada tabela e qual coluna ele usou */
+async function hubDiag(){SB.sm={};SB.warn={};sbAuth();const L=[];const log=(...a)=>{const t=a.join(' ');L.push(t);console.log('[hub-diag]',t)};
+  log('chave:',sbKey()?sbKey().slice(0,16)+'…':'AUSENTE','| sessão do hub (JWT):',SB.jwt?'sim':'não','| ID do site:',IDN.rid||'(vazio)','| nick do site:',IDN.rnick||'(vazio)');
+  for(const [k,t] of Object.entries(HUB.t)){const sm=await sbSample(t);log(k.padEnd(8),t+':',sm===null?'SEM ACESSO (veja o aviso [hub] acima)':sm.row?'colunas → '+sm.keys.map(c=>c+':'+(sm.kinds[c]||'?')).join(', '):'0 linhas visíveis (tabela vazia ou RLS bloqueando este papel)')}
+  const ctx=await sbUser();log('usuário:',ctx?JSON.stringify({tabela:ctx.T,idPublico:ctx.pub,colunaId:ctx.pubCol,nick:ctx.nick,colunaNick:ctx.nickCol,valoresDeId:ctx.vals}):'NÃO ENCONTRADO — confira HUB.t.users / HUB.col.users e se o RLS deixa ler');
+  const vals=ctx?ctx.vals:[String(player.id)],w=await sbWalletLoad(vals);log('carteira:',w.ok?JSON.stringify(SB.wk)+' saldo='+w.v:w.st);
+  const v=await sbVerLoad(vals);log('verificado:',v===null?'sem acesso à tabela':v?'SIM':'não');
+  const f=await sbFriends();log('amigos:',f===null?'sem acesso/erro':f.length+' → '+f.map(x=>x.nick+(x.v?' (V)':'')+' #'+x.id).join(', '));return L}
 
 /* ---------- conexão com o hub (Socket.io, namespace isolado) ---------- */
 var NET={sock:null,up:0,m:null,q:0,qm:'1v1',qn:1,qneed:2,qt0:0,qiv:0,btn:'',wantQ:0,k:0,cc:0,pend:null,seq:0,iv:0,lk:'',init:null,ready:0,inited:0,om:null,os:null,odf:null,gone:{},early:[],ch:[],on:0},NR=null,NVIS=0;
@@ -1097,7 +1132,7 @@ function frRender(){const B=$('#frl');if(!B)return;B.textContent='';const add=(t
   sec('Online',FRD.list.filter(frOnline).sort(srt),1);sec('Offline',FRD.list.filter(f=>!frOnline(f)).sort(srt),0)}
 async function frLoad(){if(FRD.busy)return;FRD.busy=1;if(FRD.open)frRender();
   try{if(!sbKey()){FRD.list=null;FRD.err='Amigos indisponíveis: falta a chave do Supabase (HUB.sb.key).'}
-    else{const l=await sbFriends();if(l===null)FRD.err='Não foi possível ler '+HUB.t.friends+'. Confira as permissões (RLS) e HUB.col.friends.';else{FRD.list=l;FRD.err=''}}
+    else{const l=await sbFriends();if(l===null)FRD.err='Não foi possível ler '+HUB.t.friends+'. Rode hubDiag() no console (F12) e confira as permissões (RLS).';else{FRD.list=l;FRD.err=''}}
     if(FRD.list&&FRD.list.length&&NET.up)await new Promise(res=>{const t=setTimeout(res,4000);NET.sock.emit('ga:friends',{ids:FRD.list.map(f=>f.id)},r=>{clearTimeout(t);FRD.pres=(r&&r.list)||{};res()})})}
   catch(e){console.warn('[hub] amigos',e)}
   finally{FRD.busy=0;frRender();frBadge()}}
@@ -1133,7 +1168,7 @@ $('#rcs').onclick=function(){if(NET.up&&NR){const i=$('#rci'),t=i.value.trim();i
 
 /* ---------- partida do início: identidade → Supabase → hub ---------- */
 async function hubInit(){hubUI();hubConnect();
-  try{await sbResolveIdentity();await sbLoad();await sbVer()}catch(e){console.warn('[hub]',e)}
+  try{await sbBoot()}catch(e){console.warn('[hub]',e)}
   if(NET.up)hubHello();
   setTimeout(()=>{if(!FRD.list&&sbKey())frLoad()},800);
   setInterval(()=>{if(!document.hidden){sbPull();if(HUB.pres.table)sbPresence(hubSt==='partida'?'jogando':'online')}},25000);
