@@ -284,8 +284,6 @@
 
         .admin-block { background: #000; border: 1px solid var(--steel-border); padding: 12px; border-radius: 8px; display: flex; flex-direction: column; gap: 8px; }
         .admin-game-item { background: #000; border: 1px solid var(--steel-border); padding: 12px; border-radius: 8px; display: flex; flex-direction: column; gap: 8px; }
-        .file-upload-label { font-size: 11px; color: #94a3b8; display: flex; flex-direction: column; gap: 4px; }
-        .file-upload-label input[type="file"] { background: #080c14; border: 1px solid var(--steel-border); padding: 6px; color: var(--ink); border-radius: 4px; font-size: 11px; }
 
         .btn-danger { background: rgba(239, 68, 68, 0.15); border-color: var(--alert-red); color: var(--alert-red); }
         .btn-success { background: rgba(34, 197, 94, 0.15); border-color: #22c55e; color: #22c55e; }
@@ -352,7 +350,7 @@
                 <input type="email" id="inputVinculoEmailPrompt" placeholder="Digite seu e-mail principal..." class="auth-input" required style="text-align:center;">
                 <div style="display:flex; gap:10px;">
                     <button type="button" class="btn-gaming btn-danger" onclick="fecharModalAlertEmail()" style="flex:1; padding:8px; font-size:11px;">Depois</button>
-                    <button type="submit" class="btn-gaming" style="flex:1; padding:8px; font-size:11px; background:var(--gold-warning); color:#000;">Vinculado E-mail</button>
+                    <button type="submit" class="btn-gaming" style="flex:1; padding:8px; font-size:11px; background:var(--gold-warning); color:#000;">Vincular E-mail</button>
                 </div>
             </form>
         </div>
@@ -609,7 +607,7 @@
             <button class="btn-gaming" onclick="carregarSaldoDiamantesSite()" style="font-size: 11px; padding: 6px 12px;">🔄 Atualizar Saldo</button>
         </div>
 
-        <!-- ABA DE ITENS COSMÉTICOS E MOLDURAS (PREÇOS REAJUSTADOS 50% DESCONTO) -->
+        <!-- ABA DE ITENS COSMÉTICOS E MOLDURAS -->
         <h3 style="font-family:'Orbitron'; font-size:13px; color:var(--gold-warning); margin-bottom:12px;">🎨 Molduras de Perfil Disponíveis</h3>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px;">
             <div class="panel-card" style="text-align: center; border: 1px solid #3b82f6;">
@@ -827,7 +825,7 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.461 (Big Wheel + Gamer Reward Modal)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.462 (Correções de Som & Cancelamento de E-mail)</strong>
     </footer>
 
     <script>
@@ -879,9 +877,10 @@
         async function carregarVerificadosNuvem() {
             try {
                 const { data } = await supabaseClient.from('wavecombat_verificados').select('*');
+                cacheVerificadosNuvem = {}; // Limpa o cache anterior
                 if (data && data.length > 0) {
                     data.forEach(item => {
-                        cacheVerificadosNuvem[String(item.id_jogador)] = true;
+                        if (item.id_jogador) cacheVerificadosNuvem[String(item.id_jogador)] = true;
                         if (item.nick) cacheVerificadosNuvem[item.nick.toLowerCase()] = true;
                     });
                 }
@@ -909,11 +908,16 @@
             return false;
         }
 
+        // LÓGICA DE SELO DE VERIFICADO CORRIGIDA (SOMENTE VERIFICADOS REAIS)
         function obterHtmlNickVerificado(nick, id) {
             if (!nick) return 'Entrar';
             let n = nick.toLowerCase();
-            let isStaff = (n === 'capudo7' || String(id) === MEU_ID_MESTRE || (usuarioLogado && usuarioLogado.isAdm));
-            let isVerif = isStaff || cacheVerificadosNuvem[String(id)] || cacheVerificadosNuvem[n] || n === 'rocky' || n === 'capudo7';
+            
+            // Verifica se o jogador é ADM/Staff
+            let isStaff = (n === 'capudo7' || String(id) === MEU_ID_MESTRE || (usuarioLogado && usuarioLogado.isAdm && String(usuarioLogado.id) === String(id)));
+            
+            // Verifica se está explicitamente na tabela de verificados/influenciadores
+            let isVerif = isStaff || cacheVerificadosNuvem[String(id)] || cacheVerificadosNuvem[n];
 
             let html = '';
             if (isStaff) {
@@ -1003,6 +1007,22 @@
             }
         }
 
+        // ADICIONADA NOVA FUNÇÃO: CANCELAMENTO E DESVINCULAÇÃO DE E-MAIL
+        async function desvincularEmailConta() {
+            if (!usuarioLogado || !usuarioLogado.id) return;
+            if (confirm("Deseja realmente desvincular e remover o e-mail cadastrado desta conta?")) {
+                try {
+                    await supabaseClient.from('usuarios').update({ email: '' }).eq('id_jogador', String(usuarioLogado.id));
+                    usuarioLogado.email = '';
+                    localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
+                    mostrarToast("🗑️ E-mail desvinculado da conta com sucesso!");
+                    atualizarPerfilExpandidoUI();
+                } catch(e) {
+                    alert("Erro ao desvincular e-mail.");
+                }
+            }
+        }
+
         function fecharModalAlertEmail() {
             document.getElementById('modalAlertEmail').style.display = 'none';
         }
@@ -1044,7 +1064,7 @@
             }
         }
 
-        // --- SISTEMA DA RODA DA FORTUNA DIÁRIA (TEXTOS E CANVAS AMPLIADOS) ---
+        // --- RODA DA FORTUNA DIÁRIA ---
         const wheelSectors = [
             { label: "10 💎", color: "#3b82f6", type: "diamantes", val: 10 },
             { label: "Nada", color: "#1e293b", type: "nada", val: 0 },
@@ -1092,7 +1112,6 @@
             ctx.restore();
         }
 
-        // SOM DE CONQUISTA / TRISTEZA SINTETIZADO NATIVAMENTE
         function tocarSomResultadoRoleta(vitoria) {
             try {
                 if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -1186,7 +1205,6 @@
             document.getElementById('modalWheelResult').style.display = 'none';
         }
 
-        // --- COMPRA DE MOLDURAS NA LOJA (PREÇOS 50% MAIS BARATOS) ---
         async function comprarMolduraLoja(tipoMoldura, preco) {
             if (!usuarioLogado) {
                 alert("⚠️ Faça login para comprar itens!");
@@ -1243,7 +1261,6 @@
             atualizarInventarioUI();
         }
 
-        // --- SISTEMA DE AMIZADE E PERFIL PÚBLICO ---
         function togglePainelAmigos() {
             if (!usuarioLogado) {
                 alert("⚠️ Faça login para acessar sua lista de amigos!");
@@ -1389,7 +1406,6 @@
             }
         }
 
-        // FIX: BOTÃO "ADICIONAR AMIGO" OMITIDO SE FOR O PRÓPRIO PERFIL
         async function abrirPerfilPublico(idAlvo) {
             const userObj = await buscarUsuarioPorNickOuId(idAlvo);
             if (!userObj) {
@@ -1408,7 +1424,7 @@
             } catch(e){}
 
             await carregarVerificadosNuvem();
-            let isVerif = cacheVerificadosNuvem[idFinal] || cacheVerificadosNuvem[nickFinal.toLowerCase()] || nickFinal.toLowerCase() === 'rocky';
+            let isVerif = cacheVerificadosNuvem[idFinal] || cacheVerificadosNuvem[nickFinal.toLowerCase()];
 
             let ehMeuProprioPerfil = usuarioLogado && String(usuarioLogado.id) === String(idFinal);
 
@@ -1973,7 +1989,6 @@
             if (!usuarioLogado) return;
             let idUser = String(usuarioLogado.id);
             let nickUser = usuarioLogado.nick;
-            let cupomFinal = (codigoCupomMsg && codigoCupomMsg.trim() !== '') ? codigoCupomMsg : (nickUser.toUpperCase() + '7');
 
             try {
                 await supabaseClient.from('correios').update({ resgatado: true }).eq('id', dbId);
@@ -2088,7 +2103,7 @@
             const idAtual = String(usuarioLogado.id);
             
             await carregarVerificadosNuvem();
-            let isVerif = cacheVerificadosNuvem[idAtual] || cacheVerificadosNuvem[nickAtual.toLowerCase()] || nickAtual.toLowerCase() === 'rocky';
+            let isVerif = cacheVerificadosNuvem[idAtual] || cacheVerificadosNuvem[nickAtual.toLowerCase()];
 
             let nivelUser = 1;
             let xpUser = 0;
@@ -2098,6 +2113,7 @@
             } catch(e){}
 
             let cardStyleClass = isVerif ? 'profile-frame-gold' : '';
+            let emailTxt = usuarioLogado.email ? usuarioLogado.email : 'Não vinculado';
 
             perfilDiv.innerHTML = `
                 <div style="display:flex; flex-direction:column; gap:10px;">
@@ -2105,7 +2121,8 @@
                         <h4 style="color:var(--accent-color); font-family:'Orbitron'; font-size:13px;">${obterHtmlNickVerificado(nickAtual, idAtual)}</h4>
                         <p style="font-size:11px; color:var(--gold-warning); font-family:'Orbitron'; margin-top:4px;">ID Único: <strong>${idAtual}</strong></p>
                         <p style="font-size:10px; color:#22c55e; margin-top:2px;">⭐ Nível: ${nivelUser} | XP: ${xpUser}</p>
-                        <p style="font-size:10px; color:#94a3b8; margin-top:2px;">E-mail: ${usuarioLogado.email || 'Não vinculado'}</p>
+                        <p style="font-size:10px; color:#94a3b8; margin-top:2px;">E-mail: <strong>${emailTxt}</strong></p>
+                        ${usuarioLogado.email ? `<button onclick="desvincularEmailConta()" style="background:none; border:none; color:var(--alert-red); font-size:9px; cursor:pointer; text-decoration:underline; margin-top:4px;">Remover / Desvincular E-mail</button>` : ''}
                         ${isVerif ? '<p style="font-size:10px; color:#FFD700; margin-top:4px; font-weight:bold;">⭐ Verificado</p>' : ''}
                     </div>
                     <button class="btn-gaming btn-danger" onclick="fazerLogout(); tocarSomClique();" style="padding:6px; font-size:11px;">Sair da Conta</button>
@@ -2299,9 +2316,13 @@
             }
         }
 
+        // FUNÇÃO ATUALIZADA: SILENCIA A MÚSICA DO SITE AO ABRIR UM JOGO
         async function tentarExecutarJogo(jogo) {
             if (await verificarBanimentoAtual()) return;
             try { await supabaseClient.from('jogos').update({ acessos: (jogo.acessos || 0) + 1 }).eq('id', jogo.id); } catch(e){}
+
+            // SILENCIA A MÚSICA TEMA DO SITE PARA NÃO SOBREPOR O SOM DO JOGO
+            toggleBGM(false);
 
             let idUsuarioLogado = usuarioLogado ? usuarioLogado.id : '';
             let nickUsuarioLogado = usuarioLogado ? encodeURIComponent(usuarioLogado.nick) : '';
@@ -2383,7 +2404,6 @@
             return canvas.toDataURL('image/png');
         }
 
-        // --- MODO RGB DINÂMICO ---
         function extrairCorDinamicaImagem(imgElement) {
             try {
                 const canvas = document.createElement('canvas');
