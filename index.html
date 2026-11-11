@@ -62,11 +62,45 @@
             margin-right: 4px;
             font-weight: bold;
         }
+
+        /* MOLDURAS DINÂMICAS PARA PERFIL */
+        .frame-cyber_neon {
+            border: 2px solid #00f0ff !important;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.8), inset 0 0 10px rgba(0, 240, 255, 0.3);
+        }
+        .frame-fogo_infernal {
+            border: 2px solid #ef4444 !important;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.9), inset 0 0 12px rgba(239, 68, 68, 0.5);
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(8, 8, 12, 0.98)) !important;
+        }
+        .frame-matrix_verde {
+            border: 2px solid #22c55e !important;
+            box-shadow: 0 0 18px rgba(34, 197, 94, 0.8), inset 0 0 10px rgba(34, 197, 94, 0.4);
+        }
         .profile-frame-gold {
             border: 3px solid #FFD700 !important;
             box-shadow: 0 0 25px rgba(255, 215, 0, 0.7);
             background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(11,15,23,0.95)) !important;
             position: relative;
+        }
+
+        .unread-alert-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gold-warning);
+            color: #000;
+            font-weight: 900;
+            font-size: 11px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            margin-left: 5px;
+            animation: bounceAlert 1s infinite alternate;
+        }
+        @keyframes bounceAlert {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.25); }
         }
 
         .bg-particles {
@@ -84,7 +118,6 @@
             100% { transform: translateY(-10vh) translateX(50px); opacity: 0; }
         }
 
-        /* BARRA DE ALERTA GLOBAL DO ADM */
         .broadcast-ticker {
             background: linear-gradient(90deg, #ef4444, var(--gold-warning), var(--accent-color));
             color: #000; font-family: 'Orbitron'; font-size: 11px; font-weight: 900;
@@ -199,7 +232,7 @@
         .modal-close { position: absolute; top: 12px; right: 15px; background: none; border: none; color: var(--ink); font-size: 22px; cursor: pointer; }
 
         .tab-switcher { display: flex; border-bottom: 2px solid var(--steel-border); margin-bottom: 15px; flex-wrap: wrap; }
-        .tab-btn { flex: 1; background: none; border: none; padding: 8px; font-family: 'Orbitron'; font-weight: 700; font-size: 10px; color: #64748b; cursor: pointer; display: block; }
+        .tab-btn { flex: 1; background: none; border: none; padding: 8px; font-family: 'Orbitron'; font-weight: 700; font-size: 10px; color: #64748b; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .tab-btn.active { color: var(--accent-color); border-bottom: 2px solid var(--accent-color); margin-bottom: -2px; }
 
         .auth-form { display: flex; flex-direction: column; gap: 10px; }
@@ -224,21 +257,10 @@
         .live-embed-container { margin: 10px auto; width: 100%; max-width: 800px; height: 0; padding-bottom: 56.25%; position: relative; background: #000; border-radius: 8px; overflow: hidden; }
         .live-embed-container iframe { position: absolute; top:0; left:0; width: 100%; height: 100%; border: none; }
 
-        /* ESTILOS DA RODA DA FORTUNA AMPLIADA E EXPANDIDA */
         .wheel-section { background: var(--panel-bg); border: 2px solid var(--accent-color); padding: 25px 15px; border-radius: 12px; text-align: center; margin-bottom: 30px; box-shadow: 0 0 30px var(--accent-glow); }
         .wheel-container { position: relative; width: 380px; height: 380px; max-width: 90vw; max-height: 90vw; margin: 20px auto; }
         #canvasWheel { width: 100%; height: 100%; border-radius: 50%; border: 6px solid var(--accent-color); box-shadow: 0 0 30px var(--accent-glow); transition: transform 4.5s cubic-bezier(0.15, 0.9, 0.2, 1); }
         .wheel-pointer { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 16px solid transparent; border-right: 16px solid transparent; border-top: 28px solid var(--gold-warning); z-index: 10; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.9)); }
-
-        @keyframes popInModal {
-            0% { transform: scale(0.5); opacity: 0; }
-            80% { transform: scale(1.05); }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        .modal-wheel-result {
-            animation: popInModal 0.4s ease-out forwards;
-        }
 
         .community-main-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 15px; }
         @media(min-width: 850px) { .community-main-grid { grid-template-columns: 1fr 320px; } }
@@ -258,7 +280,7 @@
         .minichat-container { display: flex; flex-direction: column; height: 180px; background: #000; border: 1px solid var(--steel-border); border-radius: 6px; overflow: hidden; margin-top: 8px; }
         .minichat-messages { flex: 1; padding: 8px; overflow-y: auto; font-size: 11px; display: flex; flex-direction: column; gap: 4px; }
         
-        .chat-msg-item { padding: 4px 6px; border-radius: 4px; background: rgba(255,255,255,0.02); }
+        .chat-msg-item { padding: 4px 6px; border-radius: 4px; background: rgba(255,255,255,0.02); display: flex; justify-content: space-between; align-items: center; }
         .chat-msg-item.mentioned { border-left: 3px solid var(--accent-color); background: rgba(0, 240, 255, 0.08); }
 
         .emoji-picker-bar { display: flex; gap: 4px; margin-top: 5px; overflow-x: auto; padding-bottom: 2px; }
@@ -285,6 +307,9 @@
         .admin-block { background: #000; border: 1px solid var(--steel-border); padding: 12px; border-radius: 8px; display: flex; flex-direction: column; gap: 8px; }
         .admin-game-item { background: #000; border: 1px solid var(--steel-border); padding: 12px; border-radius: 8px; display: flex; flex-direction: column; gap: 8px; }
 
+        .stat-bar-outer { width: 100%; background: #121824; height: 12px; border-radius: 6px; overflow: hidden; margin-top: 4px; }
+        .stat-bar-inner { height: 100%; background: var(--accent-color); width: 0%; transition: width 0.5s; }
+
         .btn-danger { background: rgba(239, 68, 68, 0.15); border-color: var(--alert-red); color: var(--alert-red); }
         .btn-success { background: rgba(34, 197, 94, 0.15); border-color: #22c55e; color: #22c55e; }
 
@@ -293,9 +318,8 @@
 </head>
 <body id="mainBody" class="theme-oled">
 
-    <!-- BARRA DE ALERTA GLOBAL (BROADCAST DO ADM) -->
     <div class="broadcast-ticker" id="broadcastTicker">
-        <marquee id="broadcastText">⚡ AVISO GLOBAL: Bem-vindos ao WaveCombat Hub v0.460!</marquee>
+        <marquee id="broadcastText">⚡ AVISO GLOBAL: Bem-vindos ao WaveCombat Hub!</marquee>
     </div>
 
     <div class="bg-particles" id="bgParticles"></div>
@@ -325,27 +349,43 @@
             <li>
                 <div class="user-nav-wrapper">
                     <button class="btn-toggle-adm-nav" id="btnToggleAdmNav" onclick="alternarPainelAdm(); fecharMenuMobile(); tocarSomClique();" style="display:none;">⚙️ ADM</button>
-                    <button class="btn-auth-nav" id="btnAuthNav" onclick="abrirModalAuth(); fecharMenuMobile(); tocarSomClique();">Entrar</button>
+                    <button class="btn-auth-nav" id="btnAuthNav" onclick="abrirModalAuth(); fecharMenuMobile(); tocarSomClique();">Entrar <span id="navUnreadBadge"></span></button>
                 </div>
             </li>
         </ul>
     </nav>
 
-    <!-- MODAL GAMER DE RESULTADO DA ROLETA -->
-    <div class="modal-overlay" id="modalWheelResult" style="z-index: 3800;">
-        <div class="modal-card modal-wheel-result" id="modalWheelCard" style="text-align: center; border-width: 3px;">
-            <div id="wheelResultIcon" style="font-size: 55px; margin-bottom: 10px;">🎁</div>
-            <h2 id="wheelResultTitle" style="font-family:'Orbitron'; font-size: 20px; color:var(--accent-color); margin-bottom: 8px;">PARABÉNS!</h2>
-            <p id="wheelResultMessage" style="font-size: 13px; color: #fff; margin-bottom: 20px; line-height: 1.4;"></p>
-            <button class="btn-gaming" onclick="fecharModalWheelResult()" style="width: 100%; padding: 12px; font-size: 12px; background: var(--accent-color); color: #000;">ENTENDIDO!</button>
+    <!-- MODAL DE PRÉ-VISUALIZAÇÃO DE MOLDURA DA LOJA -->
+    <div class="modal-overlay" id="modalPreviewMoldura" style="z-index: 3800;">
+        <div class="modal-card" style="text-align: center; border-color: var(--accent-color);">
+            <button class="modal-close" onclick="fecharModalPreviewMoldura()">&times;</button>
+            <h3 style="font-family:'Orbitron'; color:var(--accent-color); margin-bottom:10px;">👁️ Pré-visualização de Moldura</h3>
+            <p style="font-size:11px; color:#94a3b8; margin-bottom:15px;">Veja como seu perfil ficará equipado com este item:</p>
+            <div id="previewMolduraBox" style="padding: 15px; border-radius: 8px; margin-bottom: 15px; background: #000;">
+                <h4 id="previewNickText" style="font-family:'Orbitron'; font-size: 14px; color: #fff;">--</h4>
+                <p style="font-size: 10px; color: var(--gold-warning); margin-top: 4px;">ID: 12345678</p>
+            </div>
+            <button class="btn-gaming" id="btnComprarPreviewDirect" style="width: 100%; font-size: 11px; padding: 10px;">Comprar Agora</button>
         </div>
     </div>
 
-    <!-- MODAL DE ALERTA DE CADASTRO DE E-MAIL PARA CONTAS EXISTENTES -->
+    <!-- MODAL DE DENÚNCIA DE JOGADOR -->
+    <div class="modal-overlay" id="modalDenuncia" style="z-index: 3800;">
+        <div class="modal-card" style="text-align: center; border-color: var(--alert-red);">
+            <button class="modal-close" onclick="fecharModalDenuncia()">&times;</button>
+            <h3 style="font-family:'Orbitron'; color:var(--alert-red); margin-bottom:10px;">🚨 Denunciar Jogador</h3>
+            <p style="font-size:11px; color:#94a3b8; margin-bottom:12px;">Relate um comportamento inadequado para a Staff:</p>
+            <input type="text" id="denunciaTargetNick" class="auth-input" readonly style="margin-bottom:10px; text-align:center;">
+            <textarea id="denunciaMotivoText" class="auth-input" placeholder="Descreva o motivo da denúncia (uso de hacks, ofensas no chat, etc)..." style="height:80px; resize:none; margin-bottom:12px;"></textarea>
+            <button class="btn-gaming btn-danger" onclick="enviarDenunciaJogador()" style="width:100%; font-size:11px; padding:10px;">Enviar Denúncia</button>
+        </div>
+    </div>
+
+    <!-- MODAL DE ALERTA DE CADASTRO DE E-MAIL -->
     <div class="modal-overlay" id="modalAlertEmail" style="z-index: 3600;">
         <div class="modal-card" style="text-align: center; border-color: var(--gold-warning);">
             <h3 style="font-family:'Orbitron'; color:var(--gold-warning); margin-bottom:10px;">⚠️ Lembrete de Segurança</h3>
-            <p style="font-size:12px; color:#94a3b8; margin-bottom:15px;">Sua conta ainda não possui um e-mail de recuperação vinculado. Cadastre um e-mail para não perder o acesso no futuro:</p>
+            <p style="font-size:12px; color:#94a3b8; margin-bottom:15px;">Sua conta ainda não possui um e-mail de recuperação vinculado. Cadastre um e-mail para não perder o acesso:</p>
             <form onsubmit="salvarEmailRecuperacaoDirect(event)" style="display:flex; flex-direction:column; gap:10px;">
                 <input type="email" id="inputVinculoEmailPrompt" placeholder="Digite seu e-mail principal..." class="auth-input" required style="text-align:center;">
                 <div style="display:flex; gap:10px;">
@@ -364,7 +404,7 @@
                 <button class="tab-btn" id="tabRegisterBtn" onclick="alternarAba('registro'); tocarSomClique();">Criar Conta</button>
                 <button class="tab-btn" id="tabPerfilBtn" onclick="alternarAba('perfil'); tocarSomClique();">Perfil</button>
                 <button class="tab-btn" id="tabInventarioBtn" onclick="alternarAba('inventario'); tocarSomClique();">🎒 Inventário</button>
-                <button class="tab-btn" id="tabCorreioBtn" onclick="alternarAba('correio'); tocarSomClique();">📬 Correio</button>
+                <button class="tab-btn" id="tabCorreioBtn" onclick="alternarAba('correio'); tocarSomClique();">📬 Correio <span id="tabCorreioAlertBadge"></span></button>
             </div>
             
             <div class="form-panel active" id="panelLogin">
@@ -404,76 +444,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE CONFIRMAÇÃO DE DIAMANTES (ADM) -->
-    <div class="modal-overlay" id="modalConfirmarDiamantes" style="z-index: 3500;">
-        <div class="modal-card" style="text-align: center; border-color: var(--accent-color);">
-            <h3 id="modalDiamantesTitulo" style="font-family:'Orbitron'; color:var(--accent-color); margin-bottom:10px;">⚡ Confirmar Transação</h3>
-            <p style="font-size:12px; color:#94a3b8; margin-bottom:15px;">Por favor, confira os dados do jogador:</p>
-            <div style="background:#000; border:1px solid var(--steel-border); padding:15px; border-radius:8px; margin-bottom:15px; text-align:left; font-size:12px; display:flex; flex-direction:column; gap:8px;">
-                <div>👤 Nick: <strong id="confNick" style="color:#fff;">--</strong></div>
-                <div>🆔 ID Único: <strong id="confId" style="color:var(--gold-warning);">--</strong></div>
-                <div>💎 Quantidade: <strong id="confQtd" style="color:var(--accent-color);">--</strong></div>
-                <div>💰 Saldo Atual: <strong id="confSaldoAtual" style="color:#22c55e;">--</strong></div>
-            </div>
-            <div style="display:flex; gap:10px;">
-                <button class="btn-gaming btn-danger" onclick="fecharModalConfirmarDiamantes()" style="flex:1; padding:10px; font-size:11px;">Cancelar</button>
-                <button class="btn-gaming" id="btnConfirmarAcaoDiamantes" style="flex:1; padding:10px; font-size:11px; background:#22c55e; color:#000;">Confirmar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL DE CONFIRMAÇÃO DE EXCLUSÃO DE CONTA (ADM) -->
-    <div class="modal-overlay" id="modalConfirmarExclusao" style="z-index: 3500;">
-        <div class="modal-card" style="text-align: center; border-color: var(--alert-red);">
-            <h3 style="font-family:'Orbitron'; color:var(--alert-red); margin-bottom:10px;">⚠️ Confirmar Exclusão de Conta</h3>
-            <p style="font-size:12px; color:#94a3b8; margin-bottom:15px;">Tem certeza que deseja apagar permanentemente esta conta?</p>
-            <div style="background:#000; border:1px solid var(--steel-border); padding:15px; border-radius:8px; margin-bottom:15px; text-align:left; font-size:12px; display:flex; flex-direction:column; gap:8px;">
-                <div>👤 Nick: <strong id="confDelNick" style="color:#fff;">--</strong></div>
-                <div>🆔 ID Único: <strong id="confDelId" style="color:var(--gold-warning);">--</strong></div>
-            </div>
-            <div style="display:flex; gap:10px;">
-                <button class="btn-gaming" onclick="fecharModalConfirmarExclusao()" style="flex:1; padding:10px; font-size:11px;">Cancelar</button>
-                <button class="btn-gaming btn-danger" id="btnConfirmarAcaoExclusao" style="flex:1; padding:10px; font-size:11px;">Sim, Excluir</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL PARA EXIBIR O QR CODE PIX -->
-    <div class="modal-overlay" id="pixModal">
-        <div class="modal-card" style="text-align: center;">
-            <button class="modal-close" onclick="fecharModalPix()">&times;</button>
-            <h3 style="font-family:'Orbitron'; color:var(--accent-color); margin-bottom:10px;">Pagamento via Pix</h3>
-            <p style="font-size:12px; color:#94a3b8; margin-bottom:12px;">Escaneie o QR Code abaixo ou copie o código Pix:</p>
-            
-            <div style="margin-bottom:10px;">
-                <input type="text" id="inputCupomRecarga" placeholder="Possui Cupom de Influenciador? Digite aqui" class="auth-input" style="font-size:11px; text-align:center; border-color:var(--gold-warning);">
-            </div>
-
-            <div id="pixQrContainer" style="margin: 15px 0; display: flex; justify-content: center;"></div>
-            
-            <input type="text" id="pixCopiaColaInput" class="auth-input" readonly style="font-size:10px; margin-bottom:10px;">
-            <button class="btn-gaming" onclick="copiarPixCopiaCola()" style="width:100%; padding:8px; font-size:11px;">📋 Copiar Código Pix</button>
-            
-            <p style="font-size:10px; color:var(--gold-warning); margin-top:12px;">⚡ Assim que confirmado, os diamantes caem na sua conta!</p>
-        </div>
-    </div>
-
-    <!-- MODAL DE FESTA / RECOMPENSA DE VERIFICADO -->
-    <div class="modal-overlay" id="modalVerificadoPremio" style="z-index: 3000;">
-        <div class="modal-card" style="text-align: center; border-color: #FFD700; box-shadow: 0 0 50px rgba(255,215,0,0.8);">
-            <h2 style="font-family:'Orbitron'; color:#FFD700; margin-bottom:10px;">🎉 PARABÉNS! VOCÊ É VERIFICADO! ⭐</h2>
-            <p style="font-size:12px; color:#fff; margin-bottom:15px;">Você resgatou com sucesso o selo oficial de prestígio:</p>
-            <div style="background:#000; border:1px solid #FFD700; padding:15px; border-radius:8px; margin-bottom:15px; text-align:left; font-size:11px; display:flex; flex-direction:column; gap:6px;">
-                <div>✨ Símbolo <strong>V Dourado</strong> à frente do seu Nick</div>
-                <div>🖼️ Moldura Dourada Exclusiva para Perfil</div>
-                <div>💎 <strong>5.000 Diamantes</strong> creditados na sua conta</div>
-                <div id="infoCupomGeradoPremio" style="color:var(--gold-warning); font-weight:bold;"></div>
-            </div>
-            <button class="btn-gaming" onclick="fecharModalVerificadoPremio()" style="background:#FFD700; color:#000; width:100%; padding:10px;">Curtir a Festa! 🥳</button>
-        </div>
-    </div>
-
-    <!-- MODAL DE PERFIL PÚBLICO CLICÁVEL -->
+    <!-- MODAL PERFIL PÚBLICO CLICÁVEL -->
     <div class="modal-overlay" id="modalPerfilPublico" style="z-index: 3500;">
         <div class="modal-card" style="text-align: center; border-color: var(--accent-color);">
             <button class="modal-close" onclick="fecharModalPerfilPublico()">&times;</button>
@@ -481,12 +452,7 @@
         </div>
     </div>
 
-    <!-- BOTÃO FLUTUANTE PARA ABRIR A LISTA DE AMIGOS -->
-    <button onclick="togglePainelAmigos()" style="position: fixed; bottom: 80px; right: 20px; z-index: 1500; background: var(--accent-color); color: #000; border: none; padding: 10px 14px; border-radius: 50px; font-family: 'Orbitron'; font-weight: bold; font-size: 11px; cursor: pointer; box-shadow: 0 0 20px var(--accent-glow);">
-        👥 Amigos (<span id="countAmigosOnline">0</span>)
-    </button>
-
-    <!-- GAVETA / PAINEL DE AMIGOS -->
+    <!-- GAVETA DE AMIGOS -->
     <div id="painelAmigos" style="position: fixed; top: 0; right: -320px; width: 310px; height: 100vh; background: var(--panel-bg); border-left: 2px solid var(--accent-color); z-index: 2500; transition: 0.3s ease; padding: 20px; display: flex; flex-direction: column; box-shadow: -10px 0 30px rgba(0,0,0,0.8);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--steel-border); padding-bottom: 10px;">
             <h3 style="font-family: 'Orbitron'; font-size: 14px; color: var(--accent-color);">👥 Meus Amigos</h3>
@@ -501,23 +467,15 @@
         <div style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; font-size: 11px;">
             <div>
                 <h4 style="color: #22c55e; font-family: 'Orbitron'; font-size: 11px; margin-bottom: 6px;">🟢 Online (<span id="labelQtdOnline">0</span>)</h4>
-                <div id="listaAmigosOnline" style="display: flex; flex-direction: column; gap: 6px;">
-                    <span style="color: #64748b; font-style: italic;">Nenhum amigo online.</span>
-                </div>
+                <div id="listaAmigosOnline" style="display: flex; flex-direction: column; gap: 6px;"></div>
             </div>
-
             <div style="margin-top: 10px;">
                 <h4 style="color: #64748b; font-family: 'Orbitron'; font-size: 11px; margin-bottom: 6px;">⚪ Offline (<span id="labelQtdOffline">0</span>)</h4>
-                <div id="listaAmigosOffline" style="display: flex; flex-direction: column; gap: 6px;">
-                    <span style="color: #64748b; font-style: italic;">Nenhum amigo offline.</span>
-                </div>
+                <div id="listaAmigosOffline" style="display: flex; flex-direction: column; gap: 6px;"></div>
             </div>
-
             <div style="margin-top: 10px;">
                 <h4 style="color: var(--gold-warning); font-family: 'Orbitron'; font-size: 11px; margin-bottom: 6px;">📩 Pedidos Pendentes</h4>
-                <div id="listaPedidosPendentes" style="display: flex; flex-direction: column; gap: 6px;">
-                    <span style="color: #64748b; font-style: italic;">Nenhum pedido pendente.</span>
-                </div>
+                <div id="listaPedidosPendentes" style="display: flex; flex-direction: column; gap: 6px;"></div>
             </div>
         </div>
     </div>
@@ -536,7 +494,7 @@
         
         <div style="display:flex; gap:10px; justify-content:center; align-items:center; flex-wrap:wrap; margin-top:8px;">
             <button class="btn-pwa-install" id="btnPwaInstall" onclick="instalarAppMobile()">📲 INSTALAR APLICATIVO DO SITE</button>
-            <button class="btn-pwa-install" id="btnPushNotif" onclick="solicitarPermissaoNotificacao()" style="background:#3b82f6; display:none;">🔔 ATIVAR NOTIFICAÇÕES</button>
+            <button class="btn-pwa-install" id="btnPushNotif" onclick="solicitarPermissaoNotificacao()" style="background:#3b82f6; display:none;">🔔 ATIVAR NOTIFICAÇÕES PUSH</button>
         </div>
     </header>
 
@@ -549,7 +507,6 @@
                 <option value="Arcade">Arcade</option>
                 <option value="Estratégia">Estratégia</option>
                 <option value="Multiplayer">Multiplayer</option>
-                <option value="favoritos">⭐ Favoritos</option>
             </select>
         </div>
         
@@ -566,40 +523,15 @@
         </div>
         <div class="player-controls-bar" id="playerControlsBar">
             <button class="btn-gaming" onclick="toggleTelaCheia(); tocarSomClique();" style="padding:8px 14px; font-size:11px;">⛶ Tela Cheia</button>
-            <button class="btn-gaming" id="btnMicToggle" onclick="toggleMicrofoneVoice()" style="padding:8px 14px; font-size:11px; background:#22c55e; color:#000;">🎤 Mic: ON</button>
-            <button class="btn-gaming" id="btnAudioToggle" onclick="toggleAudioVoice()" style="padding:8px 14px; font-size:11px; background:#3b82f6; color:#fff;">🔊 Som: ON</button>
             <button class="btn-gaming btn-danger" onclick="encerrarJogo(); tocarSomClique();" style="padding:8px 14px; font-size:11px;">✖ Sair do Game</button>
         </div>
-
-        <div class="site-leaderboard-section" id="siteLeaderboardSection">
-            <h3 style="color:var(--accent-color); font-family:'Orbitron'; font-size:14px; text-align:center;">🏆 RANKING GLOBAL DE JOGADORES</h3>
-            <div class="site-leaderboard-list" id="siteLeaderboardListContainer">
-                <p style="color:#94a3b8; text-align:center; font-size:11px;">Carregando ranking global...</p>
-            </div>
-        </div>
     </section>
 
-    <!-- SEÇÃO DE EVENTOS: RODA DA FORTUNA DIÁRIA -->
-    <section id="eventos">
-        <h2 class="section-title">🎡 Eventos & Recompensas Diárias</h2>
-        <div class="wheel-section">
-            <h3 style="font-family:'Orbitron'; color:var(--accent-color); font-size:16px; margin-bottom:6px;">🎰 Roda da Fortuna Diária</h3>
-            <p style="font-size:12px; color:#94a3b8; margin-bottom:15px;">Gire a roleta uma vez por dia para ganhar prêmios incríveis!</p>
-            
-            <div class="wheel-container">
-                <div class="wheel-pointer"></div>
-                <canvas id="canvasWheel" width="380" height="380"></canvas>
-            </div>
-
-            <button class="btn-gaming" onclick="girarRodaDaFortuna()" id="btnGirarRoleta" style="margin-top: 15px; padding: 12px 30px; background: #22c55e; color: #000; font-size: 14px;">🎡 GIRAR ROLETA AGORA</button>
-        </div>
-    </section>
-
-    <!-- SEÇÃO DA LOJA DE DIAMANTES E ITENS -->
+    <!-- SEÇÃO DA LOJA COM PRÉ-VISUALIZAÇÃO DE MOLDURAS -->
     <section id="lojaDiamantes">
         <h2 class="section-title">💎 Loja de Diamantes & Molduras</h2>
         
-        <div style="background: var(--panel-bg); border: 2px solid var(--accent-color); padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; box-shadow: 0 0 20px var(--accent-glow);">
+        <div style="background: var(--panel-bg); border: 2px solid var(--accent-color); padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
             <div>
                 <span style="font-size: 12px; color: #94a3b8;">Seu Saldo Atual:</span>
                 <h3 style="font-family: 'Orbitron'; color: #fff; font-size: 20px;">💎 <span id="userDiamondBalance">0</span> Diamantes</h3>
@@ -607,76 +539,34 @@
             <button class="btn-gaming" onclick="carregarSaldoDiamantesSite()" style="font-size: 11px; padding: 6px 12px;">🔄 Atualizar Saldo</button>
         </div>
 
-        <!-- ABA DE ITENS COSMÉTICOS E MOLDURAS -->
         <h3 style="font-family:'Orbitron'; font-size:13px; color:var(--gold-warning); margin-bottom:12px;">🎨 Molduras de Perfil Disponíveis</h3>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px;">
             <div class="panel-card" style="text-align: center; border: 1px solid #3b82f6;">
                 <h4 style="font-family: 'Orbitron'; color: #3b82f6;">Moldura Cyber Neon</h4>
                 <p style="font-size: 10px; color: #94a3b8; margin: 6px 0;">Borda azul brilhante futurista</p>
                 <p style="font-size: 13px; color: var(--gold-warning); font-weight: bold; margin-bottom: 8px;">💎 150 Diamantes</p>
-                <button class="btn-gaming" onclick="comprarMolduraLoja('cyber_neon', 150)" style="width: 100%; font-size: 10px; padding: 6px;">Comprar Item</button>
+                <div style="display:flex; gap:6px;">
+                    <button class="btn-gaming" onclick="abrirPreviewMoldura('cyber_neon', 150)" style="flex:1; font-size:10px; padding:6px; background:#3b82f6; color:#fff;">👁️ Testar</button>
+                    <button class="btn-gaming" onclick="comprarMolduraLoja('cyber_neon', 150)" style="flex:1; font-size:10px; padding:6px;">Comprar</button>
+                </div>
             </div>
             <div class="panel-card" style="text-align: center; border: 1px solid #ef4444;">
                 <h4 style="font-family: 'Orbitron'; color: #ef4444;">Moldura Fogo Infernal</h4>
                 <p style="font-size: 10px; color: #94a3b8; margin: 6px 0;">Efeito brasa vermelha intensa</p>
                 <p style="font-size: 13px; color: var(--gold-warning); font-weight: bold; margin-bottom: 8px;">💎 250 Diamantes</p>
-                <button class="btn-gaming" onclick="comprarMolduraLoja('fogo_infernal', 250)" style="width: 100%; font-size: 10px; padding: 6px;">Comprar Item</button>
+                <div style="display:flex; gap:6px;">
+                    <button class="btn-gaming" onclick="abrirPreviewMoldura('fogo_infernal', 250)" style="flex:1; font-size:10px; padding:6px; background:#ef4444; color:#fff;">👁️ Testar</button>
+                    <button class="btn-gaming" onclick="comprarMolduraLoja('fogo_infernal', 250)" style="flex:1; font-size:10px; padding:6px;">Comprar</button>
+                </div>
             </div>
             <div class="panel-card" style="text-align: center; border: 1px solid #22c55e;">
                 <h4 style="font-family: 'Orbitron'; color: #22c55e;">Moldura Matrix Verde</h4>
                 <p style="font-size: 10px; color: #94a3b8; margin: 6px 0;">Estilo código binário hacker</p>
                 <p style="font-size: 13px; color: var(--gold-warning); font-weight: bold; margin-bottom: 8px;">💎 200 Diamantes</p>
-                <button class="btn-gaming" onclick="comprarMolduraLoja('matrix_verde', 200)" style="width: 100%; font-size: 10px; padding: 6px;">Comprar Item</button>
-            </div>
-        </div>
-
-        <h3 style="font-family:'Orbitron'; font-size:13px; color:var(--accent-color); margin-bottom:12px;">💎 Pacotes de Diamantes Pix</h3>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px;">
-            <div class="panel-card" style="text-align: center; border: 1px solid var(--steel-border);">
-                <h4 style="font-family: 'Orbitron'; color: var(--accent-color);">110 💎</h4>
-                <p style="font-size: 10px; color: #22c55e;">+10% Bônus Incluído</p>
-                <p style="font-size: 14px; color: var(--gold-warning); font-weight: bold; margin: 8px 0;">R$ 3,00</p>
-                <button class="btn-gaming" onclick="gerarPixMercadoPago(3.00, 110)" style="width: 100%; font-size: 11px; padding: 8px;">Comprar Pix</button>
-            </div>
-
-            <div class="panel-card" style="text-align: center; border: 1px solid var(--steel-border);">
-                <h4 style="font-family: 'Orbitron'; color: var(--accent-color);">330 💎</h4>
-                <p style="font-size: 10px; color: #22c55e;">+10% Bônus Incluído</p>
-                <p style="font-size: 14px; color: var(--gold-warning); font-weight: bold; margin: 8px 0;">R$ 6,00</p>
-                <button class="btn-gaming" onclick="gerarPixMercadoPago(6.00, 330)" style="width: 100%; font-size: 11px; padding: 8px;">Comprar Pix</button>
-            </div>
-
-            <div class="panel-card" style="text-align: center; border: 1px solid var(--steel-border);">
-                <h4 style="font-family: 'Orbitron'; color: var(--accent-color);">660 💎</h4>
-                <p style="font-size: 10px; color: #22c55e;">+10% Bônus Incluído</p>
-                <p style="font-size: 14px; color: var(--gold-warning); font-weight: bold; margin: 8px 0;">R$ 9,00</p>
-                <button class="btn-gaming" onclick="gerarPixMercadoPago(9.00, 660)" style="width: 100%; font-size: 11px; padding: 8px;">Comprar Pix</button>
-            </div>
-
-            <div class="panel-card" style="text-align: center; border: 1px solid var(--steel-border);">
-                <h4 style="font-family: 'Orbitron'; color: var(--accent-color);">1.320 💎</h4>
-                <p style="font-size: 10px; color: #22c55e;">+10% Bônus Incluído</p>
-                <p style="font-size: 14px; color: var(--gold-warning); font-weight: bold; margin: 8px 0;">R$ 18,00</p>
-                <button class="btn-gaming" onclick="gerarPixMercadoPago(18.00, 1320)" style="width: 100%; font-size: 11px; padding: 8px;">Comprar Pix</button>
-            </div>
-
-            <div class="panel-card" style="text-align: center; border: 1px solid var(--steel-border);">
-                <h4 style="font-family: 'Orbitron'; color: var(--accent-color);">3.960 💎</h4>
-                <p style="font-size: 10px; color: #22c55e;">+10% Bônus Incluído</p>
-                <p style="font-size: 14px; color: var(--gold-warning); font-weight: bold; margin: 8px 0;">R$ 32,00</p>
-                <button class="btn-gaming" onclick="gerarPixMercadoPago(32.00, 3960)" style="width: 100%; font-size: 11px; padding: 8px;">Comprar Pix</button>
-            </div>
-        </div>
-    </section>
-
-    <!-- PLAYER DE LIVE/VÍDEO -->
-    <section id="transmissaoAoVivo">
-        <div class="live-section-box" id="liveSectionBox">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                <h3 style="margin:0; font-size:13px; color:var(--accent-color); font-family:'Orbitron';">🔴 TRANSMISSÃO / VÍDEO DO CRIADOR</h3>
-            </div>
-            <div class="live-embed-container">
-                <iframe id="youtubeLiveIframe" src="about:blank" allowfullscreen></iframe>
+                <div style="display:flex; gap:6px;">
+                    <button class="btn-gaming" onclick="abrirPreviewMoldura('matrix_verde', 200)" style="flex:1; font-size:10px; padding:6px; background:#22c55e; color:#000;">👁️ Testar</button>
+                    <button class="btn-gaming" onclick="comprarMolduraLoja('matrix_verde', 200)" style="flex:1; font-size:10px; padding:6px;">Comprar</button>
+                </div>
             </div>
         </div>
     </section>
@@ -687,1659 +577,336 @@
             <div class="panel-card">
                 <h3>🌐 Redes Sociais & Chat Global</h3>
                 <div class="social-buttons-flex" style="margin-bottom:12px;">
-                    <a href="https://discord.gg/FaeYug6XBx" target="_blank" class="social-btn-item btn-discord-net" onclick="tocarSomClique()">🎮 Discord Oficial (Convidar Amigos)</a>
-                    <a href="https://youtube.com/@capudooficial7?si=NSvfxpSzswVEStdu" target="_blank" class="social-btn-item btn-youtube-net" onclick="tocarSomClique()">▶ siga o criador do jogo aqui</a>
-                    <a href="https://www.instagram.com/capudooficial.7/" target="_blank" class="social-btn-item btn-instagram-net" onclick="tocarSomClique()">📸 Instagram Oficial</a>
+                    <a href="https://discord.gg/FaeYug6XBx" target="_blank" class="social-btn-item btn-discord-net">🎮 Discord Oficial</a>
+                    <a href="https://youtube.com/@capudooficial7" target="_blank" class="social-btn-item btn-youtube-net">▶ siga o criador do jogo aqui</a>
                 </div>
 
                 <h4 style="font-family:'Orbitron'; font-size:11px; color:var(--accent-color); margin-bottom:4px;">💬 Chat Global ao Vivo</h4>
                 <div class="minichat-container">
-                    <div class="minichat-messages" id="miniChatMessages">
-                        <div style="color:#64748b; font-style:italic;">Carregando mensagens da comunidade...</div>
-                    </div>
-                    
-                    <div class="emoji-picker-bar">
-                        <button class="emoji-btn" onclick="inserirEmojiChat('🔥')">🔥</button>
-                        <button class="emoji-btn" onclick="inserirEmojiChat('🎮')">🎮</button>
-                        <button class="emoji-btn" onclick="inserirEmojiChat('🚀')">🚀</button>
-                        <button class="emoji-btn" onclick="inserirEmojiChat('🏆')">🏆</button>
-                        <button class="emoji-btn" onclick="inserirEmojiChat('💎')">💎</button>
-                        <button class="emoji-btn" onclick="inserirEmojiChat('😎')">😎</button>
-                        <button class="emoji-btn" onclick="inserirEmojiChat(' GG ')">GG</button>
-                    </div>
-
+                    <div class="minichat-messages" id="miniChatMessages"></div>
                     <div class="minichat-input-box">
-                        <input type="text" id="miniChatInput" placeholder="Digite sua mensagem... (Use @ para mencionar)" maxlength="100" onkeypress="checarEnvioChat(event)">
-                        <button onclick="enviarMensagemChat(); tocarSomClique();">Enviar</button>
-                    </div>
-                </div>
-            </div>
-
-            <div style="display:flex; flex-direction:column; gap:15px;">
-                <div class="qrcode-box">
-                    <h4 style="font-family:'Orbitron'; font-size:11px; color:var(--accent-color); margin-bottom:6px;">🎁 Doação LivePix</h4>
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://livepix.gg/capudooficial" alt="QR Code LivePix" class="qrcode-img">
-                    <a href="https://livepix.gg/capudooficial" target="_blank" class="btn-qrcode-link" onclick="tocarSomClique()">🔗 Acessar Link LivePix</a>
-                </div>
-
-                <div class="panel-card" style="padding:10px;">
-                    <h3 style="font-size:12px; margin-bottom:8px;">⚙️ Preferências do Hub</h3>
-                    <div style="display:flex; flex-direction:column; gap:8px; font-size:11px;">
-                        <label style="display:flex; justify-content:space-between; align-items:center;">
-                            Efeitos Sonoros Arcade:
-                            <input type="checkbox" id="checkAudioSFX" checked onchange="toggleAudioSFX(this.checked)">
-                        </label>
-                        <label style="display:flex; justify-content:space-between; align-items:center;">
-                            Música Tema Arcade (BGM):
-                            <input type="checkbox" id="checkBGM" checked onchange="toggleBGM(this.checked)">
-                        </label>
-                        <label style="display:flex; flex-direction:column; gap:4px;">
-                            Volume da Música:
-                            <input type="range" id="rangeBGMVolume" min="0" max="100" value="50" oninput="setBGMVolume(this.value)">
-                        </label>
-                        <label style="display:flex; justify-content:space-between; align-items:center;">
-                            Tema OLED (Preto Absoluto):
-                            <input type="checkbox" id="checkThemeOLED" checked onchange="toggleThemeOLED(this.checked)">
-                        </label>
+                        <input type="text" id="miniChatInput" placeholder="Digite sua mensagem..." maxlength="100" onkeypress="checarEnvioChat(event)">
+                        <button onclick="enviarMensagemChat()">Enviar</button>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- PAINEL ADMINISTRATIVO EXPANDIDO -->
+    <!-- PAINEL ADMINISTRATIVO COM ESTATÍSTICAS, LOGS E CORREIO EM MASSA -->
     <div class="admin-section" id="adminSection" style="display:none;">
         <div class="admin-container">
             <h3 style="color:var(--accent-color); font-family:'Orbitron'; text-align:center; margin-bottom:15px; font-size:16px;">⚙️ PAINEL ADMINISTRATIVO</h3>
 
-            <!-- CONFIGURAR AVISO GLOBAL DO ADM -->
-            <div class="admin-grid-tools">
-                <div class="admin-block">
-                    <h4 style="color:var(--gold-warning);">📢 Enviar Alerta Global (Broadcast)</h4>
-                    <input type="text" id="adminBroadcastInput" placeholder="Digite o texto do alerta em tempo real..." class="auth-input" style="font-size:11px; margin-bottom:6px;">
-                    <button type="button" class="btn-gaming" onclick="salvarBroadcastAdm()" style="font-size:10px; padding:6px; background:var(--gold-warning); color:#000;">⚡ Transmitir Alerta Global</button>
-                </div>
-                <div class="admin-block">
-                    <h4>🖼️ Alterar Logo Principal</h4>
-                    <input type="file" id="admLogoFile" accept="image/*">
-                    <button type="button" class="btn-gaming" onclick="alterarLogoSite(); tocarSomLevelUp();" style="font-size:11px; padding:6px;">Atualizar Logo na Nuvem</button>
+            <!-- ESTATÍSTICAS E GRÁFICOS DO HUB -->
+            <div class="admin-block" style="margin-bottom:15px; border-color:var(--accent-color);">
+                <h4 style="color:var(--accent-color);">📊 Gráficos de Acessos & Desempenho dos Jogos</h4>
+                <div id="adminGraficosContainer" style="display:flex; flex-direction:column; gap:8px; margin-top:8px;"></div>
+            </div>
+
+            <!-- ENVIO DE MENSAGENS E RECOMPENSAS EM MASSA -->
+            <div class="admin-block" style="margin-bottom:15px; border-color:var(--gold-warning);">
+                <h4 style="color:var(--gold-warning);">📢 Envio de Mensagens & Diamantes em Massa (Todos Jogadores)</h4>
+                <input type="text" id="admMassTitulo" placeholder="Título do Correio em Massa" class="auth-input" style="font-size:11px; margin-bottom:6px;">
+                <textarea id="admMassMensagem" placeholder="Escreva a mensagem para todos os usuários cadastrados..." class="auth-input" style="font-size:11px; height:50px; resize:none; margin-bottom:6px;"></textarea>
+                <div style="display:flex; gap:8px;">
+                    <input type="number" id="admMassDiamantes" placeholder="Qtd Diamantes Brinde (Opcional)" class="auth-input" style="font-size:11px; flex:1;">
+                    <button type="button" class="btn-gaming" onclick="enviarCorreioEmMassaAdm()" style="font-size:10px; background:var(--gold-warning); color:#000; padding:8px 12px;">📬 Disparar Para Todos</button>
                 </div>
             </div>
 
-            <div class="admin-grid-tools">
-                <div class="admin-block">
-                    <h4>🔴 Gerenciar Transmissão ao Vivo</h4>
-                    <button type="button" id="btnToggleLiveStatus" class="btn-gaming" onclick="alternarStatusLiveAdm(); tocarSomClique();" style="font-size:11px; padding:8px; margin-bottom:6px; background:#ef4444; color:#fff;">LIVE: OFFLINE</button>
-                    <input type="text" id="inputAdminLiveUrl" placeholder="Cole o link do YouTube aqui" class="auth-input" style="font-size:11px; margin-bottom:6px;">
-                    <button type="button" class="btn-gaming" onclick="salvarConfigLiveAdm(); tocarSomLevelUp();" style="font-size:10px; padding:6px;">💾 Salvar Live na Nuvem</button>
-                </div>
-                <div class="admin-block">
-                    <h4>💎 Gestão Manual de Diamantes</h4>
-                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                        <input type="text" id="admTargetId" placeholder="ID ou Nick" class="auth-input" style="font-size:11px; flex:1;">
-                        <input type="number" id="admTargetQtd" placeholder="Qtd Diamantes" class="auth-input" style="font-size:11px; flex:1;">
-                        <button type="button" class="btn-gaming" onclick="prepararAcaoDiamantes('enviar')" style="font-size:10px; padding:6px; background:#22c55e; color:#000;">⚡ Enviar</button>
-                        <button type="button" class="btn-gaming btn-danger" onclick="prepararAcaoDiamantes('remover')" style="font-size:10px; padding:6px;">🔻 Remover</button>
-                    </div>
-                </div>
+            <!-- DENÚNCIAS RECEBIDAS -->
+            <div class="admin-block" style="margin-bottom:15px; border-color:var(--alert-red);">
+                <h4 style="color:var(--alert-red);">🚨 Denúncias de Jogadores Recebidas</h4>
+                <div id="adminListaDenunciasContainer" style="max-height:150px; overflow-y:auto; display:flex; flex-direction:column; gap:6px; margin-top:6px;"></div>
             </div>
 
-            <!-- EXCLUSÃO DE CONTA POR ID OU NICK (ADM) -->
-            <div class="admin-grid-tools" style="margin-top: 15px;">
-                <div class="admin-block" style="grid-column: 1 / -1; border-color: var(--alert-red);">
-                    <h4 style="color:var(--alert-red);">🗑️ Exclusão de Conta (ADM)</h4>
-                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                        <input type="text" id="admDeleteTargetId" placeholder="ID ou Nick do Jogador para Excluir" class="auth-input" style="font-size:11px; flex:1;">
-                        <button type="button" class="btn-gaming btn-danger" onclick="prepararAcaoExcluirConta()" style="font-size:10px; padding:8px 12px;">🗑️ Excluir Conta</button>
-                    </div>
-                </div>
+            <!-- LOGS DE AUDITORIA ADMINISTRATIVA -->
+            <div class="admin-block" style="margin-bottom:15px;">
+                <h4 style="color:#64748b;">📋 Logs de Auditoria Administrativa</h4>
+                <div id="adminLogsContainer" style="max-height:140px; overflow-y:auto; font-size:10px; color:#94a3b8; display:flex; flex-direction:column; gap:4px; font-family:monospace; background:#000; padding:6px; border-radius:4px;"></div>
             </div>
-
-            <!-- LISTA DE USUÁRIOS -->
-            <div class="admin-block" style="margin-top: 15px;">
-                <h4 style="color:var(--accent-color);">👥 Lista e Gestão de Usuários Cadastrados</h4>
-                <div style="display:flex; gap:10px; margin-bottom:10px;">
-                    <input type="text" id="inputBuscaAdminUser" placeholder="Pesquisar por Nick ou ID..." class="auth-input" oninput="renderizarTabelaUsuariosAdmin()" style="font-size:11px;">
-                </div>
-                <div id="adminListaUsuariosContainer" style="max-height:250px; overflow-y:auto; display:flex; flex-direction:column; gap:6px;"></div>
-            </div>
-
-            <!-- INFLUENCIADORES & CORREIO -->
-            <div class="admin-block" style="margin-top: 15px; border: 2px solid var(--gold-warning); background: rgba(245, 158, 11, 0.05);">
-                <h4 style="color:var(--gold-warning); font-family:'Orbitron';">🌟 PAINEL ÚNICO: INFLUENCIADORES & VERIFICADOS</h4>
-                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
-                    <input type="text" id="infTargetNick" placeholder="Nick ou ID" class="auth-input" style="font-size:11px; flex:1;">
-                    <input type="text" id="infTargetCodigo" placeholder="Cupom (Ex: CAPUDO7)" class="auth-input" style="font-size:11px; flex:1;">
-                    <button type="button" class="btn-gaming" onclick="adicionarInfluenciadorEEnviarCorreio()" style="font-size:10px; background:var(--gold-warning); color:#000; flex-grow:2;">🌟 Salvar & Enviar Convite</button>
-                </div>
-                <div id="adminListaInfluenciadoresContainer" style="max-height:220px; overflow-y:auto; display:flex; flex-direction:column; gap:6px;"></div>
-            </div>
-
-            <h4 style="color:#fff; margin-bottom:10px; font-family:'Orbitron'; font-size:14px; margin-top:15px;">🎮 Gestão de Games na Nuvem</h4>
-            <div id="adminListaJogos" style="display:flex; flex-direction:column; gap:10px;"></div>
 
             <div style="text-align:center; margin-top:15px;">
-                <button type="button" class="btn-gaming btn-danger" onclick="fazerLogoutAdmin(); tocarSomClique();" style="font-size:11px; padding:6px 16px;">Sair do Painel ADM</button>
+                <button type="button" class="btn-gaming btn-danger" onclick="fazerLogout();" style="font-size:11px; padding:6px 16px;">Sair do Painel ADM</button>
             </div>
         </div>
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.462 (Correções de Som & Cancelamento de E-mail)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.465 (Full Upgrade Edition)</strong>
     </footer>
 
     <script>
         const SUPABASE_URL = "https://ipqjeacdfiomcxfuixdj.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_EWW84q_43YbOvMwB_Rua-A_X465PbLP";
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
         const MEU_ID_MESTRE = "577082415";
 
-        const jogosIniciaisFallback = [
-            { id: "1", nome: "Riverbed Warfare", categoria: "Estratégia", desc: "Combate veicular em tempo real, extração de recursos e defesa contra hordas.", arquivo: "riverbed-warfare.html", img: "", publicado: true, destaque_manual: true, acessos: 154 },
-            { id: "2", nome: "tanque defence", categoria: "Estratégia", desc: "Combate veicular em tempo real, extração de recursos e defesa contra hordas.", arquivo: "tanque-defence.html", img: "", publicado: true, destaque_manual: false, acessos: 154 },
-            { id: "3", nome: "Esquadrão de Tanques", categoria: "Arcade", desc: "Jogo de sobrevivência de tanques combate intenso.", arquivo: "esquadrao-de-tanques.html", img: "", publicado: true, destaque_manual: false, acessos: 93 },
-            { id: "4", nome: "Gravitas Arena", categoria: "Estratégia", desc: "Jogo de guerra de tanques e estratégia tática.", arquivo: "Gravitas-Arena.html", img: "", publicado: true, destaque_manual: false, acessos: 64 },
-            { id: "5", nome: "Zombie House", categoria: "Multiplayer", desc: "Sobreviva ao apocalipse zumbi na casa florestal.", arquivo: "Zombie_House.html", img: "", publicado: true, destaque_manual: false, acessos: 120 },
-            { id: "6", nome: "Point Blank Web", categoria: "Multiplayer", desc: "Port web oficial do clássico jogo de tiro multiplayer em primeira pessoa.", arquivo: "https://jeanlucasfavero5.github.io/teste/", img: "", publicado: true, destaque_manual: false, acessos: 210 }
-        ];
-
-        let listaJogosCache = [];
         let usuarioLogado = null;
         let painelAdmAberto = false;
-        let siteConfigGlobal = { url: "", ativa: false, logo: "", broadcast: "" };
-        let audioSfxAtivo = true;
-        let ultimaMensagemChatTempo = 0;
         let cacheVerificadosNuvem = {};
-        let painelAmigosAberto = false;
+        let targetDenunciaNick = "";
+        let previewMolduraPreco = 0;
+        let previewMolduraTipo = "";
 
-        let bgmInterval = null;
-        let bgmActive = true; 
-        let bgmVolumeValue = 0.5; 
-        const arcadeNotes = [261.63, 329.63, 392.00, 523.25, 493.88, 392.00, 329.63, 293.66, 349.23, 440.00]; 
-        let noteIndex = 0;
-        let micAtivo = true;
-        let audioVoiceAtivo = true;
-
-        function formatarNumero(num) {
-            if (num === null || num === undefined) return '0';
-            num = Number(num);
-            if (isNaN(num)) return '0';
-            if (num >= 1e12) return (num / 1e12).toFixed(1).replace('.0', '') + 'T';
-            if (num >= 1e9) return (num / 1e9).toFixed(1).replace('.0', '') + 'B';
-            if (num >= 1e6) return (num / 1e6).toFixed(1).replace('.0', '') + 'M';
-            if (num >= 1e3) {
-                return (num / 1000).toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + 'k';
-            }
-            return num.toLocaleString('pt-BR');
-        }
-
-        async function carregarVerificadosNuvem() {
-            try {
-                const { data } = await supabaseClient.from('wavecombat_verificados').select('*');
-                cacheVerificadosNuvem = {}; // Limpa o cache anterior
-                if (data && data.length > 0) {
-                    data.forEach(item => {
-                        if (item.id_jogador) cacheVerificadosNuvem[String(item.id_jogador)] = true;
-                        if (item.nick) cacheVerificadosNuvem[item.nick.toLowerCase()] = true;
-                    });
-                }
-            } catch(e) {}
-        }
-
-        async function verificarBanimentoAtual() {
-            if (!usuarioLogado) return false;
-            try {
-                const { data: banInfo } = await supabaseClient
-                    .from('wavecombat_banidos')
-                    .select('*')
-                    .eq('id_jogador', String(usuarioLogado.id))
-                    .maybeSingle();
-
-                if (banInfo) {
-                    let expira = new Date(banInfo.expira_em).getTime();
-                    if (Date.now() < expira) {
-                        alert(`⚠️ Sua conta está banida até ${new Date(expira).toLocaleString('pt-BR')}.`);
-                        fazerLogout();
-                        return true;
+        // LAZY LOADING DE IMAGENS E CACHE OTIMIZADO
+        document.addEventListener("DOMContentLoaded", () => {
+            const lazyImages = document.querySelectorAll("img[data-src]");
+            const observer = new IntersectionObserver((entries, obs) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.dataset.src;
+                        obs.unobserve(img);
                     }
-                }
-            } catch(e){}
-            return false;
-        }
-
-        // LÓGICA DE SELO DE VERIFICADO CORRIGIDA (SOMENTE VERIFICADOS REAIS)
-        function obterHtmlNickVerificado(nick, id) {
-            if (!nick) return 'Entrar';
-            let n = nick.toLowerCase();
-            
-            // Verifica se o jogador é ADM/Staff
-            let isStaff = (n === 'capudo7' || String(id) === MEU_ID_MESTRE || (usuarioLogado && usuarioLogado.isAdm && String(usuarioLogado.id) === String(id)));
-            
-            // Verifica se está explicitamente na tabela de verificados/influenciadores
-            let isVerif = isStaff || cacheVerificadosNuvem[String(id)] || cacheVerificadosNuvem[n];
-
-            let html = '';
-            if (isStaff) {
-                html += `<span class="staff-star" title="Administrador / Staff">⭐</span>`;
-            }
-            if (isVerif) {
-                html += `<span class="verified-v" title="Usuário Verificado">V</span>`;
-            }
-            html += `<span style="cursor:pointer;" onclick="abrirPerfilPublico('${id || ''}')">${nick}</span>`;
-            return html;
-        }
-
-        async function carregarSessaoSalva() {
-            try {
-                const sessaoSalva = localStorage.getItem('wavecombat_sessao_ativa');
-                if (sessaoSalva) {
-                    const parsed = JSON.parse(sessaoSalva);
-                    if (parsed && parsed.nick && parsed.id) {
-                        usuarioLogado = parsed;
-                        if (String(usuarioLogado.id) === MEU_ID_MESTRE || usuarioLogado.nick.toLowerCase() === 'capudo7') {
-                            usuarioLogado.id = MEU_ID_MESTRE;
-                            usuarioLogado.isAdm = true;
-                        }
-
-                        document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(usuarioLogado.nick, usuarioLogado.id);
-                        if (usuarioLogado.isAdm) {
-                            document.getElementById('btnToggleAdmNav').style.display = 'inline-block';
-                        }
-
-                        if (await verificarBanimentoAtual()) return;
-                        sincronizarUsuarioNuvem(usuarioLogado.id);
-                    } else {
-                        localStorage.removeItem('wavecombat_sessao_ativa');
-                        document.getElementById('btnAuthNav').innerHTML = 'Entrar';
-                    }
-                } else {
-                    usuarioLogado = null;
-                    document.getElementById('btnAuthNav').innerHTML = 'Entrar';
-                }
-            } catch(e) {
-                localStorage.removeItem('wavecombat_sessao_ativa');
-                usuarioLogado = null;
-                document.getElementById('btnAuthNav').innerHTML = 'Entrar';
-            }
-            
-            await carregarVerificadosNuvem();
-            atualizarAbasPerfilUI();
-            carregarSaldoDiamantesSite();
-            verificarEstadoNotificacao();
-            
-            setTimeout(() => {
-                if(bgmActive) toggleBGM(true);
-            }, 1000);
-        }
-
-        async function sincronizarUsuarioNuvem(idJogador) {
-            try {
-                const { data } = await supabaseClient.from('usuarios').select('*').eq('id_jogador', String(idJogador)).maybeSingle();
-                if (data && data.nick) {
-                    usuarioLogado.nick = data.nick;
-                    usuarioLogado.email = data.email || '';
-                    usuarioLogado.moldura = data.moldura || '';
-                    localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
-                    document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(usuarioLogado.nick, usuarioLogado.id);
-
-                    if (!usuarioLogado.email) {
-                        document.getElementById('modalAlertEmail').style.display = 'flex';
-                    }
-                }
-            } catch(e) {}
-        }
-
-        async function salvarEmailRecuperacaoDirect(e) {
-            e.preventDefault();
-            const emailDigitado = document.getElementById('inputVinculoEmailPrompt').value.trim();
-            if (!emailDigitado || !usuarioLogado) return;
-
-            try {
-                await supabaseClient.from('usuarios').update({ email: emailDigitado }).eq('id_jogador', String(usuarioLogado.id));
-                usuarioLogado.email = emailDigitado;
-                localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
-                fecharModalAlertEmail();
-                mostrarToast("✉️ E-mail de recuperação vinculado com sucesso!");
-                atualizarPerfilExpandidoUI();
-            } catch(err) {
-                alert("Erro ao vincular e-mail.");
-            }
-        }
-
-        // ADICIONADA NOVA FUNÇÃO: CANCELAMENTO E DESVINCULAÇÃO DE E-MAIL
-        async function desvincularEmailConta() {
-            if (!usuarioLogado || !usuarioLogado.id) return;
-            if (confirm("Deseja realmente desvincular e remover o e-mail cadastrado desta conta?")) {
-                try {
-                    await supabaseClient.from('usuarios').update({ email: '' }).eq('id_jogador', String(usuarioLogado.id));
-                    usuarioLogado.email = '';
-                    localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
-                    mostrarToast("🗑️ E-mail desvinculado da conta com sucesso!");
-                    atualizarPerfilExpandidoUI();
-                } catch(e) {
-                    alert("Erro ao desvincular e-mail.");
-                }
-            }
-        }
-
-        function fecharModalAlertEmail() {
-            document.getElementById('modalAlertEmail').style.display = 'none';
-        }
-
-        async function carregarSaldoDiamantesSite() {
-            const saldoEl = document.getElementById('userDiamondBalance');
-            if (!usuarioLogado || !usuarioLogado.id) {
-                if (saldoEl) saldoEl.textContent = '0';
-                return;
-            }
-
-            const cacheLocalDiamantes = localStorage.getItem(`diamantes_${usuarioLogado.id}`);
-            if (cacheLocalDiamantes && saldoEl) {
-                saldoEl.textContent = formatarNumero(cacheLocalDiamantes);
-            }
-
-            try {
-                const { data, error } = await supabaseClient
-                    .from('carteira_diamantes')
-                    .select('diamantes')
-                    .eq('id_jogador', String(usuarioLogado.id))
-                    .maybeSingle();
-
-                if (!error && data) {
-                    const qtdOficial = data.diamantes || 0;
-                    if (saldoEl) saldoEl.textContent = formatarNumero(qtdOficial);
-                    localStorage.setItem(`diamantes_${usuarioLogado.id}`, qtdOficial);
-                } else {
-                    await supabaseClient.from('carteira_diamantes').insert([{ 
-                        id_jogador: String(usuarioLogado.id), 
-                        nick: usuarioLogado.nick, 
-                        diamantes: cacheLocalDiamantes ? parseInt(cacheLocalDiamantes) : 0 
-                    }]);
-                }
-            } catch (e) {
-                if (cacheLocalDiamantes && saldoEl) {
-                    saldoEl.textContent = formatarNumero(cacheLocalDiamantes);
-                }
-            }
-        }
-
-        // --- RODA DA FORTUNA DIÁRIA ---
-        const wheelSectors = [
-            { label: "10 💎", color: "#3b82f6", type: "diamantes", val: 10 },
-            { label: "Nada", color: "#1e293b", type: "nada", val: 0 },
-            { label: "20 💎", color: "#8b5cf6", type: "diamantes", val: 20 },
-            { label: "100 XP", color: "#22c55e", type: "xp", val: 100 },
-            { label: "Nada", color: "#1e293b", type: "nada", val: 0 },
-            { label: "30 💎", color: "#f59e0b", type: "diamantes", val: 30 },
-            { label: "Cupom 10%", color: "#ec4899", type: "cupom", val: 10 },
-            { label: "Nada", color: "#1e293b", type: "nada", val: 0 }
-        ];
-
-        let roletaGirando = false;
-
-        function desenharRoda() {
-            const canvas = document.getElementById('canvasWheel');
-            if(!canvas) return;
-            const ctx = canvas.getContext('2d');
-            const numSectors = wheelSectors.length;
-            const arcSize = (2 * Math.PI) / numSectors;
-            const radius = canvas.width / 2;
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.save();
-            ctx.translate(radius, radius);
-
-            wheelSectors.forEach((sector, i) => {
-                const angle = i * arcSize;
-                ctx.beginPath();
-                ctx.fillStyle = sector.color;
-                ctx.moveTo(0, 0);
-                ctx.arc(0, 0, radius, angle, angle + arcSize, false);
-                ctx.lineTo(0, 0);
-                ctx.fill();
-                ctx.stroke();
-
-                ctx.save();
-                ctx.rotate(angle + arcSize / 2);
-                ctx.fillStyle = "#ffffff";
-                ctx.shadowColor = "#000000";
-                ctx.shadowBlur = 6;
-                ctx.font = "bold 16px Orbitron";
-                ctx.fillText(sector.label, radius / 1.7, 6);
-                ctx.restore();
+                });
             });
-            ctx.restore();
-        }
-
-        function tocarSomResultadoRoleta(vitoria) {
-            try {
-                if (audioCtx.state === 'suspended') audioCtx.resume();
-                const now = audioCtx.currentTime;
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-
-                if (vitoria) {
-                    osc.type = 'triangle';
-                    osc.frequency.setValueAtTime(440, now);
-                    osc.frequency.setValueAtTime(554.37, now + 0.1);
-                    osc.frequency.setValueAtTime(659.25, now + 0.2);
-                    osc.frequency.setValueAtTime(880, now + 0.3);
-                    gain.gain.setValueAtTime(0.2, now);
-                    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
-                    osc.connect(gain); gain.connect(audioCtx.destination);
-                    osc.start(now); osc.stop(now + 0.6);
-                } else {
-                    osc.type = 'sawtooth';
-                    osc.frequency.setValueAtTime(220, now);
-                    osc.frequency.linearRampToValueAtTime(110, now + 0.4);
-                    gain.gain.setValueAtTime(0.2, now);
-                    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.5);
-                    osc.connect(gain); gain.connect(audioCtx.destination);
-                    osc.start(now); osc.stop(now + 0.5);
-                }
-            } catch(e) {}
-        }
-
-        async function girarRodaDaFortuna() {
-            if (!usuarioLogado) {
-                alert("⚠️ Faça login para girar a Roda da Fortuna e resgatar seus prêmios!");
-                abrirModalAuth(true);
-                return;
-            }
-
-            if (roletaGirando) return;
-
-            let hoje = new Date().toDateString();
-            let ultimoGiro = localStorage.getItem(`ultimo_giro_${usuarioLogado.id}`);
-            if (ultimoGiro === hoje) {
-                exibirModalWheelResult("⏳", "ROLETA INDISPONÍVEL", "Você já girou a roleta hoje! Volte amanhã para mais prêmios e sorte.", false);
-                return;
-            }
-
-            roletaGirando = true;
-            const canvas = document.getElementById('canvasWheel');
-            const randomSector = Math.floor(Math.random() * wheelSectors.length);
-            const arcDeg = 360 / wheelSectors.length;
-            const targetDeg = 360 * 5 + (wheelSectors.length - randomSector) * arcDeg - arcDeg / 2;
-
-            canvas.style.transform = `rotate(${targetDeg}deg)`;
-
-            setTimeout(async () => {
-                roletaGirando = false;
-                localStorage.setItem(`ultimo_giro_${usuarioLogado.id}`, hoje);
-                let premio = wheelSectors[randomSector];
-
-                if (premio.type === 'diamantes') {
-                    let saldoAtual = parseInt(localStorage.getItem(`diamantes_${usuarioLogado.id}`) || '0', 10);
-                    let novoSaldo = saldoAtual + premio.val;
-                    localStorage.setItem(`diamantes_${usuarioLogado.id}`, novoSaldo);
-                    await supabaseClient.from('carteira_diamantes').upsert({ id_jogador: String(usuarioLogado.id), nick: usuarioLogado.nick, diamantes: novoSaldo }, { onConflict: 'id_jogador' });
-                    carregarSaldoDiamantesSite();
-                    exibirModalWheelResult("💎", "VOCÊ GANHOU!", `Parabéns! Foram creditados <strong>${premio.val} Diamantes</strong> na sua conta!`, true);
-                } else if (premio.type === 'xp') {
-                    exibirModalWheelResult("⭐", "BÔNUS DE XP!", `Parabéns! Você ganhou <strong>${premio.val} XP</strong> para subir no ranking global!`, true);
-                } else if (premio.type === 'cupom') {
-                    exibirModalWheelResult("🎟️", "CUPOM DE DESCONTO!", `Sensacional! Você ganhou um <strong>Cupom de 10% de desconto</strong> para compras na Loja Pix!`, true);
-                } else {
-                    exibirModalWheelResult("😢", "QUE PENA!", `Caiu em <strong>"Nada"</strong>. Não desanime, volte amanhã para tentar novamente!`, false);
-                }
-            }, 4500);
-        }
-
-        function exibirModalWheelResult(icone, titulo, mensagem, vitoria) {
-            document.getElementById('wheelResultIcon').textContent = icone;
-            document.getElementById('wheelResultTitle').textContent = titulo;
-            document.getElementById('wheelResultTitle').style.color = vitoria ? 'var(--accent-color)' : 'var(--alert-red)';
-            document.getElementById('wheelResultMessage').innerHTML = mensagem;
-            
-            const card = document.getElementById('modalWheelCard');
-            card.style.borderColor = vitoria ? 'var(--accent-color)' : 'var(--alert-red)';
-            card.style.boxShadow = vitoria ? '0 0 40px var(--accent-glow)' : '0 0 30px rgba(239, 68, 68, 0.4)';
-
-            document.getElementById('modalWheelResult').style.display = 'flex';
-            tocarSomResultadoRoleta(vitoria);
-        }
-
-        function fecharModalWheelResult() {
-            document.getElementById('modalWheelResult').style.display = 'none';
-        }
-
-        async function comprarMolduraLoja(tipoMoldura, preco) {
-            if (!usuarioLogado) {
-                alert("⚠️ Faça login para comprar itens!");
-                abrirModalAuth(true);
-                return;
-            }
-            let saldoAtual = parseInt(localStorage.getItem(`diamantes_${usuarioLogado.id}`) || '0', 10);
-            if (saldoAtual < preco) {
-                alert("❌ Você não tem diamantes suficientes!");
-                return;
-            }
-
-            let novoSaldo = saldoAtual - preco;
-            localStorage.setItem(`diamantes_${usuarioLogado.id}`, novoSaldo);
-            await supabaseClient.from('carteira_diamantes').upsert({ id_jogador: String(usuarioLogado.id), nick: usuarioLogado.nick, diamantes: novoSaldo }, { onConflict: 'id_jogador' });
-            
-            let inv = JSON.parse(localStorage.getItem(`inv_${usuarioLogado.id}`) || '[]');
-            if (!inv.includes(tipoMoldura)) inv.push(tipoMoldura);
-            localStorage.setItem(`inv_${usuarioLogado.id}`, JSON.stringify(inv));
-
-            carregarSaldoDiamantesSite();
-            mostrarToast(`✅ Moldura adquirida com sucesso! Veja no seu Inventário.`);
-            atualizarInventarioUI();
-        }
-
-        function atualizarInventarioUI() {
-            const container = document.getElementById('inventarioUserData');
-            if(!container || !usuarioLogado) return;
-            let inv = JSON.parse(localStorage.getItem(`inv_${usuarioLogado.id}`) || '[]');
-            let molduraAtiva = localStorage.getItem(`moldura_ativa_${usuarioLogado.id}`) || '';
-
-            if (inv.length === 0) {
-                container.innerHTML = `<p style="color:#94a3b8; text-align:center; font-size:11px;">Seu inventário está vazio. Compre itens na Loja!</p>`;
-                return;
-            }
-
-            container.innerHTML = inv.map(item => `
-                <div style="background:#000; border:1px solid var(--steel-border); padding:10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:11px;">
-                    <div>
-                        <strong style="color:var(--accent-color); text-transform:uppercase;">Moldura: ${item.replace('_', ' ')}</strong>
-                    </div>
-                    <div>
-                        <button class="btn-gaming" onclick="equiparMoldura('${item}')" style="padding:4px 8px; font-size:10px; background:${molduraAtiva === item ? '#22c55e' : 'var(--accent-color)'}; color:#000;">
-                            ${molduraAtiva === item ? 'Equipado' : 'Equipar'}
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function equiparMoldura(item) {
-            localStorage.setItem(`moldura_ativa_${usuarioLogado.id}`, item);
-            mostrarToast(`✨ Moldura ${item} equipada!`);
-            atualizarInventarioUI();
-        }
-
-        function togglePainelAmigos() {
-            if (!usuarioLogado) {
-                alert("⚠️ Faça login para acessar sua lista de amigos!");
-                abrirModalAuth(true);
-                return;
-            }
-            painelAmigosAberto = !painelAmigosAberto;
-            document.getElementById('painelAmigos').style.right = painelAmigosAberto ? '0px' : '-320px';
-            if (painelAmigosAberto) carregarListaAmigos();
-        }
-
-        async function enviarPedidoAmizade() {
-            const termo = document.getElementById('inputAdicionarAmigo').value.trim();
-            if (!termo) return;
-
-            const alvo = await buscarUsuarioPorNickOuId(termo);
-            if (!alvo) {
-                alert("❌ Jogador não encontrado!");
-                return;
-            }
-
-            if (alvo.id === String(usuarioLogado.id)) {
-                alert("⚠️ Você não pode adicionar a si mesmo!");
-                return;
-            }
-
-            try {
-                const { data: existe } = await supabaseClient
-                    .from('wavecombat_amigos')
-                    .select('*')
-                    .or(`and(id_jogador.eq.${usuarioLogado.id},id_amigo.eq.${alvo.id}),and(id_jogador.eq.${alvo.id},id_amigo.eq.${usuarioLogado.id})`)
-                    .maybeSingle();
-
-                if (existe) {
-                    alert("⚠️ Já existe um vínculo ou pedido pendente com este jogador!");
-                    return;
-                }
-
-                await supabaseClient.from('wavecombat_amigos').insert([
-                    { id_jogador: String(usuarioLogado.id), id_amigo: alvo.id, status: 'pendente' }
-                ]);
-
-                mostrarToast(`📨 Pedido de amizade enviado para ${alvo.nick}!`);
-                document.getElementById('inputAdicionarAmigo').value = '';
-                carregarListaAmigos();
-            } catch(e) {
-                alert("Erro ao enviar pedido de amizade.");
-            }
-        }
-
-        async function carregarListaAmigos() {
-            if (!usuarioLogado) return;
-            const idUser = String(usuarioLogado.id);
-
-            try {
-                const { data: amizades } = await supabaseClient
-                    .from('wavecombat_amigos')
-                    .select('*')
-                    .or(`id_jogador.eq.${idUser},id_amigo.eq.${idUser}`);
-
-                let onlineContainer = document.getElementById('listaAmigosOnline');
-                let offlineContainer = document.getElementById('listaAmigosOffline');
-                let pendenteContainer = document.getElementById('listaPedidosPendentes');
-                if (!onlineContainer || !offlineContainer || !pendenteContainer) return;
-
-                onlineContainer.innerHTML = '';
-                offlineContainer.innerHTML = '';
-                pendenteContainer.innerHTML = '';
-
-                let qtdOnlineCount = 0;
-                let qtdOfflineCount = 0;
-
-                if (amizades && amizades.length > 0) {
-                    for (let rel of amizades) {
-                        let idOutro = rel.id_jogador === idUser ? rel.id_amigo : rel.id_jogador;
-                        let infoOutro = await buscarUsuarioPorNickOuId(idOutro);
-                        if (!infoOutro) continue;
-
-                        if (rel.status === 'pendente') {
-                            if (rel.id_amigo === idUser) {
-                                pendenteContainer.innerHTML += `
-                                    <div style="background:#000; border:1px solid var(--steel-border); padding:6px; border-radius:6px; display:flex; justify-content:space-between; align-items:center;">
-                                        <span style="cursor:pointer; color:var(--accent-color);" onclick="abrirPerfilPublico('${infoOutro.id}')">${infoOutro.nick}</span>
-                                        <div style="display:flex; gap:4px;">
-                                            <button class="btn-gaming" onclick="responderAmizade(${rel.id}, 'aceito')" style="padding:2px 6px; font-size:9px; background:#22c55e; color:#000;">Aceitar</button>
-                                            <button class="btn-gaming btn-danger" onclick="responderAmizade(${rel.id}, 'recusar')" style="padding:2px 6px; font-size:9px;">X</button>
-                                        </div>
-                                    </div>
-                                `;
-                            }
-                        } else if (rel.status === 'aceito') {
-                            let isOnline = true; 
-                            let jogandoAgora = "No Hub WaveCombat";
-
-                            let htmlCard = `
-                                <div style="background:#000; border:1px solid var(--steel-border); padding:8px; border-radius:6px; display:flex; flex-direction:column; gap:4px;">
-                                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                                        <strong style="cursor:pointer; color:#fff;" onclick="abrirPerfilPublico('${infoOutro.id}')">${infoOutro.nick}</strong>
-                                        <button onclick="removerAmizade(${rel.id})" style="background:none; border:none; color:var(--alert-red); cursor:pointer; font-size:10px;">Remover</button>
-                                    </div>
-                                    <span style="font-size:10px; color:${isOnline ? '#22c55e' : '#64748b'};">${jogandoAgora}</span>
-                                </div>
-                            `;
-
-                            if (isOnline) {
-                                onlineContainer.innerHTML += htmlCard;
-                                qtdOnlineCount++;
-                            } else {
-                                offlineContainer.innerHTML += htmlCard;
-                                qtdOfflineCount++;
-                            }
-                        }
-                    }
-                }
-
-                document.getElementById('countAmigosOnline').textContent = qtdOnlineCount;
-                document.getElementById('labelQtdOnline').textContent = qtdOnlineCount;
-                document.getElementById('labelQtdOffline').textContent = qtdOfflineCount;
-
-                if (onlineContainer.innerHTML === '') onlineContainer.innerHTML = `<span style="color:#64748b; font-style:italic;">Nenhum amigo online.</span>`;
-                if (offlineContainer.innerHTML === '') offlineContainer.innerHTML = `<span style="color:#64748b; font-style:italic;">Nenhum amigo offline.</span>`;
-                if (pendenteContainer.innerHTML === '') pendenteContainer.innerHTML = `<span style="color:#64748b; font-style:italic;">Nenhum pedido pendente.</span>`;
-
-            } catch(e) {}
-        }
-
-        async function responderAmizade(idRelacao, acao) {
-            if (acao === 'recusar') {
-                await supabaseClient.from('wavecombat_amigos').delete().eq('id', idRelacao);
-                mostrarToast("❌ Pedido recusado.");
-            } else {
-                await supabaseClient.from('wavecombat_amigos').update({ status: 'aceito' }).eq('id', idRelacao);
-                mostrarToast("✨ Amizade aceita!");
-            }
-            carregarListaAmigos();
-        }
-
-        async function removerAmizade(idRelacao) {
-            if (confirm("Deseja remover este amigo?")) {
-                await supabaseClient.from('wavecombat_amigos').delete().eq('id', idRelacao);
-                mostrarToast("🗑️ Amigo removido.");
-                carregarListaAmigos();
-            }
-        }
-
-        async function abrirPerfilPublico(idAlvo) {
-            const userObj = await buscarUsuarioPorNickOuId(idAlvo);
-            if (!userObj) {
-                alert("Usuário não encontrado.");
-                return;
-            }
-
-            let idFinal = userObj.id;
-            let nickFinal = userObj.nick;
-
-            let nivelUser = 1;
-            let xpUser = 0;
-            try {
-                const { data: lb } = await supabaseClient.from('leaderboard').select('nivel, xp').eq('id_jogador', idFinal).maybeSingle();
-                if (lb) { nivelUser = lb.nivel || 1; xpUser = lb.xp || 0; }
-            } catch(e){}
-
-            await carregarVerificadosNuvem();
-            let isVerif = cacheVerificadosNuvem[idFinal] || cacheVerificadosNuvem[nickFinal.toLowerCase()];
-
-            let ehMeuProprioPerfil = usuarioLogado && String(usuarioLogado.id) === String(idFinal);
-
-            let container = document.getElementById('conteudoPerfilPublico');
-            container.innerHTML = `
-                <div class="${isVerif ? 'profile-frame-gold' : ''}" style="padding: 15px; border-radius: 8px; background: #000;">
-                    <h3 style="font-family:'Orbitron'; color:var(--accent-color); font-size:16px; margin-bottom:8px;">${nickFinal} ${isVerif ? '⭐' : ''}</h3>
-                    <p style="font-size:11px; color:var(--gold-warning); font-family:'Orbitron'; margin-bottom:6px;">ID: <strong>${idFinal}</strong></p>
-                    <p style="font-size:11px; color:#22c55e; margin-bottom:10px;">⭐ Nível: ${nivelUser} | XP: ${xpUser}</p>
-                    ${isVerif ? '<p style="font-size:11px; color:#FFD700; font-weight:bold; margin-bottom:10px;">⭐ Conta Oficial Verificada</p>' : ''}
-                    ${!ehMeuProprioPerfil ? `<button class="btn-gaming" onclick="enviarPedidoAmizadeDireto('${idFinal}')" style="width:100%; font-size:11px; padding:8px; margin-top:10px;">➕ Adicionar Amigo</button>` : `<p style="font-size:10px; color:#64748b; margin-top:10px;">(Este é o seu perfil)</p>`}
-                </div>
-            `;
-            document.getElementById('modalPerfilPublico').style.display = 'flex';
-        }
-
-        function fecharModalPerfilPublico() {
-            document.getElementById('modalPerfilPublico').style.display = 'none';
-        }
-
-        async function enviarPedidoAmizadeDireto(idAlvo) {
-            document.getElementById('inputAdicionarAmigo').value = idAlvo;
-            fecharModalPerfilPublico();
-            if (!painelAmigosAberto) togglePainelAmigos();
-            enviarPedidoAmizade();
-        }
-
-        function playBGMNote() {
-            if (!bgmActive) return;
-            try {
-                if (audioCtx.state === 'suspended') audioCtx.resume();
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'square'; 
-                osc.frequency.setValueAtTime(arcadeNotes[noteIndex], audioCtx.currentTime);
-                
-                gain.gain.setValueAtTime(bgmVolumeValue * 0.04, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.16);
-                
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.16);
-                
-                noteIndex = (noteIndex + 1) % arcadeNotes.length;
-            } catch(e) {}
-        }
-
-        function toggleBGM(ativo) {
-            bgmActive = ativo;
-            const chk = document.getElementById('checkBGM');
-            if(chk) chk.checked = bgmActive;
-            if (bgmActive) {
-                if (audioCtx.state === 'suspended') audioCtx.resume();
-                if (bgmInterval) clearInterval(bgmInterval);
-                bgmInterval = setInterval(playBGMNote, 180); 
-            } else {
-                if (bgmInterval) clearInterval(bgmInterval);
-            }
-        }
-
-        function setBGMVolume(val) { bgmVolumeValue = val / 100; }
-
-        function toggleMicrofoneVoice() {
-            micAtivo = !micAtivo;
-            const btn = document.getElementById('btnMicToggle');
-            if(btn) {
-                btn.textContent = micAtivo ? "🎤 Mic: ON" : "0 Mic: OFF";
-                btn.style.background = micAtivo ? "#22c55e" : "#ef4444";
-                btn.style.color = micAtivo ? "#000" : "#fff";
-            }
-            mostrarToast(micAtivo ? "🎤 Microfone ativado" : "🔇 Microfone desativado");
-        }
-
-        function toggleAudioVoice() {
-            audioVoiceAtivo = !audioVoiceAtivo;
-            const btn = document.getElementById('btnAudioToggle');
-            if(btn) {
-                btn.textContent = audioVoiceAtivo ? "🔊 Som: ON" : "🔇 Som: OFF";
-                btn.style.background = audioVoiceAtivo ? "#3b82f6" : "#ef4444";
-            }
-            mostrarToast(audioVoiceAtivo ? "🔊 Áudio da sala ativado" : "🔇 Áudio da sala silenciado");
-        }
-
-        let deferredPrompt = null;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            const btn = document.getElementById('btnPwaInstall');
-            if (btn) btn.style.display = 'inline-block';
+            lazyImages.forEach(img => observer.observe(img));
         });
 
-        function instalarAppMobile() {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') {
-                        mostrarToast("📲 Aplicativo instalado com sucesso!");
-                    }
-                    deferredPrompt = null;
-                });
-            } else {
-                alert("Para instalar: Toque nos 3 pontos do navegador e selecione 'Adicionar ao ecrã principal'.");
-            }
-        }
-
-        function verificarEstadoNotificacao() {
-            if ("Notification" in window) {
-                const btnPush = document.getElementById('btnPushNotif');
-                if (Notification.permission === "default") {
-                    if (btnPush) btnPush.style.display = 'inline-block';
-                } else if (btnPush) {
-                    btnPush.style.display = 'none';
-                }
-            }
-        }
-
+        // NOTIFICAÇÕES PUSH DO NAVEGADOR
         function solicitarPermissaoNotificacao() {
             if ("Notification" in window) {
                 Notification.requestPermission().then(permission => {
                     if (permission === "granted") {
-                        mostrarToast("🔔 Notificações ativadas com sucesso!");
+                        mostrarToast("🔔 Notificações Push ativadas com sucesso!");
                         document.getElementById('btnPushNotif').style.display = 'none';
-                        new Notification("WaveCombat Hub", { body: "Obrigado por ativar as notificações!" });
-                    } else {
-                        mostrarToast("❌ Permissão de notificação negada.");
                     }
                 });
             }
         }
 
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        function tocarSomClique() {
-            if (!audioSfxAtivo) return;
-            try {
-                if (audioCtx.state === 'suspended') audioCtx.resume();
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(440, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.08);
-                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-                gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.08);
-                osc.connect(gain); gain.connect(audioCtx.destination);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.08);
-            } catch(e) {}
-        }
-
-        function tocarSomLevelUp() {
-            if (!audioSfxAtivo) return;
-            try {
-                if (audioCtx.state === 'suspended') audioCtx.resume();
-                const now = audioCtx.currentTime;
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(300, now);
-                osc.frequency.setValueAtTime(450, now + 0.1);
-                osc.frequency.setValueAtTime(600, now + 0.2);
-                gain.gain.setValueAtTime(0.08, now);
-                gain.gain.linearRampToValueAtTime(0, now + 0.35);
-                osc.connect(gain); gain.connect(audioCtx.destination);
-                osc.start(now); osc.stop(now + 0.35);
-            } catch(e) {}
-        }
-
-        function toggleAudioSFX(ativo) {
-            audioSfxAtivo = ativo;
-            mostrarToast(ativo ? "🔊 Efeitos sonoros ativados" : "🔇 Efeitos sonoros desativados");
-        }
-
-        function toggleThemeOLED(ativo) {
-            if(ativo) {
-                document.documentElement.style.setProperty('--bg-dark', '#000000');
-                document.documentElement.style.setProperty('--panel-bg', 'rgba(8, 8, 12, 0.98)');
-            } else {
-                document.documentElement.style.setProperty('--bg-dark', '#0b0f17');
-                document.documentElement.style.setProperty('--panel-bg', 'rgba(16, 22, 34, 0.95)');
-            }
-            mostrarToast(ativo ? "⚫ Tema OLED ativado" : "🌙 Tema padrão ativado");
-        }
-
-        function mostrarToast(texto) {
-            const toast = document.getElementById('toastNotification');
-            toast.textContent = texto;
-            toast.classList.add('show');
-            setTimeout(() => { toast.classList.remove('show'); }, 3500);
-        }
-
-        function gerarParticulasFundo() {
-            const container = document.getElementById('bgParticles');
-            for (let i = 0; i < 25; i++) {
-                const p = document.createElement('div');
-                p.className = 'particle';
-                p.style.left = Math.random() * 100 + 'vw';
-                p.style.animationDuration = (10 + Math.random() * 15) + 's';
-                p.style.animationDelay = (Math.random() * 5) + 's';
-                container.appendChild(p);
+        function dispararNotificacaoPushLocal(titulo, mensagem) {
+            if ("Notification" in window && Notification.permission === "granted") {
+                new Notification(titulo, { body: mensagem, icon: "./manifest-icon.png" });
             }
         }
 
-        function atualizarAbasPerfilUI() {
-            const tabLogin = document.getElementById('tabLoginBtn');
-            const tabRegister = document.getElementById('tabRegisterBtn');
-            const tabPerfil = document.getElementById('tabPerfilBtn');
+        // PERFIL: STATUS PERSONALIZADO & LINKS SOCIAIS
+        async function salvarPerfilStatusESociais(e) {
+            e.preventDefault();
+            if (!usuarioLogado) return;
 
-            if (usuarioLogado) {
-                tabLogin.style.display = 'none';
-                tabRegister.style.display = 'none';
-                tabPerfil.classList.add('active');
-                alternarAba('perfil');
-            } else {
-                tabLogin.style.display = 'block';
-                tabRegister.style.display = 'block';
-                tabLogin.classList.add('active');
-                tabPerfil.classList.remove('active');
-                alternarAba('login');
-            }
-            atualizarPerfilExpandidoUI();
-            atualizarInventarioUI();
-            carregarCorreioUsuario();
-        }
-
-        function toggleMenuMobile() { document.getElementById('navLinks').classList.toggle('active'); }
-        function fecharMenuMobile() { document.getElementById('navLinks').classList.remove('active'); }
-
-        function abrirModalAuth(motivoJogo = false) { 
-            const msg = document.getElementById('msgBloqueioJogo');
-            if(msg) msg.style.display = motivoJogo ? 'block' : 'none';
-            document.getElementById('authModal').style.display = 'flex'; 
-            atualizarAbasPerfilUI();
-        }
-        function fecharModalAuth() { document.getElementById('authModal').style.display = 'none'; }
-        
-        let pixIntervalCheck = null;
-        let saldoAnteriorPix = 0;
-
-        function fecharModalPix() {
-            document.getElementById('pixModal').style.display = 'none';
-            if (pixIntervalCheck) clearInterval(pixIntervalCheck);
-        }
-
-        function copiarPixCopiaCola() {
-            const input = document.getElementById('pixCopiaColaInput');
-            input.select();
-            document.execCommand('copy');
-            mostrarToast("📋 Código Pix copiado!");
-        }
-
-        async function gerarPixMercadoPago(valor, quantDiamantes) {
-            if (!usuarioLogado || !usuarioLogado.id) {
-                alert("⚠️ Você precisa criar uma conta ou fazer login para comprar diamantes!");
-                abrirModalAuth(true);
-                return;
-            }
-
-            const idJogador = String(usuarioLogado.id);
-            const nick = usuarioLogado.nick;
-            const cupomDigitado = (document.getElementById('inputCupomRecarga')?.value || '').trim().toUpperCase();
-            let bonusDiamantes = 0;
-
-            if (cupomDigitado) {
-                try {
-                    const { data: infData } = await supabaseClient.from('influenciadores').select('*').eq('cupom', cupomDigitado).maybeSingle();
-                    if (infData) {
-                        bonusDiamantes = Math.round(quantDiamantes * 0.05);
-                        quantDiamantes += bonusDiamantes;
-                        let comissao = valor * 0.30;
-                        await supabaseClient.from('influenciadores').update({
-                            usos: (infData.usos || 0) + 1,
-                            comissao: Number(infData.comissao || 0) + comissao
-                        }).eq('id_jogador', infData.id_jogador);
-
-                        mostrarToast(`⭐ Cupom "${cupomDigitado}" aplicado! +${bonusDiamantes} Diamantes bônus.`);
-                    } else {
-                        mostrarToast("⚠️ Cupom não encontrado, a compra prosseguirá normalmente.");
-                    }
-                } catch(e){}
-            }
-
-            const saldoEl = document.getElementById('userDiamondBalance');
-            saldoAnteriorPix = parseInt(saldoEl ? saldoEl.textContent.replace(/\./g, '').replace('k','000') : '0', 10);
-            mostrarToast("⏳ Gerando cobrança Pix no Mercado Pago...");
+            const statusTxt = document.getElementById('inputPerfilStatus').value.trim();
+            const linkSocial = document.getElementById('inputPerfilSocial').value.trim();
 
             try {
-                const res = await fetch(`${SUPABASE_URL}/functions/v1/gerar-pix`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ valor: valor, diamantes: quantDiamantes, id_jogador: idJogador, nick: nick })
-                });
-                const data = await res.json();
-                if (data.qr_code_base64 && data.qr_code) {
-                    document.getElementById('pixQrContainer').innerHTML = `<img src="data:image/png;base64,${data.qr_code_base64}" style="width:180px; height:180px; border-radius:8px; border:2px solid var(--accent-color);">`;
-                    document.getElementById('pixCopiaColaInput').value = data.qr_code;
-                    document.getElementById('pixModal').style.display = 'flex';
-                    mostrarToast("✅ Pix gerado com sucesso! Aguardando pagamento...");
+                await supabaseClient.from('usuarios').update({
+                    status_custom: statusTxt,
+                    link_social: linkSocial
+                }).eq('id_jogador', String(usuarioLogado.id));
 
-                    if (pixIntervalCheck) clearInterval(pixIntervalCheck);
-                    pixIntervalCheck = setInterval(async () => {
-                        const { data: carteira } = await supabaseClient.from('carteira_diamantes').select('diamantes').eq('id_jogador', idJogador).single();
-                        if (carteira && carteira.diamantes > saldoAnteriorPix) {
-                            clearInterval(pixIntervalCheck);
-                            document.getElementById('pixModal').style.display = 'none';
-                            carregarSaldoDiamantesSite();
-                            tocarSomLevelUp();
-                            mostrarToast("💎 Pagamento confirmado! Diamantes adicionados!");
-                        }
-                    }, 3000);
+                usuarioLogado.status_custom = statusTxt;
+                usuarioLogado.link_social = linkSocial;
+                localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
+                mostrarToast("✨ Perfil atualizado com sucesso!");
+                atualizarPerfilExpandidoUI();
+            } catch(err) {
+                alert("Erro ao salvar status do perfil.");
+            }
+        }
+
+        // PRÉ-VISUALIZAÇÃO DE MOLDURAS NA LOJA
+        function abrirPreviewMoldura(tipo, preco) {
+            previewMolduraTipo = tipo;
+            previewMolduraPreco = preco;
+
+            const nick = usuarioLogado ? usuarioLogado.nick : "Seu Nick";
+            const box = document.getElementById('previewMolduraBox');
+            box.className = `frame-${tipo}`;
+            document.getElementById('previewNickText').textContent = nick;
+
+            const btnComprar = document.getElementById('btnComprarPreviewDirect');
+            btnComprar.onclick = () => {
+                fecharModalPreviewMoldura();
+                comprarMolduraLoja(tipo, preco);
+            };
+
+            document.getElementById('modalPreviewMoldura').style.display = 'flex';
+        }
+
+        function fecharModalPreviewMoldura() {
+            document.getElementById('modalPreviewMoldura').style.display = 'none';
+        }
+
+        // SISTEMA DE DENÚNCIAS
+        function abrirModalDenuncia(nickTarget) {
+            targetDenunciaNick = nickTarget;
+            document.getElementById('denunciaTargetNick').value = `Denunciando: ${nickTarget}`;
+            document.getElementById('modalDenuncia').style.display = 'flex';
+        }
+
+        function fecharModalDenuncia() {
+            document.getElementById('modalDenuncia').style.display = 'none';
+        }
+
+        async function enviarDenunciaJogador() {
+            const motivo = document.getElementById('denunciaMotivoText').value.trim();
+            if (!motivo) { alert("Por favor, descreva o motivo da denúncia."); return; }
+
+            try {
+                await supabaseClient.from('wavecombat_denuncias').insert([{
+                    autor_id: usuarioLogado ? String(usuarioLogado.id) : 'Convidado',
+                    autor_nick: usuarioLogado ? usuarioLogado.nick : 'Convidado',
+                    alvo_nick: targetDenunciaNick,
+                    motivo: motivo,
+                    data: new Date().toLocaleString('pt-BR')
+                }]);
+
+                fecharModalDenuncia();
+                document.getElementById('denunciaMotivoText').value = '';
+                mostrarToast("🚨 Denúncia enviada para análise da Staff!");
+                registrarLogAuditoria(`Nova denúncia enviada contra ${targetDenunciaNick}`);
+            } catch(e) {
+                alert("Erro ao enviar denúncia.");
+            }
+        }
+
+        // INDICADOR ! AMARELO DE CORREIO NÃO LIDO
+        async function checarMensagensNaoLidasCorreio() {
+            if (!usuarioLogado) return;
+            try {
+                const { data } = await supabaseClient
+                    .from('correios')
+                    .select('id')
+                    .eq('id_jogador', String(usuarioLogado.id))
+                    .eq('resgatado', false);
+
+                const temPendente = data && data.length > 0;
+                const badgeNav = document.getElementById('navUnreadBadge');
+                const badgeTab = document.getElementById('tabCorreioAlertBadge');
+
+                if (temPendente) {
+                    badgeNav.innerHTML = `<span class="unread-alert-badge">!</span>`;
+                    badgeTab.innerHTML = `<span class="unread-alert-badge">!</span>`;
                 } else {
-                    alert("Erro ao gerar o Pix. Verifique os dados.");
+                    badgeNav.innerHTML = '';
+                    badgeTab.innerHTML = '';
                 }
-            } catch (e) {
-                alert("Erro na conexão com o gateway de pagamento.");
-            }
+            } catch(e){}
         }
 
-        async function esqueciMinhaSenha() {
-            let emailInput = prompt("Digite o e-mail cadastrado na sua conta para recuperar a senha:");
-            if (!emailInput) return;
+        // CORREIO EM MASSA (ADM)
+        async function enviarCorreioEmMassaAdm() {
+            const titulo = document.getElementById('admMassTitulo').value.trim();
+            const msg = document.getElementById('admMassMensagem').value.trim();
+            const qtdDiamantes = parseInt(document.getElementById('admMassDiamantes').value) || 0;
+
+            if (!titulo || !msg) { alert("Preencha o título e a mensagem."); return; }
+
             try {
-                const { data } = await supabaseClient.from('usuarios').select('*').eq('email', emailInput.trim()).maybeSingle();
-                if(data) {
-                    alert(`✅ Sua senha é: ${data.pass}\n(Dica: Anote em um lugar seguro!)`);
-                } else {
-                    alert("❌ Nenhum usuário encontrado com este e-mail.");
+                const { data: usuarios } = await supabaseClient.from('usuarios').select('id_jogador');
+                if (usuarios && usuarios.length > 0) {
+                    const pacotes = usuarios.map(u => ({
+                        id_jogador: String(u.id_jogador),
+                        titulo: titulo,
+                        mensagem: msg + (qtdDiamantes > 0 ? ` (Acompanha ${qtdDiamantes} 💎 Brinde!)` : ''),
+                        tipo: 'massa',
+                        resgatado: false,
+                        data: new Date().toLocaleDateString('pt-BR')
+                    }));
+
+                    await supabaseClient.from('correios').insert(pacotes);
+
+                    if (qtdDiamantes > 0) {
+                        for (let u of usuarios) {
+                            const { data: c } = await supabaseClient.from('carteira_diamantes').select('diamantes').eq('id_jogador', String(u.id_jogador)).maybeSingle();
+                            let s = c ? (c.diamantes || 0) : 0;
+                            await supabaseClient.from('carteira_diamantes').upsert({ id_jogador: String(u.id_jogador), diamantes: s + qtdDiamantes }, { onConflict: 'id_jogador' });
+                        }
+                    }
+
+                    mostrarToast(`📬 Correio enviado para ${usuarios.length} jogadores!`);
+                    registrarLogAuditoria(`Disparo de correio em massa para ${usuarios.length} usuários.`);
+                    dispararNotificacaoPushLocal("📬 Novo Comunicado do Hub", titulo);
+                    document.getElementById('admMassTitulo').value = '';
+                    document.getElementById('admMassMensagem').value = '';
+                    document.getElementById('admMassDiamantes').value = '';
                 }
             } catch(e) {
-                alert("Erro ao recuperar senha.");
+                alert("Erro ao disparar mensagens em massa.");
             }
         }
 
-        async function prepararAcaoDiamantes(tipo) {
-            const termo = document.getElementById('admTargetId').value.trim();
-            const qtd = parseInt(document.getElementById('admTargetQtd').value);
-            if (!termo || isNaN(qtd) || qtd <= 0) {
-                alert("⚠️ Insira um ID ou Nick válido e uma quantidade correta de diamantes.");
-                return;
-            }
-
-            const userObj = await buscarUsuarioPorNickOuId(termo);
-            if (!userObj) {
-                alert("❌ Jogador não encontrado no sistema!");
-                return;
-            }
-
-            const idFinal = userObj.id;
-            const nickFinal = userObj.nick;
-
+        // LOGS DE AUDITORIA ADM
+        async function registrarLogAuditoria(acao) {
             try {
-                const { data: carteira } = await supabaseClient.from('carteira_diamantes').select('diamantes').eq('id_jogador', idFinal).maybeSingle();
-                const saldoAtual = carteira ? (carteira.diamantes || 0) : 0;
-
-                document.getElementById('modalDiamantesTitulo').textContent = tipo === 'enviar' ? '⚡ Confirmar Envio de Diamantes' : '🔻 Confirmar Remoção de Diamantes';
-                document.getElementById('confNick').textContent = nickFinal;
-                document.getElementById('confId').textContent = idFinal;
-                document.getElementById('confQtd').textContent = `${tipo === 'enviar' ? '+' : '-'}${formatarNumero(qtd)} Diamantes`;
-                document.getElementById('confSaldoAtual').textContent = `${formatarNumero(saldoAtual)} 💎`;
-
-                const btnConf = document.getElementById('btnConfirmarAcaoDiamantes');
-                btnConf.onclick = () => executarAcaoDiamantes(idFinal, nickFinal, qtd, tipo, saldoAtual);
-                document.getElementById('modalConfirmarDiamantes').style.display = 'flex';
-            } catch(e) {}
-        }
-
-        function fecharModalConfirmarDiamantes() {
-            document.getElementById('modalConfirmarDiamantes').style.display = 'none';
-        }
-
-        async function executarAcaoDiamantes(idFinal, nickFinal, qtd, tipo, saldoAtual) {
-            fecharModalConfirmarDiamantes();
-            const novoSaldo = tipo === 'enviar' ? saldoAtual + qtd : Math.max(0, saldoAtual - qtd);
-
-            try {
-                await supabaseClient.from('carteira_diamantes').upsert({ id_jogador: String(idFinal), nick: nickFinal, diamantes: novoSaldo }, { onConflict: 'id_jogador' });
-                await supabaseClient.from('correios').insert([{
-                    id_jogador: String(idFinal),
-                    titulo: tipo === 'enviar' ? '🎁 Recompensa Administrativa' : '⚠️ Ajuste Administrativo de Saldo',
-                    mensagem: tipo === 'enviar' ? `Você recebeu ${qtd} Diamantes da Administração!` : `Foram debitados ${qtd} Diamantes da sua conta pela Administração.`,
-                    tipo: 'diamantes',
-                    resgatado: true,
-                    data: new Date().toLocaleDateString('pt-BR')
+                await supabaseClient.from('wavecombat_logs').insert([{
+                    autor: usuarioLogado ? usuarioLogado.nick : 'Sistema',
+                    acao: acao,
+                    data: new Date().toLocaleString('pt-BR')
                 }]);
-
-                mostrarToast(`⚡ Sucesso! ${tipo === 'enviar' ? 'Enviados' : 'Removidos'} ${qtd} diamantes.`);
-                carregarSaldoDiamantesSite();
-                renderizarTabelaUsuariosAdmin();
-            } catch(e) {}
-        }
-
-        async function prepararAcaoExcluirConta() {
-            const termo = document.getElementById('admDeleteTargetId').value.trim();
-            if (!termo) { alert("Insira o ID ou Nick do jogador."); return; }
-
-            const userObj = await buscarUsuarioPorNickOuId(termo);
-            if (!userObj) { alert("Jogador não encontrado!"); return; }
-
-            if (userObj.id === MEU_ID_MESTRE || userObj.nick.toLowerCase() === 'capudo7') {
-                alert("🚫 Você não pode excluir a conta mestre do administrador!");
-                return;
-            }
-
-            document.getElementById('confDelNick').textContent = userObj.nick;
-            document.getElementById('confDelId').textContent = userObj.id;
-
-            const btnConf = document.getElementById('btnConfirmarAcaoExclusao');
-            btnConf.onclick = () => executarExclusaoContaDefinitiva(userObj.id, userObj.nick);
-            document.getElementById('modalConfirmarExclusao').style.display = 'flex';
-        }
-
-        function fecharModalConfirmarExclusao() {
-            document.getElementById('modalConfirmarExclusao').style.display = 'none';
-        }
-
-        async function executarExclusaoContaDefinitiva(idFinal, nickFinal) {
-            fecharModalConfirmarExclusao();
-            try {
-                await supabaseClient.from('usuarios').delete().eq('id_jogador', String(idFinal));
-                await supabaseClient.from('carteira_diamantes').delete().eq('id_jogador', String(idFinal));
-                await supabaseClient.from('correios').delete().eq('id_jogador', String(idFinal));
-                mostrarToast(`✅ Conta de ${nickFinal} excluída com sucesso!`);
-                renderizarTabelaUsuariosAdmin();
-            } catch(e) {}
-        }
-
-        async function buscarUsuarioPorNickOuId(termo) {
-            termo = termo.trim();
-            if (!termo) return null;
-
-            try {
-                let { data } = await supabaseClient
-                    .from('usuarios')
-                    .select('*')
-                    .or(`id.eq.${termo},id_jogador.eq.${termo},nick.ilike.${termo}`)
-                    .maybeSingle();
-
-                if (data) return { id: String(data.id_jogador || data.id), nick: data.nick };
             } catch(e){}
+        }
 
+        async function carregarLogsAuditoriaAdmin() {
+            const container = document.getElementById('adminLogsContainer');
+            if(!container) return;
             try {
-                let { data: carData } = await supabaseClient
-                    .from('carteira_diamantes')
-                    .select('*')
-                    .or(`id_jogador.eq.${termo},nick.ilike.${termo}`)
-                    .maybeSingle();
-
-                if (carData) return { id: String(carData.id_jogador), nick: carData.nick || carData.id_jogador };
+                const { data } = await supabaseClient.from('wavecombat_logs').select('*').order('created_at', { ascending: false }).limit(20);
+                if (data && data.length > 0) {
+                    container.innerHTML = data.map(l => `<div>[${l.data}] <strong>${l.autor}:</strong> ${l.acao}</div>`).join('');
+                } else {
+                    container.innerHTML = '<div>Nenhum registro de log recente.</div>';
+                }
             } catch(e){}
-
-            if (/^\d+$/.test(termo)) return { id: termo, nick: termo };
-            return null;
         }
 
-        async function adicionarInfluenciadorEEnviarCorreio() {
-            let termo = document.getElementById('infTargetNick').value.trim();
-            let codigo = document.getElementById('infTargetCodigo').value.trim().toUpperCase();
-            
-            if (!termo || !codigo) { alert("Preencha o Nick/ID e o Cupom."); return; }
-
-            const userObj = await buscarUsuarioPorNickOuId(termo);
-            if (!userObj) { alert("Jogador não encontrado!"); return; }
-
-            try {
-                await supabaseClient.from('influenciadores').upsert({ id_jogador: userObj.id, nick: userObj.nick, cupom: codigo, usos: 0, comissao: 0.00 }, { onConflict: 'id_jogador' });
-                await supabaseClient.from('wavecombat_verificados').upsert([{ id_jogador: userObj.id, nick: userObj.nick }], { onConflict: 'id_jogador' });
-
-                await supabaseClient.from('correios').insert([{
-                    id_jogador: userObj.id,
-                    titulo: "🎉 Convite Especial de Verificado & Cupom! ⭐",
-                    mensagem: `Sua conta foi selecionada para verificado! Resgate o Selo V Dourado, Moldura, 5.000 Diamantes e Cupom: ${codigo}`,
-                    tipo: 'verificado_invite',
-                    codigo_cupom: codigo,
-                    resgatado: false,
-                    data: new Date().toLocaleDateString('pt-BR')
-                }]);
-
-                await carregarVerificadosNuvem();
-                mostrarToast(`⭐ Influenciador ${userObj.nick} gravado!`);
-                renderizarTabelaInfluenciadoresAdmin();
-            } catch(e) {}
-        }
-
-        async function obterUsuariosCadastrados() {
-            try {
-                const { data } = await supabaseClient.from('usuarios').select('*');
-                if (data) return data.map(u => ({ nick: u.nick, pass: u.pass || '', email: u.email || '', id: String(u.id_jogador || u.id) }));
-            } catch(e){}
-            return [];
-        }
-
-        async function renderizarTabelaUsuariosAdmin() {
-            let container = document.getElementById('adminListaUsuariosContainer');
+        // GRÁFICOS E ESTATÍSTICAS DO ADM
+        async function carregarGraficosEstatistacasAdmin() {
+            const container = document.getElementById('adminGraficosContainer');
             if (!container) return;
-            let filtro = (document.getElementById('inputBuscaAdminUser')?.value || '').toLowerCase();
-            let usuarios = await obterUsuariosCadastrados();
-            
-            let diamantesDict = {};
-            try {
-                const { data: dList } = await supabaseClient.from('carteira_diamantes').select('id_jogador, diamantes');
-                if (dList) dList.forEach(d => { diamantesDict[String(d.id_jogador)] = d.diamantes || 0; });
-            } catch(e){}
 
-            usuarios.sort((a, b) => (a.nick || '').localeCompare(b.nick || '', 'pt-BR', { sensitivity: 'base' }));
-            let filtrados = usuarios.filter(u => (u.nick && u.nick.toLowerCase().includes(filtro)) || (u.id && String(u.id).includes(filtro)));
-            
-            container.innerHTML = filtrados.map(u => {
-                let diamantesUser = diamantesDict[u.id] || 0;
-                return `
-                    <div style="display:flex; justify-content:space-between; align-items:center; background:#000; border:1px solid var(--steel-border); padding:8px; border-radius:6px; font-size:11px; flex-wrap:wrap; gap:6px;">
-                        <div style="display:flex; align-items:center; gap:6px;">
-                            <strong>${obterHtmlNickVerificado(u.nick, u.id)}</strong> <span style="color:#64748b;">(ID: ${u.id}) - E-mail: ${u.email || 'Não vinculado'}</span>
-                            <span style="color:var(--accent-color); font-weight:bold; background:rgba(0,240,255,0.1); padding:2px 6px; border-radius:4px;">💎 ${formatarNumero(diamantesUser)}</span>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        async function renderizarTabelaInfluenciadoresAdmin() {
-            let container = document.getElementById('adminListaInfluenciadoresContainer');
-            if (!container) return;
             try {
-                const { data } = await supabaseClient.from('influenciadores').select('*');
-                if (!data || data.length === 0) {
-                    container.innerHTML = `<p style="color:#94a3b8; font-size:11px; text-align:center;">Nenhum influenciador cadastrado.</p>`;
-                    return;
+                const { data: jogos } = await supabaseClient.from('jogos').select('*');
+                if (jogos && jogos.length > 0) {
+                    let maxAcessos = Math.max(...jogos.map(j => j.acessos || 0), 1);
+                    container.innerHTML = jogos.map(j => {
+                        let pct = Math.round(((j.acessos || 0) / maxAcessos) * 100);
+                        return `
+                            <div style="font-size:11px;">
+                                <div style="display:flex; justify-content:space-between;">
+                                    <span>🎮 <strong>${j.nome}</strong></span>
+                                    <span style="color:var(--accent-color);">${j.acessos || 0} Acessos (${pct}%)</span>
+                                </div>
+                                <div class="stat-bar-outer">
+                                    <div class="stat-bar-inner" style="width: ${pct}%;"></div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
                 }
-                container.innerHTML = data.map(inf => `
-                    <div style="display:flex; justify-content:space-between; align-items:center; background:#000; border:1px solid var(--steel-border); padding:8px; border-radius:6px; font-size:11px; flex-wrap:wrap; gap:6px;">
-                        <div>
-                            <strong style="color:var(--accent-color);">${obterHtmlNickVerificado(inf.nick, inf.id_jogador)}</strong> | Cupom: <strong style="color:var(--gold-warning);">${inf.cupom}</strong>
-                        </div>
-                    </div>
-                `).join('');
             } catch(e){}
         }
 
-        async function carregarCorreioUsuario() {
-            let container = document.getElementById('correioMensagensContainer');
-            if (!container || !usuarioLogado) return;
-            let idUser = String(usuarioLogado.id);
-            try {
-                const { data } = await supabaseClient.from('correios').select('*').eq('id_jogador', idUser).order('created_at', { ascending: false });
-                if (!data || data.length === 0) {
-                    container.innerHTML = `<p style="color:#94a3b8; text-align:center; font-size:11px;">Nenhuma mensagem no correio.</p>`;
-                    return;
-                }
-                container.innerHTML = data.map(m => `
-                    <div style="background:#000; border:1px solid ${m.resgatado ? 'var(--steel-border)' : '#FFD700'}; padding:10px; border-radius:8px; margin-bottom:8px; font-size:11px;">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-                            <strong style="color:var(--accent-color);">${m.titulo}</strong>
-                            <span style="color:#64748b; font-size:9px;">${m.data}</span>
-                        </div>
-                        <p style="color:#94a3b8; margin-bottom:8px;">${m.mensagem}</p>
-                        ${!m.resgatado ? `<button class="btn-gaming" onclick="resgatarPremioCorreio(${m.id}, '${m.codigo_cupom || ''}')" style="background:#FFD700; color:#000; width:100%; padding:6px; font-size:10px;">🎁 Resgatar Prêmios</button>` : `<span style="color:#22c55e; font-weight:bold;">✅ Resgatado</span>`}
-                    </div>
-                `).join('');
-            } catch(e){}
-        }
-
-        async function resgatarPremioCorreio(dbId, codigoCupomMsg) {
-            if (!usuarioLogado) return;
-            let idUser = String(usuarioLogado.id);
-            let nickUser = usuarioLogado.nick;
-
-            try {
-                await supabaseClient.from('correios').update({ resgatado: true }).eq('id', dbId);
-                await supabaseClient.from('wavecombat_verificados').upsert([{ id_jogador: idUser, nick: nickUser }], { onConflict: 'id_jogador' });
-                
-                const { data: carteira } = await supabaseClient.from('carteira_diamantes').select('diamantes').eq('id_jogador', idUser).single();
-                let saldoAtual = carteira ? (carteira.diamantes || 0) : 0;
-                await supabaseClient.from('carteira_diamantes').upsert({ id_jogador: idUser, nick: nickUser, diamantes: saldoAtual + 5000 }, { onConflict: 'id_jogador' });
-
-                await carregarVerificadosNuvem();
-                tocarSomLevelUp();
-                document.getElementById('modalVerificadoPremio').style.display = 'flex';
-                
-                await carregarCorreioUsuario();
-                await carregarSaldoDiamantesSite();
-                await atualizarPerfilExpandidoUI();
-                document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(nickUser, idUser);
-            } catch(e){}
-        }
-
-        function fecharModalVerificadoPremio() { document.getElementById('modalVerificadoPremio').style.display = 'none'; }
-
-        function alternarAba(aba) {
-            document.getElementById('tabLoginBtn')?.classList.toggle('active', aba === 'login');
-            document.getElementById('tabRegisterBtn')?.classList.toggle('active', aba === 'registro');
-            document.getElementById('tabPerfilBtn')?.classList.toggle('active', aba === 'perfil');
-            document.getElementById('tabInventarioBtn')?.classList.toggle('active', aba === 'inventario');
-            document.getElementById('tabCorreioBtn')?.classList.toggle('active', aba === 'correio');
-            
-            document.getElementById('panelLogin').classList.toggle('active', aba === 'login');
-            document.getElementById('panelRegistro').classList.toggle('active', aba === 'registro');
-            document.getElementById('panelPerfil').classList.toggle('active', aba === 'perfil');
-            document.getElementById('panelInventario').classList.toggle('active', aba === 'inventario');
-            document.getElementById('panelCorreio').classList.toggle('active', aba === 'correio');
-        }
-
-        async function fazerRegistroPlataforma(e) {
-            e.preventDefault();
-            const u = document.getElementById('regUser').value.trim();
-            const email = document.getElementById('regEmail').value.trim();
-            const p = document.getElementById('regPass').value;
-            let users = await obterUsuariosCadastrados();
-            if(users.some(x => x.nick && x.nick.toLowerCase() === u.toLowerCase())) {
-                alert("Este nick já existe! Escolha outro.");
-                return;
-            }
-            const novoId = Math.floor(100000000 + Math.random() * 900000000).toString();
-            try {
-                await supabaseClient.from('usuarios').insert([{ id_jogador: novoId, nick: u, email: email, pass: p }]);
-                usuarioLogado = { nick: u, email: email, isAdm: false, id: novoId };
-                localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
-                
-                mostrarToast("✨ Conta criada com sucesso!");
-                document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(u, novoId);
-                fecharModalAuth();
-                atualizarAbasPerfilUI();
-                carregarSaldoDiamantesSite();
-            } catch(err){
-                alert("Erro ao criar conta na nuvem.");
-            }
-        }
-
-        async function fazerLoginPlataforma(e) {
-            e.preventDefault();
-            const u = document.getElementById('loginUser').value.trim();
-            const p = document.getElementById('loginPass').value;
-            
-            if (u.toLowerCase() === 'capudo7' && p === '262026') {
-                usuarioLogado = { nick: 'capudo7', isAdm: true, id: MEU_ID_MESTRE };
-                localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
-                if (await verificarBanimentoAtual()) return;
-
-                mostrarToast('⭐ Acesso ADM Concedido!');
-                document.getElementById('btnToggleAdmNav').style.display = 'inline-block';
-                document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado('capudo7', MEU_ID_MESTRE);
-                fecharModalAuth();
-                atualizarAbasPerfilUI();
-                carregarSaldoDiamantesSite();
-                return;
-            }
-
-            let users = await obterUsuariosCadastrados();
-            let achou = users.find(x => (x.nick && x.nick.toLowerCase() === u.toLowerCase() || x.email === u) && x.pass === p);
-            if(achou) {
-                let idUser = String(achou.id);
-                usuarioLogado = { nick: achou.nick, email: achou.email, isAdm: false, id: idUser };
-                if (await verificarBanimentoAtual()) return;
-
-                localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
-                mostrarToast(`👋 Bem-vindo, ${achou.nick}!`);
-                document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(achou.nick, idUser);
-                fecharModalAuth();
-                atualizarAbasPerfilUI();
-                carregarSaldoDiamantesSite();
-
-                if (!achou.email) {
-                    document.getElementById('modalAlertEmail').style.display = 'flex';
-                }
-            } else {
-                alert('Usuário/E-mail ou senha incorretos!');
-            }
-        }
-
+        // ADAPTADOR DE ATUALIZAÇÃO DO PERFIL EXPANDIDO
         async function atualizarPerfilExpandidoUI() {
             const perfilDiv = document.getElementById('perfilUserData');
-            if (!perfilDiv) return;
-            if (!usuarioLogado) {
-                perfilDiv.innerHTML = `<p style="color:#94a3b8; text-align:center;">Faça login para ver seu perfil.</p>`;
-                return;
-            }
-            const nickAtual = usuarioLogado.nick;
-            const idAtual = String(usuarioLogado.id);
-            
-            await carregarVerificadosNuvem();
-            let isVerif = cacheVerificadosNuvem[idAtual] || cacheVerificadosNuvem[nickAtual.toLowerCase()];
+            if (!perfilDiv || !usuarioLogado) return;
 
-            let nivelUser = 1;
-            let xpUser = 0;
-            try {
-                const { data: lbData } = await supabaseClient.from('leaderboard').select('nivel, xp').eq('id_jogador', idAtual).single();
-                if (lbData) { nivelUser = lbData.nivel || 1; xpUser = lbData.xp || 0; }
-            } catch(e){}
-
-            let cardStyleClass = isVerif ? 'profile-frame-gold' : '';
-            let emailTxt = usuarioLogado.email ? usuarioLogado.email : 'Não vinculado';
+            const statusTxt = usuarioLogado.status_custom || '';
+            const linkSocial = usuarioLogado.link_social || '';
 
             perfilDiv.innerHTML = `
                 <div style="display:flex; flex-direction:column; gap:10px;">
-                    <div class="${cardStyleClass}" style="background:#000; border:1px solid var(--steel-border); padding:10px; border-radius:8px; text-align:center;">
-                        <h4 style="color:var(--accent-color); font-family:'Orbitron'; font-size:13px;">${obterHtmlNickVerificado(nickAtual, idAtual)}</h4>
-                        <p style="font-size:11px; color:var(--gold-warning); font-family:'Orbitron'; margin-top:4px;">ID Único: <strong>${idAtual}</strong></p>
-                        <p style="font-size:10px; color:#22c55e; margin-top:2px;">⭐ Nível: ${nivelUser} | XP: ${xpUser}</p>
-                        <p style="font-size:10px; color:#94a3b8; margin-top:2px;">E-mail: <strong>${emailTxt}</strong></p>
-                        ${usuarioLogado.email ? `<button onclick="desvincularEmailConta()" style="background:none; border:none; color:var(--alert-red); font-size:9px; cursor:pointer; text-decoration:underline; margin-top:4px;">Remover / Desvincular E-mail</button>` : ''}
-                        ${isVerif ? '<p style="font-size:10px; color:#FFD700; margin-top:4px; font-weight:bold;">⭐ Verificado</p>' : ''}
+                    <div style="background:#000; border:1px solid var(--steel-border); padding:10px; border-radius:8px; text-align:center;">
+                        <h4 style="color:var(--accent-color);">${usuarioLogado.nick}</h4>
+                        <p style="font-size:10px; color:var(--gold-warning); margin-top:2px;">ID: ${usuarioLogado.id}</p>
+                        <p style="font-size:10px; color:#94a3b8; margin-top:4px;">"${statusTxt || 'Sem status definido'}"</p>
+                        ${linkSocial ? `<a href="${linkSocial}" target="_blank" style="font-size:10px; color:var(--accent-color); text-decoration:underline;">🔗 Minha Rede Social</a>` : ''}
                     </div>
-                    <button class="btn-gaming btn-danger" onclick="fazerLogout(); tocarSomClique();" style="padding:6px; font-size:11px;">Sair da Conta</button>
+
+                    <form onsubmit="salvarPerfilStatusESociais(event)" style="display:flex; flex-direction:column; gap:6px;">
+                        <input type="text" id="inputPerfilStatus" value="${statusTxt}" placeholder="Seu status/frase de efeito..." class="auth-input" style="font-size:11px;">
+                        <input type="url" id="inputPerfilSocial" value="${linkSocial}" placeholder="Link social (Instagram/YouTube)..." class="auth-input" style="font-size:11px;">
+                        <button type="submit" class="btn-gaming" style="font-size:10px; padding:6px;">💾 Salvar Alterações</button>
+                    </form>
+
+                    <button class="btn-gaming btn-danger" onclick="fazerLogout();" style="padding:6px; font-size:11px;">Sair da Conta</button>
                 </div>
             `;
-        }
-
-        function fazerLogout() {
-            usuarioLogado = null;
-            localStorage.removeItem('wavecombat_sessao_ativa');
-            document.getElementById('btnAuthNav').textContent = 'Entrar';
-            document.getElementById('btnToggleAdmNav').style.display = 'none';
-            document.getElementById('adminSection').style.display = 'none';
-            document.getElementById('userDiamondBalance').textContent = '0';
-            mostrarToast('Sessão encerrada.');
-            atualizarAbasPerfilUI();
-        }
-
-        async function carregarLeaderboardSite() {
-            const container = document.getElementById('siteLeaderboardListContainer');
-            const section = document.getElementById('siteLeaderboardSection');
-            if(!container || !section) return;
-            section.style.display = 'block';
-            await carregarVerificadosNuvem();
-            try {
-                const { data } = await supabaseClient.from('leaderboard').select('*').order('pontos', { ascending: false }).limit(10);
-                if (!data || data.length === 0) {
-                    container.innerHTML = `<p style="color:#94a3b8; text-align:center; font-size:11px;">Nenhum recorde registrado.</p>`;
-                    return;
-                }
-                container.innerHTML = data.map((item, idx) => `
-                    <div style="display:flex; justify-content:space-between; align-items:center; background:#000; border:1px solid var(--steel-border); padding:6px 10px; border-radius:6px; font-size:11px;">
-                        <span style="display:flex; align-items:center;"><strong>#${idx+1}</strong>&nbsp;${obterHtmlNickVerificado(item.nick, item.id_jogador)}</span>
-                        <strong style="color:var(--accent-color);">${formatarNumero(item.pontos)} pts</strong>
-                    </div>
-                `).join('');
-            } catch(e) {}
-        }
-
-        async function carregarMensagensChat() {
-            try {
-                const { data } = await supabaseClient.from('chat_global').select('*').order('created_at', { ascending: true }).limit(30);
-                const container = document.getElementById('miniChatMessages');
-                if (!container) return;
-
-                if (!data || data.length === 0) {
-                    container.innerHTML = `<div style="color:#64748b; font-style:italic;">Nenhuma mensagem recente.</div>`;
-                    return;
-                }
-
-                const nickAtual = usuarioLogado ? usuarioLogado.nick : '';
-                container.innerHTML = data.map(m => {
-                    const isMentioned = nickAtual && m.mensagem.toLowerCase().includes(`@${nickAtual.toLowerCase()}`);
-                    return `
-                        <div class="chat-msg-item ${isMentioned ? 'mentioned' : ''}">
-                            <strong style="color:#00f0ff; font-family:'Orbitron';">${obterHtmlNickVerificado(m.nick, m.id_jogador || '')}:</strong> <span style="color:#f8fafc;">${m.mensagem}</span>
-                        </div>
-                    `;
-                }).join('');
-                container.scrollTop = container.scrollHeight;
-            } catch(e) {}
-        }
-
-        function inserirEmojiChat(emoji) {
-            const input = document.getElementById('miniChatInput');
-            if(input) { input.value += emoji; input.focus(); }
-        }
-
-        function checarEnvioChat(e) { if (e.key === 'Enter') enviarMensagemChat(); }
-
-        async function enviarMensagemChat() {
-            const agora = Date.now();
-            if (agora - ultimaMensagemChatTempo < 2000) return;
-            const input = document.getElementById('miniChatInput');
-            const txt = input.value.trim();
-            if (!txt) return;
-
-            ultimaMensagemChatTempo = agora;
-            const nick = usuarioLogado ? usuarioLogado.nick : 'Convidado';
-            const idJogador = usuarioLogado ? String(usuarioLogado.id) : '';
-            
-            try {
-                await supabaseClient.from('chat_global').insert([{ nick, mensagem: txt, cor: '#00f0ff', id_jogador: idJogador }]);
-                input.value = '';
-                carregarMensagensChat();
-                tocarSomClique();
-            } catch(e) {}
-        }
-
-        async function buscarDadosNuvem() {
-            try { await carregarVerificadosNuvem(); } catch(e) {}
-
-            try {
-                const { data } = await supabaseClient.from('jogos').select('*');
-                listaJogosCache = (!data || data.length === 0) ? jogosIniciaisFallback : data;
-            } catch(e) {
-                listaJogosCache = jogosIniciaisFallback;
-            }
-
-            try {
-                const { data: confData } = await supabaseClient.from('configuracoes').select('*');
-                if(confData) {
-                    confData.forEach(item => {
-                        if(item.chave === 'live_url') siteConfigGlobal.url = item.valor || "";
-                        if(item.chave === 'live_ativa') siteConfigGlobal.ativa = (item.valor === 'true');
-                        if(item.chave === 'site_logo') siteConfigGlobal.logo = item.valor || "";
-                        if(item.chave === 'broadcast') siteConfigGlobal.broadcast = item.valor || "";
-                    });
-                }
-            } catch(e) {}
-
-            if (siteConfigGlobal.broadcast) {
-                document.getElementById('broadcastText').textContent = siteConfigGlobal.broadcast;
-                document.getElementById('broadcastTicker').style.display = 'block';
-            }
-
-            sincronizarCamposAdmUI();
-            aplicarLogoNoSite();
-            atualizarVisibilidadeLiveGeral();
-            atualizarPlataforma();
-            carregarLeaderboardSite();
-        }
-
-        function sincronizarCamposAdmUI() {
-            const inputLive = document.getElementById('inputAdminLiveUrl');
-            if(inputLive) inputLive.value = siteConfigGlobal.url;
-            const btnStatus = document.getElementById('btnToggleLiveStatus');
-            if(btnStatus) {
-                btnStatus.textContent = siteConfigGlobal.ativa ? "LIVE: ONLINE" : "LIVE: OFFLINE";
-                btnStatus.style.background = siteConfigGlobal.ativa ? "#22c55e" : "#ef4444";
-            }
-        }
-
-        function alternarStatusLiveAdm() {
-            siteConfigGlobal.ativa = !siteConfigGlobal.ativa;
-            sincronizarCamposAdmUI();
-        }
-
-        async function salvarConfigLiveAdm() {
-            const url = document.getElementById('inputAdminLiveUrl').value.trim();
-            siteConfigGlobal.url = url;
-            try {
-                await supabaseClient.from('configuracoes').upsert({ chave: 'live_url', valor: url });
-                await supabaseClient.from('configuracoes').upsert({ chave: 'live_ativa', valor: String(siteConfigGlobal.ativa) });
-                mostrarToast('💾 Configurações da live guardadas!');
-            } catch(e) {}
-            atualizarVisibilidadeLiveGeral();
-        }
-
-        async function salvarBroadcastAdm() {
-            const txt = document.getElementById('adminBroadcastInput').value.trim();
-            siteConfigGlobal.broadcast = txt;
-            try {
-                await supabaseClient.from('configuracoes').upsert({ chave: 'broadcast', valor: txt });
-                if(txt) {
-                    document.getElementById('broadcastText').textContent = txt;
-                    document.getElementById('broadcastTicker').style.display = 'block';
-                } else {
-                    document.getElementById('broadcastTicker').style.display = 'none';
-                }
-                mostrarToast('📢 Alerta global transmitido!');
-            } catch(e){}
-        }
-
-        async function alterarLogoSite() {
-            const f = document.getElementById('admLogoFile').files[0];
-            if(f) {
-                const fileName = `logo_${Date.now()}_${f.name}`;
-                const { error } = await supabaseClient.storage.from('capas').upload(fileName, f);
-                if(!error) {
-                    const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/capas/${fileName}`;
-                    siteConfigGlobal.logo = publicUrl;
-                    try { await supabaseClient.from('configuracoes').upsert({ chave: 'site_logo', valor: publicUrl }); } catch(e) {}
-                    aplicarLogoNoSite();
-                    mostrarToast('🖼️ Logo atualizada!');
-                }
-            }
-        }
-
-        function aplicarLogoNoSite() {
-            const logoUrl = siteConfigGlobal.logo;
-            if (logoUrl && logoUrl.trim() !== "") {
-                document.getElementById('defaultLogoSvg').style.display = 'none';
-                let img = document.getElementById('customNavLogo');
-                if(!img) {
-                    img = document.createElement('img');
-                    img.id = 'customNavLogo'; img.className = 'logo-img-custom';
-                    document.getElementById('navLogoContainer').prepend(img);
-                }
-                img.src = logoUrl;
-            }
-        }
-
-        // FUNÇÃO ATUALIZADA: SILENCIA A MÚSICA DO SITE AO ABRIR UM JOGO
-        async function tentarExecutarJogo(jogo) {
-            if (await verificarBanimentoAtual()) return;
-            try { await supabaseClient.from('jogos').update({ acessos: (jogo.acessos || 0) + 1 }).eq('id', jogo.id); } catch(e){}
-
-            // SILENCIA A MÚSICA TEMA DO SITE PARA NÃO SOBREPOR O SOM DO JOGO
-            toggleBGM(false);
-
-            let idUsuarioLogado = usuarioLogado ? usuarioLogado.id : '';
-            let nickUsuarioLogado = usuarioLogado ? encodeURIComponent(usuarioLogado.nick) : '';
-            
-            let separador = jogo.arquivo.includes('?') ? '&' : '?';
-            let urlComSessao = `${jogo.arquivo}${separador}id=${idUsuarioLogado}&userId=${idUsuarioLogado}&nick=${nickUsuarioLogado}`;
-
-            document.getElementById('gameIframe').src = urlComSessao;
-            document.getElementById('player').style.display = 'block';
-            document.getElementById('playerControlsBar').style.display = 'flex';
-            document.getElementById('player').scrollIntoView({ behavior: 'smooth' });
-        }
-
-        function tentarExecutarJogoDestaque() {
-            const jogos = listaJogosCache.filter(j => j.publicado);
-            const destaque = obterJogoDestaque(jogos);
-            if(destaque) tentarExecutarJogo(destaque);
+            checarMensagensNaoLidasCorreio();
         }
 
         function alternarPainelAdm() {
@@ -2348,184 +915,10 @@
             painel.style.display = painelAdmAberto ? 'block' : 'none';
             if(painelAdmAberto) {
                 painel.scrollIntoView({ behavior: 'smooth' });
-                renderizarJogosAdmin();
-                renderizarTabelaUsuariosAdmin();
-                renderizarTabelaInfluenciadoresAdmin();
-                sincronizarCamposAdmUI();
+                carregarGraficosEstatistacasAdmin();
+                carregarLogsAuditoriaAdmin();
             }
         }
-
-        function fazerLogoutAdmin() { fazerLogout(); }
-
-        function converterUrlYoutubeParaEmbed(url) {
-            if(!url) return "";
-            let videoId = "";
-            if (url.includes("embed/")) return url;
-            if (url.includes("watch?v=")) videoId = url.split("watch?v=")[1].split("&")[0];
-            else if (url.includes("youtu.be/")) videoId = url.split("youtu.be/")[1].split("?")[0];
-            else if (url.includes("live/")) videoId = url.split("live/")[1].split("?")[0];
-            return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
-        }
-
-        function atualizarVisibilidadeLiveGeral() {
-            const box = document.getElementById('liveSectionBox');
-            const iframe = document.getElementById('youtubeLiveIframe');
-            if(!box || !iframe) return;
-
-            if (siteConfigGlobal.ativa && siteConfigGlobal.url.trim() !== "") {
-                box.style.display = 'block';
-                iframe.src = converterUrlYoutubeParaEmbed(siteConfigGlobal.url);
-            } else {
-                box.style.display = 'none';
-                iframe.src = "about:blank";
-            }
-        }
-
-        function toggleTelaCheia() {
-            const c = document.getElementById('player');
-            if (!document.fullscreenElement) c.requestFullscreen().catch(()=>{});
-            else document.exitFullscreen();
-        }
-
-        function encerrarJogo() {
-            document.getElementById('gameIframe').src = "about:blank";
-            if (document.fullscreenElement) document.exitFullscreen();
-            document.getElementById('player').style.display = 'none';
-            document.getElementById('playerControlsBar').style.display = 'none';
-        }
-
-        function gerarPrintAutoCapa(nome) {
-            const canvas = document.createElement('canvas');
-            canvas.width = 640; canvas.height = 360;
-            const ctx = canvas.getContext('2d');
-            ctx.fillStyle = '#000'; ctx.fillRect(0,0,640,360);
-            ctx.fillStyle = '#00f0ff'; ctx.font = 'bold 28px Orbitron'; ctx.textAlign = 'center';
-            ctx.fillText(nome.toUpperCase(), 320, 180);
-            return canvas.toDataURL('image/png');
-        }
-
-        function extrairCorDinamicaImagem(imgElement) {
-            try {
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                canvas.width = 50; canvas.height = 50;
-                ctx.drawImage(imgElement, 0, 0, 50, 50);
-                const data = ctx.getImageData(0, 0, 50, 50).data;
-                let r = 0, g = 0, b = 0, count = 0;
-                for (let i = 0; i < data.length; i += 16) {
-                    let red = data[i], green = data[i+1], blue = data[i+2];
-                    let max = Math.max(red, green, blue), min = Math.min(red, green, blue);
-                    if (max > 40 && (max - min) > 20) { r += red; g += green; b += blue; count++; }
-                }
-                if (count > 0) {
-                    r = Math.floor(r / count); g = Math.floor(g / count); b = Math.floor(b / count);
-                    document.documentElement.style.setProperty('--accent-color', `rgb(${r}, ${g}, ${b})`);
-                    document.documentElement.style.setProperty('--accent-glow', `rgba(${r}, ${g}, ${b}, 0.35)`);
-                }
-            } catch(e) {}
-        }
-
-        function obterJogoDestaque(jogosPublicados) {
-            const manual = jogosPublicados.find(j => j.destaque_manual);
-            if(manual) return manual;
-            return [...jogosPublicados].sort((a,b) => (b.acessos || 0) - (a.acessos || 0))[0] || null;
-        }
-
-        function atualizarPlataforma() {
-            let jogosPublicados = listaJogosCache.filter(j => j.publicado);
-            const busca = (document.getElementById('inputSearchGames')?.value || '').toLowerCase();
-            const cat = document.getElementById('selectCategoryFilter')?.value || 'todos';
-
-            if (busca) jogosPublicados = jogosPublicados.filter(j => j.nome.toLowerCase().includes(busca));
-            if (cat !== 'todos') jogosPublicados = jogosPublicados.filter(j => j.categoria === cat);
-
-            jogosPublicados.sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR', { sensitivity: 'base' }));
-
-            const destaque = obterJogoDestaque(jogosPublicados);
-            const capaDestaque = destaque ? (destaque.img || gerarPrintAutoCapa(destaque.nome)) : "";
-
-            if(capaDestaque) {
-                document.getElementById('heroHeader').style.backgroundImage = `url('${capaDestaque}')`;
-                const tempImg = new Image();
-                tempImg.crossOrigin = "Anonymous";
-                tempImg.src = capaDestaque;
-                tempImg.onload = () => extrairCorDinamicaImagem(tempImg);
-            }
-
-            const featuredContainer = document.getElementById('featuredGameContainer');
-            if(destaque) {
-                featuredContainer.innerHTML = `
-                    <div class="featured-game-box">
-                        <div class="featured-badge">🔥 DESTAQUE</div>
-                        <img src="${capaDestaque}" class="featured-img" alt="${destaque.nome}" onclick="tentarExecutarJogo(${JSON.stringify(destaque).replace(/"/g, '&quot;')}); tocarSomClique();">
-                        <h3 style="font-size:16px; font-family:'Orbitron';">${destaque.nome}</h3>
-                        <p style="font-size:12px; color:#94a3b8;">${destaque.desc}</p>
-                        <div class="game-card-actions">
-                            <button type="button" class="btn-gaming" onclick="tentarExecutarJogo(${JSON.stringify(destaque).replace(/"/g, '&quot;')}); tocarSomClique();" style="flex:1; padding:8px;">▶ JOGAR AGORA</button>
-                        </div>
-                    </div>
-                `;
-            } else {
-                featuredContainer.innerHTML = `<p style="color:#94a3b8;">Nenhum jogo visível.</p>`;
-            }
-
-            const listContainer = document.getElementById('gamesListContainer');
-            listContainer.innerHTML = '';
-            jogosPublicados.forEach(jogo => {
-                const thumb = jogo.img || gerarPrintAutoCapa(jogo.nome);
-                const item = document.createElement('div');
-                item.className = 'game-list-card';
-                item.innerHTML = `
-                    <img src="${thumb}" class="game-list-thumb" alt="${jogo.nome}">
-                    <div class="game-list-info" onclick="tentarExecutarJogo(${JSON.stringify(jogo).replace(/"/g, '&quot;')}); tocarSomClique();">
-                        <h4>${jogo.nome}</h4>
-                        <p>${jogo.desc}</p>
-                    </div>
-                `;
-                listContainer.appendChild(item);
-            });
-
-            if(painelAdmAberto) renderizarJogosAdmin();
-        }
-
-        function renderizarJogosAdmin() {
-            const container = document.getElementById('adminListaJogos');
-            if(!container) return;
-            container.innerHTML = '';
-            
-            listaJogosCache.forEach((jogo) => {
-                const item = document.createElement('div');
-                item.className = 'admin-game-item';
-                item.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:5px;">
-                        <span style="color:var(--accent-color); font-weight:bold; font-size:12px;">${jogo.nome} (${formatarNumero(jogo.acessos || 0)})</span>
-                        <div style="display:flex; gap:4px; align-items:center;">
-                            <button type="button" class="btn-gaming" onclick="tentarExecutarJogo(${JSON.stringify(jogo).replace(/"/g, '&quot;')}); tocarSomClique();" style="font-size:9px; padding:3px 6px;">🎮 Testar</button>
-                            <button type="button" class="btn-gaming ${jogo.publicado ? 'btn-danger' : 'btn-success'}" onclick="togglePublicarJogo('${jogo.id}')" style="font-size:9px; padding:3px 6px;">
-                                ${jogo.publicado ? '👁️ Ocultar' : '🚀 Publicar'}
-                            </button>
-                        </div>
-                    </div>
-                `;
-                container.appendChild(item);
-            });
-        }
-
-        async function togglePublicarJogo(id) {
-            let j = listaJogosCache.find(x => x.id === id);
-            if(j) {
-                const novoEstado = !j.publicado;
-                await supabaseClient.from('jogos').update({ publicado: novoEstado }).eq('id', id);
-                await buscarDadosNuvem();
-            }
-        }
-
-        gerarParticulasFundo();
-        carregarSessaoSalva();
-        buscarDadosNuvem();
-        carregarMensagensChat();
-        desenharRoda();
-        setInterval(carregarMensagensChat, 3000);
     </script>
 </body>
 </html>
