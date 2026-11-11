@@ -157,7 +157,7 @@ body.lob #app{touch-action:none}
 <div id="ori" class="mo" style="z-index:50;text-align:center;font-size:20px">📱↻<br>Gire o dispositivo para o modo paisagem</div>
 <div id="tt"></div>
 <script>
-const VER='v0.0020',$=s=>document.querySelector(s),rnd=n=>Math.floor(Math.random()*n),esc=s=>String(s).replace(/[&<>"]/g,c=>'&#'+c.charCodeAt(0)+';'),hs=s=>{let x=0;for(const c of s)x=(x*31+c.charCodeAt(0))|0;return x};
+const VER='v0.0021',$=s=>document.querySelector(s),rnd=n=>Math.floor(Math.random()*n),esc=s=>String(s).replace(/[&<>"]/g,c=>'&#'+c.charCodeAt(0)+';'),hs=s=>{let x=0;for(const c of s)x=(x*31+c.charCodeAt(0))|0;return x};
 const st={g(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},s(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 const DB=st.g('zh_db',{u:{}}),set=st.g('zh_set',{vol:80,mus:60,sfx:true,btn:'Automático'}),save=()=>{st.s('zh_db',DB);window.hubPush&&hubPush()},me=()=>{const u=DB.u[U];if(u){if(!u.hub&&String(u.id).length!=9){u.id=100000000+rnd(900000000);save()}u.own=u.own||{f:[0],b:[0]};['s','p','t'].forEach(k=>u.own[k]=u.own[k]||[0]);u.eq=u.eq||{f:0,b:0};if(!u.pass.v)u.pass={lvl:1,prem:false,got:{},day:u.pass.day||'',v:2};[['shirt','s'],['pants','p'],['shoes','t']].forEach(([a,k])=>{if(!u.own[k].includes(u.char[a]))u.char[a]=0});if(!u.eqw){u.eqw={p:'Pistola M9',s:'',a:''};if(!u.inv.includes('Pistola M9'))u.inv.push('Pistola M9')}}return u};
 let U=null,cur='login',hist=[],inGame=false,tab='Armas',mt='m',ang=0,L={mode:'Offline',map:'Casa na Floresta',dif:'Normal',room:'Pública'};
@@ -364,7 +364,7 @@ go(v){if(cur!=v){hist.push(cur);show(v)}},back(){show(hist.pop()||'lobby')},home
 mode(v){L.mode=v;A.go('lobby')},
 wcfind(){M(`<h3>🌐 Conectando...</h3><div class="c">O servidor pode levar até 1 minuto para acordar.</div><button data-a="wccancel">Cancelar</button>`);wcConn(()=>{WC.sock.emit('find_match',{gameId:WC_GAME,playerName:U});M(`<h3>Procurando partida...</h3><div class="c">Jogadores: <b id="wqc">1/4</b> · Tempo: <b id="wqt">0:00</b></div><div class="c" id="wcm">Entrando na fila...</div><button data-a="wccancel">Cancelar</button>`);wcQ(1)})},
 wccancel(){WC.sock&&WC.sock.emit('cancel_matchmaking');wcQ(0);close()},
-fr(){let d=$('#frd');if(!d){d=document.createElement('div');d.id='frd';document.body.appendChild(d)}if(d.classList.contains('on'))return d.classList.remove('on');d.classList.add('on');frLoad()},frx(){const d=$('#frd');if(d)d.classList.remove('on')},
+fr(){let d=$('#frd');if(!d){d=document.createElement('div');d.id='frd';document.body.appendChild(d)}if(d.classList.contains('on'))return d.classList.remove('on');d.classList.add('on');frLoad()},frx(){const d=$('#frd');if(d)d.classList.remove('on')},sbd(){sbDiag()},
 wcjoin(){const id=$('#wcr').value.trim();if(!id)return toast('Digite o código da sala');wcConn(()=>{WC.room=id;WC.sock.emit('join_room',{gameId:WC_GAME,roomId:id,playerName:U})})},
 wcgo(){if(!WC.sock||!wcHost())return;WC.sock.emit('game_action',{t:'start'});A.cdgo(1)},
 wcleave(){if(WC.sock)WC.sock.disconnect();WC.sock=null;WC.room=null;WC.players={};WC.chat=[];close()},
@@ -450,7 +450,7 @@ const u=DB.u[k];u.hub=1;u.id=+playerId;U=k;if(playerId===ADM_ID&&nick===ADM_NICK
 /* WaveCombat Hub · saldo de 💎 na nuvem (Supabase, tabela carteira_diamantes) */
 function hubCred(){const t=f=>{try{return f()}catch(e){return undefined}},c=window.supabaseClient||{},m=n=>(document.querySelector(`meta[name="${n}"]`)||{}).content,l=k=>localStorage.getItem(k);
 return{url:window.SUPABASE_URL||t(()=>SUPABASE_URL)||c.supabaseUrl||m('supabase-url')||l('supabase_url')||l('wavecombat_supabase_url'),key:window.SUPABASE_KEY||window.SUPABASE_ANON_KEY||t(()=>SUPABASE_KEY)||t(()=>SUPABASE_ANON_KEY)||c.supabaseKey||m('supabase-key')||l('supabase_key')||l('wavecombat_supabase_key')}}
-const HUB={url:'https://ipqjeacdfiomcxfuixdj.supabase.co',key:'sb_publishable_EWW84q_43YbOvMwB_Rua-A_X465PbLP',table:'carteira_diamantes',localKey:'wavecombat_diamantes',socket:'https://wavecombat-hub.onrender.com',fcols:null,statusTable:''};
+const HUB={url:'https://ipqjeacdfiomcxfuixdj.supabase.co',key:'sb_publishable_EWW84q_43YbOvMwB_Rua-A_X465PbLP',table:'carteira_diamantes',localKey:'wavecombat_diamantes',socket:'https://wavecombat-hub.onrender.com',cols:null,fcols:null,statusTable:''};
 {const c=hubCred();if(c.url)HUB.url=c.url;if(c.key)HUB.key=c.key}
 const HID=['jogador_id','player_id','user_id','id_jogador','wavecombat_id','id'],HDC=['diamantes','saldo','diamonds','balance','saldo_diamantes','quantidade'];
 let hubT=0,hubDirty=false,hubC=st.g('wc_cols',null);
@@ -486,10 +486,40 @@ async function enviarResultadoPartida(pontosAlcancados) {
         console.warn("Cliente do Supabase não encontrado no escopo global.");
     }
 }
-async function hubRow(){for(const c of hubC?[hubC.i]:HID){try{const r=await fetch(`${HUB.url}/rest/v1/${HUB.table}?${c}=eq.${playerId}&select=*&limit=1`,{headers:hh()});if(!r.ok)continue;const j=await r.json();if(Array.isArray(j)&&j[0]){let d=hubC&&hubC.d;if(!d||!(d in j[0]))d=HDC.find(k=>typeof j[0][k]=='number')||Object.keys(j[0]).find(k=>typeof j[0][k]=='number'&&k!=c&&!/id|created|updated/i.test(k));if(!d)continue;if(!hubC||hubC.i!=c||hubC.d!=d){hubC={i:c,d};st.s('wc_cols',hubC)}return j[0][d]}}catch(e){}}return null}
-function hubPush(){const u=DB.u[U];if(!u)return;try{localStorage.setItem(HUB.localKey,String(u.dia))}catch(e){}if(!hubC)return;clearTimeout(hubT);hubT=setTimeout(()=>{fetch(`${HUB.url}/rest/v1/${HUB.table}?${hubC.i}=eq.${playerId}`,{method:'PATCH',headers:{...hh(),'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({[hubC.d]:u.dia})}).then(r=>{if(!r.ok&&!hubDirty){hubDirty=true;toast('Não foi possível salvar 💎 na nuvem (verifique as regras RLS)')}else if(r.ok)hubDirty=false}).catch(()=>{})},800)}
-async function hubPull(first){const u=DB.u[U];if(!u||hubDirty)return;let v=await hubRow();if(v===null){const l=localStorage.getItem(HUB.localKey);if(l!==null&&l!==''&&!isNaN(+l))v=+l}
+/* ===== Supabase: esquema detectado automaticamente (usuarios · carteira_diamantes · wavecombat_verificados · wavecombat_amigos) =====
+   Para travar os nomes das colunas (ignora a detecção), preencha HUB.cols. Exemplo:
+   HUB.cols={usuarios:{id:'wavecombat_id',pk:'id',nick:'nick'},carteira:{id:'usuario_id',dia:'diamantes'},verificados:{id:'usuario_id'},amigos:{a:'usuario_id',b:'amigo_id'}}  */
+if(HUB.fcols&&!HUB.cols)HUB.cols={amigos:HUB.fcols};
+const SBD={log:[]};let SC=st.g('wc_schema2',null)||{},SBP=null;
+const isUuid=v=>/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(v));
+const colT=(rows,c)=>{for(const r of rows){const v=r[c];if(v==null)continue;if(typeof v=='boolean')return'bool';if(typeof v=='number')return'num';if(typeof v=='object')return'obj';const t=String(v);if(isUuid(t))return'uuid';if(/^\d{4}-\d{2}-\d{2}[T ]/.test(t))return'date';return'str'}return'?'};
+async function sbGet(tb,qs){try{const r=await fetch(`${HUB.url}/rest/v1/${tb}?${qs}`,{headers:hh()}),t=await r.text();let j=null;try{j=t?JSON.parse(t):null}catch(e){}SBD.log.push(tb+' '+r.status+(r.ok?'':' '+t.slice(0,140)));if(SBD.log.length>40)SBD.log.shift();return{ok:r.ok,rows:Array.isArray(j)?j:[]}}catch(e){SBD.log.push(tb+' falha de rede');return{ok:false,rows:[]}}}
+async function sbCols(tb){const r=await sbGet(tb,'select=*&limit=20');return{ok:r.ok,rows:r.rows,cols:r.rows[0]?Object.keys(r.rows[0]):[]}}
+function sbOr(sm,keys,gen){const fk=/(user|usuario|jogador|player|amigo|friend|owner|dono|wavecombat)|_id$/i,hasFk=sm.cols.some(c=>c!='id'&&fk.test(c)),p=[];for(const c of sm.cols){if(c=='id'&&!gen&&hasFk)continue;const t=colT(sm.rows,c);if(t=='date'||t=='bool'||t=='obj')continue;for(const k of keys){if(t=='uuid'&&!isUuid(k))continue;if(t=='num'&&!/^\d{1,18}$/.test(k))continue;if(t=='?'&&!/^[\w-]+$/.test(k))continue;p.push(`${c}.eq.${k}`)}}return p}
+const nre=/^(nick|nickname|apelido|nome_usuario|username|display_name|nome|usuario)$/i;
+async function sbProfile(){const cf=(HUB.cols&&HUB.cols.usuarios)||{},sm=await sbCols('usuarios');let row=null,idc=cf.id||null;
+if(cf.id)row=(await sbGet('usuarios',`${cf.id}=eq.${playerId}&select=*&limit=1`)).rows[0]||null;
+else{const p=sbOr(sm,[String(playerId)],true);if(p.length)row=(await sbGet('usuarios',`or=(${p.join(',')})&select=*&limit=5`)).rows[0]||null}
+if(!row&&playerNick&&!/[,()"]/.test(playerNick)){for(const c of cf.nick?[cf.nick]:sm.cols.filter(c=>nre.test(c))){row=(await sbGet('usuarios',`${c}=eq.${encodeURIComponent(playerNick)}&select=*&limit=1`)).rows[0]||null;if(row)break}}
+if(!row)return null;const cols=Object.keys(row);if(!idc)idc=cols.find(c=>String(row[c])==String(playerId))||cols.find(c=>/^\d{9}$/.test(String(row[c])))||null;
+const pk=cf.pk||(cols.includes('id')?'id':idc),nk=cf.nick||cols.find(c=>nre.test(c))||null;
+return{row,cols,idc,pk,nk,pid:String(idc&&row[idc]!=null?row[idc]:playerId),pkv:String(pk&&row[pk]!=null?row[pk]:playerId)}}
+const sbProf=()=>SBP||(SBP=sbProfile());
+const sbKeys=P=>P?[...new Set([P.pid,P.pkv])]:[String(playerId)];
+async function sbRef(tb,keys,lim,gen){const sm=await sbCols(tb);if(!sm.ok)return{sm,rows:null};if(!sm.cols.length)return{sm,rows:[]};const p=sbOr(sm,keys,gen);if(!p.length)return{sm,rows:[]};const r=await sbGet(tb,`or=(${p.join(',')})&select=*&limit=${lim}`);return{sm,rows:r.ok?r.rows:null}}
+async function dbDia(){const P=await sbProf(),keys=sbKeys(P),cf=(HUB.cols&&HUB.cols.carteira)||{};let row=null;
+if(cf.id){for(const k of keys){row=(await sbGet('carteira_diamantes',`${cf.id}=eq.${k}&select=*&limit=1`)).rows[0];if(row)break}}
+else{let r=await sbRef('carteira_diamantes',keys,5);row=r.rows&&r.rows[0];if(!row&&playerNick&&!/[,()"]/.test(playerNick)){r=await sbRef('carteira_diamantes',[playerNick],5);row=r.rows&&r.rows[0]}}
+if(!row)return null;const cols=Object.keys(row),idc=cf.id||cols.find(c=>keys.includes(String(row[c]))||String(row[c])==playerNick),num=c=>row[c]!==null&&typeof row[c]!='boolean'&&row[c]!==''&&!isNaN(+row[c]),
+dc=cf.dia||cols.find(c=>/diam|saldo|balance|gems|quantidade|total|valor/i.test(c)&&c!=idc&&num(c))||cols.find(c=>typeof row[c]=='number'&&c!=idc&&!/(^|_)id$/i.test(c));
+if(!dc)return null;SC.carteira={idc,dc,kv:String(row[idc])};st.s('wc_schema2',SC);return+row[dc]}
+function hubPush(){const u=DB.u[U];if(!u)return;try{localStorage.setItem(HUB.localKey,String(u.dia))}catch(e){}const c=SC.carteira;if(!c)return;clearTimeout(hubT);hubT=setTimeout(()=>{fetch(`${HUB.url}/rest/v1/carteira_diamantes?${c.idc}=eq.${encodeURIComponent(c.kv)}`,{method:'PATCH',headers:{...hh(),'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({[c.dc]:Math.max(0,Math.round(u.dia))})}).then(r=>{SBD.log.push('PATCH carteira '+r.status);if(!r.ok&&!hubDirty){hubDirty=true;toast('Não foi possível salvar 💎 na nuvem (verifique as regras RLS)')}else if(r.ok)hubDirty=false}).catch(()=>{})},800)}
+async function hubPull(first){const u=DB.u[U];if(!u||hubDirty)return;let v=null;try{v=await dbDia()}catch(e){}if(v===null){const l=localStorage.getItem(HUB.localKey);if(l!==null&&l!==''&&!isNaN(+l))v=+l}
 if(v!==null&&v!==u.dia&&!inGame){u.dia=v;st.s('zh_db',DB);if(!first&&cur!='intro')show(cur)}}
+async function hubProfile(){const P=await sbProf();if(!P)return;const nk=P.nk&&P.row[P.nk]?String(P.row[P.nk]).trim():null,pid=P.idc&&/^\d{9}$/.test(String(P.row[P.idc]))?String(P.row[P.idc]):null;let ch=false;
+if(nk&&nk!==playerNick){playerNick=nk;try{localStorage.setItem('wavecombat_nick',nk)}catch(e){}ch=true}
+if(pid&&pid!==String(playerId)){playerId=pid;try{localStorage.setItem('wavecombat_id',pid)}catch(e){}ch=true}
+if(ch){SBP=null;initId();if(cur!='intro')show(cur)}}
 /* ===== WaveCombat Net · cliente Socket.io (reutilizável nos 5 jogos: troque WC_GAME) ===== */
 const WC_GAME='zombie-house',WC_SERVER='https://wavecombat-hub.onrender.com',WC_NS='';
 const WC={sock:null,room:null,players:{},chat:[],q:false,qn:1,qi:0,q0:0};
@@ -521,19 +551,37 @@ k.on('disconnect',()=>{WC.room=null;WC.players={}})}
 function wcRoomM(){const h=wcHost();M(`<h3>🚪 Sala ${esc(String(WC.room))}</h3>${Object.values(WC.players).map(p=>`<div class="c">${p.id==WC.sock.id?'⭐ ':''}${esc(p.name)}</div>`).join('')}${h?'<button class="pr" data-a="wcgo">▶ Iniciar partida</button>':'<small>Aguardando o anfitrião iniciar...</small>'}<div id="wrc" class="chl" style="max-height:120px"></div><div class="r nw"><input id="wri" maxlength="80" placeholder="Mensagem da sala..."><button data-a="wrs">➤</button></div><button data-a="wcleave">Sair da sala</button>`);wrc()}
 function wcJoined(id,pl,auto){WC.room=id;WC.players=pl;wcRoomM();if(auto&&wcHost())setTimeout(()=>{if(WC.room&&!inGame&&!CDN)A.wcgo()},3000)}
 const PRES={};let WS='online';
-const VID=['jogador_id','user_id','player_id','id_jogador','usuario_id','wavecombat_id','id'];let vC=st.g('wc_vcol',null);
-async function hubVer(ids){const list=ids.join(',');for(const c of vC?[vC]:VID){try{const r=await fetch(`${HUB.url}/rest/v1/wavecombat_verificados?${c}=in.(${list})&select=${c}`,{headers:hh()});if(!r.ok)continue;const j=await r.json();if(Array.isArray(j)){vC=c;st.s('wc_vcol',c);return new Set(j.map(x=>String(x[c])))}}catch(e){}}return null}
-function hubVerSelf(){hubVer([playerId]).then(v=>{const u=DB.u[U];if(!v||!u)return;const x=v.has(String(playerId))?1:0;if(u.vf!==x){u.vf=x;st.s('zh_db',DB);if(cur!='intro')show(cur)}})}
-const FIC=['jogador_id','usuario_id','user_id','id_jogador','player_id','id_usuario'],FFC=['amigo_id','friend_id','id_amigo','amigo','id_amigo_jogador'];let fC=st.g('wc_fcols',null);
-async function hubFriends(){const cs=HUB.fcols?[HUB.fcols]:fC?[fC]:FIC.flatMap(a=>FFC.map(b=>({a,b})));for(const c of cs){try{const r=await fetch(`${HUB.url}/rest/v1/wavecombat_amigos?or=(${c.a}.eq.${playerId},${c.b}.eq.${playerId})&select=*&limit=300`,{headers:hh()});if(!r.ok)continue;const j=await r.json();if(!Array.isArray(j))continue;fC=c;st.s('wc_fcols',fC);const out=new Map();
-for(const x of j){const mine=String(x[c.a])==String(playerId),fid=String(mine?x[c.b]:x[c.a]);if(!fid||fid=='null'||fid==String(playerId))continue;const sv=String(x.status||x.estado||'').toLowerCase();out.set(fid,{id:fid,nick:x.amigo_nick||x.nick_amigo||x.friend_nick||x.nick||x.nome||x.apelido||('ID '+fid),online:x.online===true||/online|jog|play/.test(sv),game:x.jogo||x.game||x.jogando||''})}
-return[...out.values()]}catch(e){}}return null}
-async function frLoad(){const d=$('#frd');if(!d)return;d.innerHTML='<div class="fh2"><span>👥 Amigos</span><button data-a="frx">✕</button></div><div class="fb2" id="frb">Carregando...</div><a class="yt yt2" href="https://youtube.com/@capudooficial7?si=NSvfxpSzswVEStdu" target="_blank" rel="noopener noreferrer">siga o criador do jogo aqui</a>';const l=await hubFriends(),b=$('#frb');if(!b)return;if(!l){b.textContent='Não foi possível carregar a lista de amigos do site.';return}
-const vs=(await hubVer(l.map(x=>x.id)))||new Set();l.forEach(f=>{const p=PRES[f.id];if(p){f.online=true;f.game=p.game||f.game}});const on=l.filter(f=>f.online),off=l.filter(f=>!f.online),row=(f,c)=>`<div class="fr3"><span class="${c}">${vs.has(f.id)?'<i class="vi">V</i> ':''}${esc(f.nick)}</span><small>${c=='on3'?(f.game?'Jogando '+esc(f.game):'Online'):'Offline'}</small></div>`;
+async function dbVer(ids){const cf=(HUB.cols&&HUB.cols.verificados)||{},keys=[...new Set(ids.map(String))],sm=await sbCols('wavecombat_verificados');if(!sm.ok)return null;if(!sm.cols.length)return new Set();
+const p=cf.id?keys.map(k=>`${cf.id}.eq.${k}`):sbOr(sm,keys);if(!p.length)return new Set();const r=await sbGet('wavecombat_verificados',`or=(${p.join(',')})&select=*&limit=500`);if(!r.ok)return null;
+const fl=sm.cols.find(c=>/^(ativo|verificado|active|valido|ok)$/i.test(c)&&colT(sm.rows,c)=='bool'),out=new Set();for(const row of r.rows){if(fl&&row[fl]===false)continue;for(const c of sm.cols)if(keys.includes(String(row[c])))out.add(String(row[c]))}return out}
+async function hubVerSelf(){const P=await sbProf(),keys=sbKeys(P),v=await dbVer(keys).catch(()=>null),u=DB.u[U];if(!v||!u)return;const x=keys.some(k=>v.has(k))?1:0;if(u.vf!==x){u.vf=x;st.s('zh_db',DB);if(cur!='intro')show(cur)}}
+const onl=(r,cols)=>{const b=cols.find(c=>/^(online|esta_online|is_online)$/i.test(c));if(b&&typeof r[b]=='boolean')return r[b];const s=cols.find(c=>/^(status|estado|presenca)$/i.test(c));if(s&&r[s])return/online|jog|play|ativo/.test(String(r[s]).toLowerCase());const t=cols.find(c=>/ultimo_acesso|last_seen|ultima_atividade|last_active|atualizado_em/i.test(c));return!!(t&&r[t]&&Date.now()-new Date(r[t]).getTime()<120000)};
+const gmn=(r,cols)=>{const g=cols.find(c=>/^(jogo|jogo_atual|jogando|game|current_game)$/i.test(c));return g&&typeof r[g]=='string'?r[g]:''};
+async function resolveFriends(refs,P){const Q=P||{};if(!refs.length)return[];const sm=await sbCols('usuarios'),parts=[];
+for(const c of [Q.pk,Q.idc].filter((x,i,a)=>x&&a.indexOf(x)==i)){const t=colT(sm.rows,c),l=refs.filter(v=>t=='uuid'?isUuid(v):t=='num'?/^\d{1,18}$/.test(v):true);if(l.length)parts.push(`${c}.in.(${l.join(',')})`)}
+let prof=[];if(parts.length)prof=(await sbGet('usuarios',`or=(${parts.join(',')})&select=*&limit=500`)).rows;const cols=sm.cols,nk=Q.nk||cols.find(c=>nre.test(c)),out=[];
+for(const ref of refs){const row=prof.find(x=>[Q.pk,Q.idc].some(c=>c&&String(x[c])==ref));if(!row){out.push({id:ref,ref,nick:'ID '+ref,online:false,game:''});continue}
+out.push({id:String(Q.idc&&row[Q.idc]!=null?row[Q.idc]:ref),ref,nick:String(nk&&row[nk]!=null?row[nk]:'ID '+ref),online:onl(row,cols),game:gmn(row,cols)})}return out}
+async function dbFriends(){const P=await sbProf(),keys=sbKeys(P),cf=(HUB.cols&&HUB.cols.amigos)||{},sm=await sbCols('wavecombat_amigos');if(!sm.ok)return null;
+const q=cf.a&&cf.b?keys.flatMap(k=>[`${cf.a}.eq.${k}`,`${cf.b}.eq.${k}`]):sbOr(sm,keys);if(!q.length)return[];
+const r=await sbGet('wavecombat_amigos',`or=(${q.join(',')})&select=*&limit=500`);if(!r.ok)return null;
+const fk=/_id$|user|usuario|jogador|player|amigo|friend/i,ok=c=>{const t=colT(sm.rows,c);if(!(t=='uuid'||t=='num'||t=='str'))return false;if(t=='str'&&/status|estado|nick|nome|apelido|data|criad|aceit|mensagem/i.test(c))return false;if(c=='id'&&sm.cols.some(x=>x!='id'&&fk.test(x)))return false;return true},
+sc=cf.a&&cf.b?[cf.a,cf.b]:sm.cols.filter(ok),acc=sm.cols.find(c=>/^(aceito|aceita|accepted|ativo|active)$/i.test(c)&&colT(sm.rows,c)=='bool'),refs=new Set();
+for(const row of r.rows){const sv=String(row.status||row.estado||'').toLowerCase();if(/pend|recus|bloq|block|reject|rejeit|cancel/.test(sv))continue;if(acc&&row[acc]===false)continue;const mine=sc.filter(c=>keys.includes(String(row[c])));if(!mine.length)continue;for(const c of sc){if(mine.includes(c))continue;const v=row[c];if(v!=null&&!keys.includes(String(v)))refs.add(String(v))}}
+return resolveFriends([...refs],P)}
+async function frLoad(){const d=$('#frd');if(!d)return;d.innerHTML='<div class="fh2"><span>👥 Amigos</span><button data-a="frx">✕</button></div><div class="fb2" id="frb">Carregando...</div><button data-a="sbd" style="margin:0 8px">🔧 Diagnóstico Supabase</button><a class="yt yt2" href="https://youtube.com/@capudooficial7?si=NSvfxpSzswVEStdu" target="_blank" rel="noopener noreferrer">siga o criador do jogo aqui</a>';
+const l=await dbFriends(),b=$('#frb');if(!b)return;if(!l){b.textContent='Não foi possível carregar a lista de amigos do site. Toque em Diagnóstico.';return}
+const vs=(await dbVer(l.flatMap(f=>[f.id,f.ref])))||new Set();l.forEach(f=>{const p=PRES[f.id];if(p){f.online=true;f.game=p.game||f.game}});const on=l.filter(f=>f.online),off=l.filter(f=>!f.online),row=(f,c)=>`<div class="fr3"><span class="${c}">${vs.has(f.id)||vs.has(f.ref)?'<i class="vi">V</i> ':''}${esc(f.nick)}</span><small>${c=='on3'?(f.game?'Jogando '+esc(f.game):'Online'):'Offline'}</small></div>`;
 b.innerHTML=`<h4>Online (${on.length})</h4>${on.map(f=>row(f,'on3')).join('')||'<small>Ninguém online</small>'}<h4>Offline (${off.length})</h4>${off.map(f=>row(f,'off3')).join('')||'<small>—</small>'}`}
-function wcStatus(v){WS=v;try{localStorage.setItem('wavecombat_status',JSON.stringify({game:WC_GAME,status:v,t:Date.now()}))}catch(e){}const k=(WC.sock&&WC.sock.connected)?WC.sock:(CS.g&&CS.g.connected?CS.g:null);if(k)k.emit('presence_update',{gameId:WC_GAME,playerId:String(playerId),nick:playerNick,status:v,game:v=='playing'?'Zombie House':''});
+async function sbDiag(){M('<h3>🔧 Diagnóstico Supabase</h3><div class="c">Consultando...</div>');const out={playerId:String(playerId),nick:playerNick,esquema_detectado:SC},P=await sbProf();out.usuarios_linha=P?{pk:P.pk,coluna_id:P.idc,coluna_nick:P.nk,colunas:P.cols}:'não encontrada (verifique RLS/colunas)';out.tabelas={};
+for(const t of ['usuarios','carteira_diamantes','wavecombat_verificados','wavecombat_amigos']){const x=await sbCols(t);out.tabelas[t]={ok:x.ok,colunas:x.cols,linhas_de_amostra:x.rows.length}}
+M(`<h3>🔧 Diagnóstico Supabase</h3><pre style="max-height:46vh;overflow:auto;font-size:11px;white-space:pre-wrap">${esc(JSON.stringify(out,null,1))}</pre><pre style="max-height:20vh;overflow:auto;font-size:11px;white-space:pre-wrap">${esc(SBD.log.join('\n'))}</pre><button data-a="cm">Fechar</button>`)}
+async function sbStatus(v){if(HUB.statusTable)return;const P=await sbProf();if(!P||!P.pk)return;const f={},c=P.cols,r=P.row,has=re=>c.find(x=>re.test(x)),b=has(/^(online|esta_online|is_online)$/i),s=has(/^(status|estado|presenca)$/i),g=has(/^(jogo|jogo_atual|jogando|game|current_game)$/i),t=has(/^(ultimo_acesso|last_seen|ultima_atividade|last_active)$/i);
+if(b&&typeof r[b]=='boolean')f[b]=v!='offline';if(s&&(typeof r[s]=='string'||r[s]==null))f[s]=v=='playing'?'jogando':v;if(g){if(typeof r[g]=='boolean')f[g]=v=='playing';else if(typeof r[g]=='string'||r[g]==null)f[g]=v=='playing'?'Zombie House':null}if(t)f[t]=new Date().toISOString();
+if(!Object.keys(f).length)return;fetch(`${HUB.url}/rest/v1/usuarios?${P.pk}=eq.${encodeURIComponent(P.pkv)}`,{method:'PATCH',headers:{...hh(),'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(f)}).then(x=>SBD.log.push('PATCH usuarios '+x.status)).catch(()=>{})}
+function wcStatus(v){WS=v;try{localStorage.setItem('wavecombat_status',JSON.stringify({game:WC_GAME,status:v,t:Date.now()}))}catch(e){}const k=(WC.sock&&WC.sock.connected)?WC.sock:(CS.g&&CS.g.connected?CS.g:null);if(k)k.emit('presence_update',{gameId:WC_GAME,playerId:String(playerId),nick:playerNick,status:v,game:v=='playing'?'Zombie House':''});sbStatus(v);
 if(HUB.statusTable)fetch(`${HUB.url}/rest/v1/${HUB.statusTable}?on_conflict=id`,{method:'POST',headers:{...hh(),'Content-Type':'application/json',Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({id:String(playerId),nick:playerNick,status:v,jogo:v=='playing'?'Zombie House':null,atualizado:new Date().toISOString()})}).catch(()=>{})}
-const boot=()=>{try{fetch(wcUrl(),{mode:'no-cors'}).catch(()=>{})}catch(e){}initId();hubPull(true);show('intro');setInterval(tick,1000);setInterval(()=>hubPull(),5000);addEventListener('storage',e=>{if(e.key==HUB.localKey)hubPull()});hubVerSelf();setInterval(hubVerSelf,60000);wcStatus('online');setInterval(()=>wcStatus(WS),30000)};
+const boot=()=>{try{fetch(wcUrl(),{mode:'no-cors'}).catch(()=>{})}catch(e){}try{['wc_cols','wc_fcols','wc_vcol'].forEach(k=>localStorage.removeItem(k))}catch(e){}initId();hubPull(true);hubProfile();show('intro');setInterval(tick,1000);setInterval(()=>hubPull(),5000);addEventListener('storage',e=>{if(e.key==HUB.localKey)hubPull()});hubVerSelf();setInterval(hubVerSelf,60000);wcStatus('online');setInterval(()=>wcStatus(WS),30000)};
 chk();document.readyState=='loading'?document.addEventListener('DOMContentLoaded',boot):boot();
 </script><script>
 /* ZOMBIE HOUSE · GAMEPLAY · ETAPA 1 (engine + FPS + cabana). Hooks p/ próximas etapas: ZH.hooks, ZH.walls, ZH.win, ZH.P, ZH.resolve */
