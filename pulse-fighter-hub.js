@@ -24,7 +24,7 @@
  *    sala_criar {mode,pass} (+ack {ok,code,...})   sala_entrar {code,pass} (+ack {ok|err})
  *    sala_sair · sala_remover {id} (só o dono) · sala_equipe {team} · sala_chat {text,mid} · sala_iniciar (só o dono, 1 cartão)
  *    → sala_estado {code,mode,host,started,max,members:[{id,nick,v,team,host}]} · sala_removido · sala_chat
- *      erros de entrar: nao_existe | senha | cheia | iniciada | removido | limite
+ *      erros: nao_existe | senha | cheia | iniciada | removido | limite | so_dono | poucos (mín. 2 jogadores; vagas livres viram bots)
  *
  *  v2 — PARTIDA (relay de quem está na mesma partida)
  *    → partida {room,mode,you,host,slots:[{s,id,nick,v,bot,team}],sala}
@@ -92,11 +92,14 @@ module.exports = function pulseFighterHub(io, opts) {
   };
   const tryForm = mode => {
     const q = Q[mode], need = NEED[mode];
+    let formed = false;
     while (q.length >= need) {
       const group = q.splice(0, need);
       group.forEach(e => { e.socket.pfQ = null; });
       makeMatch(mode, group.map((h, k) => ({ h, s: ORDER[mode][k] })));
+      formed = true;
     }
+    if (formed && QT[mode]) { clearTimeout(QT[mode]); QT[mode] = null; }
     qBroadcast(mode); qTimer(mode);
   };
   const botFill = mode => {
@@ -122,8 +125,8 @@ module.exports = function pulseFighterHub(io, opts) {
   const bcastRoom = R => io.to(roomRoom(R.code)).emit(ev('sala_estado'), pubRoom(R));
 
   io.on('connection', socket => {
-    let pid = null, lastChat = 0, lastSala = 0, sentHist = false, watching = new Set(), myRoom = null, relN = 0, relT = 0, tries = [];
-    socket.pfQ = null; socket.pfMatch = null;
+    let pid = null, lastChat = 0, lastSala = 0, sentHist = false, watching = new Set(), relN = 0, relT = 0, tries = [];
+    socket.pfQ = null; socket.pfMatch = null; socket.pfRoom = null;
 
     const leave = () => {
       if (!pid) return;
@@ -155,8 +158,8 @@ module.exports = function pulseFighterHub(io, opts) {
       if (M.host === pm.slot) { M.host = Math.min(...M.socks.keys()); io.to(pm.room).emit(ev('partida_host'), { s: M.host }); }
     };
     const leaveRoom = () => {
-      if (!myRoom) return;
-      const code = myRoom; myRoom = null; socket.leave(roomRoom(code));
+      if (!socket.pfRoom) return;
+      const code = socket.pfRoom; socket.pfRoom = null; socket.leave(roomRoom(code));
       const R = ROOMS.get(code); if (!R) return;
       const me = who();
       R.members = R.members.filter(m => m.socket !== socket);
@@ -243,7 +246,7 @@ module.exports = function pulseFighterHub(io, opts) {
       const M = socket.pfMatch && MATCHES.get(socket.pfMatch.room), sala = M && M.sala;
       leaveMatch();
       const R = sala && ROOMS.get(sala);
-      if (R && myRoom === sala) socket.emit(ev('sala_estado'), pubRoom(R));
+      if (R && socket.pfRoom === sala) socket.emit(ev('sala_estado'), pubRoom(R));
     });
 
     // ---- salas personalizadas ----
@@ -256,8 +259,8 @@ module.exports = function pulseFighterHub(io, opts) {
       const me = who(d), code = newCode();
       const R = { code, pass, mode, host: me.id, members: [], banned: new Set(), match: null, started: false };
       R.members.push({ id: me.id, nick: me.nick, v: me.v, team: 0, socket });
-      ROOMS.set(code, R); myRoom = code; socket.join(roomRoom(code));
-      reply(Object.assign({ ok: true }, pubRoom(R)));
+      ROOMS.set(code, R); socket.pfRoom = code; socket.join(roomRoom(code));
+      reply(Object.assign({ ok: true, you: me.id }, pubRoom(R)));
     });
     socket.on(ev('sala_entrar'), (d, ack) => {
       const reply = r => { if (typeof ack === 'function') ack(r); };
@@ -270,7 +273,7 @@ module.exports = function pulseFighterHub(io, opts) {
       const me = who(d);
       if (R.banned.has(me.id)) return reply({ ok: false, err: 'removido' });
       if (R.started) return reply({ ok: false, err: 'iniciada' });
-      if (myRoom === code && R.members.some(m => m.socket === socket)) return reply(Object.assign({ ok: true }, pubRoom(R)));
+      if (socket.pfRoom === code && R.members.some(m => m.socket === socket)) return reply(Object.assign({ ok: true, you: me.id }, pubRoom(R)));
       const per = NEED[R.mode] / 2, cnt = [0, 0];
       R.members.forEach(m => { cnt[m.team]++; });
       if (cnt[0] >= per && cnt[1] >= per) return reply({ ok: false, err: 'cheia' });
@@ -278,26 +281,26 @@ module.exports = function pulseFighterHub(io, opts) {
       const team = cnt[0] <= cnt[1] ? (cnt[0] < per ? 0 : 1) : (cnt[1] < per ? 1 : 0);
       R.members = R.members.filter(m => m.id !== me.id);     // mesmo jogador reconectando
       R.members.push({ id: me.id, nick: me.nick, v: me.v, team, socket });
-      myRoom = code; socket.join(roomRoom(code));
-      reply(Object.assign({ ok: true }, pubRoom(R)));
+      socket.pfRoom = code; socket.join(roomRoom(code));
+      reply(Object.assign({ ok: true, you: me.id }, pubRoom(R)));
       bcastRoom(R);
     });
     socket.on(ev('sala_sair'), () => leaveRoom());
     socket.on(ev('sala_remover'), (d, ack) => {
       const reply = r => { if (typeof ack === 'function') ack(r); };
-      const R = myRoom && ROOMS.get(myRoom), me = who();
+      const R = socket.pfRoom && ROOMS.get(socket.pfRoom), me = who();
       if (!R || R.host !== me.id) return reply({ ok: false, err: 'so_dono' });
       if (R.started) return reply({ ok: false, err: 'iniciada' });
       const tid = clean(d && d.id, 40), t = R.members.find(m => m.id === tid);
       if (!t || tid === me.id) return reply({ ok: false, err: 'invalido' });
       R.members = R.members.filter(m => m !== t); R.banned.add(tid);
       t.socket.leave(roomRoom(R.code)); t.socket.emit(ev('sala_removido'), { code: R.code });
-      t.socket.pfRoomGone && t.socket.pfRoomGone();
+      t.socket.pfRoom = null;
       reply({ ok: true }); bcastRoom(R);
     });
     socket.on(ev('sala_equipe'), (d, ack) => {
       const reply = r => { if (typeof ack === 'function') ack(r); };
-      const R = myRoom && ROOMS.get(myRoom); if (!R) return reply({ ok: false });
+      const R = socket.pfRoom && ROOMS.get(socket.pfRoom); if (!R) return reply({ ok: false });
       if (R.started) return reply({ ok: false, err: 'iniciada' });
       const m = R.members.find(x => x.socket === socket); if (!m) return reply({ ok: false });
       const nt = 1 - m.team, per = NEED[R.mode] / 2;
@@ -305,7 +308,7 @@ module.exports = function pulseFighterHub(io, opts) {
       m.team = nt; reply({ ok: true }); bcastRoom(R);
     });
     socket.on(ev('sala_chat'), d => {
-      const R = myRoom && ROOMS.get(myRoom); if (!R || !d) return;
+      const R = socket.pfRoom && ROOMS.get(socket.pfRoom); if (!R || !d) return;
       const text = clean(d.text, 120).trim(); if (!text) return;
       const now = Date.now(); if (now - lastSala < 400) return; lastSala = now;
       const me = who();
@@ -313,11 +316,11 @@ module.exports = function pulseFighterHub(io, opts) {
     });
     socket.on(ev('sala_iniciar'), (d, ack) => {
       const reply = r => { if (typeof ack === 'function') ack(r); };
-      const R = myRoom && ROOMS.get(myRoom), me = who();
+      const R = socket.pfRoom && ROOMS.get(socket.pfRoom), me = who();
       if (!R || R.host !== me.id) return reply({ ok: false, err: 'so_dono' });
       if (R.started) return reply({ ok: false, err: 'iniciada' });
       const t0 = R.members.filter(m => m.team === 0), t1 = R.members.filter(m => m.team === 1);
-      if (!t0.length || !t1.length) return reply({ ok: false, err: 'poucos' });
+      if (R.members.length < 2) return reply({ ok: false, err: 'poucos' });   // mínimo 2 jogadores; vagas livres viram bots
       const base = [0, NEED[R.mode] / 2], assign = [];
       [t0, t1].forEach((arr, t) => arr.forEach((m, k) => assign.push({ h: m, s: base[t] + k })));
       R.started = true;
