@@ -439,6 +439,52 @@ body.v22 .hmini{display:block}
 .rm-chat{margin-top:12px;border-radius:12px;overflow:hidden;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.14)}
 @media (max-width:520px){.rm-teams{grid-template-columns:1fr}}
 @media (max-height:520px){.on-box{padding:8px;margin-top:8px}.on-box h4{margin-bottom:5px}.on-fmt .chip{padding:7px 0}.on-fmt{margin-bottom:6px}.rm-m{padding:5px 8px;margin-top:4px}.rm-chat .mm-msgs{max-height:56px;min-height:30px}.rm-id{font-size:16px}}
+/* ---- clã ---- */
+.nb{position:relative}
+.nb.dot::after{content:'';position:absolute;top:3px;right:5px;width:11px;height:11px;border-radius:50%;background:#ff2d3a;box-shadow:0 0 8px #ff2d3a;border:1.5px solid #fff}
+.pbox.clw{width:min(820px,97vw)}
+.cl-wrap{display:grid;grid-template-columns:190px 1fr;gap:14px;align-items:start}
+.cl-side{padding:14px 10px;border-radius:14px;background:linear-gradient(170deg,rgba(255,255,255,.1),rgba(0,0,0,.35));border:1px solid rgba(255,255,255,.18);text-align:center}
+.cl-side h3{font:900 19px Impact,'Arial Black',sans-serif;letter-spacing:.06em;margin:4px 0;word-break:break-word}
+.cl-id{font-size:12px;opacity:.9;margin-bottom:6px}.cl-id b{font-family:monospace;font-size:13px}
+.cl-id button{margin-left:4px;padding:1px 6px;font-size:12px;border-radius:6px;background:rgba(255,255,255,.16)}
+.cl-lv{font:900 13px Impact,sans-serif;letter-spacing:.12em;color:var(--gd);margin-top:2px}
+.cl-side .ps-xp{margin:4px 0 2px}
+.cl-side small{font-size:11px;opacity:.7}
+.cl-st{display:flex;flex-direction:column;gap:3px;margin-top:8px;font-size:12px;font-weight:700}
+.cl-embw{width:78px;height:90px;margin:0 auto 6px;filter:drop-shadow(0 0 8px var(--c))}
+.cl-embw.sm{width:38px;height:44px;margin:0;flex:none}.cl-embw.sm .cl-emb{font-size:18px}
+.cl-emb{width:100%;height:100%;display:grid;place-items:center;font-size:36px;position:relative;background:linear-gradient(160deg,#fff1b8,#c98a1b);clip-path:polygon(50% 0,100% 13%,100% 58%,50% 100%,0 58%,0 13%)}
+.cl-emb::before{content:'';position:absolute;inset:3px;background:linear-gradient(160deg,var(--c),#12062c 130%);clip-path:polygon(50% 0,100% 13%,100% 58%,50% 100%,0 58%,0 13%)}
+.cl-emb span{position:relative;z-index:1}
+.cl-tabs{display:flex;gap:6px;overflow-x:auto;padding:6px 4px 8px;margin-bottom:4px}
+.cl-tabs button{position:relative;flex:0 0 auto;padding:8px 11px;border-radius:9px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);font-weight:900;font-size:12px;letter-spacing:.04em;color:#fff}
+.cl-tabs button.on{background:linear-gradient(135deg,var(--pk),#ff8a3d);border-color:#fff}
+.cl-tabs button b{position:absolute;top:-6px;right:-4px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:#ff2d3a;font-size:10px;line-height:17px;text-align:center}
+.cl-card{margin-bottom:8px;padding:10px 12px;border-radius:10px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.12)}
+.cl-card h4{font-size:11px;letter-spacing:.14em;opacity:.7;margin-bottom:4px}.cl-card p{font-size:13.5px;line-height:1.4;word-break:break-word}.cl-card i{opacity:.55}
+.cl-m{display:flex;align-items:center;gap:8px;margin-bottom:6px;padding:8px;border-radius:10px;background:rgba(255,255,255,.07);flex-wrap:wrap}
+.cl-m.me{background:rgba(143,255,192,.12);border:1px solid rgba(143,255,192,.35)}
+.cl-m .nm{flex:1;min-width:120px;display:flex;flex-direction:column;overflow:hidden}
+.cl-m .nm b{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cl-m .nm small{font-size:11px;opacity:.7}.cl-m .nm small.d{white-space:normal;opacity:.55;margin-top:2px}
+.cl-av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font:900 15px Impact,sans-serif;background:radial-gradient(circle at 30% 30%,#ffd36b,#ff2d7a);border:2px solid #fff;flex:none}
+.cl-m i.role{font-style:normal;font-size:10.5px;font-weight:900;padding:3px 7px;border-radius:7px;background:rgba(255,255,255,.12);white-space:nowrap}
+.cl-m i.r-lider{background:#ffd36b;color:#2a1700}.cl-m i.r-vice{background:#a855ff}
+.cl-m button{padding:6px 9px;border-radius:8px;font-weight:900;font-size:11px;white-space:nowrap;color:#fff;background:rgba(255,255,255,.18)}
+.cl-m button.ok{background:#12a150}.cl-m button.kk{background:#c4123a}.cl-m button.pm{background:#6d3df0}
+.cl-m button:disabled{opacity:.45}
+.cl-main .btn.kk{background:linear-gradient(135deg,#c4123a,#7a0b26);box-shadow:0 0 12px rgba(196,18,58,.5)}
+.cl-empty{opacity:.65;text-align:center;padding:16px 0;font-size:13px}
+.cl-lab{font-size:11px;font-weight:900;letter-spacing:.14em;opacity:.7;margin:10px 0 5px}
+.cl-emojis,.cl-cores{display:flex;flex-wrap:wrap;gap:6px}
+.cl-emojis button{width:38px;height:38px;border-radius:9px;font-size:20px;background:rgba(255,255,255,.1);border:2px solid transparent}.cl-emojis button.on{border-color:#fff;background:rgba(255,255,255,.25)}
+.cl-cores button{width:28px;height:28px;border-radius:50%;border:2px solid transparent}.cl-cores button.on{border-color:#fff;box-shadow:0 0 8px #fff}
+.cl-main textarea{width:100%;padding:9px 12px;border-radius:8px;border:1px solid rgba(255,255,255,.25);background:rgba(0,0,0,.45);color:#fff;resize:none;font:inherit;font-size:13px}
+.cl-none{text-align:center;margin-bottom:6px}.cl-none h3{font:900 18px Impact,sans-serif;letter-spacing:.06em}.cl-none small{opacity:.7}
+.cl-msg{text-align:center;padding:26px 8px;font-size:14px;line-height:1.5}.cl-msg .ic{font-size:34px;display:block;margin-bottom:6px}
+@media(max-width:620px){.cl-wrap{grid-template-columns:1fr}.cl-side{display:grid;grid-template-columns:78px 1fr;gap:2px 12px;text-align:left;align-items:center}.cl-side .cl-embw{grid-row:1/7;margin:0}.cl-st{flex-direction:row;gap:12px;margin-top:4px}}
+
 </style>
 </head>
 <body data-sc="title">
@@ -679,7 +725,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   initIdentity();
   initUI();
   cloudStart();
-  hubStart(); verLoad(true); friendsLoad(true);
+  hubStart(); verLoad(true); friendsLoad(true); clBoot();
   resize();
   requestAnimationFrame(frame);
 });
@@ -721,7 +767,7 @@ function updatePlayerHUD(){
   if(diamEl) diamEl.innerText=window.player.dpend?'💎 …':`💎 ${window.player.diamonds}`;
   const gdEl=$('hud-player-gold'); if(gdEl) gdEl.innerText=`🪙 ${SV.gold.toLocaleString('pt-BR')}`;
   const av=$('hud-avatar'); if(av) av.innerText=window.player.name.charAt(0).toUpperCase();
-  const cl=$('hud-player-clan'); if(cl) cl.innerText='Nv '+lvInfo(SV.xp).L+' · Clã: '+(localStorage.getItem('pf_clan')||'—')+(window.player.isAdmin?'  ⭐ ADM':'');
+  const cl=$('hud-player-clan'); if(cl) cl.innerText='Nv '+lvInfo(SV.xp).L+' · Clã: '+(clName()||'—')+(window.player.isAdmin?'  ⭐ ADM':'');
 }
 
 function setDiamonds(n){
@@ -744,7 +790,7 @@ function openSettings(){ sfx('click'); renderAdmin(); go('settings'); }
 function closeSettings(){ sfx('click'); go(prevScreen); }
 let toastT;
 function toast(m){ const t=$('toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),2300); }
-function openPanel(title,html,wide){ $('panel-title').textContent=title; $('panel-body').innerHTML=html; document.querySelector('#panel .pbox').classList.toggle('wide',!!wide); $('panel').classList.add('on'); sfx('click'); }
+function openPanel(title,html,wide){ $('panel-title').textContent=title; $('panel-body').innerHTML=html; const pb=document.querySelector('#panel .pbox'); pb.classList.toggle('wide',!!wide&&wide!=='cl'); pb.classList.toggle('clw',wide==='cl'); $('panel').classList.add('on'); sfx('click'); }
 function closePanel(){ $('panel').classList.remove('on'); if(typeof BP!=='undefined') BP.on=false; }
 
 const sel={fmt:'1v1',diff:'Normal'};
@@ -820,7 +866,7 @@ function matchEnd(won,draw){
   const a=lvInfo(SV.xp).L; SV.gold+=g; SV.xp+=x; const b=lvInfo(SV.xp).L; saveSave();
   const ep=$('endpts'); ep.dataset.pts=pts; ep.textContent='🏆 +'+pts+' pontos';
   $('endrw').innerHTML=`🪙 +${g} &nbsp;·&nbsp; ⭐ +${x} XP`+(b>a?`<br><b style="color:var(--gd)">⬆️ NÍVEL ${b}!</b>`:'');
-  enviarResultadoPartida(pts);
+  enviarResultadoPartida(pts); clContribute(pts);
 }
 
 /* ---- loja ---- */
@@ -1086,11 +1132,341 @@ function passBuyAll(){
 }
 
 /* ---- clã / perfil (nick vem do Hub: sem renomear) ---- */
-function openClan(){
-  const c=localStorage.getItem('pf_clan')||'';
-  openPanel('🛡️ CLÃ',`<p style="margin-bottom:10px;opacity:.85">${c?'Seu clã: <b>'+esc(c)+'</b>':'Você ainda não está em um clã.'}</p><div class="row"><input type="text" id="cl-in" maxlength="12" placeholder="Nome do clã" value="${esc(c)}"><button class="btn sm" onclick="saveClan()">SALVAR</button></div>`);
+/* ---- CLÃ: Supabase (pf_clas · pf_clas_membros · pf_clas_pedidos) — tabelas em pulse-fighter-clas.sql ---- */
+var CL={me:null,clan:null,members:[],reqs:[],nreq:0,tab:'info',q:'',res:null,mine:new Set(),loaded:false,off:false,net:false,busy:false,lk:false,conf:null,st:0,emb:'🛡️',cor:'#ff2d7a',modo:'pedido',nn:'',nd:''};
+const CL_EMB=['🛡️','⚔️','🐉','🦅','🐺','🦁','🔥','⚡','💀','👑','🌪️','🐍','🦂','🌙','☄️','🥷'];
+const CL_COR=['#ff2d7a','#ff8a3d','#ffd36b','#3dff9b','#19e3ff','#4d7bff','#a855ff','#ff2d3a'];
+const CL_MODO={aberto:'ABERTO',pedido:'POR PEDIDO',fechado:'FECHADO'};
+const CL_MODO_TX={aberto:'Qualquer jogador pode entrar',pedido:'Líder ou vice aceitam ou recusam cada pedido',fechado:'Não aceita novos membros'};
+const CL_CARGO={lider:'👑 LÍDER',vice:'⭐ VICE',membro:'MEMBRO'};
+const CL_MAXVICE=3,CL_MAXPED=5;
+const clE=encodeURIComponent,clMy=()=>String(player.id),clX=s=>esc(s==null?'':s);
+const clCor=c=>/^#[0-9a-f]{6}$/i.test(c&&c.cor)?c.cor:'#ff2d7a';
+const clLv=p=>{ let L=1; while(L<10&&p>=L*L*200) L++; return L; };
+const clCap=L=>30+L*2;
+const clPts=ms=>ms.reduce((a,m)=>a+(+m.pontos||0),0);
+function clName(){ try{ if(CL&&CL.clan) return CL.clan.nome; return localStorage.getItem('pf_clan:'+window.player.id)||''; }catch(e){ return ''; } }
+function clCache(n){ try{ localStorage.setItem('pf_clan:'+player.id,n||''); }catch(_){} }
+function clAgo(s){ const d=(Date.now()-new Date(s).getTime())/1000; if(!(d>=0)) return ''; if(d<90) return 'agora'; if(d<5400) return Math.round(d/60)+' min'; if(d<129600) return Math.round(d/3600)+' h'; return Math.round(d/86400)+' d'; }
+function clDate(s){ const d=new Date(s); return isNaN(d)?'—':d.toLocaleDateString('pt-BR'); }
+
+async function clApi(path,o){
+  o=o||{};
+  const r=await fetch(SUPABASE_URL+'/rest/v1/'+path,{method:o.m||'GET',headers:{...sbH(),...(o.pref?{Prefer:o.pref}:{})},body:o.b!=null?JSON.stringify(o.b):undefined});
+  const tx=await r.text(); let j=null; try{ j=tx?JSON.parse(tx):null; }catch(_){}
+  if(!r.ok){ const e=new Error('http '+r.status); e.status=r.status; e.code=j&&j.code; throw e; }
+  return j;
 }
-function saveClan(){ const v=$('cl-in').value.trim().toUpperCase().replace(/[^\w ]/g,'').slice(0,12); localStorage.setItem('pf_clan',v); updatePlayerHUD(); sfx('confirm'); openClan(); }
+function clErr(e){
+  if(e&&e.status===404) CL.off=true;
+  else if(e&&e.status===409) toast('Já existe (nome em uso ou você já está em um clã)');
+  else if(e&&(e.status===401||e.status===403)) toast('Sem permissão no Supabase (políticas do clã)');
+  else if(!e||!e.status) CL.net=true;
+  else toast('Erro no clã ('+e.status+')');
+  clRender();
+}
+function clClear(){ CL.me=null; CL.clan=null; CL.members=[]; CL.reqs=[]; CL.nreq=0; }
+function clBadge(){ const b=document.querySelector('.topnav .nb[onclick="openClan()"]'); if(b) b.classList.toggle('dot',!!(CL.me&&CL.me.cargo!=='membro'&&CL.nreq>0)); }
+function clShown(){ return $('panel').classList.contains('on')&&/CLÃ/.test($('panel-title').textContent); }
+
+async function clLoad(){
+  CL.busy=true;
+  try{
+    if(isGuest()){ clClear(); CL.loaded=true; return; }
+    const me=await clApi(`pf_clas_membros?id_jogador=eq.${clE(clMy())}&select=*&limit=1`);
+    CL.off=false; CL.net=false;
+    if(!me[0]){ clClear(); CL.loaded=true; clCache(''); return; }
+    const cid=me[0].clan_id;
+    const [cl,mb]=await Promise.all([clApi(`pf_clas?id=eq.${cid}&select=*&limit=1`),clApi(`pf_clas_membros?clan_id=eq.${cid}&select=*&order=pontos.desc&limit=100`)]);
+    if(!cl[0]){ clClear(); CL.loaded=true; clCache(''); return; }
+    CL.clan=cl[0]; CL.members=mb; CL.me=mb.find(x=>String(x.id_jogador)===clMy())||me[0];
+    CL.reqs=CL.me.cargo!=='membro'?await clApi(`pf_clas_pedidos?clan_id=eq.${cid}&select=*&order=criado_em.asc&limit=100`):[];
+    CL.nreq=CL.reqs.length; clCache(CL.clan.nome); CL.loaded=true; clSync();
+  }catch(e){ CL.loaded=true; clErr(e); }
+  finally{ CL.busy=false; clBadge(); try{ updatePlayerHUD(); }catch(_){} }
+}
+function clSync(){
+  const L=lvInfo(SV.xp).L;
+  if(CL.me&&(CL.me.nick!==player.name||CL.me.nivel!==L)){ CL.me.nick=player.name; CL.me.nivel=L; clApi('pf_clas_membros?id=eq.'+CL.me.id,{m:'PATCH',b:{nick:player.name,nivel:L}}).catch(()=>{}); }
+}
+function clBoot(){ clClear(); CL.loaded=false; CL.off=false; CL.net=false; if(isGuest()){ CL.loaded=true; clBadge(); return; } clLoad(); }
+async function clPoll(){
+  if(document.hidden||CL.busy||CL.lk||CL.off||isGuest()||!CL.loaded) return;
+  try{
+    const me=await clApi(`pf_clas_membros?id_jogador=eq.${clE(clMy())}&select=id,clan_id,cargo&limit=1`),m=me[0],was=CL.me;
+    if((m?m.clan_id:null)!==(was?was.clan_id:null)||(m&&was&&m.cargo!==was.cargo)){
+      const oc=was?was.cargo:null; await clLoad();
+      if(CL.me&&!was) toast('🛡️ Você entrou no clã '+CL.clan.nome+'!');
+      else if(!CL.me&&was) toast('Você não faz mais parte do clã');
+      else if(CL.me&&oc!==CL.me.cargo) toast('Seu cargo agora: '+(CL_CARGO[CL.me.cargo]||''));
+      clRender(); return;
+    }
+    if(m&&m.cargo!=='membro'){
+      const rq=await clApi(`pf_clas_pedidos?clan_id=eq.${m.clan_id}&select=id`);
+      if(rq.length>CL.nreq) toast('📨 Novo pedido para entrar no clã');
+      if(rq.length!==CL.nreq){ await clLoad(); clRender(); }
+    }
+  }catch(e){}
+}
+setInterval(clPoll,60000);
+function clContribute(pts){
+  try{
+    if(!CL.me||isGuest()||!(pts>0)) return;
+    const n=(+CL.me.pontos||0)+Math.round(pts),L=lvInfo(SV.xp).L;
+    CL.me.pontos=n; CL.me.nivel=L; CL.me.nick=player.name;
+    clApi('pf_clas_membros?id=eq.'+CL.me.id,{m:'PATCH',b:{pontos:n,nivel:L,nick:player.name}}).catch(()=>{});
+  }catch(e){}
+}
+
+/* ---- tela ---- */
+function openClan(){
+  CL.conf=null; CL.q=''; CL.res=null; CL.tab=CL.me?'info':'buscar';
+  openPanel('🛡️ CLÃ','<p style="opacity:.8">Carregando...</p>','cl');
+  clLoad().then(()=>{ if(!CL.me&&!CL.off&&!CL.net&&!isGuest()) clSearch(''); else clRender(); });
+}
+function clMsg(ic,t){ return `<div class="cl-msg"><span class="ic">${ic}</span>${t}</div>`; }
+function clEmb(c,sm){ return `<div class="cl-embw${sm?' sm':''}" style="--c:${clCor(c)}"><div class="cl-emb"><span>${clX(c.emblema||'🛡️')}</span></div></div>`; }
+function clB(k,id,label,cls){ return `<button class="${cls||''}" onclick="clAct('${k}',${+id||0})">${CL.conf===k+':'+(+id||0)?'CONFIRMAR?':label}</button>`; }
+function clTabOk(){
+  const adm=CL.me&&CL.me.cargo!=='membro';
+  const ok=CL.me?['info','mem','buscar','conf'].concat(adm?['ped']:[]):['buscar','criar'];
+  if(ok.indexOf(CL.tab)<0) CL.tab=CL.me?'info':'buscar';
+}
+function clTabs(list){ return `<div class="cl-tabs">${list.map(t=>`<button class="${CL.tab===t[0]?'on':''}" onclick="clTab('${t[0]}')">${t[1]} ${t[2]}${t[0]==='ped'&&CL.reqs.length?`<b>${CL.reqs.length}</b>`:''}</button>`).join('')}</div>`; }
+function clTab(t){ CL.conf=null; clKeep(); CL.tab=t; if(t==='buscar'&&CL.res===null) clSearch(CL.q); else clRender(); sfx('click'); }
+function clKeep(){ const a=$('cl-nn'),b=$('cl-nd'); if(a) CL.nn=a.value; if(b) CL.nd=b.value; }
+function clPick(k,i){ clKeep(); if(k==='emb') CL.emb=CL_EMB[i]; else if(k==='cor') CL.cor=CL_COR[i]; else CL.modo=['aberto','pedido','fechado'][i]; clRender(); }
+function clCopy(id){ try{ navigator.clipboard.writeText(String(id)); }catch(_){} toast('ID '+id+' copiado'); }
+
+function clRender(){
+  if(!clShown()) return;
+  let h='';
+  if(isGuest()) h=clMsg('🔒','Entre com sua conta WaveCombat para criar ou participar de um clã.');
+  else if(CL.off) h=clMsg('🛠️','Os clãs ainda não foram ativados neste servidor.<br><small>'+(player.isAdmin?'ADM: execute <b>pulse-fighter-clas.sql</b> no SQL Editor do Supabase.':'Avise o administrador do jogo.')+'</small>');
+  else if(CL.net) h=clMsg('📡','Sem conexão com o servidor.<br><button class="btn sm" onclick="openClan()">TENTAR DE NOVO</button>');
+  else if(!CL.loaded) h='<p style="opacity:.8">Carregando...</p>';
+  else{ clTabOk(); h=CL.me?clHome():clNoClan(); }
+  $('panel-body').innerHTML=h;
+}
+
+function clHome(){
+  const c=CL.clan,ms=CL.members,P=clPts(ms),L=clLv(P),lo=(L-1)*(L-1)*200,hi=L<10?L*L*200:0,pct=hi?Math.round((P-lo)/(hi-lo)*100):100,cap=clCap(L);
+  const adm=CL.me.cargo!=='membro';
+  const tabs=[['info','📜','INFORMAÇÕES'],['mem','👥','MEMBROS']].concat(adm?[['ped','📨','PEDIDOS']]:[],[['buscar','🔎','PROCURAR'],['conf','⚙️','OPÇÕES']]);
+  const side=`<div class="cl-side">${clEmb(c)}<h3>${clX(c.nome)}</h3><div class="cl-id">ID <b>${+c.id}</b> <button onclick="clCopy(${+c.id})" title="Copiar ID">📋</button></div><div class="cl-lv">NV ${L}</div><div class="ps-xp"><i style="width:${pct}%"></i></div><small>${hi?fmt(P)+' / '+fmt(hi)+' pts':fmt(P)+' pts · MÁX'}</small><div class="cl-st"><span>👥 ${ms.length}/${cap}</span><span>👑 ${clX(c.lider_nick||'—')}</span></div></div>`;
+  let b='';
+  if(CL.tab==='info') b=clInfo(c,ms,P);
+  else if(CL.tab==='mem') b=clMem(ms);
+  else if(CL.tab==='ped') b=clPed();
+  else if(CL.tab==='buscar') b=clBuscar();
+  else b=clConf(c,ms);
+  return `<div class="cl-wrap">${side}<div class="cl-main">${clTabs(tabs)}${b}</div></div>`;
+}
+function clInfo(c,ms,P){
+  const vices=ms.filter(m=>m.cargo==='vice'),top=ms.slice().sort((a,b)=>(b.pontos||0)-(a.pontos||0)).slice(0,3);
+  return `<div class="cl-card"><h4>📢 ANÚNCIO</h4><p>${clX(c.anuncio)||'<i>Sem anúncio.</i>'}</p></div>
+  <div class="cl-card"><h4>📝 DESCRIÇÃO</h4><p>${clX(c.descricao)||'<i>Sem descrição.</i>'}</p></div>
+  <div class="kv"><b>Líder</b><span>👑 ${clX(c.lider_nick||'—')}</span></div>
+  <div class="kv"><b>Vice-líderes</b><span>${vices.length?vices.map(v=>clX(v.nick)).join(', '):'—'}</span></div>
+  <div class="kv"><b>Entrada</b><span>${CL_MODO[c.modo]||'—'}</span></div>
+  <div class="kv"><b>Nível mínimo</b><span>Nv ${+c.nivel_min||1}</span></div>
+  <div class="kv"><b>Pontos do clã</b><span>${fmt(P)}</span></div>
+  <div class="kv"><b>Criado em</b><span>${clDate(c.criado_em)}</span></div>
+  <div class="cl-lab">TOP CONTRIBUIDORES</div>${top.map((m,i)=>`<div class="kv"><b>${['🥇','🥈','🥉'][i]} ${clX(m.nick||'Jogador')}</b><span>${fmt(m.pontos||0)} pts</span></div>`).join('')}`;
+}
+function clMem(ms){
+  const me=CL.me,lead=me.cargo==='lider';
+  return ms.map(m=>{
+    const mine=String(m.id_jogador)===clMy(),canK=!mine&&((lead&&m.cargo!=='lider')||(me.cargo==='vice'&&m.cargo==='membro'));
+    return `<div class="cl-m${mine?' me':''}"><div class="cl-av">${clX((m.nick||'?').charAt(0).toUpperCase())}</div>
+    <div class="nm"><b>${clX(m.nick||'Jogador')}${vb(m.id_jogador)}</b><small>ID ${clX(m.id_jogador)} · Nv ${+m.nivel||1} · ${fmt(m.pontos||0)} pts</small></div>
+    <i class="role r-${clX(m.cargo)}">${CL_CARGO[m.cargo]||'MEMBRO'}</i>
+    ${lead&&!mine&&m.cargo==='membro'?clB('promote',m.id,'⭐ PROMOVER','pm'):''}${lead&&!mine&&m.cargo==='vice'?clB('demote',m.id,'⬇️ REBAIXAR','pm'):''}${lead&&!mine?clB('transfer',m.id,'👑 LÍDER','pm'):''}${canK?clB('kick',m.id,'🚫 REMOVER','kk'):''}</div>`;
+  }).join('');
+}
+function clPed(){
+  if(!CL.reqs.length) return '<p class="cl-empty">Nenhum pedido pendente.</p>';
+  return CL.reqs.map(r=>`<div class="cl-m"><div class="cl-av">${clX((r.nick||'?').charAt(0).toUpperCase())}</div>
+  <div class="nm"><b>${clX(r.nick||'Jogador')}${vb(r.id_jogador)}</b><small>ID ${clX(r.id_jogador)} · Nv ${+r.nivel||1} · ${clAgo(r.criado_em)}</small></div>${clB('accept',r.id,'✔ ACEITAR','ok')}${clB('reject',r.id,'✖ RECUSAR','kk')}</div>`).join('');
+}
+function clBuscar(){
+  let h=`<div class="row"><input type="text" id="cl-q" maxlength="24" placeholder="Nome ou ID do clã" value="${clX(CL.q)}" onkeydown="if(event.key==='Enter')clSearch(this.value)"><button class="btn sm" onclick="clSearch($('cl-q').value)">🔎 BUSCAR</button></div>`;
+  if(CL.res===null) return h+'<p class="cl-empty">Procurando...</p>';
+  if(!CL.res.length) return h+'<p class="cl-empty">Nenhum clã encontrado.</p>';
+  h+=`<div class="cl-lab">${CL.q?'RESULTADOS':'CLÃS RECENTES'}</div>`;
+  return h+CL.res.map(c=>{
+    let btn;
+    if(CL.me&&CL.me.clan_id==c.id) btn='<i class="role">SEU CLÃ</i>';
+    else if(CL.me) btn='';
+    else if(c.modo==='fechado') btn='<button disabled>FECHADO</button>';
+    else if(lvInfo(SV.xp).L<(+c.nivel_min||1)) btn=`<button disabled>NV MÍN. ${+c.nivel_min}</button>`;
+    else if(c.modo==='aberto') btn=`<button class="ok" onclick="clJoin(${+c.id})">ENTRAR</button>`;
+    else if(CL.mine.has(c.id)) btn=`<button class="kk" onclick="clCancel(${+c.id})">CANCELAR PEDIDO</button>`;
+    else btn=`<button class="pm" onclick="clJoin(${+c.id})">📨 PEDIR PARA ENTRAR</button>`;
+    return `<div class="cl-m">${clEmb(c,1)}<div class="nm"><b>${clX(c.nome)}</b><small>ID ${+c.id} · Nv ${c._L} · 👥 ${c._n}/${c._cap} · ${CL_MODO[c.modo]||''}${(+c.nivel_min||1)>1?' · Nv mín. '+(+c.nivel_min):''}</small>${c.descricao?`<small class="d">${clX(c.descricao)}</small>`:''}</div>${btn}</div>`;
+  }).join('');
+}
+function clNoClan(){
+  const head=`<div class="cl-none">${clEmb({emblema:'🛡️',cor:'#7a6aa8'})}<h3>Você ainda não está em um clã</h3><small>Procure um clã pelo nome ou ID, ou crie o seu.</small></div>`;
+  return head+clTabs([['buscar','🔎','PROCURAR CLÃ'],['criar','➕','CRIAR CLÃ']])+`<div class="cl-main">${CL.tab==='criar'?clCriar():clBuscar()}</div>`;
+}
+function clEmojis(se,sc,fn){ return `<div class="cl-emojis">${CL_EMB.map((e,i)=>`<button class="${se===e?'on':''}" onclick="${fn}('emb',${i})">${e}</button>`).join('')}</div><div class="cl-lab">COR</div><div class="cl-cores">${CL_COR.map((c,i)=>`<button class="${sc===c?'on':''}" style="background:${c}" onclick="${fn}('cor',${i})"></button>`).join('')}</div>`; }
+function clModos(sel,fn){ return `<div class="chips">${['aberto','pedido','fechado'].map((m,i)=>`<button class="chip${sel===m?' on':''}" style="--c:#19e3ff" onclick="${fn}('modo',${i})">${CL_MODO[m]}</button>`).join('')}</div><small class="on-sm">${CL_MODO_TX[sel]||''}</small>`; }
+function clCriar(){
+  return `<div class="row"><input type="text" id="cl-nn" maxlength="16" placeholder="Nome do clã (3 a 16 caracteres)" value="${clX(CL.nn)}"></div>
+  <div class="cl-lab">EMBLEMA</div>${clEmojis(CL.emb,CL.cor,'clPick')}
+  <div class="cl-lab">ENTRADA</div>${clModos(CL.modo,'clPick')}
+  <div class="cl-lab">DESCRIÇÃO</div><textarea id="cl-nd" maxlength="120" rows="2" placeholder="Fale sobre o seu clã...">${clX(CL.nd)}</textarea>
+  <button class="btn" onclick="clCreate()">🛡️ CRIAR CLÃ</button>`;
+}
+function clConf(c,ms){
+  const me=CL.me,adm=me.cargo!=='membro',lead=me.cargo==='lider';
+  const mins=[1,3,5,8,10,15,20,25,30].concat([+c.nivel_min||1]).filter((v,i,a)=>a.indexOf(v)===i).sort((a,b)=>a-b);
+  let h='';
+  if(adm){
+    if(lead) h+=`<div class="cl-lab">EMBLEMA</div>${clEmojis(c.emblema,clCor(c),'clSetEmb')}`;
+    h+=`<div class="cl-lab">TIPO DE ENTRADA</div>${clModos(c.modo,'clSetModo')}
+    <div class="kv" style="margin-top:8px"><b>Nível mínimo para entrar</b><select id="cl-nm" onchange="clSet({nivel_min:+this.value})">${mins.map(n=>`<option value="${n}"${(+c.nivel_min||1)===n?' selected':''}>Nv ${n}</option>`).join('')}</select></div>
+    <div class="cl-lab">ANÚNCIO</div><textarea id="cl-an" maxlength="140" rows="2">${clX(c.anuncio)}</textarea>
+    <div class="cl-lab">DESCRIÇÃO</div><textarea id="cl-ds" maxlength="120" rows="2">${clX(c.descricao)}</textarea>
+    <button class="btn sm" style="margin-top:8px" onclick="clSaveTxt()">💾 SALVAR TEXTOS</button>`;
+  }else{
+    h+=`<div class="kv"><b>Tipo de entrada</b><span>${CL_MODO[c.modo]||'—'}</span></div><div class="kv"><b>Nível mínimo</b><span>Nv ${+c.nivel_min||1}</span></div><p class="on-sm">Somente o líder e os vice-líderes alteram as configurações do clã.</p>`;
+  }
+  h+='<div class="cl-lab">AÇÕES</div>';
+  if(lead) h+=`<div class="row">${clB('disband',0,'🗑️ DISSOLVER CLÃ','btn sm kk')}</div><p class="on-sm">Para sair do clã, transfira a liderança na aba MEMBROS (👑 LÍDER).</p>`;
+  else h+=`<div class="row">${clB('leave',0,'🚪 SAIR DO CLÃ','btn sm kk')}</div>`;
+  return h;
+}
+
+/* ---- ações ---- */
+function clAct(k,id){
+  const key=k+':'+id;
+  if(/^(kick|transfer|leave|disband)$/.test(k)&&CL.conf!==key){ CL.conf=key; clRender(); clearTimeout(CL.ct); CL.ct=setTimeout(()=>{ if(CL.conf===key){ CL.conf=null; clRender(); } },4000); return; }
+  CL.conf=null; clDo(k,id);
+}
+async function clDo(k,id){
+  if(CL.lk) return; CL.lk=true;
+  try{ await clExec(k,id); }catch(e){ clErr(e); }
+  CL.lk=false; await clLoad();
+  if(!CL.me&&CL.res===null&&!CL.off&&!CL.net&&!isGuest()) await clSearch(''); else clRender();
+}
+async function clExec(k,id){
+  const c=CL.clan,me=CL.me; if(!c||!me) return;
+  const adm=me.cargo!=='membro',lead=me.cargo==='lider',mb=CL.members.find(x=>x.id==id),rq=CL.reqs.find(x=>x.id==id);
+  if(k==='accept'||k==='reject'){
+    if(!adm||!rq) return;
+    if(k==='reject'){ await clApi('pf_clas_pedidos?id=eq.'+rq.id,{m:'DELETE'}); toast('Pedido de '+(rq.nick||'jogador')+' recusado'); return; }
+    if(CL.members.length>=clCap(clLv(clPts(CL.members)))){ toast('Clã lotado: não há vagas'); return; }
+    try{ await clApi('pf_clas_membros',{m:'POST',b:{clan_id:c.id,id_jogador:String(rq.id_jogador),nick:rq.nick||'Jogador',cargo:'membro',nivel:rq.nivel||1,pontos:0}}); sfx('confirm'); toast('✔ '+(rq.nick||'Jogador')+' agora faz parte do clã'); }
+    catch(e){ if(e.status===409) toast('Esse jogador já entrou em outro clã'); else throw e; }
+    await clApi('pf_clas_pedidos?id_jogador=eq.'+clE(rq.id_jogador),{m:'DELETE'});
+    return;
+  }
+  if(k==='kick'){
+    if(!mb||String(mb.id_jogador)===clMy()||mb.cargo==='lider'||(!lead&&!(me.cargo==='vice'&&mb.cargo==='membro'))) return;
+    await clApi('pf_clas_membros?id=eq.'+mb.id,{m:'DELETE'}); toast('🚫 '+(mb.nick||'Jogador')+' removido do clã'); return;
+  }
+  if(k==='promote'){
+    if(!lead||!mb||mb.cargo!=='membro') return;
+    if(CL.members.filter(x=>x.cargo==='vice').length>=CL_MAXVICE){ toast('Máximo de '+CL_MAXVICE+' vice-líderes'); return; }
+    await clApi('pf_clas_membros?id=eq.'+mb.id,{m:'PATCH',b:{cargo:'vice'}}); toast('⭐ '+(mb.nick||'Jogador')+' agora é vice-líder'); return;
+  }
+  if(k==='demote'){
+    if(!lead||!mb||mb.cargo!=='vice') return;
+    await clApi('pf_clas_membros?id=eq.'+mb.id,{m:'PATCH',b:{cargo:'membro'}}); toast((mb.nick||'Jogador')+' voltou a ser membro'); return;
+  }
+  if(k==='transfer'){
+    if(!lead||!mb||mb.cargo==='lider') return;
+    await clApi('pf_clas_membros?id=eq.'+mb.id,{m:'PATCH',b:{cargo:'lider'}});
+    await clApi('pf_clas_membros?id=eq.'+me.id,{m:'PATCH',b:{cargo:'vice'}});
+    await clApi('pf_clas?id=eq.'+c.id,{m:'PATCH',b:{lider_id:String(mb.id_jogador),lider_nick:mb.nick||''}});
+    toast('👑 '+(mb.nick||'Jogador')+' é o novo líder'); return;
+  }
+  if(k==='leave'||k==='disband'){
+    if(lead){
+      if(k==='leave'&&CL.members.length>1){ toast('Transfira a liderança antes de sair'); return; }
+      await clApi('pf_clas?id=eq.'+c.id,{m:'DELETE'}); toast('Clã dissolvido');
+    }else if(k==='leave'){ await clApi('pf_clas_membros?id=eq.'+me.id,{m:'DELETE'}); toast('Você saiu do clã'); }
+    else return;
+    CL.tab='buscar'; CL.res=null; CL.q='';
+  }
+}
+async function clSet(patch){
+  if(!CL.me||CL.me.cargo==='membro'||CL.lk) return;
+  if((patch.emblema!==undefined||patch.cor!==undefined)&&CL.me.cargo!=='lider') return;
+  CL.lk=true;
+  try{ await clApi('pf_clas?id=eq.'+CL.clan.id,{m:'PATCH',b:patch}); Object.assign(CL.clan,patch); sfx('confirm'); }catch(e){ clErr(e); }
+  CL.lk=false; clRender();
+}
+function clSetEmb(k,i){ clSet(k==='emb'?{emblema:CL_EMB[i]}:{cor:CL_COR[i]}); }
+function clSetModo(k,i){ clSet({modo:['aberto','pedido','fechado'][i]}); }
+function clSaveTxt(){ clSet({anuncio:($('cl-an').value||'').slice(0,140),descricao:($('cl-ds').value||'').slice(0,120)}).then(()=>toast('💾 Textos salvos')); }
+
+async function clCreate(){
+  if(CL.lk) return; clKeep();
+  const nm=(CL.nn||'').trim().replace(/\s+/g,' ');
+  if(isGuest()) return toast('Entre com sua conta WaveCombat');
+  if(!/^[\p{L}\p{N} _-]{3,16}$/u.test(nm)) return toast('Nome: 3 a 16 letras, números ou espaços');
+  CL.lk=true; let c=null;
+  try{
+    const L=lvInfo(SV.xp).L;
+    const r=await clApi('pf_clas',{m:'POST',b:{nome:nm,emblema:CL.emb,cor:CL.cor,descricao:(CL.nd||'').trim().slice(0,120),modo:CL.modo,nivel_min:1,lider_id:clMy(),lider_nick:player.name},pref:'return=representation'});
+    c=r&&r[0]; if(!c) throw {status:500};
+    try{ await clApi('pf_clas_membros',{m:'POST',b:{clan_id:c.id,id_jogador:clMy(),nick:player.name,cargo:'lider',nivel:L,pontos:0}}); }
+    catch(e){ await clApi('pf_clas?id=eq.'+c.id,{m:'DELETE'}).catch(()=>{}); throw e; }
+    sfx('confirm'); toast('🛡️ Clã '+nm+' criado!'); CL.tab='info'; CL.nn=''; CL.nd='';
+  }catch(e){ if(e&&e.status===409) toast(c?'Você já está em um clã':'Já existe um clã com esse nome'); else clErr(e); }
+  CL.lk=false; await clLoad(); clRender();
+}
+async function clSearch(q){
+  q=String(q||'').trim().replace(/[^\p{L}\p{N} _-]/gu,'').slice(0,24); CL.q=q; CL.res=null; const tk=++CL.st; clRender();
+  try{
+    let rows;
+    if(!q) rows=await clApi('pf_clas?select=*&order=id.desc&limit=20');
+    else if(/^\d{1,12}$/.test(q)) rows=await clApi(`pf_clas?select=*&or=(id.eq.${q},nome.ilike.*${clE(q)}*)&order=id.asc&limit=20`);
+    else rows=await clApi(`pf_clas?select=*&nome=ilike.*${clE(q)}*&order=id.asc&limit=20`);
+    const n={},p={};
+    if(rows.length){
+      const ms=await clApi(`pf_clas_membros?select=clan_id,pontos&clan_id=in.(${rows.map(r=>+r.id).join(',')})&limit=2000`);
+      ms.forEach(m=>{ n[m.clan_id]=(n[m.clan_id]||0)+1; p[m.clan_id]=(p[m.clan_id]||0)+(+m.pontos||0); });
+    }
+    CL.mine=new Set();
+    if(!CL.me&&!isGuest()){ const pd=await clApi(`pf_clas_pedidos?id_jogador=eq.${clE(clMy())}&select=clan_id`); pd.forEach(x=>CL.mine.add(x.clan_id)); }
+    if(tk!==CL.st) return;
+    rows.forEach(c=>{ c._n=n[c.id]||0; c._L=clLv(p[c.id]||0); c._cap=clCap(c._L); });
+    CL.off=false; CL.net=false; CL.res=rows;
+  }catch(e){ if(tk!==CL.st) return; CL.res=[]; clErr(e); return; }
+  clRender();
+}
+async function clJoin(id){
+  if(CL.lk) return; if(isGuest()) return toast('Entre com sua conta WaveCombat para usar clãs');
+  if(CL.me) return toast('Você já está em um clã');
+  const c=(CL.res||[]).find(x=>x.id==id); if(!c) return;
+  const L=lvInfo(SV.xp).L;
+  if(L<(+c.nivel_min||1)) return toast('Nível mínimo para entrar: '+c.nivel_min);
+  if(c.modo==='fechado') return toast('Este clã não aceita novos membros');
+  if(c.modo==='pedido'&&CL.mine.size>=CL_MAXPED) return toast('Limite de '+CL_MAXPED+' pedidos pendentes');
+  CL.lk=true;
+  try{
+    const ms=await clApi(`pf_clas_membros?clan_id=eq.${+c.id}&select=pontos&limit=2000`);
+    if(ms.length>=clCap(clLv(clPts(ms)))){ toast('Clã lotado'); }
+    else if(c.modo==='aberto'){
+      await clApi('pf_clas_membros',{m:'POST',b:{clan_id:c.id,id_jogador:clMy(),nick:player.name,cargo:'membro',nivel:L,pontos:0}});
+      sfx('confirm'); toast('🛡️ Você entrou em '+c.nome+'!'); CL.tab='info';
+    }else{
+      await clApi('pf_clas_pedidos',{m:'POST',b:{clan_id:c.id,id_jogador:clMy(),nick:player.name,nivel:L}});
+      CL.mine.add(c.id); sfx('confirm'); toast('📨 Pedido enviado! Aguarde o líder ou vice aceitar');
+    }
+  }catch(e){ if(e&&e.status===409) toast(c.modo==='aberto'?'Você já está em um clã':'Você já enviou pedido a este clã'); else clErr(e); }
+  CL.lk=false; await clLoad(); clRender();
+}
+async function clCancel(id){
+  if(CL.lk) return; CL.lk=true;
+  try{ await clApi(`pf_clas_pedidos?clan_id=eq.${+id}&id_jogador=eq.${clE(clMy())}`,{m:'DELETE'}); CL.mine.delete(id); toast('Pedido cancelado'); }catch(e){ clErr(e); }
+  CL.lk=false; clRender();
+}
+
 function openProfile(){
   const li=lvInfo(SV.xp),pct=li.need?Math.round(li.r/li.need*100):100;
   openPanel('👤 PERFIL',`<div class="avatar big">${esc(player.name.charAt(0).toUpperCase())}</div>
@@ -3371,7 +3747,7 @@ async function roomJoin(){
   if(!pass) return toast('Digite a senha da sala');
   if(MM.on) return toast('Cancele a busca de partida antes');
   netStatus('Entrando na sala...'); if(!(await roomReady())) return;
-  hub.emit(HEV('sala_entrar'),{code,pass,nick:player.name},a=>{ if(!roomOk(a)) return; NX.pass=''; NX.myId=String(a.you||player.id); sfx('confirm'); roomOpen(a); });
+  hub.emit(HEV('sala_entrar'),{code,pass,nick:player.name},a=>{ if(!roomOk(a)) return; NX.pass=pass; NX.myId=String(a.you||player.id); sfx('confirm'); roomOpen(a); });
 }
 function roomOpen(R){
   NX.sala=R; if(NETROOM!==R.code) chatRoomStart(R.code);
