@@ -202,7 +202,7 @@ body.gl .bg{display:none}
 <div id="toast"></div>
 
 <script>
-const VERSAO='0.010',ADMIN_IDS=['162028398','577082415'];
+const VERSAO='0.011',ADMIN_IDS=['162028398','577082415'];
 // Hub: credenciais podem vir da página (window.SUPABASE_*); senão usa os padrões abaixo
 const SB_URL=window.SUPABASE_URL||'https://ipqjeacdfiomcxfuixdj.supabase.co';
 const SB_KEY=window.SUPABASE_KEY||window.SUPABASE_ANON_KEY||'sb_publishable_EWW84q_43YbOvMwB_Rua-A_X465PbLP';
@@ -459,7 +459,7 @@ const loop=()=>{requestAnimationFrame(loop);const t=(performance.now()-t0)/1e3;k
  ch.visible=k>.25;ch.scale.setScalar((.85+.15*Math.min(1,k*1.3))*(S.sexo=='f'?.96:1));if(nk)nk.visible=k>.5;
  if(!dr){vel*=.94;rot+=vel}ch.rotation.y=rot;
  torso.scale.y=1+Math.sin(t*1.8)*.006;aL.rotation.x=Math.sin(t*1.4)*.04;aR.rotation.x=-Math.sin(t*1.4)*.04;hd.rotation.y=Math.sin(t*.7)*.08;
- if(mt.on)mtick();R.render(sc,cam)};
+ if(mt.on)mtick();else if(REAL.on)rigLobby();R.render(sc,cam)};
 
 // ---- Etapa 3: quadra de rua 3v3 (gaiola com grades e grafites) ----
 const X0=200,mt={on:0,x:0,z:0,a:0,vx:0,vz:0,ch:0,pw:0,cd:0,sc:[0,0],gol:0,fx:0,fz:0,kk:0},KB={},JV={x:0,z:0},bs={x:0,y:.11,z:0,vx:0,vy:0,vz:0};let lt0=performance.now();
@@ -528,7 +528,7 @@ pg.setAttribute('position',new T3.BufferAttribute(pp,3));pg.setAttribute('color'
 const parts=new T3.Points(pg,new T3.PointsMaterial({size:.25,vertexColors:true,transparent:true,depthWrite:false}));parts.frustumCulled=false;parts.visible=false;court.add(parts);let pt=0;
 const PCOL=[[.78,1,0],[0,.9,1],[1,.18,.58],[1,.84,.3],[1,1,1]];
 function burst(sg){for(let i=0;i<PN;i++){pp[i*3]=sg*12.6+(Math.random()-.5);pp[i*3+1]=.8+Math.random()*1.2;pp[i*3+2]=(Math.random()-.5)*3;pv[i*3]=-sg*(1+Math.random()*5);pv[i*3+1]=3+Math.random()*6;pv[i*3+2]=(Math.random()-.5)*8;const c=PCOL[i%5];pcl[i*3]=c[0];pcl[i*3+1]=c[1];pcl[i*3+2]=c[2]}pg.attributes.position.needsUpdate=true;pg.attributes.color.needsUpdate=true;pt=2;parts.visible=true}
-function pstep(dt){if(pt<=0)return;pt-=dt;for(let i=0;i<PN;i++){pp[i*3]+=pv[i*3]*dt;pp[i*3+1]+=pv[i*3+1]*dt;pp[i*3+2]+=pv[i*3+2]*dt;pv[i*3+1]-=9*dt}pg.attributes.position.needsUpdate=true;if(pt<=0)parts.visible=false}
+function pstep(dt){if(CEL.t>0)CEL.t-=dt;if(pt<=0)return;pt-=dt;for(let i=0;i<PN;i++){pp[i*3]+=pv[i*3]*dt;pp[i*3+1]+=pv[i*3+1]*dt;pp[i*3+2]+=pv[i*3+2]*dt;pv[i*3+1]-=9*dt}pg.attributes.position.needsUpdate=true;if(pt<=0)parts.visible=false}
 // ---- nick acima da cabeça ----
 const nsp=()=>{const s=new T3.Sprite(new T3.SpriteMaterial({transparent:true,depthTest:false}));s.scale.set(1.3,.325,1);s.renderOrder=9;s.visible=false;court.add(s);return s};
 function setNick(b,t,h){b.nick=t||'';const s=b.nm;if(!t){s.visible=false;return}
@@ -561,9 +561,9 @@ function style(v,t){if(MP.role==='c')return;mt.sty=Math.min(100,mt.sty+v);mt.stt
 const banner=(t,ms)=>{const e=$('#gl2');e.textContent=t;e.classList.add('on');clearTimeout(banner.h);banner.h=setTimeout(()=>e.classList.remove('on'),ms||900)};
 const foolNear=(e,r)=>{let h=0;FIELD.forEach(b=>{if(b!==mt&&b!==e&&b.tm!==e.tm&&b.st<=0&&dist(b,e)<r){b.st=1.1;h=1}});return h};
 const fool=(r,pts,t)=>{style(foolNear(mt,r)?pts:8,t);sfx('skill')};
-function hit(o,v,vy,dx,dz){bs.o=0;bs.vx=dx*v;bs.vz=dz*v;bs.vy=vy;bs.cd=.3;bs.lift=0;if(o===mt)mt.lp=now()}
+function hit(o,v,vy,dx,dz){bs.o=0;bs.vx=dx*v;bs.vz=dz*v;bs.vy=vy;bs.cd=.3;bs.lift=0;if(o===mt)mt.lp=now();else o.kk=.45}
 const carry=(o,ph)=>{const s=Math.hypot(o.vx,o.vz),k=Math.min(1,s/3.5),off=.42+.14*Math.abs(Math.sin(ph))*k+(o.ef||0),lt=Math.sin(ph)*.08*k+(o.ex||0),fx=Math.sin(o.a),fz=Math.cos(o.a);bs.x=o.x+fx*off+fz*lt;bs.z=o.z+fz*off-fx*lt;bs.y=.11+Math.abs(Math.sin(ph+1.2))*.035*k;bs.vx=o.vx;bs.vz=o.vz;bs.vy=0};
-const gol=side=>{if(side){S.st=S.st||{};S.st.g=(S.st.g||0)+1;salvar()}$('#sb').textContent=mt.sc[0]+' × '+mt.sc[1];banner(side&&bs.dbl?'GOLAÇO! x2':'GOL!',1700);ball.material.emissive.set(0);mt.shk=.7;burst(side?1:-1);sfx('goal');
+const gol=side=>{if(side){S.st=S.st||{};S.st.g=(S.st.g||0)+1;salvar()}$('#sb').textContent=mt.sc[0]+' × '+mt.sc[1];banner(side&&bs.dbl?'GOLAÇO! x2':'GOL!',1700);ball.material.emissive.set(0);mt.shk=.7;burst(side?1:-1);sfx('goal');CEL.t=2.2;CEL.tm=side?0:1;
  if(MP.role==='h')out('street:ev',{t:'gol',s:mt.sc,sd:side?1:-1});
  setTimeout(()=>{if(mt.sc[0]>=7||mt.sc[1]>=7)fim();else if(!mt.over){rst();mt.gol=0}},1800)};
 function kick(v,vy,dx,dz){mt.kk=.25;hit(mt,v,vy,dx,dz);sfx('kick')}
@@ -641,7 +641,7 @@ function kpose(b,c,N){const g=b.g;let rz=0,py=-.05,kn=.7,hp=-.35,az=.6,ae=-.5,rx
  c[4].rotation.z=az;c[5].rotation.z=-az;c[4].rotation.x=c[5].rotation.x=ae;c[4].f.rotation.x=c[5].f.rotation.x=-.5}
 function ai(dt,N){FB.forEach(b=>fieldAI(b,dt,N));keeperAI(TK,dt,-1);keeperAI(K1,dt,1);
  const E=[mt,...ALL];for(let i=0;i<E.length;i++)for(let j=i+1;j<E.length;j++){const a=E[i],b=E[j];if(a.dv>0||a.lie>0||b.dv>0||b.lie>0)continue;const dx=a.x-b.x,dz=a.z-b.z,d=Math.hypot(dx,dz);if(d<.55&&d>.001){const k=(.55-d)/2/d;a.x+=dx*k;a.z+=dz*k;b.x-=dx*k;b.z-=dz*k}}}
-function bvis(list,dt,N){list.forEach(b=>{const s=Math.hypot(b.vx,b.vz),sw=Math.min(1,s/4.4),rsb=Math.min(1,Math.max(0,(s-2.2)/2.4)),c=b.g.children;if(s>.3)b.ph=(b.ph||0)+dt*6.283*(.55+.17*s);const ph=b.ph||0;
+function bvis(list,dt,N){list.forEach(b=>{if(b.rig&&REAL.on){rigBot(b,dt,N);return}const s=Math.hypot(b.vx,b.vz),sw=Math.min(1,s/4.4),rsb=Math.min(1,Math.max(0,(s-2.2)/2.4)),c=b.g.children;if(s>.3)b.ph=(b.ph||0)+dt*6.283*(.55+.17*s);const ph=b.ph||0;
  b.g.position.set(b.x,-.95*(1-Math.cos((.38+.34*rsb)*sw*Math.abs(Math.sin(ph)))),b.z);b.g.rotation.set(0,b.a,0);
  gait(c[0],c[1],c[4],c[5],ph,sw,rsb);
  if(b.st>0)b.g.rotation.x=-1.3*Math.min(1,b.st*3);
@@ -730,7 +730,7 @@ function mtick(){const N=now(),dt=Math.min(.05,N-lt0);lt0=N;if(mt.over)return;
   case'fall':rx=-1.4;py=.1;H0.rotation.x=H1.rotation.x=0}
  if(mt.kk>0){mt.kk-=dt;const q=mt.kk/.25;H1.rotation.x=-1.5*q;H1.lo.rotation.x=.9*(1-q);ubx+=.1*q}
  const hdy=-uby*.85,hdx=-ubx*.7;
- ch.position.set(X0+mt.x,py,mt.z);ch.rotation.set(rx,ry,rz);ub.rotation.set(ubx,uby,ubz);pel.rotation.y=0;hd.rotation.set(hdx,hdy,0);if(nk)nk.visible=false;
+ ch.position.set(X0+mt.x,py,mt.z);ch.rotation.set(rx,ry,rz);ub.rotation.set(ubx,uby,ubz);pel.rotation.y=0;hd.rotation.set(hdx,hdy,0);if(nk)nk.visible=false;if(REAL.on)rigPlayer(dt,spd);
  mt.nm.position.set(mt.x,2.15,mt.z);
  $('#bsh').style.transform='scale('+(1+mt.pw*.25)+')';
  const tx=mt.x*.6+bs.x*.4,tz=mt.z*.6+bs.z*.4,k2=Math.min(1,dt*3);mt.fx+=(tx-mt.fx)*k2;mt.fz+=(tz-mt.fz)*k2;mt.shk=Math.max(0,mt.shk-dt*1.4);
@@ -764,7 +764,7 @@ window.sairPartida=()=>{if(MP.role)out('street:sair',{});MP.role='';mt.on=0;mt.o
 window.mpIn=d=>{if(MP.role!=='h'||!d)return;const b=SLT[d.slot];if(!b||b.rm<0)return;if(d.m){b.inp={ix:clamp(+d.m[0]||0,-1,1),iz:clamp(+d.m[1]||0,-1,1)};b.inT=now()}else if(d.e)rmAct(b,d)};
 window.mpSnap=d=>{if(MP.role==='c')MP.sn=d};
 window.mpEv=d=>{if(!d)return;
- if(d.t=='gol'&&MP.role==='c'){mt.sc=d.s;$('#sb').textContent=d.s[0]+' × '+d.s[1];banner('GOL!',1700);mt.shk=.7;burst(d.sd);sfx('goal')}
+ if(d.t=='gol'&&MP.role==='c'){mt.sc=d.s;$('#sb').textContent=d.s[0]+' × '+d.s[1];banner('GOL!',1700);mt.shk=.7;burst(d.sd);sfx('goal');CEL.t=2.2;CEL.tm=d.sd>0?0:1}
  else if(d.t=='fim'&&MP.role==='c'&&!mt.over){mt.over=1;resultado(d.s[0],d.s[1],MP.slot%2)}
  else if(d.t=='host-saiu'&&MP.role==='c'&&!mt.over){mt.over=1;$('#ft').textContent='PARTIDA ENCERRADA';$('#fs2').textContent='O anfitrião saiu';$('#fr').textContent='';$('#fim').classList.add('on')}
  else if(d.t=='saiu'&&MP.role==='h'){const b=SLT[d.slot];if(b&&b.rm>=0){b.rm=-1;MP.rmN=Math.max(0,MP.rmN-1);setNick(b,'CPU',0)}}};
@@ -783,7 +783,45 @@ const bdr=$('#bdr');let sid=null,sx0=0,sy0=0;
 bdr.addEventListener('pointerdown',e=>{e.preventDefault();sid=e.pointerId;bdr.setPointerCapture(sid);sx0=e.clientX;sy0=e.clientY});
 bdr.addEventListener('pointerup',e=>{if(e.pointerId!==sid)return;sid=null;const dx=e.clientX-sx0,dy=e.clientY-sy0;skill(Math.hypot(dx,dy)<16?'elastico':Math.abs(dx)>Math.abs(dy)?(dx>0?'chapeu':'pedalada'):(dy<0?'erguer':'carretilha'))});
 bdr.addEventListener('pointercancel',()=>{sid=null});
-window.eng={ap,q:qlt};window.go3d=()=>{tg=1};rs();loop();
+// ---- personagem realista (modelo .glb com esqueleto e animações reais) ----
+const REAL={on:0,m:null,clips:{},sc:1,oy:0,env:null},CEL={t:0,tm:0};
+const ONCE={kick:.45,pass:.4,slide:.6,dive:.8,fall:.8},ALT={pass:'kick',kick:'run',slide:'fall',dive:'fall',dribble:'run',walk:'run',run:'walk'};
+function mkEnv(){try{const pm=new T3.PMREMGenerator(R),c=document.createElement('canvas');c.width=256;c.height=128;const x=c.getContext('2d'),g=x.createLinearGradient(0,0,0,128);g.addColorStop(0,'#9db4ff');g.addColorStop(.5,'#ffe9d0');g.addColorStop(1,'#2a1a3a');x.fillStyle=g;x.fillRect(0,0,256,128);x.fillStyle='#fff';x.fillRect(40,18,60,22);x.fillRect(170,22,50,18);
+ const t=new T3.CanvasTexture(c);t.mapping=T3.EquirectangularReflectionMapping;const rt=pm.fromEquirectangular(t);pm.dispose();t.dispose();return rt.texture}catch(err){return null}}
+{const E0=mkEnv();if(E0)[[skin,.2],[jers,.3],[shoe,.5],[gold,1],[lens,1],[white,.3],[hairM,.4],[capM,.3]].forEach(([m,i])=>{m.envMap=E0;m.envMapIntensity=i;m.needsUpdate=true})}
+function fixMat(o){(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>{if(!m)return;if(m.map)m.map.encoding=T3.LinearEncoding;if(REAL.env&&m.isMeshStandardMaterial){m.envMap=REAL.env;m.envMapIntensity=.6}m.needsUpdate=true})}
+function mkRig(){const root=T3.SkeletonUtils.clone(REAL.m);root.scale.multiplyScalar(REAL.sc);root.position.y+=REAL.oy;root.rotation.y+=window.WC_GIRO||0;
+ root.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;o.frustumCulled=false;fixMat(o)}});
+ const w=new T3.Group();w.add(root);const mixer=new T3.AnimationMixer(root),acts={};Object.keys(REAL.clips).forEach(k=>{acts[k]=mixer.clipAction(REAL.clips[k])});
+ return{w,mixer,acts,cur:'',curA:null,lock:0}}
+function rigState(r,n,speed,dt){
+ if(r.lock>0)r.lock-=dt;
+ let k=n;for(let g=0;g<4&&!r.acts[k]&&ALT[k];g++)k=ALT[k];if(!r.acts[k])k='idle';const a=r.acts[k];if(!a){r.mixer.update(dt);return}
+ const once=ONCE[k];
+ if(r.cur!==k&&!(r.lock>0&&ONCE[r.cur]&&!once)){
+  a.reset();a.enabled=true;a.setEffectiveWeight(1);a.setLoop(once?T3.LoopOnce:T3.LoopRepeat,Infinity);a.clampWhenFinished=!!once;a.fadeIn(.18);a.play();
+  if(once){const d=a.getClip().duration||once,ts=clamp(d/once,.7,2.5);a.setEffectiveTimeScale(ts);r.lock=d/ts}
+  if(r.curA&&r.curA!==a)r.curA.fadeOut(.18);r.curA=a;r.cur=k}
+ if(!once&&r.cur===k&&(k=='run'||k=='walk'))a.setEffectiveTimeScale(clamp(speed/(k=='run'?4.6:1.6),.5,1.6));
+ r.mixer.update(dt)}
+function stPlayer(){const n=A.n;if(n=='slide')return'slide';if(n=='dive')return'dive';if(n=='bici'||n=='voleio'||mt.kk>0)return'kick';if(n=='fall')return'fall';if(n)return'dribble';if(CEL.t>0&&CEL.tm===0)return'celebrate';const s=Math.hypot(mt.vx,mt.vz);return s<.4?'idle':s<3?'walk':'run'}
+function rigPlayer(dt,spd){const r=ch.rig;if(!r)return;ch.position.y=0;ch.rotation.x=ch.rotation.z=0;rigState(r,stPlayer(),spd,dt)}
+function rigBot(b,dt,N){const s=Math.hypot(b.vx,b.vz);b.g.position.set(b.x,0,b.z);b.g.rotation.set(0,b.a,0);b.nm.position.set(b.x,2.1,b.z);
+ if(b.kk>0)b.kk-=dt;
+ let n=s<.4?'idle':s<3?'walk':'run';
+ if(b.st>0)n='fall';else if(b.sl>0)n='slide';else if(b.role=='k'){if(b.dv>0)n='dive';else if(b.lie>0)n='fall'}else if(b.kk>0)n='kick';
+ if(b.role!='k'&&CEL.t>0&&b.tm===CEL.tm&&n!='fall')n='celebrate';
+ rigState(b.rig,n,s,dt)}
+function rigLobby(){const t=performance.now(),dt=Math.min(.05,(t-(rigLobby.l||t))/1e3);rigLobby.l=t;if(ch.rig&&ch.rig.w.visible)rigState(ch.rig,'idle',0,dt)}
+const ringM=c=>{const m=new T3.Mesh(new T3.RingGeometry(.42,.58,32),new T3.MeshBasicMaterial({color:c,transparent:true,opacity:.85,side:T3.DoubleSide}));m.rotation.x=-Math.PI/2;m.position.y=.03;return m};
+function applyReal(model,clips){
+ if(model){model.updateMatrixWorld(true);REAL.m=model;REAL.clips=clips;const box=new T3.Box3().setFromObject(model),h=box.max.y-box.min.y||1;REAL.sc=1.78/h;REAL.oy=-box.min.y*REAL.sc;REAL.env=mkEnv()}
+ if(!REAL.m)return false;
+ [[ch,ch]].concat(ALL.concat([HB]).map(b=>[b.g,b])).forEach(([g,e])=>{if(e.rig)g.remove(e.rig.w);e.rig=mkRig();g.add(e.rig.w);if(e!==ch&&!e.ring){e.ring=ringM(e.tm?0xff1744:0x2979ff);g.add(e.ring)}});
+ setReal(true);return true}
+function setReal(on){REAL.on=!!on&&!!REAL.m;
+ [[ch,ch]].concat(ALL.concat([HB]).map(b=>[b.g,b])).forEach(([g,e])=>{if(!e.rig)return;e.rig.w.visible=REAL.on;if(e.ring)e.ring.visible=REAL.on;const n=e===ch?5:8;for(let i=0;i<n;i++)if(g.children[i])g.children[i].visible=!REAL.on})}
+window.eng={ap,q:qlt,real:applyReal,realOn:setReal};window.go3d=()=>{tg=1};rs();loop();
 })();
 
 // ---- Música dos menus (sintetizada) ----
@@ -1174,5 +1212,39 @@ async function criarTime(){
 document.addEventListener('DOMContentLoaded',()=>{
  $('#play').onclick=()=>{if(MM.on)return;abrir('jogar')};
  const mp=window.mpStart;if(mp)window.mpStart=i=>{mp(i);statusJogo('partida')};
+});
+</script>
+<script>
+// ===== v0.011: personagem realista (modelos .glb com esqueleto e animações) =====
+const MOD=window.WC_MODELOS||'modelos/',CDN3='https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/';
+const ESTADOS=['idle','walk','run','kick','pass','slide','dive','celebrate','fall','dribble'];
+const RXE={idle:/idle|stand|parad/i,walk:/walk|andar/i,run:/run|jog|sprint|corr/i,kick:/kick|shoot|shot|strike|chut/i,pass:/pass/i,slide:/slide|tackle|carrinho/i,dive:/dive|save|keeper|defes/i,celebrate:/celebr|victory|win|dance|comem/i,fall:/fall|knock|down|cai/i,dribble:/dribbl|feint|stepover|skill|drible/i};
+let REALOK=0;
+const libJS=(n,f)=>new Promise((ok,no)=>{if(window.THREE&&THREE[n])return ok();const e=document.createElement('script');e.src=CDN3+f;e.onload=ok;e.onerror=()=>no(new Error('não carregou '+f));document.head.appendChild(e)});
+const existe=async u=>{try{const r=await fetch(u,{method:'HEAD'});return r.ok}catch(e){return false}};
+function fixClip(c,bones){const nm=n=>{if(bones.has(n))return n;const a=n.replace(':','');if(bones.has(a))return a;const b=n.replace(/^mixamorig/,'mixamorig:');return bones.has(b)?b:n};
+ c.tracks.forEach(t=>{const i=t.name.indexOf('.');if(i<0)return;t.name=nm(t.name.slice(0,i))+t.name.slice(i);
+  if(/hips.*\.position$/i.test(t.name)){const v=t.values;for(let k=3;k<v.length;k+=3){v[k]=v[0];v[k+2]=v[2]}}})}
+async function realCarregar(items){
+ if(!window.eng||!eng.real)throw new Error('motor 3D indisponível');
+ await libJS('GLTFLoader','loaders/GLTFLoader.js');await libJS('SkeletonUtils','utils/SkeletonUtils.js');
+ const L=new THREE.GLTFLoader(),ld=u=>new Promise((ok,no)=>L.load(u,ok,undefined,no));
+ const m=await ld(items[0].url),clips={},bones=new Set();m.scene.traverse(o=>{if(o.isBone)bones.add(o.name)});
+ const put=(c,hint)=>{const k=ESTADOS.find(e=>hint===e)||ESTADOS.find(e=>RXE[e].test(hint));if(!k||clips[k])return;fixClip(c,bones);clips[k]=c};
+ m.animations.forEach(c=>put(c,c.name));
+ for(const it of items.slice(1)){try{const g=await ld(it.url);g.animations.forEach(c=>put(c,it.nome||c.name))}catch(e){console.warn('animação',it.nome,e)}}
+ if(!Object.keys(clips).length)throw new Error('o modelo não tem animações (coloque idle/run/kick... .glb na pasta modelos/)');
+ eng.real(m.scene,clips);REALOK=1;if(S.real===0)eng.realOn(false);return Object.keys(clips)}
+async function mdlEscolher(fs){fs=[...fs];if(!fs.length)return;fs.sort((a,b)=>b.size-a.size);
+ const it=fs.map(f=>({url:URL.createObjectURL(f),nome:f.name.replace(/\.[^.]+$/,'')}));
+ try{const k=await realCarregar(it);S.real=1;salvar();toast('Personagem realista carregado ('+k.length+' animações)');abrir('pers')}catch(e){console.warn(e);toast('Falha ao carregar o modelo: '+(e.message||e))}}
+function realOnOff(){S.real=S.real===0?1:0;salvar();if(window.eng&&eng.realOn)eng.realOn(S.real!==0);abrir('pers')}
+const realCard=()=>`<div class="card" style="align-items:stretch;text-align:left;margin-bottom:8px"><b>Personagem realista</b><small>${REALOK?(S.real===0?'Modelo carregado (desligado)':'Modelo ativo, com animações reais'):'Coloque jogador.glb (e idle, run, kick, slide, dive .glb) na pasta modelos/ ou carregue os arquivos aqui.'}</small><div class="pills" style="margin:6px 0 0"><label class="btn sm mi" style="cursor:pointer">Carregar .glb<input type="file" accept=".glb,.gltf" multiple hidden onchange="mdlEscolher(this.files)"></label>${REALOK?`<button class="btn sm mi" onclick="realOnOff()">${S.real===0?'Ligar':'Desligar'}</button>`:''}</div></div>`;
+const _p8=P.pers;P.pers=()=>realCard()+_p8();
+document.addEventListener('DOMContentLoaded',async()=>{
+ if(S.real===0||!await existe(MOD+'jogador.glb'))return;
+ const it=[{url:MOD+'jogador.glb'}];
+ for(const k of ESTADOS)if(await existe(MOD+k+'.glb'))it.push({url:MOD+k+'.glb',nome:k});
+ try{const k=await realCarregar(it);toast('Personagem realista carregado ('+k.length+' animações)')}catch(e){console.warn('modelo realista',e);toast('Modelo realista indisponível: usando o personagem padrão')}
 });
 </script></body></html>
