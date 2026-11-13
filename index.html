@@ -1,1238 +1,1234 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>WaveCombat | Modern Gaming Hub</title>
+<!-- Meta Tags para PWA -->
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#00f0ff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="WaveCombat">
+
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Orbitron:wght@600;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+    :root {
+        --bg-dark: #000000;
+        --panel-bg: rgba(8, 8, 12, 0.98);
+        --accent-color: #00f0ff; 
+        --accent-glow: rgba(0, 240, 255, 0.3);
+        --steel-border: #121824;
+        --steel-bright: #334155;
+        --ink: #f8fafc;
+        --gold-warning: #f59e0b;
+        --alert-red: #ef4444;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; max-width: 100vw; overflow-x: hidden; }
+    body {
+        background-color: var(--bg-dark);
+        background-image: 
+            linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+        background-size: 40px 40px;
+        color: var(--ink);
+        font-family: 'Outfit', sans-serif;
+        scroll-behavior: smooth;
+        position: relative;
+    }
+
+    @keyframes goldShine {
+        0% { filter: drop-shadow(0 0 2px #FFD700); transform: rotate(0deg) scale(1); }
+        50% { filter: drop-shadow(0 0 10px #FFD700) brightness(1.4); transform: rotate(8deg) scale(1.15); }
+        100% { filter: drop-shadow(0 0 2px #FFD700); transform: rotate(0deg) scale(1); }
+    }
+    .verified-v {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: #FFD700;
+        font-family: 'Orbitron', sans-serif;
+        font-weight: 900;
+        animation: goldShine 2.5s infinite ease-in-out;
+        margin-right: 5px;
+        font-size: 1.1em;
+    }
+    .staff-star {
+        color: var(--gold-warning);
+        margin-right: 4px;
+        font-weight: bold;
+    }
+    .profile-frame-gold {
+        border: 3px solid #FFD700 !important;
+        box-shadow: 0 0 25px rgba(255, 215, 0, 0.7);
+        background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(11,15,23,0.95)) !important;
+        position: relative;
+    }
+
+    .unread-badge { position: relative; }
+    .unread-badge::after {
+        content: '!';
+        position: absolute; top: -6px; right: -6px;
+        background-color: var(--gold-warning); color: #000;
+        font-weight: 900; border-radius: 50%;
+        width: 18px; height: 18px; display: flex;
+        align-items: center; justify-content: center;
+        font-size: 11px; animation: pulseAlert 1.5s infinite;
+        box-shadow: 0 0 8px var(--gold-warning);
+    }
+    @keyframes pulseAlert {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.25); }
+        100% { transform: scale(1); }
+    }
+
+    .avatar-preview-box {
+        width: 90px; height: 90px; border-radius: 50%; margin: 15px auto;
+        display: flex; align-items: center; justify-content: center; position: relative;
+        background: #000; border: 2px solid var(--steel-bright); font-family: 'Orbitron'; font-size: 12px;
+    }
+    .frame-neon {
+        box-shadow: 0 0 20px #00f0ff, inset 0 0 15px #00f0ff;
+        border: 3px solid #00f0ff !important;
+    }
+    .frame-fogo {
+        box-shadow: 0 0 20px #ef4444, inset 0 0 15px #f59e0b;
+        border: 3px solid #ef4444 !important;
+    }
+
+    .admin-bar-chart {
+        display: flex; align-items: flex-end; gap: 12px; height: 140px;
+        background: #000; border: 1px solid var(--steel-border); padding: 12px; border-radius: 8px; margin-top: 10px;
+    }
+    .admin-bar-col {
+        flex: 1; background: var(--accent-color); border-radius: 4px 4px 0 0;
+        text-align: center; color: #000; font-weight: bold; font-size: 10px; font-family: 'Orbitron';
+    }
+
+    .bg-particles {
+        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+        pointer-events: none; z-index: 0; overflow: hidden;
+    }
+    .particle {
+        position: absolute; width: 3px; height: 3px; background: var(--accent-color);
+        border-radius: 50%; opacity: 0.3; animation: floatParticle 15s infinite linear;
+        box-shadow: 0 0 8px var(--accent-color);
+    }
+    @keyframes floatParticle {
+        0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+        50% { opacity: 0.7; }
+        100% { transform: translateY(-10vh) translateX(50px); opacity: 0; }
+    }
+
+    .broadcast-ticker {
+        background: linear-gradient(90deg, #ef4444, var(--gold-warning), var(--accent-color));
+        color: #000; font-family: 'Orbitron'; font-size: 11px; font-weight: 900;
+        padding: 6px 15px; text-transform: uppercase; white-space: nowrap; overflow: hidden;
+        position: fixed; top: 0; left: 0; width: 100%; z-index: 1005; display: none;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.8);
+    }
+
+    nav {
+        position: fixed; top: 0; left: 0; width: 100%; max-width: 100vw;
+        min-height: 65px; background: rgba(8, 8, 12, 0.98);
+        backdrop-filter: blur(10px); border-bottom: 2px solid var(--accent-color);
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 10px 15px; z-index: 1000; box-shadow: 0 4px 25px var(--accent-glow);
+    }
+    .logo-container { display: flex; align-items: center; gap: 8px; text-decoration: none; z-index: 1002; cursor: pointer; }
+    .logo-img-custom { height: 36px; max-width: 120px; object-fit: contain; filter: drop-shadow(0 0 10px var(--accent-color)); }
+    .logo-svg { width: 32px; height: 32px; filter: drop-shadow(0 0 10px var(--accent-color)); }
+    .logo-text { font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 16px; color: var(--accent-color); letter-spacing: 1px; }
+
+    .menu-toggle-btn {
+        display: flex; flex-direction: column; justify-around;
+        width: 30px; height: 25px; background: transparent; border: none; cursor: pointer; z-index: 1002;
+    }
+    .menu-toggle-btn span { width: 100%; height: 3px; background: var(--accent-color); border-radius: 2px; transition: 0.3s; }
+
+    .nav-links { display: flex; gap: 15px; list-style: none; align-items: center; z-index: 1002; }
+    .nav-links li a { color: var(--ink); text-decoration: none; font-family: 'Orbitron', sans-serif; font-size: 13px; text-transform: uppercase; transition: 0.2s; }
+    .nav-links li a:hover { color: var(--accent-color); }
+
+    @media (max-width: 768px) {
+        .menu-toggle-btn { display: flex; }
+        .nav-links {
+            position: fixed; top: 0; right: -100%; width: 250px; height: 100vh;
+            background: rgba(8, 8, 12, 0.98); border-left: 2px solid var(--accent-color);
+            flex-direction: column; justify-content: center; gap: 25px;
+            transition: 0.3s ease-in-out; z-index: 1001; padding: 20px;
+        }
+        .nav-links.active { right: 0; }
+    }
+    @media (min-width: 769px) { .menu-toggle-btn { display: none; } }
+
+    .user-nav-wrapper { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .btn-auth-nav { background: rgba(16, 22, 34, 0.8); color: var(--accent-color); border: 1px solid var(--accent-color); padding: 8px 16px; font-family: 'Orbitron'; font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 6px; display: flex; align-items: center; }
+    .btn-toggle-adm-nav { display: none; background: var(--gold-warning); color: #000; border: none; padding: 8px 12px; font-family: 'Orbitron'; font-size: 12px; font-weight: bold; cursor: pointer; border-radius: 6px; }
+
+    header.hero {
+        min-height: 45vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
+        text-align: center; padding: 40px 15px; position: relative; background-size: cover; background-position: center;
+        border-bottom: 2px solid var(--steel-border); margin-top: 65px; width: 100%; overflow: hidden; z-index: 2;
+        box-shadow: inset 0 0 50px var(--accent-glow);
+        transition: background-image 0.5s ease-in-out;
+    }
+    header.hero::before {
+        content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background: linear-gradient(180deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.98) 100%); z-index: 1;
+    }
+    header.hero > * { position: relative; z-index: 2; }
+    header.hero h1 { font-family: 'Orbitron', sans-serif; font-size: clamp(22px, 5vw, 48px); font-weight: 900; color: #fff; margin-bottom: 10px; text-transform: uppercase; }
+    header.hero h1 span { color: var(--accent-color); text-shadow: 0 0 25px var(--accent-glow); }
+    header.hero p { font-size: 14px; max-width: 600px; margin-bottom: 20px; color: #94a3b8; padding: 0 10px; }
+
+    .global-stats-bar {
+        display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;
+        background: var(--panel-bg); border: 1px solid var(--accent-color);
+        padding: 10px 20px; border-radius: 8px; margin-bottom: 20px; font-family: 'Orbitron'; font-size: 11px; color: #94a3b8;
+        box-shadow: 0 0 15px var(--accent-glow);
+    }
+    .global-stats-bar span strong { color: var(--accent-color); }
+
+    .btn-gaming {
+        font-family: 'Orbitron', sans-serif; background: var(--accent-color); color: #000; border: none;
+        padding: 12px 24px; font-size: 13px; font-weight: 800; cursor: pointer; text-transform: uppercase;
+        box-shadow: 0 0 20px var(--accent-glow); border-radius: 8px; text-decoration: none; display: inline-block; transition: 0.3s;
+        text-align: center;
+    }
+    .btn-gaming:hover { transform: scale(1.03); filter: brightness(1.2); }
+
+    .btn-pwa-install {
+        display: inline-block; background: #22c55e; color: #000; border: none; padding: 8px 14px;
+        font-family: 'Orbitron'; font-size: 11px; font-weight: bold; border-radius: 6px;
+        cursor: pointer; margin-top: 10px; box-shadow: 0 0 15px rgba(34, 197, 94, 0.4);
+    }
+
+    section { padding: 25px 15px; width: 100%; max-width: 1350px; margin: 0 auto; box-sizing: border-box; z-index: 2; position: relative; }
+    .section-title { font-family: 'Orbitron', sans-serif; font-size: 18px; margin-bottom: 20px; border-left: 4px solid var(--accent-color); padding-left: 10px; text-transform: uppercase; color: #fff; }
+
+    .search-filter-bar { display: flex; gap: 12px; margin-bottom: 20px; flex-direction: column; }
+    @media(min-width: 850px) { .search-filter-bar { flex-direction: row; } }
+
+    .games-layout-split { display: flex; flex-direction: column; gap: 20px; margin-bottom: 30px; }
+    @media(min-width: 900px) { .games-layout-split { display: grid; grid-template-columns: 1.4fr 1fr; } }
+
+    .featured-game-box { background: var(--panel-bg); border: 2px solid var(--accent-color); padding: 15px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 0 30px var(--accent-glow); border-radius: 12px; position: relative; }
+    .featured-badge { position: absolute; top: 15px; right: 15px; background: var(--gold-warning); color: #000; font-weight: 800; font-size: 10px; padding: 4px 8px; font-family: 'Orbitron'; border-radius: 4px; z-index: 5; }
+    .featured-img { width: 100%; height: 220px; object-fit: cover; border-radius: 8px; border: 1px solid var(--steel-border); cursor: pointer; }
+    @media(min-width: 600px) { .featured-img { height: 300px; } }
+
+    .game-card-actions { display: flex; gap: 10px; align-items: center; }
+
+    .games-list-column { display: flex; flex-direction: column; gap: 10px; max-height: 500px; overflow-y: auto; }
+    .game-list-card { background: var(--panel-bg); border: 1px solid var(--steel-border); padding: 10px; display: flex; align-items: center; gap: 12px; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+    .game-list-card:hover { border-color: var(--accent-color); box-shadow: 0 0 15px var(--accent-glow); }
+    .game-list-thumb { width: 75px; height: 50px; object-fit: cover; border-radius: 6px; border: 1px solid var(--steel-border); flex-shrink: 0; }
+    .game-list-info { flex-grow: 1; min-width: 0; }
+    .game-list-info h4 { font-family: 'Orbitron', sans-serif; color: #fff; font-size: 13px; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .game-list-info p { font-size: 11px; color: #94a3b8; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.92); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 15px; }
+    .modal-card { background: var(--panel-bg); border: 2px solid var(--accent-color); width: 100%; max-width: 480px; padding: 20px; border-radius: 12px; position: relative; box-shadow: 0 0 35px var(--accent-glow); max-height: 90vh; overflow-y: auto; }
+    .modal-close { position: absolute; top: 12px; right: 15px; background: none; border: none; color: var(--ink); font-size: 22px; cursor: pointer; }
+
+    .tab-switcher { display: flex; border-bottom: 2px solid var(--steel-border); margin-bottom: 15px; flex-wrap: wrap; }
+    .tab-btn { flex: 1; background: none; border: none; padding: 8px; font-family: 'Orbitron'; font-weight: 700; font-size: 10px; color: #64748b; cursor: pointer; display: block; }
+    .tab-btn.active { color: var(--accent-color); border-bottom: 2px solid var(--accent-color); margin-bottom: -2px; }
+
+    .auth-form { display: flex; flex-direction: column; gap: 10px; }
+    .auth-input { background: #000; border: 1px solid var(--steel-border); padding: 10px; color: var(--ink); font-size: 13px; width: 100%; border-radius: 6px; }
+    .auth-input:focus { border-color: var(--accent-color); outline: none; box-shadow: 0 0 10px var(--accent-glow); }
+    .form-panel { display: none; }
+    .form-panel.active { display: flex; flex-direction: column; gap: 10px; }
+
+    .embed-container { display: none; background: #000; border: 2px solid var(--accent-color); width: 100%; height: 70vh; max-height: 800px; position: relative; box-shadow: 0 0 35px var(--accent-glow); margin-top: 15px; border-radius: 10px; }
+    .embed-container iframe { width: 100%; height: 100%; border: none; border-radius: 8px; }
+    .player-controls-bar { display: none; justify-content: center; align-items: center; gap: 10px; margin-top: 12px; padding: 10px; background: var(--panel-bg); border: 1px solid var(--steel-border); border-radius: 8px; flex-wrap: wrap; }
+
+    .site-leaderboard-section {
+        display: none; background: var(--panel-bg); border: 2px solid var(--accent-color);
+        padding: 15px; border-radius: 10px; margin-top: 15px; box-shadow: 0 0 25px var(--accent-glow);
+    }
+    .site-leaderboard-list {
+        display: flex; flex-direction: column; gap: 6px; max-height: 220px; overflow-y: auto; margin-top: 10px;
+    }
+
+    .live-section-box { display: none; background: var(--panel-bg); border: 1px solid var(--accent-color); padding: 15px; text-align: center; margin-bottom: 20px; border-radius: 10px; }
+    .live-embed-container { margin: 10px auto; width: 100%; max-width: 800px; height: 0; padding-bottom: 56.25%; position: relative; background: #000; border-radius: 8px; overflow: hidden; }
+    .live-embed-container iframe { position: absolute; top:0; left:0; width: 100%; height: 100%; border: none; }
+
+    /* ESTILOS DA RODA DA FORTUNA */
+    .wheel-section { background: var(--panel-bg); border: 2px solid var(--accent-color); padding: 25px 15px; border-radius: 12px; text-align: center; margin-bottom: 30px; box-shadow: 0 0 30px var(--accent-glow); }
+    .wheel-container { position: relative; width: 380px; height: 380px; max-width: 90vw; max-height: 90vw; margin: 20px auto; }
+    #canvasWheel { width: 100%; height: 100%; border-radius: 50%; border: 6px solid var(--accent-color); box-shadow: 0 0 30px var(--accent-glow); transition: transform 4.5s cubic-bezier(0.15, 0.9, 0.2, 1); }
+    .wheel-pointer { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 16px solid transparent; border-right: 16px solid transparent; border-top: 28px solid var(--gold-warning); z-index: 10; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.9)); }
+
+    @keyframes popInModal {
+        0% { transform: scale(0.5); opacity: 0; }
+        80% { transform: scale(1.05); }
+        100% { transform: scale(1); opacity: 1; }
+    }
+    .modal-wheel-result { animation: popInModal 0.4s ease-out forwards; }
+
+    .community-main-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 15px; }
+    @media(min-width: 850px) { .community-main-grid { grid-template-columns: 1fr 320px; } }
+    .panel-card { background: var(--panel-bg); border: 1px solid var(--steel-border); padding: 15px; border-radius: 10px; display: flex; flex-direction: column; }
+    .panel-card h3 { font-family: 'Orbitron', sans-serif; font-size: 15px; color: var(--accent-color); margin-bottom: 12px; }
+
+    .social-buttons-flex { display: flex; flex-direction: column; gap: 8px; }
+    .social-btn-item { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px; border-radius: 6px; font-family: 'Orbitron'; font-size: 12px; font-weight: 700; text-decoration: none; color: #fff; transition: 0.2s; }
+    .btn-discord-net { background: #5865F2; }
+    .btn-youtube-net { background: #FF0000; }
+    .btn-instagram-net { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+
+    .qrcode-box { display: flex; flex-direction: column; align-items: center; justify-content: center; background: #000; border: 1px solid var(--steel-border); padding: 12px; border-radius: 8px; text-align: center; }
+    .qrcode-img { width: 130px; height: 130px; object-fit: contain; background: #fff; padding: 4px; border-radius: 6px; margin-bottom: 6px; }
+    .btn-qrcode-link { display: inline-block; background: var(--gold-warning); color: #000; text-decoration: none; font-family: 'Orbitron'; font-size: 10px; font-weight: 800; padding: 6px 10px; border-radius: 4px; margin-top: 6px; }
+
+    .minichat-container { display: flex; flex-direction: column; height: 180px; background: #000; border: 1px solid var(--steel-border); border-radius: 6px; overflow: hidden; margin-top: 8px; }
+    .minichat-messages { flex: 1; padding: 8px; overflow-y: auto; font-size: 11px; display: flex; flex-direction: column; gap: 4px; }
     
-    <!-- Meta Tags para PWA -->
-    <link rel="manifest" href="./manifest.json">
-    <meta name="theme-color" content="#00f0ff">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="WaveCombat">
+    .chat-msg-item { padding: 4px 6px; border-radius: 4px; background: rgba(255,255,255,0.02); }
+    .chat-msg-item.mentioned { border-left: 3px solid var(--accent-color); background: rgba(0, 240, 255, 0.08); }
 
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Orbitron:wght@600;800;900&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        :root {
-            --bg-dark: #000000;
-            --panel-bg: rgba(8, 8, 12, 0.98);
-            --accent-color: #00f0ff; 
-            --accent-glow: rgba(0, 240, 255, 0.3);
-            --steel-border: #121824;
-            --steel-bright: #334155;
-            --ink: #f8fafc;
-            --gold-warning: #f59e0b;
-            --alert-red: #ef4444;
-        }
+    .emoji-picker-bar { display: flex; gap: 4px; margin-top: 5px; overflow-x: auto; padding-bottom: 2px; }
+    .emoji-btn { background: none; border: 1px solid var(--steel-border); border-radius: 4px; font-size: 12px; padding: 2px 6px; cursor: pointer; color: #fff; }
+    .emoji-btn:hover { background: var(--steel-bright); }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        html, body { width: 100%; max-width: 100vw; overflow-x: hidden; }
-        body {
-            background-color: var(--bg-dark);
-            background-image: 
-                linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
-            background-size: 40px 40px;
-            color: var(--ink);
-            font-family: 'Outfit', sans-serif;
-            scroll-behavior: smooth;
-            position: relative;
-        }
+    .minichat-input-box { display: flex; border-top: 1px solid var(--steel-border); margin-top: 5px; }
+    .minichat-input-box input { flex: 1; background: #080c14; border: none; padding: 6px 10px; color: #fff; font-size: 11px; outline: none; }
+    .minichat-input-box button { background: var(--accent-color); border: none; padding: 0 12px; font-family: 'Orbitron'; font-weight: bold; font-size: 10px; cursor: pointer; color: #000; }
 
-        @keyframes goldShine {
-            0% { filter: drop-shadow(0 0 2px #FFD700); transform: rotate(0deg) scale(1); }
-            50% { filter: drop-shadow(0 0 10px #FFD700) brightness(1.4); transform: rotate(8deg) scale(1.15); }
-            100% { filter: drop-shadow(0 0 2px #FFD700); transform: rotate(0deg) scale(1); }
-        }
-        .verified-v {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            color: #FFD700;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 900;
-            animation: goldShine 2.5s infinite ease-in-out;
-            margin-right: 5px;
-            font-size: 1.1em;
-        }
-        .staff-star {
-            color: var(--gold-warning);
-            margin-right: 4px;
-            font-weight: bold;
-        }
-        .profile-frame-gold {
-            border: 3px solid #FFD700 !important;
-            box-shadow: 0 0 25px rgba(255, 215, 0, 0.7);
-            background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(11,15,23,0.95)) !important;
-            position: relative;
-        }
+    .toast-notification {
+        position: fixed; bottom: 20px; right: 20px; background: var(--panel-bg);
+        border: 2px solid var(--accent-color); padding: 12px 20px; border-radius: 8px;
+        box-shadow: 0 0 25px var(--accent-glow); font-family: 'Orbitron'; font-size: 12px;
+        z-index: 9999; transform: translateY(150px); opacity: 0; transition: 0.3s ease; color: #fff;
+    }
+    .toast-notification.show { transform: translateY(0); opacity: 1; }
 
-        .unread-badge { position: relative; }
-        .unread-badge::after {
-            content: '!';
-            position: absolute; top: -6px; right: -6px;
-            background-color: var(--gold-warning); color: #000;
-            font-weight: 900; border-radius: 50%;
-            width: 18px; height: 18px; display: flex;
-            align-items: center; justify-content: center;
-            font-size: 11px; animation: pulseAlert 1.5s infinite;
-            box-shadow: 0 0 8px var(--gold-warning);
-        }
-        @keyframes pulseAlert {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.25); }
-            100% { transform: scale(1); }
-        }
+    .admin-section { display: none; background: #04060a; border-top: 3px solid var(--accent-color); padding: 25px 15px; margin-top: 30px; }
+    .admin-container { width: 100%; max-width: 1100px; margin: 0 auto; background: var(--panel-bg); border: 1px solid var(--steel-bright); padding: 15px; border-radius: 12px; }
+    .admin-grid-tools { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 15px; }
+    @media(min-width: 768px) { .admin-grid-tools { grid-template-columns: 1fr 1fr; } }
 
-        .avatar-preview-box {
-            width: 90px; height: 90px; border-radius: 50%; margin: 15px auto;
-            display: flex; align-items: center; justify-content: center; position: relative;
-            background: #000; border: 2px solid var(--steel-bright); font-family: 'Orbitron'; font-size: 12px;
-        }
-        .frame-neon {
-            box-shadow: 0 0 20px #00f0ff, inset 0 0 15px #00f0ff;
-            border: 3px solid #00f0ff !important;
-        }
-        .frame-fogo {
-            box-shadow: 0 0 20px #ef4444, inset 0 0 15px #f59e0b;
-            border: 3px solid #ef4444 !important;
-        }
+    .admin-block { background: #000; border: 1px solid var(--steel-border); padding: 12px; border-radius: 8px; display: flex; flex-direction: column; gap: 8px; }
+    .admin-game-item { background: #000; border: 1px solid var(--steel-border); padding: 10px; border-radius: 8px; display: flex; flex-direction: column; gap: 8px; }
 
-        .admin-bar-chart {
-            display: flex; align-items: flex-end; gap: 12px; height: 140px;
-            background: #000; border: 1px solid var(--steel-border); padding: 12px; border-radius: 8px; margin-top: 10px;
-        }
-        .admin-bar-col {
-            flex: 1; background: var(--accent-color); border-radius: 4px 4px 0 0;
-            text-align: center; color: #000; font-weight: bold; font-size: 10px; font-family: 'Orbitron';
-        }
+    .btn-danger { background: rgba(239, 68, 68, 0.15); border-color: var(--alert-red); color: var(--alert-red); }
+    .btn-success { background: rgba(34, 197, 94, 0.15); border-color: #22c55e; color: #22c55e; }
 
-        .bg-particles {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            pointer-events: none; z-index: 0; overflow: hidden;
-        }
-        .particle {
-            position: absolute; width: 3px; height: 3px; background: var(--accent-color);
-            border-radius: 50%; opacity: 0.3; animation: floatParticle 15s infinite linear;
-            box-shadow: 0 0 8px var(--accent-color);
-        }
-        @keyframes floatParticle {
-            0% { transform: translateY(100vh) translateX(0); opacity: 0; }
-            50% { opacity: 0.7; }
-            100% { transform: translateY(-10vh) translateX(50px); opacity: 0; }
-        }
+    footer { text-align: center; padding: 20px; color: #64748b; font-size: 12px; border-top: 1px solid var(--steel-border); position: relative; z-index: 2; }
+</style>
 
-        .broadcast-ticker {
-            background: linear-gradient(90deg, #ef4444, var(--gold-warning), var(--accent-color));
-            color: #000; font-family: 'Orbitron'; font-size: 11px; font-weight: 900;
-            padding: 6px 15px; text-transform: uppercase; white-space: nowrap; overflow: hidden;
-            position: fixed; top: 0; left: 0; width: 100%; z-index: 1005; display: none;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.8);
-        }
 
-        nav {
-            position: fixed; top: 0; left: 0; width: 100%; max-width: 100vw;
-            min-height: 65px; background: rgba(8, 8, 12, 0.98);
-            backdrop-filter: blur(10px); border-bottom: 2px solid var(--accent-color);
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 10px 15px; z-index: 1000; box-shadow: 0 4px 25px var(--accent-glow);
-        }
-        .logo-container { display: flex; align-items: center; gap: 8px; text-decoration: none; z-index: 1002; cursor: pointer; }
-        .logo-img-custom { height: 36px; max-width: 120px; object-fit: contain; filter: drop-shadow(0 0 10px var(--accent-color)); }
-        .logo-svg { width: 32px; height: 32px; filter: drop-shadow(0 0 10px var(--accent-color)); }
-        .logo-text { font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 16px; color: var(--accent-color); letter-spacing: 1px; }
+<div class="broadcast-ticker" id="broadcastTicker">
+    <marquee id="broadcastText">⚡ AVISO GLOBAL: Bem-vindos ao WaveCombat Hub v0.466!</marquee>
+</div>
 
-        .menu-toggle-btn {
-            display: flex; flex-direction: column; justify-around;
-            width: 30px; height: 25px; background: transparent; border: none; cursor: pointer; z-index: 1002;
-        }
-        .menu-toggle-btn span { width: 100%; height: 3px; background: var(--accent-color); border-radius: 2px; transition: 0.3s; }
+<div class="bg-particles" id="bgParticles"></div>
+<div class="toast-notification" id="toastNotification">⚡ Ação realizada com sucesso!</div>
 
-        .nav-links { display: flex; gap: 15px; list-style: none; align-items: center; z-index: 1002; }
-        .nav-links li a { color: var(--ink); text-decoration: none; font-family: 'Orbitron', sans-serif; font-size: 13px; text-transform: uppercase; transition: 0.2s; }
-        .nav-links li a:hover { color: var(--accent-color); }
+<nav id="mainNav">
+    <a href="#inicio" class="logo-container" id="navLogoContainer" onclick="tocarSomClique()">
+        <svg class="logo-svg" id="defaultLogoSvg" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="250" cy="250" r="220" fill="none" stroke="#00f0ff" stroke-width="30"/>
+            <polygon points="180,140 380,250 180,360" fill="#00f0ff"/>
+        </svg>
+        <div class="logo-text" id="logoText">WAVECOMBAT</div>
+    </a>
 
-        @media (max-width: 768px) {
-            .menu-toggle-btn { display: flex; }
-            .nav-links {
-                position: fixed; top: 0; right: -100%; width: 250px; height: 100vh;
-                background: rgba(8, 8, 12, 0.98); border-left: 2px solid var(--accent-color);
-                flex-direction: column; justify-content: center; gap: 25px;
-                transition: 0.3s ease-in-out; z-index: 1001; padding: 20px;
-            }
-            .nav-links.active { right: 0; }
-        }
-        @media (min-width: 769px) { .menu-toggle-btn { display: none; } }
-
-        .user-nav-wrapper { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-        .btn-auth-nav { background: rgba(16, 22, 34, 0.8); color: var(--accent-color); border: 1px solid var(--accent-color); padding: 8px 16px; font-family: 'Orbitron'; font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 6px; display: flex; align-items: center; }
-        .btn-toggle-adm-nav { display: none; background: var(--gold-warning); color: #000; border: none; padding: 8px 12px; font-family: 'Orbitron'; font-size: 12px; font-weight: bold; cursor: pointer; border-radius: 6px; }
-
-        header.hero {
-            min-height: 45vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
-            text-align: center; padding: 40px 15px; position: relative; background-size: cover; background-position: center;
-            border-bottom: 2px solid var(--steel-border); margin-top: 65px; width: 100%; overflow: hidden; z-index: 2;
-            box-shadow: inset 0 0 50px var(--accent-glow);
-            transition: background-image 0.5s ease-in-out;
-        }
-        header.hero::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(180deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.98) 100%); z-index: 1;
-        }
-        header.hero > * { position: relative; z-index: 2; }
-        header.hero h1 { font-family: 'Orbitron', sans-serif; font-size: clamp(22px, 5vw, 48px); font-weight: 900; color: #fff; margin-bottom: 10px; text-transform: uppercase; }
-        header.hero h1 span { color: var(--accent-color); text-shadow: 0 0 25px var(--accent-glow); }
-        header.hero p { font-size: 14px; max-width: 600px; margin-bottom: 20px; color: #94a3b8; padding: 0 10px; }
-
-        .global-stats-bar {
-            display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;
-            background: var(--panel-bg); border: 1px solid var(--accent-color);
-            padding: 10px 20px; border-radius: 8px; margin-bottom: 20px; font-family: 'Orbitron'; font-size: 11px; color: #94a3b8;
-            box-shadow: 0 0 15px var(--accent-glow);
-        }
-        .global-stats-bar span strong { color: var(--accent-color); }
-
-        .btn-gaming {
-            font-family: 'Orbitron', sans-serif; background: var(--accent-color); color: #000; border: none;
-            padding: 12px 24px; font-size: 13px; font-weight: 800; cursor: pointer; text-transform: uppercase;
-            box-shadow: 0 0 20px var(--accent-glow); border-radius: 8px; text-decoration: none; display: inline-block; transition: 0.3s;
-            text-align: center;
-        }
-        .btn-gaming:hover { transform: scale(1.03); filter: brightness(1.2); }
-
-        .btn-pwa-install {
-            display: inline-block; background: #22c55e; color: #000; border: none; padding: 8px 14px;
-            font-family: 'Orbitron'; font-size: 11px; font-weight: bold; border-radius: 6px;
-            cursor: pointer; margin-top: 10px; box-shadow: 0 0 15px rgba(34, 197, 94, 0.4);
-        }
-
-        section { padding: 25px 15px; width: 100%; max-width: 1350px; margin: 0 auto; box-sizing: border-box; z-index: 2; position: relative; }
-        .section-title { font-family: 'Orbitron', sans-serif; font-size: 18px; margin-bottom: 20px; border-left: 4px solid var(--accent-color); padding-left: 10px; text-transform: uppercase; color: #fff; }
-
-        .search-filter-bar { display: flex; gap: 12px; margin-bottom: 20px; flex-direction: column; }
-        @media(min-width: 850px) { .search-filter-bar { flex-direction: row; } }
-
-        .games-layout-split { display: flex; flex-direction: column; gap: 20px; margin-bottom: 30px; }
-        @media(min-width: 900px) { .games-layout-split { display: grid; grid-template-columns: 1.4fr 1fr; } }
-
-        .featured-game-box { background: var(--panel-bg); border: 2px solid var(--accent-color); padding: 15px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 0 30px var(--accent-glow); border-radius: 12px; position: relative; }
-        .featured-badge { position: absolute; top: 15px; right: 15px; background: var(--gold-warning); color: #000; font-weight: 800; font-size: 10px; padding: 4px 8px; font-family: 'Orbitron'; border-radius: 4px; z-index: 5; }
-        .featured-img { width: 100%; height: 220px; object-fit: cover; border-radius: 8px; border: 1px solid var(--steel-border); cursor: pointer; }
-        @media(min-width: 600px) { .featured-img { height: 300px; } }
-
-        .game-card-actions { display: flex; gap: 10px; align-items: center; }
-
-        .games-list-column { display: flex; flex-direction: column; gap: 10px; max-height: 500px; overflow-y: auto; }
-        .game-list-card { background: var(--panel-bg); border: 1px solid var(--steel-border); padding: 10px; display: flex; align-items: center; gap: 12px; border-radius: 8px; cursor: pointer; transition: 0.2s; }
-        .game-list-card:hover { border-color: var(--accent-color); box-shadow: 0 0 15px var(--accent-glow); }
-        .game-list-thumb { width: 75px; height: 50px; object-fit: cover; border-radius: 6px; border: 1px solid var(--steel-border); flex-shrink: 0; }
-        .game-list-info { flex-grow: 1; min-width: 0; }
-        .game-list-info h4 { font-family: 'Orbitron', sans-serif; color: #fff; font-size: 13px; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .game-list-info p { font-size: 11px; color: #94a3b8; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.92); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 15px; }
-        .modal-card { background: var(--panel-bg); border: 2px solid var(--accent-color); width: 100%; max-width: 480px; padding: 20px; border-radius: 12px; position: relative; box-shadow: 0 0 35px var(--accent-glow); max-height: 90vh; overflow-y: auto; }
-        .modal-close { position: absolute; top: 12px; right: 15px; background: none; border: none; color: var(--ink); font-size: 22px; cursor: pointer; }
-
-        .tab-switcher { display: flex; border-bottom: 2px solid var(--steel-border); margin-bottom: 15px; flex-wrap: wrap; }
-        .tab-btn { flex: 1; background: none; border: none; padding: 8px; font-family: 'Orbitron'; font-weight: 700; font-size: 10px; color: #64748b; cursor: pointer; display: block; }
-        .tab-btn.active { color: var(--accent-color); border-bottom: 2px solid var(--accent-color); margin-bottom: -2px; }
-
-        .auth-form { display: flex; flex-direction: column; gap: 10px; }
-        .auth-input { background: #000; border: 1px solid var(--steel-border); padding: 10px; color: var(--ink); font-size: 13px; width: 100%; border-radius: 6px; }
-        .auth-input:focus { border-color: var(--accent-color); outline: none; box-shadow: 0 0 10px var(--accent-glow); }
-        .form-panel { display: none; }
-        .form-panel.active { display: flex; flex-direction: column; gap: 10px; }
-
-        .embed-container { display: none; background: #000; border: 2px solid var(--accent-color); width: 100%; height: 70vh; max-height: 800px; position: relative; box-shadow: 0 0 35px var(--accent-glow); margin-top: 15px; border-radius: 10px; }
-        .embed-container iframe { width: 100%; height: 100%; border: none; border-radius: 8px; }
-        .player-controls-bar { display: none; justify-content: center; align-items: center; gap: 10px; margin-top: 12px; padding: 10px; background: var(--panel-bg); border: 1px solid var(--steel-border); border-radius: 8px; flex-wrap: wrap; }
-
-        .site-leaderboard-section {
-            display: none; background: var(--panel-bg); border: 2px solid var(--accent-color);
-            padding: 15px; border-radius: 10px; margin-top: 15px; box-shadow: 0 0 25px var(--accent-glow);
-        }
-        .site-leaderboard-list {
-            display: flex; flex-direction: column; gap: 6px; max-height: 220px; overflow-y: auto; margin-top: 10px;
-        }
-
-        .live-section-box { display: none; background: var(--panel-bg); border: 1px solid var(--accent-color); padding: 15px; text-align: center; margin-bottom: 20px; border-radius: 10px; }
-        .live-embed-container { margin: 10px auto; width: 100%; max-width: 800px; height: 0; padding-bottom: 56.25%; position: relative; background: #000; border-radius: 8px; overflow: hidden; }
-        .live-embed-container iframe { position: absolute; top:0; left:0; width: 100%; height: 100%; border: none; }
-
-        /* ESTILOS DA RODA DA FORTUNA */
-        .wheel-section { background: var(--panel-bg); border: 2px solid var(--accent-color); padding: 25px 15px; border-radius: 12px; text-align: center; margin-bottom: 30px; box-shadow: 0 0 30px var(--accent-glow); }
-        .wheel-container { position: relative; width: 380px; height: 380px; max-width: 90vw; max-height: 90vw; margin: 20px auto; }
-        #canvasWheel { width: 100%; height: 100%; border-radius: 50%; border: 6px solid var(--accent-color); box-shadow: 0 0 30px var(--accent-glow); transition: transform 4.5s cubic-bezier(0.15, 0.9, 0.2, 1); }
-        .wheel-pointer { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 16px solid transparent; border-right: 16px solid transparent; border-top: 28px solid var(--gold-warning); z-index: 10; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.9)); }
-
-        @keyframes popInModal {
-            0% { transform: scale(0.5); opacity: 0; }
-            80% { transform: scale(1.05); }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        .modal-wheel-result { animation: popInModal 0.4s ease-out forwards; }
-
-        .community-main-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 15px; }
-        @media(min-width: 850px) { .community-main-grid { grid-template-columns: 1fr 320px; } }
-        .panel-card { background: var(--panel-bg); border: 1px solid var(--steel-border); padding: 15px; border-radius: 10px; display: flex; flex-direction: column; }
-        .panel-card h3 { font-family: 'Orbitron', sans-serif; font-size: 15px; color: var(--accent-color); margin-bottom: 12px; }
-
-        .social-buttons-flex { display: flex; flex-direction: column; gap: 8px; }
-        .social-btn-item { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px; border-radius: 6px; font-family: 'Orbitron'; font-size: 12px; font-weight: 700; text-decoration: none; color: #fff; transition: 0.2s; }
-        .btn-discord-net { background: #5865F2; }
-        .btn-youtube-net { background: #FF0000; }
-        .btn-instagram-net { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
-
-        .qrcode-box { display: flex; flex-direction: column; align-items: center; justify-content: center; background: #000; border: 1px solid var(--steel-border); padding: 12px; border-radius: 8px; text-align: center; }
-        .qrcode-img { width: 130px; height: 130px; object-fit: contain; background: #fff; padding: 4px; border-radius: 6px; margin-bottom: 6px; }
-        .btn-qrcode-link { display: inline-block; background: var(--gold-warning); color: #000; text-decoration: none; font-family: 'Orbitron'; font-size: 10px; font-weight: 800; padding: 6px 10px; border-radius: 4px; margin-top: 6px; }
-
-        .minichat-container { display: flex; flex-direction: column; height: 180px; background: #000; border: 1px solid var(--steel-border); border-radius: 6px; overflow: hidden; margin-top: 8px; }
-        .minichat-messages { flex: 1; padding: 8px; overflow-y: auto; font-size: 11px; display: flex; flex-direction: column; gap: 4px; }
-        
-        .chat-msg-item { padding: 4px 6px; border-radius: 4px; background: rgba(255,255,255,0.02); }
-        .chat-msg-item.mentioned { border-left: 3px solid var(--accent-color); background: rgba(0, 240, 255, 0.08); }
-
-        .emoji-picker-bar { display: flex; gap: 4px; margin-top: 5px; overflow-x: auto; padding-bottom: 2px; }
-        .emoji-btn { background: none; border: 1px solid var(--steel-border); border-radius: 4px; font-size: 12px; padding: 2px 6px; cursor: pointer; color: #fff; }
-        .emoji-btn:hover { background: var(--steel-bright); }
-
-        .minichat-input-box { display: flex; border-top: 1px solid var(--steel-border); margin-top: 5px; }
-        .minichat-input-box input { flex: 1; background: #080c14; border: none; padding: 6px 10px; color: #fff; font-size: 11px; outline: none; }
-        .minichat-input-box button { background: var(--accent-color); border: none; padding: 0 12px; font-family: 'Orbitron'; font-weight: bold; font-size: 10px; cursor: pointer; color: #000; }
-
-        .toast-notification {
-            position: fixed; bottom: 20px; right: 20px; background: var(--panel-bg);
-            border: 2px solid var(--accent-color); padding: 12px 20px; border-radius: 8px;
-            box-shadow: 0 0 25px var(--accent-glow); font-family: 'Orbitron'; font-size: 12px;
-            z-index: 9999; transform: translateY(150px); opacity: 0; transition: 0.3s ease; color: #fff;
-        }
-        .toast-notification.show { transform: translateY(0); opacity: 1; }
-
-        .admin-section { display: none; background: #04060a; border-top: 3px solid var(--accent-color); padding: 25px 15px; margin-top: 30px; }
-        .admin-container { width: 100%; max-width: 1100px; margin: 0 auto; background: var(--panel-bg); border: 1px solid var(--steel-bright); padding: 15px; border-radius: 12px; }
-        .admin-grid-tools { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 15px; }
-        @media(min-width: 768px) { .admin-grid-tools { grid-template-columns: 1fr 1fr; } }
-
-        .admin-block { background: #000; border: 1px solid var(--steel-border); padding: 12px; border-radius: 8px; display: flex; flex-direction: column; gap: 8px; }
-        .admin-game-item { background: #000; border: 1px solid var(--steel-border); padding: 10px; border-radius: 8px; display: flex; flex-direction: column; gap: 8px; }
-
-        .btn-danger { background: rgba(239, 68, 68, 0.15); border-color: var(--alert-red); color: var(--alert-red); }
-        .btn-success { background: rgba(34, 197, 94, 0.15); border-color: #22c55e; color: #22c55e; }
-
-        footer { text-align: center; padding: 20px; color: #64748b; font-size: 12px; border-top: 1px solid var(--steel-border); position: relative; z-index: 2; }
-    </style>
-</head>
-<body id="mainBody" class="theme-oled">
-
-    <div class="broadcast-ticker" id="broadcastTicker">
-        <marquee id="broadcastText">⚡ AVISO GLOBAL: Bem-vindos ao WaveCombat Hub v0.465!</marquee>
-    </div>
-
-    <div class="bg-particles" id="bgParticles"></div>
-    <div class="toast-notification" id="toastNotification">⚡ Ação realizada com sucesso!</div>
-
-    <nav id="mainNav">
-        <a href="#inicio" class="logo-container" id="navLogoContainer" onclick="tocarSomClique()">
-            <svg class="logo-svg" id="defaultLogoSvg" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="250" cy="250" r="220" fill="none" stroke="#00f0ff" stroke-width="30"/>
-                <polygon points="180,140 380,250 180,360" fill="#00f0ff"/>
-            </svg>
-            <div class="logo-text" id="logoText">WAVECOMBAT</div>
-        </a>
-
-        <button class="menu-toggle-btn" id="menuToggleBtn" onclick="toggleMenuMobile(); tocarSomClique();">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
-
-        <ul class="nav-links" id="navLinks">
-            <li><a href="#inicio" onclick="fecharMenuMobile(); tocarSomClique();">Início</a></li>
-            <li><a href="#jogos" onclick="fecharMenuMobile(); tocarSomClique();">Games</a></li>
-            <li><a href="#eventos" onclick="fecharMenuMobile(); tocarSomClique();">Eventos 🎡</a></li>
-            <li><a href="#lojaDiamantes" onclick="fecharMenuMobile(); tocarSomClique();">Loja 💎</a></li>
-            <li><a href="#comunidade" onclick="fecharMenuMobile(); tocarSomClique();">Social</a></li>
-            <li>
-                <div class="user-nav-wrapper">
-                    <button class="btn-toggle-adm-nav" id="btnToggleAdmNav" onclick="alternarPainelAdm(); fecharMenuMobile(); tocarSomClique();" style="display:none;">⚙️ ADM</button>
-                    <button class="btn-auth-nav unread-badge" id="btnAuthNav" onclick="abrirModalAuth(); fecharMenuMobile(); tocarSomClique();">Entrar</button>
-                </div>
-            </li>
-        </ul>
-    </nav>
-
-    <!-- MODAL GAMER DE RESULTADO DA ROLETA -->
-    <div class="modal-overlay" id="modalWheelResult" style="z-index: 3800;">
-        <div class="modal-card modal-wheel-result" id="modalWheelCard" style="text-align: center; border-width: 3px;">
-            <div id="wheelResultIcon" style="font-size: 55px; margin-bottom: 10px;">🎁</div>
-            <h2 id="wheelResultTitle" style="font-family:'Orbitron'; font-size: 20px; color:var(--accent-color); margin-bottom: 8px;">PARABÉNS!</h2>
-            <p id="wheelResultMessage" style="font-size: 13px; color: #fff; margin-bottom: 20px; line-height: 1.4;"></p>
-            <button class="btn-gaming" onclick="fecharModalWheelResult()" style="width: 100%; padding: 12px; font-size: 12px; background: var(--accent-color); color: #000;">ENTENDIDO!</button>
-        </div>
-    </div>
-
-    <!-- MODAL DE ALERTA DE CADASTRO DE E-MAIL -->
-    <div class="modal-overlay" id="modalAlertEmail" style="z-index: 3600;">
-        <div class="modal-card" style="text-align: center; border-color: var(--gold-warning);">
-            <h3 style="font-family:'Orbitron'; color:var(--gold-warning); margin-bottom:10px;">⚠️ Lembrete de Segurança</h3>
-            <p style="font-size:12px; color:#94a3b8; margin-bottom:15px;">Sua conta ainda não possui um e-mail de recuperação vinculado. Cadastre um e-mail para não perder o acesso no futuro:</p>
-            <form onsubmit="salvarEmailRecuperacaoDirect(event)" style="display:flex; flex-direction:column; gap:10px;">
-                <input type="email" id="inputVinculoEmailPrompt" placeholder="Digite seu e-mail principal..." class="auth-input" required style="text-align:center;">
-                <div style="display:flex; gap:10px;">
-                    <button type="button" class="btn-gaming btn-danger" onclick="fecharModalAlertEmail()" style="flex:1; padding:8px; font-size:11px;">Depois</button>
-                    <button type="submit" class="btn-gaming" style="flex:1; padding:8px; font-size:11px; background:var(--gold-warning); color:#000;">Vincular E-mail</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- MODAL DE AUTENTICAÇÃO / PERFIL / INVENTÁRIO / CORREIO -->
-    <div class="modal-overlay" id="authModal">
-        <div class="modal-card" id="authModalCard">
-            <button class="modal-close" onclick="fecharModalAuth(); tocarSomClique();">&times;</button>
-            <div class="tab-switcher" id="modalTabSwitcher">
-                <button class="tab-btn active" id="tabLoginBtn" onclick="alternarAba('login'); tocarSomClique();">Entrar</button>
-                <button class="tab-btn" id="tabRegisterBtn" onclick="alternarAba('registro'); tocarSomClique();">Criar Conta</button>
-                <button class="tab-btn" id="tabPerfilBtn" onclick="alternarAba('perfil'); tocarSomClique();">Perfil</button>
-                <button class="tab-btn" id="tabInventarioBtn" onclick="alternarAba('inventario'); tocarSomClique();">🎒 Inventário</button>
-                <button class="tab-btn unread-badge" id="tabCorreioBtn" onclick="alternarAba('correio'); tocarSomClique();">📬 Correio</button>
-            </div>
-            
-            <div class="form-panel active" id="panelLogin">
-                <p id="msgBloqueioJogo" style="display:none; color:var(--gold-warning); font-size:12px; font-weight:bold; text-align:center; margin-bottom:8px;">⚠️ CRIE SUA CONTA OU FAÇA LOGIN PARA CONTINUAR!</p>
-                <form class="auth-form" onsubmit="fazerLoginPlataforma(event)">
-                    <input type="text" id="loginUser" placeholder="Seu Nick ou E-mail" class="auth-input" required>
-                    <input type="password" id="loginPass" placeholder="Sua Senha" class="auth-input" required>
-                    <button type="submit" class="btn-gaming" onclick="tocarSomLevelUp()" style="width:100%; padding:10px;">Entrar na Conta</button>
-                </form>
-                <button onclick="esqueciMinhaSenha()" style="background:none; border:none; color:var(--accent-color); font-size:11px; cursor:pointer; text-align:center; margin-top:5px;">Esqueci minha senha</button>
-            </div>
-
-            <div class="form-panel" id="panelRegistro">
-                <form class="auth-form" onsubmit="fazerRegistroPlataforma(event)">
-                    <input type="text" id="regUser" placeholder="Escolha um Nick de Jogador" class="auth-input" required>
-                    <input type="email" id="regEmail" placeholder="Seu E-mail (Para recuperar senha)" class="auth-input" required>
-                    <input type="password" id="regPass" placeholder="Crie uma Senha" class="auth-input" required>
-                    <button type="submit" class="btn-gaming" onclick="tocarSomLevelUp()" style="width:100%; padding:10px; background:#22c55e; color:#000;">Criar Minha Conta</button>
-                </form>
-            </div>
-
-            <div class="form-panel" id="panelPerfil">
-                <div id="perfilUserData"><p style="color:#94a3b8; text-align:center;">Faça login para ver seu perfil expandido.</p></div>
-            </div>
-
-            <div class="form-panel" id="panelInventario">
-                <div id="inventarioUserData">
-                    <p style="color:#94a3b8; text-align:center; font-size:11px;">Faça login para ver seu inventário de itens e molduras.</p>
-                </div>
-            </div>
-
-            <div class="form-panel" id="panelCorreio">
-                <div id="correioMensagensContainer">
-                    <p style="color:#94a3b8; text-align:center; font-size:11px;">Nenhuma mensagem no correio.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL DE CONFIRMAÇÃO DE DIAMANTES (ADM) -->
-    <div class="modal-overlay" id="modalConfirmarDiamantes" style="z-index: 3500;">
-        <div class="modal-card" style="text-align: center; border-color: var(--accent-color);">
-            <h3 id="modalDiamantesTitulo" style="font-family:'Orbitron'; color:var(--accent-color); margin-bottom:10px;">⚡ Confirmar Transação</h3>
-            <p style="font-size:12px; color:#94a3b8; margin-bottom:15px;">Por favor, confira os dados do jogador:</p>
-            <div style="background:#000; border:1px solid var(--steel-border); padding:15px; border-radius:8px; margin-bottom:15px; text-align:left; font-size:12px; display:flex; flex-direction:column; gap:8px;">
-                <div>👤 Nick: <strong id="confNick" style="color:#fff;">--</strong></div>
-                <div>🆔 ID Único: <strong id="confId" style="color:var(--gold-warning);">--</strong></div>
-                <div>💎 Quantidade: <strong id="confQtd" style="color:var(--accent-color);">--</strong></div>
-                <div>💰 Saldo Atual: <strong id="confSaldoAtual" style="color:#22c55e;">--</strong></div>
-            </div>
-            <div style="display:flex; gap:10px;">
-                <button class="btn-gaming btn-danger" onclick="fecharModalConfirmarDiamantes()" style="flex:1; padding:10px; font-size:11px;">Cancelar</button>
-                <button class="btn-gaming" id="btnConfirmarAcaoDiamantes" style="flex:1; padding:10px; font-size:11px; background:#22c55e; color:#000;">Confirmar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL DE CONFIRMAÇÃO DE EXCLUSÃO DE CONTA (ADM) -->
-    <div class="modal-overlay" id="modalConfirmarExclusao" style="z-index: 3500;">
-        <div class="modal-card" style="text-align: center; border-color: var(--alert-red);">
-            <h3 style="font-family:'Orbitron'; color:var(--alert-red); margin-bottom:10px;">⚠️ Confirmar Exclusão de Conta</h3>
-            <p style="font-size:12px; color:#94a3b8; margin-bottom:15px;">Tem certeza que deseja apagar permanentemente esta conta?</p>
-            <div style="background:#000; border:1px solid var(--steel-border); padding:15px; border-radius:8px; margin-bottom:15px; text-align:left; font-size:12px; display:flex; flex-direction:column; gap:8px;">
-                <div>👤 Nick: <strong id="confDelNick" style="color:#fff;">--</strong></div>
-                <div>🆔 ID Único: <strong id="confDelId" style="color:var(--gold-warning);">--</strong></div>
-            </div>
-            <div style="display:flex; gap:10px;">
-                <button class="btn-gaming" onclick="fecharModalConfirmarExclusao()" style="flex:1; padding:10px; font-size:11px;">Cancelar</button>
-                <button class="btn-gaming btn-danger" id="btnConfirmarAcaoExclusao" style="flex:1; padding:10px; font-size:11px;">Sim, Excluir</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL PARA EXIBIR O QR CODE PIX -->
-    <div class="modal-overlay" id="pixModal">
-        <div class="modal-card" style="text-align: center;">
-            <button class="modal-close" onclick="fecharModalPix()">&times;</button>
-            <h3 style="font-family:'Orbitron'; color:var(--accent-color); margin-bottom:10px;">Pagamento via Pix</h3>
-            <p style="font-size:12px; color:#94a3b8; margin-bottom:12px;">Escaneie o QR Code abaixo ou copie o código Pix:</p>
-            
-            <div style="margin-bottom:10px;">
-                <input type="text" id="inputCupomRecarga" placeholder="Possui Cupom? Digite aqui" class="auth-input" style="font-size:11px; text-align:center; border-color:var(--gold-warning);">
-            </div>
-
-            <div id="pixQrContainer" style="margin: 15px 0; display: flex; justify-content: center;"></div>
-            
-            <input type="text" id="pixCopiaColaInput" class="auth-input" readonly style="font-size:10px; margin-bottom:10px;">
-            <button class="btn-gaming" onclick="copiarPixCopiaCola()" style="width:100%; padding:8px; font-size:11px;">📋 Copiar Código Pix</button>
-            
-            <p style="font-size:10px; color:var(--gold-warning); margin-top:12px;">⚡ Assim que confirmado, os diamantes caem na sua conta!</p>
-        </div>
-    </div>
-
-    <!-- MODAL DE FESTA / RECOMPENSA DE VERIFICADO -->
-    <div class="modal-overlay" id="modalVerificadoPremio" style="z-index: 3000;">
-        <div class="modal-card" style="text-align: center; border-color: #FFD700; box-shadow: 0 0 50px rgba(255,215,0,0.8);">
-            <h2 style="font-family:'Orbitron'; color:#FFD700; margin-bottom:10px;">🎉 PARABÉNS! VOCÊ É VERIFICADO! ⭐</h2>
-            <p style="font-size:12px; color:#fff; margin-bottom:15px;">Você resgatou com sucesso o selo oficial de prestígio:</p>
-            <div style="background:#000; border:1px solid #FFD700; padding:15px; border-radius:8px; margin-bottom:15px; text-align:left; font-size:11px; display:flex; flex-direction:column; gap:6px;">
-                <div>✨ Símbolo <strong>V Dourado</strong> à frente do seu Nick</div>
-                <div>🖼️ Moldura Dourada Exclusiva para Perfil</div>
-                <div>💎 <strong>5.000 Diamantes</strong> creditados na sua conta</div>
-                <div id="infoCupomGeradoPremio" style="color:var(--gold-warning); font-weight:bold;"></div>
-            </div>
-            <button class="btn-gaming" onclick="fecharModalVerificadoPremio()" style="background:#FFD700; color:#000; width:100%; padding:10px;">Curtir a Festa! 🥳</button>
-        </div>
-    </div>
-
-    <!-- MODAL DE PERFIL PÚBLICO CLICÁVEL & DENÚNCIAS -->
-    <div class="modal-overlay" id="modalPerfilPublico" style="z-index: 3500;">
-        <div class="modal-card" style="text-align: center; border-color: var(--accent-color);">
-            <button class="modal-close" onclick="fecharModalPerfilPublico()">&times;</button>
-            <div id="conteudoPerfilPublico"></div>
-        </div>
-    </div>
-
-    <!-- GAVETA DE AMIGOS -->
-    <button onclick="togglePainelAmigos()" style="position: fixed; bottom: 80px; right: 20px; z-index: 1500; background: var(--accent-color); color: #000; border: none; padding: 10px 14px; border-radius: 50px; font-family: 'Orbitron'; font-weight: bold; font-size: 11px; cursor: pointer; box-shadow: 0 0 20px var(--accent-glow);">
-        👥 Amigos (<span id="countAmigosOnline">0</span>)
+    <button class="menu-toggle-btn" id="menuToggleBtn" onclick="toggleMenuMobile(); tocarSomClique();">
+        <span></span>
+        <span></span>
+        <span></span>
     </button>
 
-    <div id="painelAmigos" style="position: fixed; top: 0; right: -320px; width: 310px; height: 100vh; background: var(--panel-bg); border-left: 2px solid var(--accent-color); z-index: 2500; transition: 0.3s ease; padding: 20px; display: flex; flex-direction: column; box-shadow: -10px 0 30px rgba(0,0,0,0.8);">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--steel-border); padding-bottom: 10px;">
-            <h3 style="font-family: 'Orbitron'; font-size: 14px; color: var(--accent-color);">👥 Meus Amigos</h3>
-            <button onclick="togglePainelAmigos()" style="background: none; border: none; color: #fff; font-size: 18px; cursor: pointer;">&times;</button>
+    <ul class="nav-links" id="navLinks">
+        <li><a href="#inicio" onclick="fecharMenuMobile(); tocarSomClique();">Início</a></li>
+        <li><a href="#jogos" onclick="fecharMenuMobile(); tocarSomClique();">Games</a></li>
+        <li><a href="#eventos" onclick="fecharMenuMobile(); tocarSomClique();">Eventos 🎡</a></li>
+        <li><a href="#lojaDiamantes" onclick="fecharMenuMobile(); tocarSomClique();">Loja 💎</a></li>
+        <li><a href="#comunidade" onclick="fecharMenuMobile(); tocarSomClique();">Social</a></li>
+        <li>
+            <div class="user-nav-wrapper">
+                <button class="btn-toggle-adm-nav" id="btnToggleAdmNav" onclick="alternarPainelAdm(); fecharMenuMobile(); tocarSomClique();" style="display:none;">⚙️ ADM</button>
+                <button class="btn-auth-nav unread-badge" id="btnAuthNav" onclick="abrirModalAuth(); fecharMenuMobile(); tocarSomClique();">Entrar</button>
+            </div>
+        </li>
+    </ul>
+</nav>
+
+<!-- MODAL GAMER DE RESULTADO DA ROLETA -->
+<div class="modal-overlay" id="modalWheelResult" style="z-index: 3800;">
+    <div class="modal-card modal-wheel-result" id="modalWheelCard" style="text-align: center; border-width: 3px;">
+        <div id="wheelResultIcon" style="font-size: 55px; margin-bottom: 10px;">🎁</div>
+        <h2 id="wheelResultTitle" style="font-family:'Orbitron'; font-size: 20px; color:var(--accent-color); margin-bottom: 8px;">PARABÉNS!</h2>
+        <p id="wheelResultMessage" style="font-size: 13px; color: #fff; margin-bottom: 20px; line-height: 1.4;"></p>
+        <button class="btn-gaming" onclick="fecharModalWheelResult()" style="width: 100%; padding: 12px; font-size: 12px; background: var(--accent-color); color: #000;">ENTENDIDO!</button>
+    </div>
+</div>
+
+<!-- MODAL DE ALERTA DE CADASTRO DE E-MAIL -->
+<div class="modal-overlay" id="modalAlertEmail" style="z-index: 3600;">
+    <div class="modal-card" style="text-align: center; border-color: var(--gold-warning);">
+        <h3 style="font-family:'Orbitron'; color:var(--gold-warning); margin-bottom:10px;">⚠️ Lembrete de Segurança</h3>
+        <p style="font-size:12px; color:#94a3b8; margin-bottom:15px;">Sua conta ainda não possui um e-mail de recuperação vinculado. Cadastre um e-mail para não perder o acesso no futuro:</p>
+        <form onsubmit="salvarEmailRecuperacaoDirect(event)" style="display:flex; flex-direction:column; gap:10px;">
+            <input type="email" id="inputVinculoEmailPrompt" placeholder="Digite seu e-mail principal..." class="auth-input" required style="text-align:center;">
+            <div style="display:flex; gap:10px;">
+                <button type="button" class="btn-gaming btn-danger" onclick="fecharModalAlertEmail()" style="flex:1; padding:8px; font-size:11px;">Depois</button>
+                <button type="submit" class="btn-gaming" style="flex:1; padding:8px; font-size:11px; background:var(--gold-warning); color:#000;">Vincular E-mail</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- MODAL DE AUTENTICAÇÃO / PERFIL / INVENTÁRIO / CORREIO -->
+<div class="modal-overlay" id="authModal">
+    <div class="modal-card" id="authModalCard">
+        <button class="modal-close" onclick="fecharModalAuth(); tocarSomClique();">&times;</button>
+        <div class="tab-switcher" id="modalTabSwitcher">
+            <button class="tab-btn active" id="tabLoginBtn" onclick="alternarAba('login'); tocarSomClique();">Entrar</button>
+            <button class="tab-btn" id="tabRegisterBtn" onclick="alternarAba('registro'); tocarSomClique();">Criar Conta</button>
+            <button class="tab-btn" id="tabPerfilBtn" onclick="alternarAba('perfil'); tocarSomClique();">Perfil</button>
+            <button class="tab-btn" id="tabInventarioBtn" onclick="alternarAba('inventario'); tocarSomClique();">🎒 Inventário</button>
+            <button class="tab-btn unread-badge" id="tabCorreioBtn" onclick="alternarAba('correio'); tocarSomClique();">📬 Correio</button>
+        </div>
+        
+        <div class="form-panel active" id="panelLogin">
+            <p id="msgBloqueioJogo" style="display:none; color:var(--gold-warning); font-size:12px; font-weight:bold; text-align:center; margin-bottom:8px;">⚠️ CRIE SUA CONTA OU FAÇA LOGIN PARA CONTINUAR!</p>
+            <form class="auth-form" onsubmit="fazerLoginPlataforma(event)">
+                <input type="text" id="loginUser" placeholder="Seu Nick ou E-mail" class="auth-input" required>
+                <input type="password" id="loginPass" placeholder="Sua Senha" class="auth-input" required>
+                <button type="submit" class="btn-gaming" onclick="tocarSomLevelUp()" style="width:100%; padding:10px;">Entrar na Conta</button>
+            </form>
+            <button onclick="esqueciMinhaSenha()" style="background:none; border:none; color:var(--accent-color); font-size:11px; cursor:pointer; text-align:center; margin-top:5px;">Esqueci minha senha</button>
         </div>
 
-        <div style="margin-bottom: 15px; display: flex; gap: 6px;">
-            <input type="text" id="inputAdicionarAmigo" placeholder="Digite o Nick ou ID..." class="auth-input" style="font-size: 11px;">
-            <button class="btn-gaming" onclick="enviarPedidoAmizade()" style="font-size: 10px; padding: 6px 10px;">➕</button>
+        <div class="form-panel" id="panelRegistro">
+            <form class="auth-form" onsubmit="fazerRegistroPlataforma(event)">
+                <input type="text" id="regUser" placeholder="Escolha um Nick de Jogador" class="auth-input" required>
+                <input type="email" id="regEmail" placeholder="Seu E-mail (Para recuperar senha)" class="auth-input" required>
+                <input type="password" id="regPass" placeholder="Crie uma Senha" class="auth-input" required>
+                <button type="submit" class="btn-gaming" onclick="tocarSomLevelUp()" style="width:100%; padding:10px; background:#22c55e; color:#000;">Criar Minha Conta</button>
+            </form>
         </div>
 
-        <div style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; font-size: 11px;">
-            <div>
-                <h4 style="color: #22c55e; font-family: 'Orbitron'; font-size: 11px; margin-bottom: 6px;">🟢 Online (<span id="labelQtdOnline">0</span>)</h4>
-                <div id="listaAmigosOnline" style="display: flex; flex-direction: column; gap: 6px;">
-                    <span style="color: #64748b; font-style: italic;">Nenhum amigo online.</span>
-                </div>
+        <div class="form-panel" id="panelPerfil">
+            <div id="perfilUserData"><p style="color:#94a3b8; text-align:center;">Faça login para ver seu perfil expandido.</p></div>
+        </div>
+
+        <div class="form-panel" id="panelInventario">
+            <div id="inventarioUserData">
+                <p style="color:#94a3b8; text-align:center; font-size:11px;">Faça login para ver seu inventário de itens e molduras.</p>
+            </div>
+        </div>
+
+        <div class="form-panel" id="panelCorreio">
+            <div id="correioMensagensContainer">
+                <p style="color:#94a3b8; text-align:center; font-size:11px;">Nenhuma mensagem no correio.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DE CONFIRMAÇÃO DE DIAMANTES (ADM) -->
+<div class="modal-overlay" id="modalConfirmarDiamantes" style="z-index: 3500;">
+    <div class="modal-card" style="text-align: center; border-color: var(--accent-color);">
+        <h3 id="modalDiamantesTitulo" style="font-family:'Orbitron'; color:var(--accent-color); margin-bottom:10px;">⚡ Confirmar Transação</h3>
+        <p style="font-size:12px; color:#94a3b8; margin-bottom:15px;">Por favor, confira os dados do jogador:</p>
+        <div style="background:#000; border:1px solid var(--steel-border); padding:15px; border-radius:8px; margin-bottom:15px; text-align:left; font-size:12px; display:flex; flex-direction:column; gap:8px;">
+            <div>👤 Nick: <strong id="confNick" style="color:#fff;">--</strong></div>
+            <div>🆔 ID Único: <strong id="confId" style="color:var(--gold-warning);">--</strong></div>
+            <div>💎 Quantidade: <strong id="confQtd" style="color:var(--accent-color);">--</strong></div>
+            <div>💰 Saldo Atual: <strong id="confSaldoAtual" style="color:#22c55e;">--</strong></div>
+        </div>
+        <div style="display:flex; gap:10px;">
+            <button class="btn-gaming btn-danger" onclick="fecharModalConfirmarDiamantes()" style="flex:1; padding:10px; font-size:11px;">Cancelar</button>
+            <button class="btn-gaming" id="btnConfirmarAcaoDiamantes" style="flex:1; padding:10px; font-size:11px; background:#22c55e; color:#000;">Confirmar</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DE CONFIRMAÇÃO DE EXCLUSÃO DE CONTA (ADM) -->
+<div class="modal-overlay" id="modalConfirmarExclusao" style="z-index: 3500;">
+    <div class="modal-card" style="text-align: center; border-color: var(--alert-red);">
+        <h3 style="font-family:'Orbitron'; color:var(--alert-red); margin-bottom:10px;">⚠️ Confirmar Exclusão de Conta</h3>
+        <p style="font-size:12px; color:#94a3b8; margin-bottom:15px;">Tem certeza que deseja apagar permanentemente esta conta?</p>
+        <div style="background:#000; border:1px solid var(--steel-border); padding:15px; border-radius:8px; margin-bottom:15px; text-align:left; font-size:12px; display:flex; flex-direction:column; gap:8px;">
+            <div>👤 Nick: <strong id="confDelNick" style="color:#fff;">--</strong></div>
+            <div>🆔 ID Único: <strong id="confDelId" style="color:var(--gold-warning);">--</strong></div>
+        </div>
+        <div style="display:flex; gap:10px;">
+            <button class="btn-gaming" onclick="fecharModalConfirmarExclusao()" style="flex:1; padding:10px; font-size:11px;">Cancelar</button>
+            <button class="btn-gaming btn-danger" id="btnConfirmarAcaoExclusao" style="flex:1; padding:10px; font-size:11px;">Sim, Excluir</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL PARA EXIBIR O QR CODE PIX -->
+<div class="modal-overlay" id="pixModal">
+    <div class="modal-card" style="text-align: center;">
+        <button class="modal-close" onclick="fecharModalPix()">&times;</button>
+        <h3 style="font-family:'Orbitron'; color:var(--accent-color); margin-bottom:10px;">Pagamento via Pix</h3>
+        <p style="font-size:12px; color:#94a3b8; margin-bottom:12px;">Escaneie o QR Code abaixo ou copie o código Pix:</p>
+        
+        <div style="margin-bottom:10px;">
+            <input type="text" id="inputCupomRecarga" placeholder="Possui Cupom? Digite aqui" class="auth-input" style="font-size:11px; text-align:center; border-color:var(--gold-warning);" oninput="verificarCupomDescontoLoja()">
+            <div id="infoDescontoCupomPix" style="font-size:11px; color:#22c55e; margin-top:4px; font-weight:bold;"></div>
+        </div>
+
+        <div id="pixQrContainer" style="margin: 15px 0; display: flex; justify-content: center;"></div>
+        
+        <input type="text" id="pixCopiaColaInput" class="auth-input" readonly style="font-size:10px; margin-bottom:10px;">
+        <button class="btn-gaming" onclick="copiarPixCopiaCola()" style="width:100%; padding:8px; font-size:11px;">📋 Copiar Código Pix</button>
+        
+        <p style="font-size:10px; color:var(--gold-warning); margin-top:12px;">⚡ Assim que confirmado, os diamantes caem na sua conta!</p>
+    </div>
+</div>
+
+<!-- MODAL DE FESTA / RECOMPENSA DE VERIFICADO -->
+<div class="modal-overlay" id="modalVerificadoPremio" style="z-index: 3000;">
+    <div class="modal-card" style="text-align: center; border-color: #FFD700; box-shadow: 0 0 50px rgba(255,215,0,0.8);">
+        <h2 style="font-family:'Orbitron'; color:#FFD700; margin-bottom:10px;">🎉 PARABÉNS! VOCÊ É VERIFICADO! ⭐</h2>
+        <p style="font-size:12px; color:#fff; margin-bottom:15px;">Você resgatou com sucesso o selo oficial de prestígio:</p>
+        <div style="background:#000; border:1px solid #FFD700; padding:15px; border-radius:8px; margin-bottom:15px; text-align:left; font-size:11px; display:flex; flex-direction:column; gap:6px;">
+            <div>✨ Símbolo <strong>V Dourado</strong> à frente do seu Nick</div>
+            <div>🖼️ Moldura Dourada Exclusiva para Perfil</div>
+            <div>💎 <strong>5.000 Diamantes</strong> creditados na sua conta</div>
+            <div id="infoCupomGeradoPremio" style="color:var(--gold-warning); font-weight:bold;"></div>
+        </div>
+        <button class="btn-gaming" onclick="fecharModalVerificadoPremio()" style="background:#FFD700; color:#000; width:100%; padding:10px;">Curtir a Festa! 🥳</button>
+    </div>
+</div>
+
+<!-- MODAL DE PERFIL PÚBLICO CLICÁVEL & DENÚNCIAS -->
+<div class="modal-overlay" id="modalPerfilPublico" style="z-index: 3500;">
+    <div class="modal-card" style="text-align: center; border-color: var(--accent-color);">
+        <button class="modal-close" onclick="fecharModalPerfilPublico()">&times;</button>
+        <div id="conteudoPerfilPublico"></div>
+    </div>
+</div>
+
+<!-- GAVETA DE AMIGOS -->
+<button onclick="togglePainelAmigos()" style="position: fixed; bottom: 80px; right: 20px; z-index: 1500; background: var(--accent-color); color: #000; border: none; padding: 10px 14px; border-radius: 50px; font-family: 'Orbitron'; font-weight: bold; font-size: 11px; cursor: pointer; box-shadow: 0 0 20px var(--accent-glow);">
+    👥 Amigos (<span id="countAmigosOnline">0</span>)
+</button>
+
+<div id="painelAmigos" style="position: fixed; top: 0; right: -320px; width: 310px; height: 100vh; background: var(--panel-bg); border-left: 2px solid var(--accent-color); z-index: 2500; transition: 0.3s ease; padding: 20px; display: flex; flex-direction: column; box-shadow: -10px 0 30px rgba(0,0,0,0.8);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--steel-border); padding-bottom: 10px;">
+        <h3 style="font-family: 'Orbitron'; font-size: 14px; color: var(--accent-color);">👥 Meus Amigos</h3>
+        <button onclick="togglePainelAmigos()" style="background: none; border: none; color: #fff; font-size: 18px; cursor: pointer;">&times;</button>
+    </div>
+
+    <div style="margin-bottom: 15px; display: flex; gap: 6px;">
+        <input type="text" id="inputAdicionarAmigo" placeholder="Digite o Nick ou ID..." class="auth-input" style="font-size: 11px;">
+        <button class="btn-gaming" onclick="enviarPedidoAmizade()" style="font-size: 10px; padding: 6px 10px;">➕</button>
+    </div>
+
+    <div style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; font-size: 11px;">
+        <div>
+            <h4 style="color: #22c55e; font-family: 'Orbitron'; font-size: 11px; margin-bottom: 6px;">🟢 Online (<span id="labelQtdOnline">0</span>)</h4>
+            <div id="listaAmigosOnline" style="display: flex; flex-direction: column; gap: 6px;">
+                <span style="color: #64748b; font-style: italic;">Nenhum amigo online.</span>
+            </div>
+        </div>
+
+        <div style="margin-top: 10px;">
+            <h4 style="color: #64748b; font-family: 'Orbitron'; font-size: 11px; margin-bottom: 6px;">⚪ Offline (<span id="labelQtdOffline">0</span>)</h4>
+            <div id="listaAmigosOffline" style="display: flex; flex-direction: column; gap: 6px;">
+                <span style="color: #64748b; font-style: italic;">Nenhum amigo offline.</span>
+            </div>
+        </div>
+
+        <div style="margin-top: 10px;">
+            <h4 style="color: var(--gold-warning); font-family: 'Orbitron'; font-size: 11px; margin-bottom: 6px;">📩 Pedidos Pendentes</h4>
+            <div id="listaPedidosPendentes" style="display: flex; flex-direction: column; gap: 6px;">
+                <span style="color: #64748b; font-style: italic;">Nenhum pedido pendente.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<header class="hero" id="heroHeader">
+    <h1 id="heroTitle">WAVECOMBAT <span>HUB</span></h1>
+    <p id="heroDesc">Plataforma moderna de jogos, arcade e experiências imersivas.</p>
+    
+    <div class="global-stats-bar" id="globalStatsBar">
+        <span>Partidas Jogadas: <strong id="statTotalPartidas">--</strong></span>
+        <span>Jogadores Registrados: <strong id="statTotalUsuarios">--</strong></span>
+        <span>Status: <strong style="color:#22c55e">ONLINE</strong></span>
+    </div>
+
+    <a href="#player" class="btn-gaming" onclick="tentarExecutarJogoDestaque(); tocarSomClique();">Jogar Destaque Agora</a>
+    
+    <div style="display:flex; gap:10px; justify-content:center; align-items:center; flex-wrap:wrap; margin-top:8px;">
+        <button class="btn-pwa-install" id="btnPwaInstall" onclick="instalarAppMobile()">📲 INSTALAR APLICATIVO DO SITE</button>
+        <button class="btn-pwa-install" id="btnPushNotif" onclick="solicitarPermissaoNotificacao()" style="background:#3b82f6; display:none;">🔔 ATIVAR NOTIFICAÇÕES</button>
+    </div>
+</header>
+
+<section id="jogos">
+    <h2 class="section-title">Biblioteca de Jogos</h2>
+    <div class="search-filter-bar">
+        <input type="text" id="inputSearchGames" placeholder="🔍 Pesquisar jogo..." class="auth-input" oninput="atualizarPlataforma()">
+        <select id="selectCategoryFilter" class="auth-input" onchange="atualizarPlataforma()">
+            <option value="todos">Todas Categorias</option>
+            <option value="Arcade">Arcade</option>
+            <option value="Estratégia">Estratégia</option>
+            <option value="Multiplayer">Multiplayer</option>
+            <option value="favoritos">⭐ Favoritos</option>
+        </select>
+    </div>
+    
+    <div class="games-layout-split">
+        <div id="featuredGameContainer"></div>
+        <div>
+            <div style="font-family:'Orbitron'; font-size:13px; color:var(--accent-color); margin-bottom:8px;">🔥 Todos os Games</div>
+            <div class="games-list-column" id="gamesListContainer"></div>
+        </div>
+    </div>
+
+    <div class="embed-container" id="player">
+        <iframe id="gameIframe" src="about:blank" title="WaveCombat Player" allow="fullscreen; autoplay; gamepad; microphone" allowfullscreen="true"></iframe>
+    </div>
+    <div class="player-controls-bar" id="playerControlsBar">
+        <button class="btn-gaming" onclick="toggleTelaCheia(); tocarSomClique();" style="padding:8px 14px; font-size:11px;">⛶ Tela Cheia</button>
+        <button class="btn-gaming" id="btnMicToggle" onclick="toggleMicrofoneVoice()" style="padding:8px 14px; font-size:11px; background:#22c55e; color:#000;">🎤 Mic: ON</button>
+        <button class="btn-gaming" id="btnAudioToggle" onclick="toggleAudioVoice()" style="padding:8px 14px; font-size:11px; background:#3b82f6; color:#fff;">🔊 Som: ON</button>
+        <button class="btn-gaming btn-danger" onclick="encerrarJogo(); tocarSomClique();" style="padding:8px 14px; font-size:11px;">✖ Sair do Game</button>
+    </div>
+
+    <div class="site-leaderboard-section" id="siteLeaderboardSection">
+        <h3 style="color:var(--accent-color); font-family:'Orbitron'; font-size:14px; text-align:center;">🏆 RANKING GLOBAL DE JOGADORES</h3>
+        <div class="site-leaderboard-list" id="siteLeaderboardListContainer">
+            <p style="color:#94a3b8; text-align:center; font-size:11px;">Carregando ranking global...</p>
+        </div>
+    </div>
+</section>
+
+<!-- SEÇÃO DE EVENTOS: RODA DA FORTUNA DIÁRIA CORRIGIDA -->
+<section id="eventos">
+    <h2 class="section-title">🎡 Eventos & Recompensas Diárias</h2>
+    <div class="wheel-section">
+        <h3 style="font-family:'Orbitron'; color:var(--accent-color); font-size:16px; margin-bottom:6px;">🎰 Roda da Fortuna Diária</h3>
+        <p style="font-size:12px; color:#94a3b8; margin-bottom:15px;">Gire a roleta uma vez por dia para ganhar prêmios incríveis!</p>
+        
+        <div class="wheel-container">
+            <div class="wheel-pointer"></div>
+            <canvas id="canvasWheel" width="380" height="380"></canvas>
+        </div>
+
+        <button class="btn-gaming" onclick="girarRodaDaFortuna()" id="btnGirarRoleta" style="margin-top: 15px; padding: 12px 30px; background: #22c55e; color: #000; font-size: 14px;">🎡 GIRAR ROLETA AGORA</button>
+    </div>
+</section>
+
+<!-- LOJA DE DIAMANTES -->
+<section id="lojaDiamantes">
+    <h2 class="section-title">💎 Loja de Diamantes & Molduras</h2>
+    
+    <div style="background: var(--panel-bg); border: 2px solid var(--accent-color); padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; box-shadow: 0 0 20px var(--accent-glow);">
+        <div>
+            <span style="font-size: 12px; color: #94a3b8;">Seu Saldo Atual:</span>
+            <h3 style="font-family: 'Orbitron'; color: #fff; font-size: 20px;">💎 <span id="userDiamondBalance">0</span> Diamantes</h3>
+        </div>
+        <button class="btn-gaming" onclick="carregarSaldoDiamantesSite()" style="font-size: 11px; padding: 6px 12px;">🔄 Atualizar Saldo</button>
+    </div>
+
+    <h3 style="font-family:'Orbitron'; font-size:13px; color:var(--gold-warning); margin-bottom:12px;">🎨 Molduras de Perfil (Pré-visualização Instantânea)</h3>
+    <div style="background: var(--panel-bg); border: 1px solid var(--steel-border); padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center;">
+        <p style="font-size: 11px; color: #94a3b8; margin-bottom: 10px;">Teste como o seu nick fica com a moldura animada antes de comprar:</p>
+        <div id="avatarPreviewBox" class="avatar-preview-box">
+            <span id="previewNickText">SeuNick</span>
+        </div>
+        <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-top:10px;">
+            <button class="btn-gaming" onclick="testarMolduraLoja('frame-neon')" style="font-size:10px; padding:6px 10px; background:#00f0ff; color:#000;">👁️ Testar Neon</button>
+            <button class="btn-gaming" onclick="testarMolduraLoja('frame-fogo')" style="font-size:10px; padding:6px 10px; background:#ef4444; color:#fff;">👁️ Testar Fogo</button>
+            <button class="btn-gaming" onclick="testarMolduraLoja('')" style="font-size:10px; padding:6px 10px; background:#64748b; color:#fff;">🔄 Normal</button>
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px;">
+        <div class="panel-card" style="text-align: center; border: 1px solid #3b82f6;">
+            <h4 style="font-family: 'Orbitron'; color: #3b82f6;">Moldura Cyber Neon</h4>
+            <p style="font-size: 10px; color: #94a3b8; margin: 6px 0;">Borda azul brilhante futurista</p>
+            <p style="font-size: 13px; color: var(--gold-warning); font-weight: bold; margin-bottom: 8px;">💎 150 Diamantes</p>
+            <button class="btn-gaming" onclick="comprarMolduraLoja('frame-neon', 150)" style="width: 100%; font-size: 10px; padding: 6px;">Comprar Item</button>
+        </div>
+        <div class="panel-card" style="text-align: center; border: 1px solid #ef4444;">
+            <h4 style="font-family: 'Orbitron'; color: #ef4444;">Moldura Fogo Infernal</h4>
+            <p style="font-size: 10px; color: #94a3b8; margin: 6px 0;">Efeito brasa vermelha intensa</p>
+            <p style="font-size: 13px; color: var(--gold-warning); font-weight: bold; margin-bottom: 8px;">💎 250 Diamantes</p>
+            <button class="btn-gaming" onclick="comprarMolduraLoja('frame-fogo', 250)" style="width: 100%; font-size: 10px; padding: 6px;">Comprar Item</button>
+        </div>
+    </div>
+
+    <h3 style="font-family:'Orbitron'; font-size:13px; color:var(--accent-color); margin-bottom:12px;">💎 Pacotes de Diamantes Pix</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px;">
+        <div class="panel-card" style="text-align: center; border: 1px solid var(--steel-border);">
+            <h4 style="font-family: 'Orbitron'; color: var(--accent-color);">110 💎</h4>
+            <p style="font-size: 10px; color: #22c55e;">+10% Bônus Incluído</p>
+            <p style="font-size: 14px; color: var(--gold-warning); font-weight: bold; margin: 8px 0;">R\$ 3,00</p>
+            <button class="btn-gaming" onclick="abrirPixComDesconto(3.00, 110)" style="width: 100%; font-size: 11px; padding: 8px;">Comprar Pix</button>
+        </div>
+        <div class="panel-card" style="text-align: center; border: 1px solid var(--steel-border);">
+            <h4 style="font-family: 'Orbitron'; color: var(--accent-color);">330 💎</h4>
+            <p style="font-size: 10px; color: #22c55e;">+10% Bônus Incluído</p>
+            <p style="font-size: 14px; color: var(--gold-warning); font-weight: bold; margin: 8px 0;">R\$ 6,00</p>
+            <button class="btn-gaming" onclick="abrirPixComDesconto(6.00, 330)" style="width: 100%; font-size: 11px; padding: 8px;">Comprar Pix</button>
+        </div>
+        <div class="panel-card" style="text-align: center; border: 1px solid var(--steel-border);">
+            <h4 style="font-family: 'Orbitron'; color: var(--accent-color);">660 💎</h4>
+            <p style="font-size: 10px; color: #22c55e;">+10% Bônus Incluído</p>
+            <p style="font-size: 14px; color: var(--gold-warning); font-weight: bold; margin: 8px 0;">R\$ 9,00</p>
+            <button class="btn-gaming" onclick="abrirPixComDesconto(9.00, 660)" style="width: 100%; font-size: 11px; padding: 8px;">Comprar Pix</button>
+        </div>
+    </div>
+</section>
+
+<!-- LIVE -->
+<section id="transmissaoAoVivo">
+    <div class="live-section-box" id="liveSectionBox">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <h3 style="margin:0; font-size:13px; color:var(--accent-color); font-family:'Orbitron';">🔴 TRANSMISSÃO / VÍDEO DO CRIADOR</h3>
+        </div>
+        <div class="live-embed-container">
+            <iframe id="youtubeLiveIframe" src="about:blank" allowfullscreen></iframe>
+        </div>
+    </div>
+</section>
+
+<section id="comunidade">
+    <h2 class="section-title">Central Social & Comunidade</h2>
+    <div class="community-main-grid">
+        <div class="panel-card">
+            <h3>🌐 Redes Sociais & Chat Global</h3>
+            <div class="social-buttons-flex" style="margin-bottom:12px;">
+                <a href="https://discord.gg/FaeYug6XBx" target="_blank" class="social-btn-item btn-discord-net" onclick="tocarSomClique()">🎮 Discord Oficial (Convidar Amigos)</a>
+                <a href="https://youtube.com/@capudooficial7?si=NSvfxpSzswVEStdu" target="_blank" class="social-btn-item btn-youtube-net" onclick="tocarSomClique()">▶ siga o criador do jogo aqui</a>
+                <a href="https://www.instagram.com/capudooficial.7/" target="_blank" class="social-btn-item btn-instagram-net" onclick="tocarSomClique()">📸 Instagram Oficial</a>
             </div>
 
-            <div style="margin-top: 10px;">
-                <h4 style="color: #64748b; font-family: 'Orbitron'; font-size: 11px; margin-bottom: 6px;">⚪ Offline (<span id="labelQtdOffline">0</span>)</h4>
-                <div id="listaAmigosOffline" style="display: flex; flex-direction: column; gap: 6px;">
-                    <span style="color: #64748b; font-style: italic;">Nenhum amigo offline.</span>
+            <h4 style="font-family:'Orbitron'; font-size:11px; color:var(--accent-color); margin-bottom:4px;">💬 Chat Global ao Vivo</h4>
+            <div class="minichat-container">
+                <div class="minichat-messages" id="miniChatMessages">
+                    <div style="color:#64748b; font-style:italic;">Carregando mensagens...</div>
+                </div>
+                
+                <div class="emoji-picker-bar">
+                    <button class="emoji-btn" onclick="inserirEmojiChat('🔥')">🔥</button>
+                    <button class="emoji-btn" onclick="inserirEmojiChat('🎮')">🎮</button>
+                    <button class="emoji-btn" onclick="inserirEmojiChat('🚀')">🚀</button>
+                    <button class="emoji-btn" onclick="inserirEmojiChat('🏆')">🏆</button>
+                    <button class="emoji-btn" onclick="inserirEmojiChat('💎')">💎</button>
+                    <button class="emoji-btn" onclick="inserirEmojiChat(' GG ')">GG</button>
+                </div>
+
+                <div class="minichat-input-box">
+                    <input type="text" id="miniChatInput" placeholder="Digite sua mensagem..." maxlength="100" onkeypress="checarEnvioChat(event)">
+                    <button onclick="enviarMensagemChat(); tocarSomClique();">Enviar</button>
                 </div>
             </div>
+        </div>
 
-            <div style="margin-top: 10px;">
-                <h4 style="color: var(--gold-warning); font-family: 'Orbitron'; font-size: 11px; margin-bottom: 6px;">📩 Pedidos Pendentes</h4>
-                <div id="listaPedidosPendentes" style="display: flex; flex-direction: column; gap: 6px;">
-                    <span style="color: #64748b; font-style: italic;">Nenhum pedido pendente.</span>
+        <div style="display:flex; flex-direction:column; gap:15px;">
+            <div class="qrcode-box">
+                <h4 style="font-family:'Orbitron'; font-size:11px; color:var(--accent-color); margin-bottom:6px;">🎁 Doação LivePix</h4>
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://livepix.gg/capudooficial" alt="QR Code LivePix" class="qrcode-img">
+                <a href="https://livepix.gg/capudooficial" target="_blank" class="btn-qrcode-link" onclick="tocarSomClique()">🔗 Acessar Link LivePix</a>
+            </div>
+
+            <div class="panel-card" style="padding:10px;">
+                <h3 style="font-size:12px; margin-bottom:8px;">⚙️ Preferências do Hub</h3>
+                <div style="display:flex; flex-direction:column; gap:8px; font-size:11px;">
+                    <label style="display:flex; justify-content:space-between; align-items:center;">
+                        Efeitos Sonoros:
+                        <input type="checkbox" id="checkAudioSFX" checked onchange="toggleAudioSFX(this.checked)">
+                    </label>
+                    <label style="display:flex; justify-content:space-between; align-items:center;">
+                        Música Tema (BGM):
+                        <input type="checkbox" id="checkBGM" checked onchange="toggleBGM(this.checked)">
+                    </label>
                 </div>
             </div>
         </div>
     </div>
+</section>
 
-    <header class="hero" id="heroHeader">
-        <h1 id="heroTitle">WAVECOMBAT <span>HUB</span></h1>
-        <p id="heroDesc">Plataforma moderna de jogos, arcade e experiências imersivas.</p>
-        
-        <div class="global-stats-bar" id="globalStatsBar">
-            <span>Partidas Jogadas: <strong id="statTotalPartidas">--</strong></span>
-            <span>Jogadores Registrados: <strong id="statTotalUsuarios">--</strong></span>
-            <span>Status: <strong style="color:#22c55e">ONLINE</strong></span>
-        </div>
+<!-- PAINEL ADMINISTRATIVO (COM GESTÃO EXPANSÍVEL DE JOGOS) -->
+<div class="admin-section" id="adminSection" style="display:none;">
+    <div class="admin-container">
+        <h3 style="color:var(--accent-color); font-family:'Orbitron'; text-align:center; margin-bottom:15px; font-size:16px;">⚙️ PAINEL ADMINISTRATIVO COMPLETO</h3>
 
-        <a href="#player" class="btn-gaming" onclick="tentarExecutarJogoDestaque(); tocarSomClique();">Jogar Destaque Agora</a>
-        
-        <div style="display:flex; gap:10px; justify-content:center; align-items:center; flex-wrap:wrap; margin-top:8px;">
-            <button class="btn-pwa-install" id="btnPwaInstall" onclick="instalarAppMobile()">📲 INSTALAR APLICATIVO DO SITE</button>
-            <button class="btn-pwa-install" id="btnPushNotif" onclick="solicitarPermissaoNotificacao()" style="background:#3b82f6; display:none;">🔔 ATIVAR NOTIFICAÇÕES</button>
-        </div>
-    </header>
-
-    <section id="jogos">
-        <h2 class="section-title">Biblioteca de Jogos</h2>
-        <div class="search-filter-bar">
-            <input type="text" id="inputSearchGames" placeholder="🔍 Pesquisar jogo..." class="auth-input" oninput="atualizarPlataforma()">
-            <select id="selectCategoryFilter" class="auth-input" onchange="atualizarPlataforma()">
-                <option value="todos">Todas Categorias</option>
-                <option value="Arcade">Arcade</option>
-                <option value="Estratégia">Estratégia</option>
-                <option value="Multiplayer">Multiplayer</option>
-                <option value="favoritos">⭐ Favoritos</option>
-            </select>
-        </div>
-        
-        <div class="games-layout-split">
-            <div id="featuredGameContainer"></div>
-            <div>
-                <div style="font-family:'Orbitron'; font-size:13px; color:var(--accent-color); margin-bottom:8px;">🔥 Todos os Games</div>
-                <div class="games-list-column" id="gamesListContainer"></div>
+        <div class="admin-block" style="margin-bottom: 15px;">
+            <h4 style="color:var(--accent-color);">📊 Gráficos de Acessos</h4>
+            <div class="admin-bar-chart" id="adminBarChartContainer">
+                <div class="admin-bar-col" style="height: 60%;">60%</div>
+                <div class="admin-bar-col" style="height: 85%;">85%</div>
             </div>
         </div>
 
-        <div class="embed-container" id="player">
-            <iframe id="gameIframe" src="about:blank" title="WaveCombat Player" allow="fullscreen; autoplay; gamepad; microphone" allowfullscreen="true"></iframe>
-        </div>
-        <div class="player-controls-bar" id="playerControlsBar">
-            <button class="btn-gaming" onclick="toggleTelaCheia(); tocarSomClique();" style="padding:8px 14px; font-size:11px;">⛶ Tela Cheia</button>
-            <button class="btn-gaming" id="btnMicToggle" onclick="toggleMicrofoneVoice()" style="padding:8px 14px; font-size:11px; background:#22c55e; color:#000;">🎤 Mic: ON</button>
-            <button class="btn-gaming" id="btnAudioToggle" onclick="toggleAudioVoice()" style="padding:8px 14px; font-size:11px; background:#3b82f6; color:#fff;">🔊 Som: ON</button>
-            <button class="btn-gaming btn-danger" onclick="encerrarJogo(); tocarSomClique();" style="padding:8px 14px; font-size:11px;">✖ Sair do Game</button>
-        </div>
+        <!-- GESTÃO DE GAMES COM CAMPOS EXPANSÍVEIS (SETA) -->
+        <h4 style="color:#fff; margin-bottom:10px; font-family:'Orbitron'; font-size:14px; margin-top:15px;">🎮 Gestão & Personalização de Games na Nuvem</h4>
+        <div id="adminListaJogos" style="display:flex; flex-direction:column; gap:10px;"></div>
 
-        <div class="site-leaderboard-section" id="siteLeaderboardSection">
-            <h3 style="color:var(--accent-color); font-family:'Orbitron'; font-size:14px; text-align:center;">🏆 RANKING GLOBAL DE JOGADORES</h3>
-            <div class="site-leaderboard-list" id="siteLeaderboardListContainer">
-                <p style="color:#94a3b8; text-align:center; font-size:11px;">Carregando ranking global...</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- SEÇÃO DE EVENTOS: RODA DA FORTUNA DIÁRIA CORRIGIDA -->
-    <section id="eventos">
-        <h2 class="section-title">🎡 Eventos & Recompensas Diárias</h2>
-        <div class="wheel-section">
-            <h3 style="font-family:'Orbitron'; color:var(--accent-color); font-size:16px; margin-bottom:6px;">🎰 Roda da Fortuna Diária</h3>
-            <p style="font-size:12px; color:#94a3b8; margin-bottom:15px;">Gire a roleta uma vez por dia para ganhar prêmios incríveis!</p>
-            
-            <div class="wheel-container">
-                <div class="wheel-pointer"></div>
-                <canvas id="canvasWheel" width="380" height="380"></canvas>
-            </div>
-
-            <button class="btn-gaming" onclick="girarRodaDaFortuna()" id="btnGirarRoleta" style="margin-top: 15px; padding: 12px 30px; background: #22c55e; color: #000; font-size: 14px;">🎡 GIRAR ROLETA AGORA</button>
-        </div>
-    </section>
-
-    <!-- LOJA DE DIAMANTES -->
-    <section id="lojaDiamantes">
-        <h2 class="section-title">💎 Loja de Diamantes & Molduras</h2>
-        
-        <div style="background: var(--panel-bg); border: 2px solid var(--accent-color); padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; box-shadow: 0 0 20px var(--accent-glow);">
-            <div>
-                <span style="font-size: 12px; color: #94a3b8;">Seu Saldo Atual:</span>
-                <h3 style="font-family: 'Orbitron'; color: #fff; font-size: 20px;">💎 <span id="userDiamondBalance">0</span> Diamantes</h3>
-            </div>
-            <button class="btn-gaming" onclick="carregarSaldoDiamantesSite()" style="font-size: 11px; padding: 6px 12px;">🔄 Atualizar Saldo</button>
-        </div>
-
-        <h3 style="font-family:'Orbitron'; font-size:13px; color:var(--gold-warning); margin-bottom:12px;">🎨 Molduras de Perfil (Pré-visualização Instantânea)</h3>
-        <div style="background: var(--panel-bg); border: 1px solid var(--steel-border); padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center;">
-            <p style="font-size: 11px; color: #94a3b8; margin-bottom: 10px;">Teste como o seu nick fica com a moldura animada antes de comprar:</p>
-            <div id="avatarPreviewBox" class="avatar-preview-box">
-                <span id="previewNickText">SeuNick</span>
-            </div>
-            <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-top:10px;">
-                <button class="btn-gaming" onclick="testarMolduraLoja('frame-neon')" style="font-size:10px; padding:6px 10px; background:#00f0ff; color:#000;">👁️ Testar Neon</button>
-                <button class="btn-gaming" onclick="testarMolduraLoja('frame-fogo')" style="font-size:10px; padding:6px 10px; background:#ef4444; color:#fff;">👁️ Testar Fogo</button>
-                <button class="btn-gaming" onclick="testarMolduraLoja('')" style="font-size:10px; padding:6px 10px; background:#64748b; color:#fff;">🔄 Normal</button>
-            </div>
-        </div>
-
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px;">
-            <div class="panel-card" style="text-align: center; border: 1px solid #3b82f6;">
-                <h4 style="font-family: 'Orbitron'; color: #3b82f6;">Moldura Cyber Neon</h4>
-                <p style="font-size: 10px; color: #94a3b8; margin: 6px 0;">Borda azul brilhante futurista</p>
-                <p style="font-size: 13px; color: var(--gold-warning); font-weight: bold; margin-bottom: 8px;">💎 150 Diamantes</p>
-                <button class="btn-gaming" onclick="comprarMolduraLoja('frame-neon', 150)" style="width: 100%; font-size: 10px; padding: 6px;">Comprar Item</button>
-            </div>
-            <div class="panel-card" style="text-align: center; border: 1px solid #ef4444;">
-                <h4 style="font-family: 'Orbitron'; color: #ef4444;">Moldura Fogo Infernal</h4>
-                <p style="font-size: 10px; color: #94a3b8; margin: 6px 0;">Efeito brasa vermelha intensa</p>
-                <p style="font-size: 13px; color: var(--gold-warning); font-weight: bold; margin-bottom: 8px;">💎 250 Diamantes</p>
-                <button class="btn-gaming" onclick="comprarMolduraLoja('frame-fogo', 250)" style="width: 100%; font-size: 10px; padding: 6px;">Comprar Item</button>
-            </div>
-        </div>
-
-        <h3 style="font-family:'Orbitron'; font-size:13px; color:var(--accent-color); margin-bottom:12px;">💎 Pacotes de Diamantes Pix</h3>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px;">
-            <div class="panel-card" style="text-align: center; border: 1px solid var(--steel-border);">
-                <h4 style="font-family: 'Orbitron'; color: var(--accent-color);">110 💎</h4>
-                <p style="font-size: 10px; color: #22c55e;">+10% Bônus Incluído</p>
-                <p style="font-size: 14px; color: var(--gold-warning); font-weight: bold; margin: 8px 0;">R$ 3,00</p>
-                <button class="btn-gaming" onclick="gerarPixMercadoPago(3.00, 110)" style="width: 100%; font-size: 11px; padding: 8px;">Comprar Pix</button>
-            </div>
-            <div class="panel-card" style="text-align: center; border: 1px solid var(--steel-border);">
-                <h4 style="font-family: 'Orbitron'; color: var(--accent-color);">330 💎</h4>
-                <p style="font-size: 10px; color: #22c55e;">+10% Bônus Incluído</p>
-                <p style="font-size: 14px; color: var(--gold-warning); font-weight: bold; margin: 8px 0;">R$ 6,00</p>
-                <button class="btn-gaming" onclick="gerarPixMercadoPago(6.00, 330)" style="width: 100%; font-size: 11px; padding: 8px;">Comprar Pix</button>
-            </div>
-            <div class="panel-card" style="text-align: center; border: 1px solid var(--steel-border);">
-                <h4 style="font-family: 'Orbitron'; color: var(--accent-color);">660 💎</h4>
-                <p style="font-size: 10px; color: #22c55e;">+10% Bônus Incluído</p>
-                <p style="font-size: 14px; color: var(--gold-warning); font-weight: bold; margin: 8px 0;">R$ 9,00</p>
-                <button class="btn-gaming" onclick="gerarPixMercadoPago(9.00, 660)" style="width: 100%; font-size: 11px; padding: 8px;">Comprar Pix</button>
-            </div>
-        </div>
-    </section>
-
-    <!-- LIVE -->
-    <section id="transmissaoAoVivo">
-        <div class="live-section-box" id="liveSectionBox">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                <h3 style="margin:0; font-size:13px; color:var(--accent-color); font-family:'Orbitron';">🔴 TRANSMISSÃO / VÍDEO DO CRIADOR</h3>
-            </div>
-            <div class="live-embed-container">
-                <iframe id="youtubeLiveIframe" src="about:blank" allowfullscreen></iframe>
-            </div>
-        </div>
-    </section>
-
-    <section id="comunidade">
-        <h2 class="section-title">Central Social & Comunidade</h2>
-        <div class="community-main-grid">
-            <div class="panel-card">
-                <h3>🌐 Redes Sociais & Chat Global</h3>
-                <div class="social-buttons-flex" style="margin-bottom:12px;">
-                    <a href="https://discord.gg/FaeYug6XBx" target="_blank" class="social-btn-item btn-discord-net" onclick="tocarSomClique()">🎮 Discord Oficial (Convidar Amigos)</a>
-                    <a href="https://youtube.com/@capudooficial7?si=NSvfxpSzswVEStdu" target="_blank" class="social-btn-item btn-youtube-net" onclick="tocarSomClique()">▶ siga o criador do jogo aqui</a>
-                    <a href="https://www.instagram.com/capudooficial.7/" target="_blank" class="social-btn-item btn-instagram-net" onclick="tocarSomClique()">📸 Instagram Oficial</a>
-                </div>
-
-                <h4 style="font-family:'Orbitron'; font-size:11px; color:var(--accent-color); margin-bottom:4px;">💬 Chat Global ao Vivo</h4>
-                <div class="minichat-container">
-                    <div class="minichat-messages" id="miniChatMessages">
-                        <div style="color:#64748b; font-style:italic;">Carregando mensagens...</div>
-                    </div>
-                    
-                    <div class="emoji-picker-bar">
-                        <button class="emoji-btn" onclick="inserirEmojiChat('🔥')">🔥</button>
-                        <button class="emoji-btn" onclick="inserirEmojiChat('🎮')">🎮</button>
-                        <button class="emoji-btn" onclick="inserirEmojiChat('🚀')">🚀</button>
-                        <button class="emoji-btn" onclick="inserirEmojiChat('🏆')">🏆</button>
-                        <button class="emoji-btn" onclick="inserirEmojiChat('💎')">💎</button>
-                        <button class="emoji-btn" onclick="inserirEmojiChat(' GG ')">GG</button>
-                    </div>
-
-                    <div class="minichat-input-box">
-                        <input type="text" id="miniChatInput" placeholder="Digite sua mensagem..." maxlength="100" onkeypress="checarEnvioChat(event)">
-                        <button onclick="enviarMensagemChat(); tocarSomClique();">Enviar</button>
-                    </div>
-                </div>
-            </div>
-
-            <div style="display:flex; flex-direction:column; gap:15px;">
-                <div class="qrcode-box">
-                    <h4 style="font-family:'Orbitron'; font-size:11px; color:var(--accent-color); margin-bottom:6px;">🎁 Doação LivePix</h4>
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://livepix.gg/capudooficial" alt="QR Code LivePix" class="qrcode-img">
-                    <a href="https://livepix.gg/capudooficial" target="_blank" class="btn-qrcode-link" onclick="tocarSomClique()">🔗 Acessar Link LivePix</a>
-                </div>
-
-                <div class="panel-card" style="padding:10px;">
-                    <h3 style="font-size:12px; margin-bottom:8px;">⚙️ Preferências do Hub</h3>
-                    <div style="display:flex; flex-direction:column; gap:8px; font-size:11px;">
-                        <label style="display:flex; justify-content:space-between; align-items:center;">
-                            Efeitos Sonoros:
-                            <input type="checkbox" id="checkAudioSFX" checked onchange="toggleAudioSFX(this.checked)">
-                        </label>
-                        <label style="display:flex; justify-content:space-between; align-items:center;">
-                            Música Tema (BGM):
-                            <input type="checkbox" id="checkBGM" checked onchange="toggleBGM(this.checked)">
-                        </label>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- PAINEL ADMINISTRATIVO (COM GESTÃO EXPANSÍVEL DE JOGOS) -->
-    <div class="admin-section" id="adminSection" style="display:none;">
-        <div class="admin-container">
-            <h3 style="color:var(--accent-color); font-family:'Orbitron'; text-align:center; margin-bottom:15px; font-size:16px;">⚙️ PAINEL ADMINISTRATIVO COMPLETO</h3>
-
-            <div class="admin-block" style="margin-bottom: 15px;">
-                <h4 style="color:var(--accent-color);">📊 Gráficos de Acessos</h4>
-                <div class="admin-bar-chart" id="adminBarChartContainer">
-                    <div class="admin-bar-col" style="height: 60%;">60%</div>
-                    <div class="admin-bar-col" style="height: 85%;">85%</div>
-                </div>
-            </div>
-
-            <!-- GESTÃO DE GAMES COM CAMPOS EXPANSÍVEIS (SETA) -->
-            <h4 style="color:#fff; margin-bottom:10px; font-family:'Orbitron'; font-size:14px; margin-top:15px;">🎮 Gestão & Personalização de Games na Nuvem</h4>
-            <div id="adminListaJogos" style="display:flex; flex-direction:column; gap:10px;"></div>
-
-            <div style="text-align:center; margin-top:15px;">
-                <button type="button" class="btn-gaming btn-danger" onclick="fazerLogoutAdmin(); tocarSomClique();" style="font-size:11px; padding:6px 16px;">Sair do Painel ADM</button>
-            </div>
+        <div style="text-align:center; margin-top:15px;">
+            <button type="button" class="btn-gaming btn-danger" onclick="fazerLogoutAdmin(); tocarSomClique();" style="font-size:11px; padding:6px 16px;">Sair do Painel ADM</button>
         </div>
     </div>
+</div>
 
-    <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.465 (Full Fix Release)</strong>
-    </footer>
+<footer>
+    WaveCombat Hub &copy; 2026 — Versão: <strong>v0.466 (Complete & Fully Stable Release)</strong>
+</footer>
 
-    <script>
-        const SUPABASE_URL = "https://ipqjeacdfiomcxfuixdj.supabase.co";
-        const SUPABASE_ANON_KEY = "sb_publishable_EWW84q_43YbOvMwB_Rua-A_X465PbLP";
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+<script>
+    const SUPABASE_URL = "https://ipqjeacdfiomcxfuixdj.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_EWW84q_43YbOvMwB_Rua-A_X465PbLP";
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        const MEU_ID_MESTRE = "577082415";
+    const MEU_ID_MESTRE = "577082415";
 
-        const jogosIniciaisFallback = [
-            { id: "1", nome: "Riverbed Warfare", categoria: "Estratégia", desc: "Combate veicular em tempo real.", arquivo: "riverbed-warfare.html", img: "", publicado: true, destaque_manual: true, acessos: 154 },
-            { id: "2", nome: "Tanque Defence", categoria: "Estratégia", desc: "Defesa contra hordas de tanques.", arquivo: "tanque-defence.html", img: "", publicado: true, destaque_manual: false, acessos: 154 }
-        ];
+    const jogosIniciaisFallback = [
+        { id: "1", nome: "Riverbed Warfare", categoria: "Estratégia", desc: "Combate veicular em tempo real.", arquivo: "riverbed-warfare.html", img: "", publicado: true, destaque_manual: true, acessos: 154 },
+        { id: "2", nome: "Tanque Defence", categoria: "Estratégia", desc: "Defesa contra hordas de tanques.", arquivo: "tanque-defence.html", img: "", publicado: true, destaque_manual: false, acessos: 154 }
+    ];
 
-        let listaJogosCache = [];
-        let usuarioLogado = null;
-        let painelAdmAberto = false;
-        let siteConfigGlobal = { url: "", ativa: false, logo: "", broadcast: "" };
-        let audioSfxAtivo = true;
-        let ultimaMensagemChatTempo = 0;
-        let cacheVerificadosNuvem = {};
-        let painelAmigosAberto = false;
-        let bgmInterval = null;
-        let bgmActive = true; 
-        let bgmVolumeValue = 0.5; 
-        const arcadeNotes = [261.63, 329.63, 392.00, 523.25, 493.88]; 
-        let noteIndex = 0;
+    let listaJogosCache = [];
+    let usuarioLogado = null;
+    let painelAdmAberto = false;
+    let siteConfigGlobal = { url: "", ativa: false, logo: "", broadcast: "" };
+    let audioSfxAtivo = true;
+    let ultimaMensagemChatTempo = 0;
+    let cacheVerificadosNuvem = {};
+    let painelAmigosAberto = false;
+    let pixValorAtualCache = 3.00;
+    let pixDiamantesAtualCache = 110;
 
-        function formatarNumero(num) {
-            if (num === null || num === undefined) return '0';
-            num = Number(num);
-            if (isNaN(num)) return '0';
-            if (num >= 1e6) return (num / 1e6).toFixed(1) + 'M';
-            if (num >= 1e3) return (num / 1000).toFixed(1) + 'k';
-            return num.toLocaleString('pt-BR');
-        }
+    function formatarNumero(num) {
+        if (num === null || num === undefined) return '0';
+        num = Number(num);
+        if (isNaN(num)) return '0';
+        if (num >= 1e6) return (num / 1e6).toFixed(1) + 'M';
+        if (num >= 1e3) return (num / 1000).toFixed(1) + 'k';
+        return num.toLocaleString('pt-BR');
+    }
 
-        async function carregarVerificadosNuvem() {
-            try {
-                const { data } = await supabaseClient.from('wavecombat_verificados').select('*');
-                cacheVerificadosNuvem = {};
-                if (data) {
-                    data.forEach(item => {
-                        if (item.id_jogador) cacheVerificadosNuvem[String(item.id_jogador)] = true;
-                        if (item.nick) cacheVerificadosNuvem[item.nick.toLowerCase()] = true;
-                    });
-                }
-            } catch(e) {}
-        }
-
-        function obterHtmlNickVerificado(nick, id) {
-            if (!nick) return 'Entrar';
-            let n = nick.toLowerCase();
-            let isStaff = (n === 'capudo7' || String(id) === MEU_ID_MESTRE);
-            let isVerif = isStaff || cacheVerificadosNuvem[String(id)] || cacheVerificadosNuvem[n];
-
-            let html = '';
-            if (isStaff) html += `<span class="staff-star">⭐</span>`;
-            if (isVerif) html += `<span class="verified-v">V</span>`;
-            html += `<span style="cursor:pointer;" onclick="abrirPerfilPublico('${id || ''}')">${nick}</span>`;
-            return html;
-        }
-
-        async function carregarSessaoSalva() {
-            try {
-                const sessaoSalva = localStorage.getItem('wavecombat_sessao_ativa');
-                if (sessaoSalva) {
-                    const parsed = JSON.parse(sessaoSalva);
-                    if (parsed && parsed.nick && parsed.id) {
-                        usuarioLogado = parsed;
-                        if (String(usuarioLogado.id) === MEU_ID_MESTRE || usuarioLogado.nick.toLowerCase() === 'capudo7') {
-                            usuarioLogado.id = MEU_ID_MESTRE;
-                            usuarioLogado.isAdm = true;
-                        }
-                        document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(usuarioLogado.nick, usuarioLogado.id);
-                        if (usuarioLogado.isAdm) document.getElementById('btnToggleAdmNav').style.display = 'inline-block';
-                        
-                        await sincronizarUsuarioNuvem(usuarioLogado.id);
-                    }
-                }
-            } catch(e) {
-                localStorage.removeItem('wavecombat_sessao_ativa');
+    async function carregarVerificadosNuvem() {
+        try {
+            const { data } = await supabaseClient.from('wavecombat_verificados').select('*');
+            cacheVerificadosNuvem = {};
+            if (data) {
+                data.forEach(item => {
+                    if (item.id_jogador) cacheVerificadosNuvem[String(item.id_jogador)] = true;
+                    if (item.nick) cacheVerificadosNuvem[item.nick.toLowerCase()] = true;
+                });
             }
-            await carregarVerificadosNuvem();
+        } catch(e) {}
+    }
+
+    function obterHtmlNickVerificado(nick, id) {
+        if (!nick) return 'Entrar';
+        let n = nick.toLowerCase();
+        let isStaff = (n === 'capudo7' || String(id) === MEU_ID_MESTRE);
+        let isVerif = isStaff || cacheVerificadosNuvem[String(id)] || cacheVerificadosNuvem[n];
+
+        let html = '';
+        if (isStaff) html += `<span class="staff-star">⭐</span>`;
+        if (isVerif) html += `<span class="verified-v">V</span>`;
+        html += `<span style="cursor:pointer;" onclick="abrirPerfilPublico('${id || ''}')">${nick}</span>`;
+        return html;
+    }
+
+    async function carregarSessaoSalva() {
+        try {
+            const sessaoSalva = localStorage.getItem('wavecombat_sessao_ativa');
+            if (sessaoSalva) {
+                const parsed = JSON.parse(sessaoSalva);
+                if (parsed && parsed.nick && parsed.id) {
+                    usuarioLogado = parsed;
+                    if (String(usuarioLogado.id) === MEU_ID_MESTRE || usuarioLogado.nick.toLowerCase() === 'capudo7') {
+                        usuarioLogado.id = MEU_ID_MESTRE;
+                        usuarioLogado.isAdm = true;
+                    }
+                    document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(usuarioLogado.nick, usuarioLogado.id);
+                    if (usuarioLogado.isAdm) document.getElementById('btnToggleAdmNav').style.display = 'inline-block';
+                    
+                    await sincronizarUsuarioNuvem(usuarioLogado.id);
+                }
+            }
+        } catch(e) {
+            localStorage.removeItem('wavecombat_sessao_ativa');
+        }
+        await carregarVerificadosNuvem();
+        atualizarAbasPerfilUI();
+        carregarSaldoDiamantesSite();
+    }
+
+    async function sincronizarUsuarioNuvem(idJogador) {
+        try {
+            const { data } = await supabaseClient.from('usuarios').select('*').eq('id_jogador', String(idJogador)).maybeSingle();
+            if (data && data.nick) {
+                usuarioLogado.nick = data.nick;
+                usuarioLogado.email = data.email || '';
+                localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
+                document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(usuarioLogado.nick, usuarioLogado.id);
+            }
+        } catch(e) {}
+    }
+
+    async function carregarSaldoDiamantesSite() {
+        const saldoEl = document.getElementById('userDiamondBalance');
+        if (!usuarioLogado || !usuarioLogado.id) return;
+        try {
+            const { data } = await supabaseClient.from('carteira_diamantes').select('diamantes').eq('id_jogador', String(usuarioLogado.id)).maybeSingle();
+            if (data && saldoEl) saldoEl.textContent = formatarNumero(data.diamantes || 0);
+        } catch(e) {}
+    }
+
+    function testarMolduraLoja(classeMoldura) {
+        document.getElementById('avatarPreviewBox').className = 'avatar-preview-box ' + classeMoldura;
+    }
+
+    async function comprarMolduraLoja(tipoMoldura, preco) {
+        if (!usuarioLogado) { abrirModalAuth(true); return; }
+        let { data: cart } = await supabaseClient.from('carteira_diamantes').select('diamantes').eq('id_jogador', String(usuarioLogado.id)).single();
+        let saldoAtual = cart ? (cart.diamantes || 0) : 0;
+        if (saldoAtual < preco) { alert("❌ Diamantes insuficientes!"); return; }
+
+        let novoSaldo = saldoAtual - preco;
+        await supabaseClient.from('carteira_diamantes').upsert({ id_jogador: String(usuarioLogado.id), nick: usuarioLogado.nick, diamantes: novoSaldo }, { onConflict: 'id_jogador' });
+        carregarSaldoDiamantesSite();
+        mostrarToast("✅ Moldura comprada com sucesso!");
+    }
+
+    /* 🎡 RODA DA FORTUNA CORRIGIDA (Ordem dos setores alinhada com o visual) */
+    const wheelSectors = [
+        { label: "10 💎", color: "#3b82f6", type: "diamantes", val: 10 },
+        { label: "Nada", color: "#1e293b", type: "nada", val: 0 },
+        { label: "30 💎", color: "#f59e0b", type: "diamantes", val: 30 },
+        { label: "Cupom 10%", color: "#ec4899", type: "cupom", val: 10 },
+        { label: "Nada", color: "#1e293b", type: "nada", val: 0 },
+        { label: "100 XP", color: "#22c55e", type: "xp", val: 100 },
+        { label: "20 💎", color: "#8b5cf6", type: "diamantes", val: 20 },
+        { label: "Nada", color: "#1e293b", type: "nada", val: 0 }
+    ];
+
+    let roletaGirando = false;
+
+    function desenharRoda() {
+        const canvas = document.getElementById('canvasWheel');
+        if(!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const numSectors = wheelSectors.length;
+        const arcSize = (2 * Math.PI) / numSectors;
+        const radius = canvas.width / 2;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.save();
+        ctx.translate(radius, radius);
+
+        wheelSectors.forEach((sector, i) => {
+            const angle = i * arcSize;
+            ctx.beginPath();
+            ctx.fillStyle = sector.color;
+            ctx.moveTo(0, 0);
+            ctx.arc(0, 0, radius, angle, angle + arcSize, false);
+            ctx.lineTo(0, 0);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.save();
+            ctx.rotate(angle + arcSize / 2);
+            ctx.fillStyle = "#ffffff";
+            ctx.font = "bold 15px Orbitron";
+            ctx.fillText(sector.label, radius / 1.7, 6);
+            ctx.restore();
+        });
+        ctx.restore();
+    }
+
+    async function girarRodaDaFortuna() {
+        if (!usuarioLogado) { abrirModalAuth(true); return; }
+        if (roletaGirando) return;
+
+        let hoje = new Date().toDateString();
+        if (localStorage.getItem(`ultimo_giro_${usuarioLogado.id}`) === hoje) {
+            exibirModalWheelResult("⏳", "INDISPONÍVEL", "Você já girou hoje! Volte amanhã.", false);
+            return;
+        }
+
+        roletaGirando = true;
+        const canvas = document.getElementById('canvasWheel');
+        const randomSector = Math.floor(Math.random() * wheelSectors.length);
+        const arcDeg = 360 / wheelSectors.length;
+        const targetDeg = 360 * 5 + (wheelSectors.length - randomSector) * arcDeg - arcDeg / 2;
+
+        canvas.style.transform = `rotate(${targetDeg}deg)`;
+
+        setTimeout(async () => {
+            roletaGirando = false;
+            localStorage.setItem(`ultimo_giro_${usuarioLogado.id}`, hoje);
+            let premio = wheelSectors[randomSector];
+
+            if (premio.type === 'diamantes') {
+                const { data: cart } = await supabaseClient.from('carteira_diamantes').select('diamantes').eq('id_jogador', String(usuarioLogado.id)).single();
+                let saldo = cart ? (cart.diamantes || 0) : 0;
+                let novoSaldo = saldo + premio.val;
+                await supabaseClient.from('carteira_diamantes').upsert({ id_jogador: String(usuarioLogado.id), nick: usuarioLogado.nick, diamantes: novoSaldo }, { onConflict: 'id_jogador' });
+                carregarSaldoDiamantesSite();
+                exibirModalWheelResult("💎", "PARABÉNS!", `Você ganhou <strong>${premio.val} Diamantes</strong>!`, true);
+            } else if (premio.type === 'xp') {
+                exibirModalWheelResult("⭐", "BÔNUS DE XP!", `Você ganhou <strong>${premio.val} XP</strong>!`, true);
+            } else if (premio.type === 'cupom') {
+                exibirModalWheelResult("🎟️", "CUPOM 10%!", `Você ganhou um cupom de desconto para a loja!`, true);
+            } else {
+                exibirModalWheelResult("😢", "NADA!", `Não foi desta vez. Tente novamente amanhã!`, false);
+            }
+        }, 4500);
+    }
+
+    function exibirModalWheelResult(icone, titulo, mensagem, vitoria) {
+        document.getElementById('wheelResultIcon').textContent = icone;
+        document.getElementById('wheelResultTitle').textContent = titulo;
+        document.getElementById('wheelResultMessage').innerHTML = mensagem;
+        document.getElementById('modalWheelResult').style.display = 'flex';
+    }
+
+    function fecharModalWheelResult() {
+        document.getElementById('modalWheelResult').style.display = 'none';
+    }
+
+    /* 💎 RECARGA PIX COM CÁLCULO DE DESCONTO DE CUPOM */
+    function abrirPixComDesconto(valor, quantDiamantes) {
+        if (!usuarioLogado) { abrirModalAuth(true); return; }
+        pixValorAtualCache = valor;
+        pixDiamantesAtualCache = quantDiamantes;
+        document.getElementById('inputCupomRecarga').value = '';
+        document.getElementById('infoDescontoCupomPix').textContent = '';
+        document.getElementById('pixQrContainer').innerHTML = `<div style="padding:20px; font-size:12px; color:var(--accent-color);">Gerando QR Code Pix... (R$ ${valor.toFixed(2)})</div>`;
+        document.getElementById('pixCopiaColaInput').value = `00020126580014br.gov.bcb.pix... valor R$ ${valor.toFixed(2)}`;
+        document.getElementById('pixModal').style.display = 'flex';
+    }
+
+    async function verificarCupomDescontoLoja() {
+        const cupom = document.getElementById('inputCupomRecarga').value.trim().toUpperCase();
+        const infoEl = document.getElementById('infoDescontoCupomPix');
+        if (!cupom) {
+            infoEl.textContent = '';
+            return;
+        }
+        try {
+            const { data } = await supabaseClient.from('influenciadores').select('*').eq('cupom', cupom).maybeSingle();
+            if (data) {
+                let valorComDesconto = pixValorAtualCache * 0.90;
+                infoEl.innerHTML = `✅ Cupom aplicado! Valor com 10% de desconto: <strong>R$ ${valorComDesconto.toFixed(2)}</strong>`;
+            } else {
+                infoEl.textContent = '❌ Cupom inválido.';
+            }
+        } catch(e) {}
+    }
+
+    function togglePainelAmigos() {
+        if (!usuarioLogado) { abrirModalAuth(true); return; }
+        painelAmigosAberto = !painelAmigosAberto;
+        document.getElementById('painelAmigos').style.right = painelAmigosAberto ? '0px' : '-320px';
+    }
+
+    function fecharModalPix() { document.getElementById('pixModal').style.display = 'none'; }
+    function copiarPixCopiaCola() {
+        document.getElementById('pixCopiaColaInput').select();
+        document.execCommand('copy');
+        mostrarToast("📋 Código copiado!");
+    }
+
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function tocarSomClique() {
+        if (!audioSfxAtivo) return;
+        try {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.08);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.08);
+        } catch(e) {}
+    }
+    function tocarSomLevelUp() { tocarSomClique(); }
+    function mostrarToast(txt) {
+        const t = document.getElementById('toastNotification');
+        t.textContent = txt; t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 3500);
+    }
+
+    function atualizarAbasPerfilUI() {
+        const u = usuarioLogado;
+        document.getElementById('tabLoginBtn')?.style.setProperty('display', u ? 'none' : 'block');
+        document.getElementById('tabRegisterBtn')?.style.setProperty('display', u ? 'none' : 'block');
+        if (u) { alternarAba('perfil'); atualizarPerfilExpandidoUI(); }
+        else { alternarAba('login'); }
+    }
+
+    function alternarAba(aba) {
+        document.getElementById('tabLoginBtn')?.classList.toggle('active', aba === 'login');
+        document.getElementById('tabRegisterBtn')?.classList.toggle('active', aba === 'registro');
+        document.getElementById('tabPerfilBtn')?.classList.toggle('active', aba === 'perfil');
+        document.getElementById('panelLogin').classList.toggle('active', aba === 'login');
+        document.getElementById('panelRegistro').classList.toggle('active', aba === 'registro');
+        document.getElementById('panelPerfil').classList.toggle('active', aba === 'perfil');
+    }
+
+    function abrirModalAuth(motivo = false) { document.getElementById('authModal').style.display = 'flex'; }
+    function fecharModalAuth() { document.getElementById('authModal').style.display = 'none'; }
+    function toggleMenuMobile() { document.getElementById('navLinks').classList.toggle('active'); }
+
+    async function fazerRegistroPlataforma(e) {
+        e.preventDefault();
+        const u = document.getElementById('regUser').value.trim();
+        const email = document.getElementById('regEmail').value.trim();
+        const p = document.getElementById('regPass').value;
+        const novoId = Math.floor(100000000 + Math.random() * 900000000).toString();
+        try {
+            await supabaseClient.from('usuarios').insert([{ id_jogador: novoId, nick: u, email: email, pass: p }]);
+            usuarioLogado = { nick: u, email: email, isAdm: false, id: novoId };
+            localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
+            mostrarToast("✨ Conta criada!");
+            fecharModalAuth();
             atualizarAbasPerfilUI();
             carregarSaldoDiamantesSite();
+        } catch(err){ alert("Erro ao criar conta."); }
+    }
+
+    async function fazerLoginPlataforma(e) {
+        e.preventDefault();
+        const u = document.getElementById('loginUser').value.trim();
+        const p = document.getElementById('loginPass').value;
+        
+        if (u.toLowerCase() === 'capudo7' && p === '262026') {
+            usuarioLogado = { nick: 'capudo7', email: 'capudo@admin.com', isAdm: true, id: MEU_ID_MESTRE };
+            localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
+            document.getElementById('btnToggleAdmNav').style.display = 'inline-block';
+            fecharModalAuth(); atualizarAbasPerfilUI(); carregarSaldoDiamantesSite();
+            return;
         }
 
-        async function sincronizarUsuarioNuvem(idJogador) {
-            try {
-                const { data } = await supabaseClient.from('usuarios').select('*').eq('id_jogador', String(idJogador)).maybeSingle();
-                if (data && data.nick) {
-                    usuarioLogado.nick = data.nick;
-                    usuarioLogado.email = data.email || '';
-                    localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
-                    document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(usuarioLogado.nick, usuarioLogado.id);
-                }
-            } catch(e) {}
-        }
-
-        async function carregarSaldoDiamantesSite() {
-            const saldoEl = document.getElementById('userDiamondBalance');
-            if (!usuarioLogado || !usuarioLogado.id) return;
-            try {
-                const { data } = await supabaseClient.from('carteira_diamantes').select('diamantes').eq('id_jogador', String(usuarioLogado.id)).maybeSingle();
-                if (data && saldoEl) saldoEl.textContent = formatarNumero(data.diamantes || 0);
-            } catch(e) {}
-        }
-
-        function testarMolduraLoja(classeMoldura) {
-            document.getElementById('avatarPreviewBox').className = 'avatar-preview-box ' + classeMoldura;
-        }
-
-        async function comprarMolduraLoja(tipoMoldura, preco) {
-            if (!usuarioLogado) { abrirModalAuth(true); return; }
-            let { data: cart } = await supabaseClient.from('carteira_diamantes').select('diamantes').eq('id_jogador', String(usuarioLogado.id)).single();
-            let saldoAtual = cart ? (cart.diamantes || 0) : 0;
-            if (saldoAtual < preco) { alert("❌ Diamantes insuficientes!"); return; }
-
-            let novoSaldo = saldoAtual - preco;
-            await supabaseClient.from('carteira_diamantes').upsert({ id_jogador: String(usuarioLogado.id), nick: usuarioLogado.nick, diamantes: novoSaldo }, { onConflict: 'id_jogador' });
-            carregarSaldoDiamantesSite();
-            mostrarToast("✅ Moldura comprada com sucesso!");
-        }
-
-        /* 🎡 RODA DA FORTUNA CORRIGIDA (Ordem dos setores alinhada com o visual) */
-        const wheelSectors = [
-            { label: "10 💎", color: "#3b82f6", type: "diamantes", val: 10 },
-            { label: "Nada", color: "#1e293b", type: "nada", val: 0 },
-            { label: "30 💎", color: "#f59e0b", type: "diamantes", val: 30 },
-            { label: "Cupom 10%", color: "#ec4899", type: "cupom", val: 10 },
-            { label: "Nada", color: "#1e293b", type: "nada", val: 0 },
-            { label: "100 XP", color: "#22c55e", type: "xp", val: 100 },
-            { label: "20 💎", color: "#8b5cf6", type: "diamantes", val: 20 },
-            { label: "Nada", color: "#1e293b", type: "nada", val: 0 }
-        ];
-
-        let roletaGirando = false;
-
-        function desenharRoda() {
-            const canvas = document.getElementById('canvasWheel');
-            if(!canvas) return;
-            const ctx = canvas.getContext('2d');
-            const numSectors = wheelSectors.length;
-            const arcSize = (2 * Math.PI) / numSectors;
-            const radius = canvas.width / 2;
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.save();
-            ctx.translate(radius, radius);
-
-            wheelSectors.forEach((sector, i) => {
-                const angle = i * arcSize;
-                ctx.beginPath();
-                ctx.fillStyle = sector.color;
-                ctx.moveTo(0, 0);
-                ctx.arc(0, 0, radius, angle, angle + arcSize, false);
-                ctx.lineTo(0, 0);
-                ctx.fill();
-                ctx.stroke();
-
-                ctx.save();
-                ctx.rotate(angle + arcSize / 2);
-                ctx.fillStyle = "#ffffff";
-                ctx.font = "bold 15px Orbitron";
-                ctx.fillText(sector.label, radius / 1.7, 6);
-                ctx.restore();
-            });
-            ctx.restore();
-        }
-
-        async function girarRodaDaFortuna() {
-            if (!usuarioLogado) { abrirModalAuth(true); return; }
-            if (roletaGirando) return;
-
-            let hoje = new Date().toDateString();
-            if (localStorage.getItem(`ultimo_giro_${usuarioLogado.id}`) === hoje) {
-                exibirModalWheelResult("⏳", "INDISPONÍVEL", "Você já girou hoje! Volte amanhã.", false);
-                return;
-            }
-
-            roletaGirando = true;
-            const canvas = document.getElementById('canvasWheel');
-            const randomSector = Math.floor(Math.random() * wheelSectors.length);
-            const arcDeg = 360 / wheelSectors.length;
-            const targetDeg = 360 * 5 + (wheelSectors.length - randomSector) * arcDeg - arcDeg / 2;
-
-            canvas.style.transform = `rotate(${targetDeg}deg)`;
-
-            setTimeout(async () => {
-                roletaGirando = false;
-                localStorage.setItem(`ultimo_giro_${usuarioLogado.id}`, hoje);
-                let premio = wheelSectors[randomSector];
-
-                if (premio.type === 'diamantes') {
-                    const { data: cart } = await supabaseClient.from('carteira_diamantes').select('diamantes').eq('id_jogador', String(usuarioLogado.id)).single();
-                    let saldo = cart ? (cart.diamantes || 0) : 0;
-                    let novoSaldo = saldo + premio.val;
-                    await supabaseClient.from('carteira_diamantes').upsert({ id_jogador: String(usuarioLogado.id), nick: usuarioLogado.nick, diamantes: novoSaldo }, { onConflict: 'id_jogador' });
-                    carregarSaldoDiamantesSite();
-                    exibirModalWheelResult("💎", "PARABÉNS!", `Você ganhou <strong>${premio.val} Diamantes</strong>!`, true);
-                } else if (premio.type === 'xp') {
-                    exibirModalWheelResult("⭐", "BÔNUS DE XP!", `Você ganhou <strong>${premio.val} XP</strong>!`, true);
-                } else if (premio.type === 'cupom') {
-                    exibirModalWheelResult("🎟️", "CUPOM 10%!", `Você ganhou um cupom de desconto para a loja!`, true);
-                } else {
-                    exibirModalWheelResult("😢", "NADA!", `Não foi desta vez. Tente novamente amanhã!`, false);
-                }
-            }, 4500);
-        }
-
-        function exibirModalWheelResult(icone, titulo, mensagem, vitoria) {
-            document.getElementById('wheelResultIcon').textContent = icone;
-            document.getElementById('wheelResultTitle').textContent = titulo;
-            document.getElementById('wheelResultMessage').innerHTML = mensagem;
-            document.getElementById('modalWheelResult').style.display = 'flex';
-        }
-
-        function fecharModalWheelResult() {
-            document.getElementById('modalWheelResult').style.display = 'none';
-        }
-
-        /* 💎 RECARGA PIX COM CÁLCULO DE DESCONTO DE CUPOM */
-        async function gerarPixMercadoPago(valor, quantDiamantes) {
-            if (!usuarioLogado) { abrirModalAuth(true); return; }
-            const cupomDigitado = (document.getElementById('inputCupomRecarga')?.value || '').trim().toUpperCase();
-            
-            let valorFinal = valor;
-            if (cupomDigitado) {
-                try {
-                    const { data: infData } = await supabaseClient.from('influenciadores').select('*').eq('cupom', cupomDigitado).maybeSingle();
-                    if (infData) {
-                        valorFinal = valor * 0.90; // 10% de desconto com o cupom
-                        mostrarToast(`⭐ Cupom "${cupomDigitado}" aplicado! Desconto de 10% na recarga.`);
-                    } else {
-                        mostrarToast("⚠️ Cupom inválido.");
-                    }
-                } catch(e){}
-            }
-
-            mostrarToast(`⏳ Gerando Pix de R$ ${valorFinal.toFixed(2)}...`);
-            // Segue a requisição normal para o backend do Pix...
-        }
-
-        function togglePainelAmigos() {
-            if (!usuarioLogado) { abrirModalAuth(true); return; }
-            painelAmigosAberto = !painelAmigosAberto;
-            document.getElementById('painelAmigos').style.right = painelAmigosAberto ? '0px' : '-320px';
-        }
-
-        function fecharModalPix() { document.getElementById('pixModal').style.display = 'none'; }
-        function copiarPixCopiaCola() {
-            document.getElementById('pixCopiaColaInput').select();
-            document.execCommand('copy');
-            mostrarToast("📋 Código copiado!");
-        }
-
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        function tocarSomClique() {
-            if (!audioSfxAtivo) return;
-            try {
-                if (audioCtx.state === 'suspended') audioCtx.resume();
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.frequency.setValueAtTime(440, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-                gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.08);
-                osc.connect(gain); gain.connect(audioCtx.destination);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.08);
-            } catch(e) {}
-        }
-        function tocarSomLevelUp() { tocarSomClique(); }
-        function mostrarToast(txt) {
-            const t = document.getElementById('toastNotification');
-            t.textContent = txt; t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), 3500);
-        }
-
-        function atualizarAbasPerfilUI() {
-            const u = usuarioLogado;
-            document.getElementById('tabLoginBtn')?.style.setProperty('display', u ? 'none' : 'block');
-            document.getElementById('tabRegisterBtn')?.style.setProperty('display', u ? 'none' : 'block');
-            if (u) { alternarAba('perfil'); atualizarPerfilExpandidoUI(); }
-            else { alternarAba('login'); }
-        }
-
-        function alternarAba(aba) {
-            document.getElementById('tabLoginBtn')?.classList.toggle('active', aba === 'login');
-            document.getElementById('tabRegisterBtn')?.classList.toggle('active', aba === 'registro');
-            document.getElementById('tabPerfilBtn')?.classList.toggle('active', aba === 'perfil');
-            document.getElementById('panelLogin').classList.toggle('active', aba === 'login');
-            document.getElementById('panelRegistro').classList.toggle('active', aba === 'registro');
-            document.getElementById('panelPerfil').classList.toggle('active', aba === 'perfil');
-        }
-
-        function abrirModalAuth(motivo = false) { document.getElementById('authModal').style.display = 'flex'; }
-        function fecharModalAuth() { document.getElementById('authModal').style.display = 'none'; }
-        function toggleMenuMobile() { document.getElementById('navLinks').classList.toggle('active'); }
-
-        async function fazerRegistroPlataforma(e) {
-            e.preventDefault();
-            const u = document.getElementById('regUser').value.trim();
-            const email = document.getElementById('regEmail').value.trim();
-            const p = document.getElementById('regPass').value;
-            const novoId = Math.floor(100000000 + Math.random() * 900000000).toString();
-            try {
-                await supabaseClient.from('usuarios').insert([{ id_jogador: novoId, nick: u, email: email, pass: p }]);
-                usuarioLogado = { nick: u, email: email, isAdm: false, id: novoId };
+        try {
+            const { data } = await supabaseClient.from('usuarios').select('*').or(`nick.ilike.${u},email.eq.${u}`).maybeSingle();
+            if (data && data.pass === p) {
+                usuarioLogado = { nick: data.nick, email: data.email || '', isAdm: false, id: String(data.id_jogador || data.id) };
                 localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
-                mostrarToast("✨ Conta criada!");
-                fecharModalAuth();
-                atualizarAbasPerfilUI();
-                carregarSaldoDiamantesSite();
-            } catch(err){ alert("Erro ao criar conta."); }
-        }
-
-        async function fazerLoginPlataforma(e) {
-            e.preventDefault();
-            const u = document.getElementById('loginUser').value.trim();
-            const p = document.getElementById('loginPass').value;
-            
-            if (u.toLowerCase() === 'capudo7' && p === '262026') {
-                usuarioLogado = { nick: 'capudo7', isAdm: true, id: MEU_ID_MESTRE };
-                localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
-                document.getElementById('btnToggleAdmNav').style.display = 'inline-block';
                 fecharModalAuth(); atualizarAbasPerfilUI(); carregarSaldoDiamantesSite();
-                return;
+                mostrarToast(`👋 Bem-vindo, ${data.nick}!`);
+            } else {
+                alert("Usuário ou senha incorretos.");
             }
+        } catch(e) { alert("Erro no login."); }
+    }
 
-            try {
-                const { data } = await supabaseClient.from('usuarios').select('*').or(`nick.ilike.${u},email.eq.${u}`).maybeSingle();
-                if (data && data.pass === p) {
-                    usuarioLogado = { nick: data.nick, email: data.email || '', isAdm: false, id: String(data.id_jogador || data.id) };
-                    localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
-                    fecharModalAuth(); atualizarAbasPerfilUI(); carregarSaldoDiamantesSite();
-                    mostrarToast(`👋 Bem-vindo, ${data.nick}!`);
-                } else {
-                    alert("Usuário ou senha incorretos.");
-                }
-            } catch(e) { alert("Erro no login."); }
-        }
+    function atualizarPerfilExpandidoUI() {
+        const div = document.getElementById('perfilUserData');
+        if(!div || !usuarioLogado) return;
+        div.innerHTML = `
+            <div style="background:#000; padding:15px; border-radius:8px; text-align:center;">
+                <h4>${obterHtmlNickVerificado(usuarioLogado.nick, usuarioLogado.id)}</h4>
+                <p style="font-size:11px; color:#94a3b8; margin:8px 0;">E-mail: <strong>${usuarioLogado.email || 'Não vinculado'}</strong></p>
+                <button class="btn-gaming btn-danger" onclick="fazerLogout()" style="padding:6px 12px; font-size:11px;">Sair da Conta</button>
+            </div>
+        `;
+    }
 
-        function atualizarPerfilExpandidoUI() {
-            const div = document.getElementById('perfilUserData');
-            if(!div || !usuarioLogado) return;
-            div.innerHTML = `
-                <div style="background:#000; padding:15px; border-radius:8px; text-align:center;">
-                    <h4>${obterHtmlNickVerificado(usuarioLogado.nick, usuarioLogado.id)}</h4>
-                    <p style="font-size:11px; color:#94a3b8; margin:8px 0;">E-mail: <strong>${usuarioLogado.email || 'Não vinculado'}</strong></p>
-                    <button class="btn-gaming btn-danger" onclick="fazerLogout()" style="padding:6px 12px; font-size:11px;">Sair da Conta</button>
+    function fazerLogout() {
+        usuarioLogado = null;
+        localStorage.removeItem('wavecombat_sessao_ativa');
+        document.getElementById('btnAuthNav').textContent = 'Entrar';
+        document.getElementById('btnToggleAdmNav').style.display = 'none';
+        document.getElementById('adminSection').style.display = 'none';
+        atualizarAbasPerfilUI();
+    }
+
+    async function buscarDadosNuvem() {
+        try {
+            const { data } = await supabaseClient.from('jogos').select('*');
+            listaJogosCache = (!data || data.length === 0) ? jogosIniciaisFallback : data;
+        } catch(e) { listaJogosCache = jogosIniciaisFallback; }
+        atualizarPlataforma();
+    }
+
+    function atualizarPlataforma() {
+        const container = document.getElementById('featuredGameContainer');
+        if(container && listaJogosCache.length > 0) {
+            let j = listaJogosCache[0];
+            container.innerHTML = `
+                <div class="featured-game-box">
+                    <div class="featured-badge">🔥 DESTAQUE</div>
+                    <h3 style="font-size:16px; font-family:'Orbitron';">${j.nome}</h3>
+                    <p style="font-size:12px; color:#94a3b8;">${j.desc}</p>
+                    <button class="btn-gaming" onclick="tentarExecutarJogo(${JSON.stringify(j).replace(/"/g, '&quot;')})">▶ JOGAR AGORA</button>
                 </div>
             `;
         }
+    }
 
-        function fazerLogout() {
-            usuarioLogado = null;
-            localStorage.removeItem('wavecombat_sessao_ativa');
-            document.getElementById('btnAuthNav').textContent = 'Entrar';
-            document.getElementById('btnToggleAdmNav').style.display = 'none';
-            document.getElementById('adminSection').style.display = 'none';
-            atualizarAbasPerfilUI();
-        }
+    function tentarExecutarJogo(j) {
+        document.getElementById('gameIframe').src = j.arquivo;
+        document.getElementById('player').style.display = 'block';
+        document.getElementById('playerControlsBar').style.display = 'flex';
+    }
 
-        async function buscarDadosNuvem() {
-            try {
-                const { data } = await supabaseClient.from('jogos').select('*');
-                listaJogosCache = (!data || data.length === 0) ? jogosIniciaisFallback : data;
-            } catch(e) { listaJogosCache = jogosIniciaisFallback; }
-            atualizarPlataforma();
-        }
+    function encerrarJogo() {
+        document.getElementById('gameIframe').src = "about:blank";
+        document.getElementById('player').style.display = 'none';
+        document.getElementById('playerControlsBar').style.display = 'none';
+    }
 
-        function atualizarPlataforma() {
-            const container = document.getElementById('featuredGameContainer');
-            if(container && listaJogosCache.length > 0) {
-                let j = listaJogosCache[0];
-                container.innerHTML = `
-                    <div class="featured-game-box">
-                        <div class="featured-badge">🔥 DESTAQUE</div>
-                        <h3 style="font-size:16px; font-family:'Orbitron';">${j.nome}</h3>
-                        <p style="font-size:12px; color:#94a3b8;">${j.desc}</p>
-                        <button class="btn-gaming" onclick="tentarExecutarJogo(${JSON.stringify(j).replace(/"/g, '&quot;')})">▶ JOGAR AGORA</button>
+    function alternarPainelAdm() {
+        const p = document.getElementById('adminSection');
+        painelAdmAberto = !painelAdmAberto;
+        p.style.display = painelAdmAberto ? 'block' : 'none';
+        if(painelAdmAberto) renderizarJogosAdmin();
+    }
+
+    function fazerLogoutAdmin() { fazerLogout(); }
+
+    /* 📂 GESTÃO DE GAMES COM SETA (DETAILS/SUMMARY) NO ADM */
+    function renderizarJogosAdmin() {
+        const container = document.getElementById('adminListaJogos');
+        if(!container) return;
+        container.innerHTML = '';
+        
+        listaJogosCache.forEach(j => {
+            const item = document.createElement('div');
+            item.className = 'admin-game-item';
+            item.innerHTML = `
+                <details style="background:#000; border:1px solid var(--steel-border); padding:8px; border-radius:6px;">
+                    <summary style="cursor:pointer; font-family:'Orbitron'; font-size:12px; color:var(--accent-color);">
+                        🎮 ${j.nome} <span style="color:#64748b; font-size:10px;">(Acessos: ${j.acessos || 0})</span>
+                    </summary>
+                    <div style="margin-top:10px; display:flex; flex-direction:column; gap:6px; font-size:11px;">
+                        <label>Nome do Jogo:</label>
+                        <input type="text" id="admEditNome_${j.id}" value="${j.nome}" class="auth-input" style="font-size:11px;">
+                        <label>Descrição:</label>
+                        <textarea id="admEditDesc_${j.id}" class="auth-input" style="font-size:11px; height:50px;">${j.desc}</textarea>
+                        <button class="btn-gaming" onclick="salvarEdicaoJogo('${j.id}')" style="padding:6px; font-size:10px;">💾 Salvar Alterações</button>
                     </div>
-                `;
-            }
-        }
+                </details>
+            `;
+            container.appendChild(item);
+        });
+    }
 
-        function tentarExecutarJogo(j) {
-            document.getElementById('gameIframe').src = j.arquivo;
-            document.getElementById('player').style.display = 'block';
-            document.getElementById('playerControlsBar').style.display = 'flex';
-        }
+    async function salvarEdicaoJogo(id) {
+        let novoNome = document.getElementById(`admEditNome_${id}`).value;
+        let novaDesc = document.getElementById(`admEditDesc_${id}`).value;
+        try {
+            await supabaseClient.from('jogos').update({ nome: novoNome, desc: novaDesc }).eq('id', id);
+            mostrarToast("💾 Jogo atualizado com sucesso!");
+            buscarDadosNuvem();
+        } catch(e) { alert("Erro ao atualizar jogo."); }
+    }
 
-        function encerrarJogo() {
-            document.getElementById('gameIframe').src = "about:blank";
-            document.getElementById('player').style.display = 'none';
-            document.getElementById('playerControlsBar').style.display = 'none';
-        }
-
-        function alternarPainelAdm() {
-            const p = document.getElementById('adminSection');
-            painelAdmAberto = !painelAdmAberto;
-            p.style.display = painelAdmAberto ? 'block' : 'none';
-            if(painelAdmAberto) renderizarJogosAdmin();
-        }
-
-        function fazerLogoutAdmin() { fazerLogout(); }
-
-        /* 📂 GESTÃO DE GAMES COM SETA (DETAILS/SUMMARY) NO ADM */
-        function renderizarJogosAdmin() {
-            const container = document.getElementById('adminListaJogos');
-            if(!container) return;
-            container.innerHTML = '';
-            
-            listaJogosCache.forEach(j => {
-                const item = document.createElement('div');
-                item.className = 'admin-game-item';
-                item.innerHTML = `
-                    <details style="background:#000; border:1px solid var(--steel-border); padding:8px; border-radius:6px;">
-                        <summary style="cursor:pointer; font-family:'Orbitron'; font-size:12px; color:var(--accent-color);">
-                            🎮 ${j.nome} <span style="color:#64748b; font-size:10px;">(Acessos: ${j.acessos || 0})</span>
-                        </summary>
-                        <div style="margin-top:10px; display:flex; flex-direction:column; gap:6px; font-size:11px;">
-                            <label>Nome do Jogo:</label>
-                            <input type="text" id="admEditNome_${j.id}" value="${j.nome}" class="auth-input" style="font-size:11px;">
-                            <label>Descrição:</label>
-                            <textarea id="admEditDesc_${j.id}" class="auth-input" style="font-size:11px; height:50px;">${j.desc}</textarea>
-                            <button class="btn-gaming" onclick="salvarEdicaoJogo('${j.id}')" style="padding:6px; font-size:10px;">💾 Salvar Alterações</button>
-                        </div>
-                    </details>
-                `;
-                container.appendChild(item);
-            });
-        }
-
-        async function salvarEdicaoJogo(id) {
-            let novoNome = document.getElementById(`admEditNome_${id}`).value;
-            let novaDesc = document.getElementById(`admEditDesc_${id}`).value;
-            try {
-                await supabaseClient.from('jogos').update({ nome: novoNome, desc: novaDesc }).eq('id', id);
-                mostrarToast("💾 Jogo atualizado com sucesso!");
-                buscarDadosNuvem();
-            } catch(e) { alert("Erro ao atualizar jogo."); }
-        }
-
-        carregarSessaoSalva();
-        buscarDadosNuvem();
-        desenharRoda();
-    </script>
-</body>
-</html>
+    carregarSessaoSalva();
+    buscarDadosNuvem();
+    desenharRoda();
+</script>
