@@ -220,6 +220,7 @@ body[data-mode=play] #qt{display:block}
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 (() => {
@@ -231,7 +232,7 @@ const URL_ID = (params.get('id') || '').trim();
 const PLAYER_ID = URL_ID || '0'; // fallback para testes locais
 const $ = id => document.getElementById(id);
 const fmt = n => Number(n).toLocaleString('pt-BR');
-const VERSION = '0.004'; // suba a cada atualização enviada
+const VERSION = '0.005'; // suba a cada atualização enviada
 const DIA = {};
 const G = { mode: 'start' };
 let NICK = 'Visitante';
@@ -418,7 +419,7 @@ function initEngine() {
 
   function setQuality(q) {
     pixelRatio = Math.min(window.devicePixelRatio || 1, [1, 1.5, 2][q]);
-    renderer.setPixelRatio(pixelRatio); sun.castShadow = q > 0; resize();
+    renderer.setPixelRatio(pixelRatio); sun.castShadow = q > 0; const ms = [0, 1024, 2048][q]; if (ms && sun.shadow.mapSize.x !== ms) { if (sun.shadow.map) { sun.shadow.map.dispose(); sun.shadow.map = null; } sun.shadow.mapSize.set(ms, ms); } resize();
   }
   scene.add(sun.target);
   return { THREE, renderer, scene, camera, player, updaters, body, head, ring, camTarget, camOffset, setQuality, W, sun };
@@ -796,7 +797,7 @@ function initUI(E) {
   /* ── v0.002: perfil/XP, habilidades, clã, passe, chat geral, minimapa, música, lobby ── */
   const P = Object.assign({ lv: 1, xp: 0, sp: 0, sk: {}, seen: [], inv: [], elite: false, bought: 0, claimed: [] }, LS.get('rise_prof_' + PLAYER_ID, {}));
   const saveP = () => LS.set('rise_prof_' + PLAYER_ID, P);
-  const need = l => 100 + (l - 1) * 60;
+  const need = l => Math.round(90 * Math.pow(1.12, l - 1));
   function addXP(n) {
     P.xp += n;
     while (P.xp >= need(P.lv)) { P.xp -= need(P.lv); P.lv++; P.sp++; toast('Nível ' + P.lv + '! +1 ponto de habilidade'); }
@@ -932,7 +933,7 @@ function initUI(E) {
     const b = E.W.biome(p.x, p.z);
     if (b !== lastB) { lastB = b; if (!P.seen.includes(b)) { P.seen.push(b); toast('Bioma descoberto: ' + BN[b] + ' (+40 XP)'); addXP(40); } }
     mt -= dt; if (mt > 0) return; mt = $('mmW').classList.contains('xl') ? .25 : .1;
-    $('coords').textContent = 'X ' + Math.round(p.x) + ' · Z ' + Math.round(p.z) + ' · ' + BN[b];
+    $('coords').textContent = 'X ' + Math.round(p.x) + ' · Z ' + Math.round(p.z) + ' · ' + BN[b] + (net.n ? ' · 👥 ' + net.n : '');
     drawMap(p);
   });
 
@@ -994,7 +995,7 @@ function initUI(E) {
   }
   function burst(pos, col, n = 8) {
     for (let i = 0; i < n; i++) {
-      const m = new T.Mesh(GP, new T.MeshBasicMaterial({ color: col, transparent: true })); m.position.set(pos.x, pos.y + 1, pos.z); E.scene.add(m);
+      if (parts.length > 80) return; const m = new T.Mesh(GP, pm(col)); m.position.set(pos.x, pos.y + 1, pos.z); E.scene.add(m);
       parts.push({ m, v: new T.Vector3((Math.random() - .5) * 6, Math.random() * 5 + 1, (Math.random() - .5) * 6), t: .5 });
     }
   }
@@ -1024,7 +1025,7 @@ function initUI(E) {
     burst(q, d.col, 16); addXP(Math.round(d.xp * m.lv));
     if (Math.random() < .7 || d.boss) dropItem(d.drop, q.x + 1, q.z, d.col);
     if (d.boss) { dropItem(d.drop, q.x - 1, q.z, d.col); dropItem(d.drop, q.x, q.z + 1.5, d.col); bossDead[m.key] = Date.now(); }
-    if (Math.random() < .15) dropItem('Poção de Vida', q.x, q.z - 1, 0xff4a6a);
+    if (Math.random() < .2) dropItem('Poção de Vida', q.x, q.z - 1, 0xff4a6a);
     QS.forEach(k => { const st = P.q[k.id]; if (st && st.s === 'a' && ((k.t === 'kill' && (k.alvo === '*' || k.alvo === d.n)) || (k.t === 'boss' && d.boss))) st.n = (st.n || 0) + 1; });
     saveP(); rmMon(m); updQt(); npcMarks();
   }
@@ -1106,7 +1107,7 @@ function initUI(E) {
     $('talk').style.display = near >= 0 ? 'block' : 'none';
     qT -= dt; if (qT < 0) { qT = .5; updQt(); npcMarks(); }
     spT -= dt;
-    if (spT < 0 && mons.length < 12) {
+    if (spT < 0 && mons.length < [8, 12, 14][cfg.q]) {
       spT = .8; const a = Math.random() * 6.28, r = 28 + Math.random() * 27, x = p.x + Math.cos(a) * r, z = p.z + Math.sin(a) * r;
       if (Math.hypot(x, z) > 45 && Math.abs(x) < HS - 10 && Math.abs(z) < HS - 10) { const ds = MD.filter(d => d.b.includes(E.W.biome(x, z))); if (ds.length) spawnMon(ds[Math.floor(Math.random() * ds.length)], x, z); }
     }
@@ -1136,8 +1137,73 @@ function initUI(E) {
       if (o.t <= 0) { E.scene.remove(o.m); drops.splice(drops.indexOf(o), 1); }
     });
     parts.slice().forEach(q => {
-      q.t -= dt; q.v.y -= 12 * dt; q.m.position.addScaledVector(q.v, dt); q.m.material.opacity = Math.max(0, q.t * 2);
-      if (q.t <= 0) { E.scene.remove(q.m); q.m.material.dispose(); parts.splice(parts.indexOf(q), 1); }
+      q.t -= dt; q.v.y -= 12 * dt; q.m.position.addScaledVector(q.v, dt); q.m.scale.setScalar(Math.max(.01, q.t * 2));
+      if (q.t <= 0) { E.scene.remove(q.m); parts.splice(parts.indexOf(q), 1); }
+    });
+  });
+  /* ── v0.005: multijogador, ciclo dia/noite (shader de céu) e otimizações ── */
+  const PM = {}, pm = c => PM[c] || (PM[c] = new T.MeshBasicMaterial({ color: c }));
+  const sky = new T.Mesh(new T.SphereGeometry(250, 16, 8), new T.ShaderMaterial({
+    side: T.BackSide, depthWrite: false, fog: false,
+    uniforms: { top: { value: new T.Color(0x3f77b5) }, hor: { value: new T.Color(0x9db9c9) } },
+    vertexShader: 'varying float h;void main(){h=normalize(position).y;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
+    fragmentShader: 'uniform vec3 top;uniform vec3 hor;varying float h;void main(){gl_FragColor=linearToOutputTexel(vec4(mix(hor,top,pow(max(h,0.),.6)),1.));}'
+  }));
+  sky.renderOrder = -1; sky.frustumCulled = false; E.scene.add(sky);
+  const hemi = E.scene.children.find(o => o.isHemisphereLight), cB = new T.Color();
+  const KEYS = [[0, 0x1b2438, 0x070b1a, 0x6a7cc0, .18], [.2, 0xf0a070, 0x4a5a95, 0xffb070, .8], [.33, 0x9db9c9, 0x3f77b5, 0xffe2b0, 1.15], [.67, 0x9db9c9, 0x3f77b5, 0xffe2b0, 1.15], [.8, 0xf08a5a, 0x4a4a85, 0xff9a60, .8], [.92, 0x1b2438, 0x070b1a, 0x6a7cc0, .18], [1.01, 0x1b2438, 0x070b1a, 0x6a7cc0, .18]];
+  let dT = 0, ang = 0;
+  E.updaters.push(dt => {
+    sky.position.copy(E.camera.position);
+    dT -= dt;
+    if (dT <= 0) {
+      dT = .1; const t = (Date.now() / 6e5 + .3) % 1; let i = 0; while (KEYS[i + 1][0] <= t) i++;
+      const a = KEYS[i], b = KEYS[i + 1], f = (t - a[0]) / (b[0] - a[0]), u = sky.material.uniforms; ang = t * 6.283;
+      u.hor.value.setHex(a[1]).lerp(cB.setHex(b[1]), f); u.top.value.setHex(a[2]).lerp(cB.setHex(b[2]), f);
+      E.scene.fog.color.copy(u.hor.value); E.scene.background.copy(u.hor.value);
+      E.sun.color.setHex(a[3]).lerp(cB.setHex(b[3]), f); const si = a[4] + (b[4] - a[4]) * f; E.sun.intensity = si; if (hemi) hemi.intensity = .3 + .4 * si / 1.15;
+    }
+    const p = E.player.position; E.sun.position.set(p.x + Math.cos(ang) * 30, p.y + 30, p.z + Math.sin(ang) * 30);
+  });
+
+  /* multijogador (Socket.io, namespace /rise — veja rise-rpg-hub.js) */
+  const net = { s: null, n: 0, t: 0, hello: null }, others = new Map();
+  function mkRemote(o) {
+    if (others.has(o.id)) return others.get(o.id);
+    const g = new T.Group(), body = new T.Mesh(new T.CylinderGeometry(.45, .55, 1.4, 12), new T.MeshStandardMaterial({ color: o.traje, roughness: .6, metalness: .2 })), head = new T.Mesh(new T.SphereGeometry(.4, 16, 12), new T.MeshStandardMaterial({ color: o.pele, roughness: .7 }));
+    body.position.y = .9; head.position.y = 2; body.castShadow = head.castShadow = true; g.add(body, head, buildExtras(o.cls, o.traje, o.det, o.pele));
+    const lb = spr(tex(o.nick + ' · Nv.' + o.lv, '#9fe0ff'), 3.8, .95); lb.position.y = 3.7; g.add(lb);
+    g.position.set(o.x || 0, 0, o.z || 0); g.visible = false; E.scene.add(g);
+    const r = { g, tx: o.x || 0, tz: o.z || 0, tr: 0, a: 0, seen: performance.now() }; others.set(o.id, r); return r;
+  }
+  function rmRemote(id) {
+    const r = others.get(id); if (!r) return; E.scene.remove(r.g);
+    r.g.traverse(o => { if (o.geometry) o.geometry.dispose(); if (o.material) { if (o.material.map) o.material.map.dispose(); o.material.dispose(); } }); others.delete(id);
+  }
+  function netStart() {
+    if (net.s || typeof io === 'undefined') return;
+    const q = new URLSearchParams(location.search).get('hub'), base = q || (location.protocol.indexOf('http') === 0 ? location.origin : 'https://wavecombat-hub.onrender.com');
+    try { net.s = io(base + '/rise', { transports: ['websocket', 'polling'], reconnectionDelay: 2000 }); } catch (e) { console.warn('Multijogador indisponível:', e); return; }
+    net.hello = () => { const p = E.player.position; net.s.emit('rise:hello', { id: PLAYER_ID, nick: NICK, cls: char.cls, traje: char.traje, det: char.det, pele: char.pele, lv: P.lv, x: p.x, z: p.z }, r => { if (r && r.ok) { net.n = r.n; r.players.forEach(mkRemote); } }); };
+    net.s.on('connect', () => { if (G.mode === 'play') net.hello(); });
+    net.s.on('disconnect', () => { net.n = 0; [...others.keys()].forEach(rmRemote); });
+    net.s.on('rise:n', n => { net.n = n; });
+    net.s.on('rise:join', mkRemote);
+    net.s.on('rise:leave', rmRemote);
+    net.s.on('rise:state', list => list.forEach(o => { const r = others.get(o.id); if (!r) return; r.tx = o.x; r.tz = o.z; r.tr = o.r; r.seen = performance.now(); if (o.a && !r.a) burst(r.g.position, 0xd9a441, 4); r.a = o.a; }));
+  }
+  let wasPlay = false;
+  E.updaters.push(dt => {
+    const play = G.mode === 'play', p = E.player.position;
+    if (play && !wasPlay) { netStart(); if (net.s && net.s.connected) net.hello(); }
+    if (!play && wasPlay && net.s && net.s.connected) net.s.emit('rise:bye');
+    wasPlay = play;
+    if (play && net.s && net.s.connected) { net.t -= dt; if (net.t <= 0) { net.t = .1; net.s.volatile.emit('rise:pos', { x: +p.x.toFixed(1), z: +p.z.toFixed(1), r: +E.player.rotation.y.toFixed(2), a: atk > 0 ? 1 : 0 }); } }
+    const now = performance.now(), k = Math.min(1, dt * 10);
+    others.forEach((r, id) => {
+      if (now - r.seen > 8000 && play) return rmRemote(id);
+      const g = r.g.position; g.x += (r.tx - g.x) * k; g.z += (r.tz - g.z) * k; g.y = E.W.H(g.x, g.z);
+      r.g.rotation.y += Math.atan2(Math.sin(r.tr - r.g.rotation.y), Math.cos(r.tr - r.g.rotation.y)) * k; r.g.visible = play;
     });
   });
   document.body.dataset.mode = 'start';
