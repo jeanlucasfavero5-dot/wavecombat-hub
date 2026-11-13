@@ -139,6 +139,20 @@ body[data-mode=play] #mmW{display:block}
 #mmW.xl #mmX{display:grid}#mmW.xl #mm{cursor:default}
 #coords{display:none;position:fixed;z-index:6;top:calc(10px + var(--safe-t));left:50%;transform:translateX(-50%);padding:4px 12px;font-size:12px;background:var(--panel);border:1px solid var(--line);border-radius:8px;white-space:nowrap;pointer-events:none}
 body[data-mode=play] #coords{display:block}
+
+/* ── v0.004: combate, NPCs e missões ── */
+#hp{display:none;position:fixed;z-index:6;left:50%;bottom:calc(14px + var(--safe-b));transform:translateX(-50%);width:min(40vw,260px);height:18px;background:rgba(0,0,0,.55);border:1px solid var(--line);border-radius:9px;overflow:hidden;pointer-events:none}
+body[data-mode=play] #hp{display:block}
+#hpF{display:block;height:100%;background:linear-gradient(90deg,#8a2a2a,#d4543f);transition:width .15s}
+#hpT{position:absolute;inset:0;text-align:center;font-size:12px;line-height:18px;text-shadow:0 1px 2px #000}
+#hurt{position:fixed;inset:0;z-index:6;pointer-events:none;opacity:0;box-shadow:inset 0 0 120px rgba(200,40,40,.75)}
+#hurt.on{animation:hf .35s}@keyframes hf{0%{opacity:1}100%{opacity:0}}
+.dmg{position:fixed;z-index:7;pointer-events:none;transform:translate(-50%,-50%);font:700 16px Cinzel,serif;text-shadow:0 2px 3px #000;animation:fl .8s forwards}
+@keyframes fl{to{transform:translate(-50%,-190%);opacity:0}}
+#talk{display:none;position:fixed;z-index:6;left:50%;bottom:calc(46px + var(--safe-b));transform:translateX(-50%)}
+#qt{display:none;position:fixed;z-index:6;left:calc(10px + var(--safe-l));top:calc(64px + var(--safe-t));max-width:min(44vw,250px);padding:6px 10px;font-size:12px;line-height:1.5;background:var(--panel);border:1px solid var(--line);border-radius:10px;pointer-events:none}
+body[data-mode=play] #qt{display:block}
+#pNpc{left:50%;bottom:calc(20px + var(--safe-b));transform:translateX(-50%);width:min(92vw,460px)}
 </style>
 </head>
 <body>
@@ -191,6 +205,8 @@ body[data-mode=play] #coords{display:block}
 <div id="pPro" class="pan big"><div class="rowh"><button class="btn px">← Voltar</button><h3>Perfil</h3></div><div id="proB"></div></div>
 <div id="pClan" class="pan big"><div class="rowh"><button class="btn px">← Lobby</button><h3>Clã</h3></div><div id="clanB"></div></div>
 <div id="pPass" class="pan big"><div class="rowh"><button class="btn px">← Lobby</button><h3>Passe</h3></div><div id="passB"></div></div>
+<div id="hp"><i id="hpF"></i><span id="hpT"></span></div><div id="hurt"></div><div id="qt"></div><button class="btn" id="talk">💬 Falar (E)</button>
+<div id="pNpc" class="pan"><h3 id="npcN"></h3><div id="npcB"></div><div class="row2" id="npcA"></div></div>
 <div id="toast"></div>
 <div id="rot"><div class="ph">📱</div>Gire a tela<small>RISE RPG funciona na horizontal</small></div>
 
@@ -215,7 +231,7 @@ const URL_ID = (params.get('id') || '').trim();
 const PLAYER_ID = URL_ID || '0'; // fallback para testes locais
 const $ = id => document.getElementById(id);
 const fmt = n => Number(n).toLocaleString('pt-BR');
-const VERSION = '0.003'; // suba a cada atualização enviada
+const VERSION = '0.004'; // suba a cada atualização enviada
 const DIA = {};
 const G = { mode: 'start' };
 let NICK = 'Visitante';
@@ -650,7 +666,7 @@ function initUI(E) {
 
   /* telas e painéis */
   function panel(id) {
-    ['pSet', 'pMail', 'pPro', 'pClan', 'pPass'].forEach(p => $(p).classList.toggle('on', p === id && !$(p).classList.contains('on')));
+    ['pSet', 'pMail', 'pPro', 'pClan', 'pPass', 'pNpc'].forEach(p => $(p).classList.toggle('on', p === id && !$(p).classList.contains('on')));
     if (id === 'pMail' && $('pMail').classList.contains('on')) { $('mbadge').style.display = 'none'; mailRender(); }
     if ($(id) && $(id).classList.contains('on') && RND[id]) RND[id]();
   }
@@ -732,8 +748,8 @@ function initUI(E) {
   /* controles: teclado + joystick/botões touch */
   const keys = {}, joy = { x: 0, y: 0 };
   let atk = 0, dash = 0, cd = 0;
-  const attack = () => { if (G.mode === 'play') { if (atk <= 0) addXP(2); atk = .3; } };
-  const skill = () => { if (G.mode === 'play' && cd <= 0) { dash = .25 + .05 * ((P.sk[char.cls] || [])[0] || 0); cd = 1.5; } };
+  const attack = () => { if (G.mode === 'play' && atk <= 0) { atk = .3; doAttack(); } };
+  const skill = () => { if (G.mode === 'play' && cd <= 0) { dash = .25 + .05 * ((P.sk[char.cls] || [])[0] || 0); cd = 1.5; doSkill(); } };
   addEventListener('keydown', e => {
     if (/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return;
     const k = e.key.toLowerCase(); keys[k] = 1;
@@ -792,6 +808,7 @@ function initUI(E) {
     B.append(h('p', '', NICK + ' ✔️ · ID ' + PLAYER_ID), h('h3', '', 'Nível ' + P.lv));
     const r = h('div', 'st'), i = h('i'), b = h('b'); b.style.width = P.xp / need(P.lv) * 100 + '%'; i.append(b); r.append(h('span', '', P.xp + '/' + need(P.lv)), i); B.append(r);
     B.append(h('p', '', CLASSES[char.cls].nome + ' · Pontos de habilidade: ' + P.sp));
+    B.append(h('p', '', 'Mochila: ' + (Object.entries(P.mat || {}).filter(([, v]) => v > 0).map(([k, v]) => k + ' ×' + v).join(', ') || 'vazia')));
     const ks = P.sk[char.cls] = P.sk[char.cls] || [0, 0, 0];
     SK[char.cls].forEach((n, k) => {
       const row = h('div', 'row2'), t = h('span', '', n + ' — Nv. ' + ks[k] + '/5'), u = h('button', 'btn', '+');
@@ -932,6 +949,197 @@ function initUI(E) {
     A.append(xi, zi);
     mk('Teleportar', () => { const p = E.player.position, c = v => Math.max(-HS + 4, Math.min(HS - 4, +v || 0)); p.x = c(xi.value); p.z = c(zi.value); p.y = E.W.H(p.x, p.z); toast('Teleportado'); });
   }
+  /* ── v0.004: monstros com IA, combate, drops, NPCs e missões ── */
+  P.q = P.q || {}; P.mat = P.mat || {};
+  const MD = [
+    { n: 'Lobo', b: [0, 4], hp: 40, dmg: 6, spd: 4.2, xp: 18, col: 0x7a7a80, drop: 'Presa' },
+    { n: 'Escorpião', b: [1], hp: 50, dmg: 8, spd: 3.4, xp: 22, col: 0xb07a2a, drop: 'Ferrão' },
+    { n: 'Yeti', b: [2], hp: 90, dmg: 12, spd: 3, xp: 40, col: 0xe6eef4, sz: 1.4, drop: 'Pelo Gélido' },
+    { n: 'Sapo Tóxico', b: [3], hp: 55, dmg: 9, spd: 3.2, xp: 26, col: 0x5fa04a, drop: 'Gosma' },
+    { n: 'Leão', b: [5], hp: 70, dmg: 11, spd: 4.6, xp: 34, col: 0xc8913a, sz: 1.2, drop: 'Presa' },
+    { n: 'Demônio de Lava', b: [6], hp: 110, dmg: 15, spd: 3.4, xp: 55, col: 0xd2451e, sz: 1.3, drop: 'Brasa' },
+    { n: 'Golem de Cristal', b: [7], hp: 130, dmg: 14, spd: 2.6, xp: 60, col: 0x9a7aff, sz: 1.5, drop: 'Cristal' }
+  ];
+  const BOSS = { n: 'Guardião do Portal', hp: 900, dmg: 28, spd: 3.2, xp: 500, col: 0x7a1fa2, sz: 3, drop: 'Núcleo Arcano', boss: true };
+  const GB = new T.SphereGeometry(.7, 10, 8), GH = new T.SphereGeometry(.38, 8, 6), GE = new T.SphereGeometry(.08, 6, 4), GC = new T.ConeGeometry(.12, .4, 5);
+  const GBar = new T.BoxGeometry(1, .12, .04).translate(.5, 0, 0), GD = new T.OctahedronGeometry(.25), GP = new T.BoxGeometry(.14, .14, .14);
+  const mons = [], drops = [], parts = [], bossDead = {};
+  let hp = -1, hurtT = 0, spT = 0, bsT = 0, qT = 0, beamT = 0, curNpc = 0, near = -1;
+  const maxHp = () => 60 + CLASSES[char.cls].st.Vida * 12 + (P.lv - 1) * 10;
+  const updHp = () => { const m = maxHp(); $('hpF').style.width = Math.max(0, hp / m * 100) + '%'; $('hpT').textContent = Math.ceil(hp) + ' / ' + m + ' · Nv. ' + P.lv; };
+
+  function mkMon(d) {
+    const g = new T.Group(), mat = new T.MeshStandardMaterial({ color: d.col, roughness: .7, emissive: 0, emissiveIntensity: .6 });
+    const body = new T.Mesh(GB, mat); body.scale.set(1, .9, 1.3); body.position.y = .8;
+    const head = new T.Mesh(GH, mat); head.position.set(0, 1.1, .85); body.castShadow = head.castShadow = true; g.add(body, head);
+    const eye = new T.MeshBasicMaterial({ color: 0xff3030 }), horn = new T.MeshStandardMaterial({ color: 0x2a2a2a });
+    [-1, 1].forEach(x => { const e = new T.Mesh(GE, eye); e.position.set(x * .17, 1.2, 1.2); const c = new T.Mesh(GC, horn); c.position.set(x * .2, 1.5, .8); g.add(e, c); });
+    const bar = new T.Group(), bg = new T.Mesh(GBar, new T.MeshBasicMaterial({ color: 0x000000 })), fill = new T.Mesh(GBar, new T.MeshBasicMaterial({ color: d.boss ? 0xb040ff : 0xd4543f }));
+    bg.scale.set(1.2, 1.3, 1); bg.position.x = -.6; fill.position.set(-.55, 0, .03); fill.scale.x = 1.1; bar.add(bg, fill); bar.position.y = 2.4; g.add(bar);
+    g.scale.setScalar(d.sz || 1); return { g, mat, bar, fill };
+  }
+  function spawnMon(d, x, z, key) {
+    const lv = 1 + Math.hypot(x, z) / 1500, m = mkMon(d);
+    m.g.position.set(x, E.W.H(x, z), z); E.scene.add(m.g);
+    Object.assign(m, { d, lv, hp: d.hp * lv, max: d.hp * lv, dmg: d.dmg * lv, sz: d.sz || 1, r: .8 * (d.sz || 1), cd: 1, flash: 0, w: 0, wa: 0, agro: false, key });
+    mons.push(m);
+  }
+  function rmMon(m) { E.scene.remove(m.g); m.mat.dispose(); const i = mons.indexOf(m); if (i >= 0) mons.splice(i, 1); }
+  function clearAll() { mons.slice().forEach(rmMon); drops.splice(0).forEach(q => E.scene.remove(q.m)); }
+
+  function dmgText(pos, txt, crit, col) {
+    const v = new T.Vector3(pos.x, pos.y + 2.2, pos.z).project(E.camera), e = h('div', 'dmg', txt);
+    e.style.left = (v.x * .5 + .5) * innerWidth + 'px'; e.style.top = (-v.y * .5 + .5) * innerHeight + 'px'; e.style.color = col || (crit ? '#ffd24a' : '#fff'); if (crit) e.style.fontSize = '22px';
+    document.body.append(e); setTimeout(() => e.remove(), 800);
+  }
+  function burst(pos, col, n = 8) {
+    for (let i = 0; i < n; i++) {
+      const m = new T.Mesh(GP, new T.MeshBasicMaterial({ color: col, transparent: true })); m.position.set(pos.x, pos.y + 1, pos.z); E.scene.add(m);
+      parts.push({ m, v: new T.Vector3((Math.random() - .5) * 6, Math.random() * 5 + 1, (Math.random() - .5) * 6), t: .5 });
+    }
+  }
+  const beamM = new T.Mesh(new T.CylinderGeometry(.05, .05, 1, 6), new T.MeshBasicMaterial({ color: 0xffffff })); beamM.visible = false; E.scene.add(beamM);
+  function beam(a, b, col) {
+    const A = new T.Vector3(a.x, a.y + 1.4, a.z), Bv = new T.Vector3(b.x, b.y + 1, b.z);
+    beamM.material.color.setHex(col); beamM.position.copy(A).add(Bv).multiplyScalar(.5); beamM.lookAt(Bv); beamM.rotateX(Math.PI / 2); beamM.scale.set(1, A.distanceTo(Bv), 1); beamM.visible = true; beamT = .1;
+  }
+
+  /* dano e morte */
+  function hurt(n) {
+    n = Math.max(1, Math.round(n * (1 - CLASSES[char.cls].st.Defesa * .04))); hp -= n;
+    const e = $('hurt'); e.classList.remove('on'); void e.offsetWidth; e.classList.add('on'); dmgText(E.player.position, '-' + n, false, '#ff6b5a');
+    if (hp <= 0) { hp = maxHp(); E.player.position.set(0, 0, 0); clearAll(); toast('Você caiu! Voltou ao ponto inicial.'); }
+    hurtT = 5; updHp();
+  }
+  function hit(m, dmg, crit) {
+    m.hp -= dmg; m.flash = .12; m.agro = true; dmgText(m.g.position, String(dmg), crit); burst(m.g.position, crit ? 0xffd24a : 0xffffff, crit ? 10 : 6);
+    m.fill.scale.x = Math.max(.001, m.hp / m.max) * 1.1;
+    if (m.hp <= 0) kill(m);
+  }
+  function dropItem(name, x, z, col) {
+    const m = new T.Mesh(GD, new T.MeshBasicMaterial({ color: col })); m.position.set(x, E.W.H(x, z) + .6, z); E.scene.add(m); drops.push({ m, name, y: m.position.y, t: 60 });
+  }
+  function kill(m) {
+    const d = m.d, q = m.g.position;
+    burst(q, d.col, 16); addXP(Math.round(d.xp * m.lv));
+    if (Math.random() < .7 || d.boss) dropItem(d.drop, q.x + 1, q.z, d.col);
+    if (d.boss) { dropItem(d.drop, q.x - 1, q.z, d.col); dropItem(d.drop, q.x, q.z + 1.5, d.col); bossDead[m.key] = Date.now(); }
+    if (Math.random() < .15) dropItem('Poção de Vida', q.x, q.z - 1, 0xff4a6a);
+    QS.forEach(k => { const st = P.q[k.id]; if (st && st.s === 'a' && ((k.t === 'kill' && (k.alvo === '*' || k.alvo === d.n)) || (k.t === 'boss' && d.boss))) st.n = (st.n || 0) + 1; });
+    saveP(); rmMon(m); updQt(); npcMarks();
+  }
+  function pdmg() {
+    const c = Math.random() < .12 + (char.cls === 3 ? .15 : 0);
+    return [Math.round((8 + CLASSES[char.cls].st.Ataque * 2 + P.lv * 1.5) * (.9 + Math.random() * .2) * (c ? 2 : 1)), c];
+  }
+  function doAttack() {
+    const p = E.player.position, r = E.player.rotation.y, fx = Math.sin(r), fz = Math.cos(r), rg = char.cls === 1 || char.cls === 2, R = rg ? 9 : 3.2;
+    const dist = m => Math.hypot(m.g.position.x - p.x, m.g.position.z - p.z);
+    mons.filter(m => { const d = dist(m); return d < R + m.r && ((m.g.position.x - p.x) * fx + (m.g.position.z - p.z) * fz) / (d || 1) > (rg ? .6 : .1); })
+      .sort((a, b) => dist(a) - dist(b)).slice(0, rg ? 1 : 3).forEach(m => { hit(m, ...pdmg()); if (rg) beam(p, m.g.position, char.cls === 2 ? 0x8a6aff : 0xd9a441); });
+  }
+  function doSkill() {
+    const p = E.player.position, mul = 1.4 + .15 * ((P.sk[char.cls] || [])[0] || 0); burst(p, 0xd9a441, 14);
+    mons.filter(m => Math.hypot(m.g.position.x - p.x, m.g.position.z - p.z) < 5.5 + m.r).forEach(m => { const [d, c] = pdmg(); hit(m, Math.round(d * mul), c); });
+  }
+
+  /* NPCs e missões */
+  const QS = [
+    { id: 'q1', npc: 0, nome: 'Ameaça dos Lobos', desc: 'Derrote 5 lobos nas Planícies ou na Floresta.', t: 'kill', alvo: 'Lobo', n: 5, xp: 150, sp: 0 },
+    { id: 'q2', npc: 1, nome: 'Presas para o Mercado', desc: 'Colete 4 Presas dos monstros.', t: 'collect', alvo: 'Presa', n: 4, xp: 120, sp: 1 },
+    { id: 'q3', npc: 2, nome: 'Olhos no Horizonte', desc: 'Descubra 3 biomas diferentes.', t: 'explore', n: 3, xp: 200, sp: 1 },
+    { id: 'q4', npc: 0, nome: 'Caçada ao Guardião', desc: 'Derrote um Guardião do Portal, perto de um Portal de Dungeon.', t: 'boss', n: 1, xp: 500, sp: 2, req: 'q1' },
+    { id: 'q5', npc: 1, nome: 'Limpeza Geral', desc: 'Derrote 8 monstros de qualquer tipo.', t: 'kill', alvo: '*', n: 8, xp: 250, sp: 1, req: 'q2' }
+  ];
+  const NPC = [
+    { nome: 'Capitão Aldric', x: 9, z: 7, col: 0xb23a2e, fala: 'Os monstros estão cada vez mais ousados.', fim: 'Boa caçada, viajante.' },
+    { nome: 'Lyra, a Caçadora', x: -9, z: 8, col: 0x2f6b3a, fala: 'Preciso de material para o mercado.', fim: 'As trilhas são seguras graças a você.' },
+    { nome: 'Sábio Orin', x: 12, z: -9, col: 0x3b4fb8, fala: 'Este mundo é vasto e cheio de segredos.', fim: 'O mundo ainda guarda muitos segredos.' }
+  ];
+  const tex = (t, col) => { const c = document.createElement('canvas'); c.width = 256; c.height = 64; const x = c.getContext('2d'); x.font = 'bold 40px Cinzel, serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.lineWidth = 6; x.strokeStyle = '#000'; x.strokeText(t, 128, 34); x.fillStyle = col; x.fillText(t, 128, 34); return new T.CanvasTexture(c); };
+  const spr = (t, w, hh) => { const q = new T.Sprite(new T.SpriteMaterial({ map: t, depthTest: false, transparent: true })); q.scale.set(w, hh, 1); return q; };
+  const tE = tex('!', '#ffd24a'), tQ = tex('?', '#7fe07a');
+  NPC.forEach(n => {
+    const g = new T.Group(), m = new T.MeshStandardMaterial({ color: n.col, roughness: .6 }), sk = new T.MeshStandardMaterial({ color: 0xe0ac82 });
+    const b = new T.Mesh(new T.CylinderGeometry(.45, .55, 1.4, 10), m); b.position.y = .9; const hd = new T.Mesh(new T.SphereGeometry(.38, 12, 10), sk); hd.position.y = 2;
+    const cap = new T.Mesh(new T.ConeGeometry(.45, .6, 8), m); cap.position.y = 2.55; b.castShadow = hd.castShadow = true; g.add(b, hd, cap);
+    const lb = spr(tex(n.nome, '#e9e4d4'), 3.4, .85); lb.position.y = 3.4; n.mk = spr(tE, 1.1, 1.1); n.mk.position.y = 4.3; g.add(lb, n.mk);
+    g.position.set(n.x, 0, n.z); g.rotation.y = Math.atan2(-n.x, -n.z); g.visible = false; E.scene.add(g); n.g = g;
+  });
+  const prog = k => k.t === 'collect' ? (P.mat[k.alvo] || 0) : k.t === 'explore' ? P.seen.length : ((P.q[k.id] || {}).n || 0);
+  const qOf = i => QS.find(k => k.npc === i && (P.q[k.id] || {}).s !== 'claimed' && (!k.req || (P.q[k.req] || {}).s === 'claimed'));
+  function updQt() {
+    const L = QS.filter(k => (P.q[k.id] || {}).s === 'a'), el = $('qt'); el.textContent = ''; el.style.display = L.length ? '' : 'none';
+    L.forEach(k => el.append(h('p', '', (prog(k) >= k.n ? '✔ ' : '• ') + k.nome + ' ' + Math.min(prog(k), k.n) + '/' + k.n)));
+  }
+  function npcMarks() {
+    NPC.forEach((n, i) => { const k = qOf(i), st = k && (P.q[k.id] || {}).s, ready = k && st === 'a' && prog(k) >= k.n; n.mk.visible = !!k && (!st || ready); n.mk.material.map = ready ? tQ : tE; });
+  }
+  function renderNpc() {
+    const n = NPC[curNpc], k = qOf(curNpc), B = $('npcB'), A = $('npcA'), cl = h('button', 'btn', 'Fechar'); cl.onclick = () => panel(null);
+    $('npcN').textContent = n.nome; B.textContent = A.textContent = '';
+    if (!k) { B.append(h('p', '', n.fim)); A.append(cl); return; }
+    const st = (P.q[k.id] || {}).s, pg = prog(k);
+    B.append(h('h3', '', k.nome), h('p', '', (st ? '' : n.fala + ' ') + k.desc), h('p', '', 'Progresso: ' + Math.min(pg, k.n) + '/' + k.n + ' · Recompensa: ' + k.xp + ' XP' + (k.sp ? ' + ' + k.sp + ' pt de habilidade' : '')));
+    if (!st) { const b = h('button', 'btn big', 'Aceitar'); b.onclick = () => { P.q[k.id] = { s: 'a', n: 0 }; saveP(); updQt(); npcMarks(); renderNpc(); }; A.append(b); }
+    else if (pg >= k.n) {
+      const b = h('button', 'btn big', 'Entregar');
+      b.onclick = () => { if (k.t === 'collect') P.mat[k.alvo] -= k.n; P.q[k.id].s = 'claimed'; P.sp += k.sp; addXP(k.xp); saveP(); toast('Missão concluída: ' + k.nome); updQt(); npcMarks(); renderNpc(); }; A.append(b);
+    }
+    A.append(cl);
+  }
+  RND.pNpc = renderNpc;
+  const talk = () => { if (G.mode === 'play' && near >= 0) { curNpc = near; panel('pNpc'); } };
+  $('talk').onclick = talk;
+  addEventListener('keydown', e => { if (!/INPUT|TEXTAREA|SELECT/.test(e.target.tagName) && e.key.toLowerCase() === 'e') talk(); });
+  updQt(); npcMarks();
+
+  /* laço de combate */
+  E.updaters.push(dt => {
+    const play = G.mode === 'play', p = E.player.position;
+    NPC.forEach(n => { n.g.visible = play; });
+    if (!play) { if (mons.length || drops.length) clearAll(); $('talk').style.display = 'none'; return; }
+    if (hp < 0) { hp = maxHp(); updHp(); }
+    hurtT = Math.max(0, hurtT - dt); if (hurtT <= 0 && hp < maxHp()) { hp = Math.min(maxHp(), hp + maxHp() * .02 * dt); updHp(); }
+    beamT -= dt; if (beamT <= 0) beamM.visible = false;
+    near = -1; NPC.forEach((n, i) => { if (Math.hypot(n.g.position.x - p.x, n.g.position.z - p.z) < 4) near = i; });
+    $('talk').style.display = near >= 0 ? 'block' : 'none';
+    qT -= dt; if (qT < 0) { qT = .5; updQt(); npcMarks(); }
+    spT -= dt;
+    if (spT < 0 && mons.length < 12) {
+      spT = .8; const a = Math.random() * 6.28, r = 28 + Math.random() * 27, x = p.x + Math.cos(a) * r, z = p.z + Math.sin(a) * r;
+      if (Math.hypot(x, z) > 45 && Math.abs(x) < HS - 10 && Math.abs(z) < HS - 10) { const ds = MD.filter(d => d.b.includes(E.W.biome(x, z))); if (ds.length) spawnMon(ds[Math.floor(Math.random() * ds.length)], x, z); }
+    }
+    bsT -= dt;
+    if (bsT < 0) {
+      bsT = 2; const cx = Math.floor(p.x / CH), cz = Math.floor(p.z / CH);
+      for (let i = -2; i <= 2; i++) for (let j = -2; j <= 2; j++) {
+        const st = E.W.structAt(cx + i, cz + j), k = (cx + i) + ',' + (cz + j);
+        if (st && st.type === 5 && !mons.some(m => m.key === k) && Date.now() - (bossDead[k] || 0) > 3e5) spawnMon(BOSS, st.x + 6, st.z, k);
+      }
+    }
+    mons.slice().forEach(m => {
+      const g = m.g, q = g.position, dx = p.x - q.x, dz = p.z - q.z, d = Math.hypot(dx, dz);
+      if (d > (m.d.boss ? 260 : 100)) return rmMon(m);
+      m.cd -= dt; m.flash = Math.max(0, m.flash - dt);
+      if (d < (m.agro ? 40 : 14)) { if (d > 1.6 * m.sz) { const sp = m.d.spd * dt; q.x += dx / d * sp; q.z += dz / d * sp; } g.rotation.y = Math.atan2(dx, dz); }
+      else { m.w -= dt; if (m.w < 0) { m.w = 2 + Math.random() * 3; m.wa = Math.random() * 6.28; } q.x += Math.sin(m.wa) * m.d.spd * .3 * dt; q.z += Math.cos(m.wa) * m.d.spd * .3 * dt; g.rotation.y = m.wa; }
+      if (d < 2.1 * m.sz && m.cd <= 0) { m.cd = 1.3; hurt(m.dmg); }
+      q.y = E.W.H(q.x, q.z); m.mat.emissive.setHex(m.flash > 0 ? 0xffffff : 0); m.bar.quaternion.copy(g.quaternion).invert().multiply(E.camera.quaternion);
+    });
+    drops.slice().forEach(o => {
+      o.t -= dt; o.m.rotation.y += dt * 2; o.m.position.y = o.y + Math.sin(o.t * 4) * .15;
+      if (Math.hypot(o.m.position.x - p.x, o.m.position.z - p.z) < 2.2) {
+        if (o.name === 'Poção de Vida') { hp = Math.min(maxHp(), hp + maxHp() * .4); updHp(); toast('+40% de vida'); } else { P.mat[o.name] = (P.mat[o.name] || 0) + 1; toast('+1 ' + o.name); saveP(); updQt(); npcMarks(); }
+        o.t = 0;
+      }
+      if (o.t <= 0) { E.scene.remove(o.m); drops.splice(drops.indexOf(o), 1); }
+    });
+    parts.slice().forEach(q => {
+      q.t -= dt; q.v.y -= 12 * dt; q.m.position.addScaledVector(q.v, dt); q.m.material.opacity = Math.max(0, q.t * 2);
+      if (q.t <= 0) { E.scene.remove(q.m); q.m.material.dispose(); parts.splice(parts.indexOf(q), 1); }
+    });
+  });
   document.body.dataset.mode = 'start';
 }
 
