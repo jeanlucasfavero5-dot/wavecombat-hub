@@ -196,7 +196,7 @@ module.exports = function (io) {
       const c = String((d && d.cod) || '').toUpperCase();
       const r = salas[c];
       if (!r || r.host !== me.id) return;
-      const ordem = [...r.mem].sort((x, y) => (x.id === r.host ? -1 : y.id === r.host ? 1 : 0));
+      const ordem = [...r.mem].sort((x, y) => (x.sid === s.id ? -1 : y.sid === s.id ? 1 : 0));
       criaPartida(ordem, Number(d.dur) || r.cfg.dur || 180);
     });
     s.on('street:sala:chat', (d) => {
