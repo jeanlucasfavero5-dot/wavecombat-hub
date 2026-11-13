@@ -153,6 +153,8 @@ body[data-mode=play] #hp{display:block}
 #qt{display:none;position:fixed;z-index:6;left:calc(10px + var(--safe-l));top:calc(64px + var(--safe-t));max-width:min(44vw,250px);padding:6px 10px;font-size:12px;line-height:1.5;background:var(--panel);border:1px solid var(--line);border-radius:10px;pointer-events:none}
 body[data-mode=play] #qt{display:block}
 #pNpc{left:50%;bottom:calc(20px + var(--safe-b));transform:translateX(-50%);width:min(92vw,460px)}
+#bSk2{right:calc(54px + 156px*var(--s) + var(--safe-r))}
+#bSk3{right:calc(66px + 234px*var(--s) + var(--safe-r))}
 </style>
 </head>
 <body>
@@ -199,7 +201,7 @@ body[data-mode=play] #qt{display:block}
   <input id="mTo" placeholder="ID do destinatário" style="display:none">
   <div class="row2" style="margin:0"><input id="mIn" maxlength="140" placeholder="Escreva uma mensagem" style="flex:1"><button class="btn" id="mSend" style="flex:none">Enviar</button></div>
 </div>
-<div id="tc"><div id="joy"><i></i></div><button id="bSkl" aria-label="Habilidade">✨</button><button id="bAtk" aria-label="Atacar">⚔️</button></div>
+<div id="tc"><div id="joy"><i></i></div><button id="bSkl" aria-label="Habilidade">✨</button><button id="bSk2" aria-label="Habilidade 2">🛡️</button><button id="bSk3" aria-label="Habilidade 3">💥</button><button id="bAtk" aria-label="Atacar">⚔️</button></div>
 <div id="cg"><div id="cgP"><div id="cgL"></div><div class="row2"><input id="cgI" maxlength="140" placeholder="Mensagem"><button class="btn" id="cgS" style="flex:none">Enviar</button></div></div><button class="ib" id="cgH" aria-label="Chat geral">💬<b id="cgBd">!</b></button></div>
 <div id="mmW"><canvas id="mm" width="240" height="240"></canvas><button id="mmX" class="ib" aria-label="Fechar mapa">✕</button></div><div id="coords"></div>
 <div id="pPro" class="pan big"><div class="rowh"><button class="btn px">← Voltar</button><h3>Perfil</h3></div><div id="proB"></div></div>
@@ -232,7 +234,7 @@ const URL_ID = (params.get('id') || '').trim();
 const PLAYER_ID = URL_ID || '0'; // fallback para testes locais
 const $ = id => document.getElementById(id);
 const fmt = n => Number(n).toLocaleString('pt-BR');
-const VERSION = '0.005'; // suba a cada atualização enviada
+const VERSION = '0.006'; // suba a cada atualização enviada
 const DIA = {};
 const G = { mode: 'start' };
 let NICK = 'Visitante';
@@ -638,7 +640,7 @@ function initUI(E) {
   function applyChar() {
     E.body.material.color.setHex(char.traje); E.head.material.color.setHex(char.pele);
     if (extras) E.player.remove(extras);
-    extras = buildExtras(char.cls, char.traje, char.det, char.pele); E.player.add(extras);
+    extras = buildExtras(char.cls, char.traje, char.det, char.pele); cosm(extras); E.player.add(extras);
   }
   function renderSel() {
     const L = $('clsL'), P = $('selP'); L.textContent = ''; P.textContent = '';
@@ -687,7 +689,7 @@ function initUI(E) {
     LS.set('rise_char_' + PLAYER_ID, char); hasChar = true;
     if (coarse && !document.fullscreenElement) fs();
     go('play');
-    toast(coarse ? 'Joystick: mover · ⚔️ atacar · ✨ habilidade' : 'WASD mover · Espaço atacar · K habilidade · Esc menu');
+    toast(coarse ? 'Joystick: mover · ⚔️ atacar · ✨ habilidade' : 'WASD mover · Espaço atacar · K/L/O habilidades · E falar · B emote · Esc menu');
   }
   $('bPlay').onclick = () => go('lobby');
   $('bFs').onclick = $('cFs').onclick = fs;
@@ -809,7 +811,7 @@ function initUI(E) {
     B.append(h('p', '', NICK + ' ✔️ · ID ' + PLAYER_ID), h('h3', '', 'Nível ' + P.lv));
     const r = h('div', 'st'), i = h('i'), b = h('b'); b.style.width = P.xp / need(P.lv) * 100 + '%'; i.append(b); r.append(h('span', '', P.xp + '/' + need(P.lv)), i); B.append(r);
     B.append(h('p', '', CLASSES[char.cls].nome + ' · Pontos de habilidade: ' + P.sp));
-    B.append(h('p', '', 'Mochila: ' + (Object.entries(P.mat || {}).filter(([, v]) => v > 0).map(([k, v]) => k + ' ×' + v).join(', ') || 'vazia')));
+    renderBag(B);
     const ks = P.sk[char.cls] = P.sk[char.cls] || [0, 0, 0];
     SK[char.cls].forEach((n, k) => {
       const row = h('div', 'row2'), t = h('span', '', n + ' — Nv. ' + ks[k] + '/5'), u = h('button', 'btn', '+');
@@ -1007,13 +1009,15 @@ function initUI(E) {
 
   /* dano e morte */
   function hurt(n) {
-    n = Math.max(1, Math.round(n * (1 - CLASSES[char.cls].st.Defesa * .04))); hp -= n;
+    n = Math.max(1, Math.round(n * (1 - CLASSES[char.cls].st.Defesa * .04)));
+    if (buf.shield > 0) { const a = Math.min(buf.shield, n); buf.shield -= a; n -= a; if (n <= 0) { dmgText(E.player.position, 'bloqueado', false, '#7fb0ff'); return; } }
+    hp -= n;
     const e = $('hurt'); e.classList.remove('on'); void e.offsetWidth; e.classList.add('on'); dmgText(E.player.position, '-' + n, false, '#ff6b5a');
     if (hp <= 0) { hp = maxHp(); E.player.position.set(0, 0, 0); clearAll(); toast('Você caiu! Voltou ao ponto inicial.'); }
     hurtT = 5; updHp();
   }
   function hit(m, dmg, crit) {
-    m.hp -= dmg; m.flash = .12; m.agro = true; dmgText(m.g.position, String(dmg), crit); burst(m.g.position, crit ? 0xffd24a : 0xffffff, crit ? 10 : 6);
+    m.hp -= dmg; m.flash = .12; m.agro = true; if (buf.pois > 0) m.pois = 6; dmgText(m.g.position, String(dmg), crit); burst(m.g.position, crit ? 0xffd24a : 0xffffff, crit ? 10 : 6);
     m.fill.scale.x = Math.max(.001, m.hp / m.max) * 1.1;
     if (m.hp <= 0) kill(m);
   }
@@ -1030,10 +1034,11 @@ function initUI(E) {
     saveP(); rmMon(m); updQt(); npcMarks();
   }
   function pdmg() {
-    const c = Math.random() < .12 + (char.cls === 3 ? .15 : 0);
-    return [Math.round((8 + CLASSES[char.cls].st.Ataque * 2 + P.lv * 1.5) * (.9 + Math.random() * .2) * (c ? 2 : 1)), c];
+    const c = buf.crit > 0 || Math.random() < .12 + (char.cls === 3 ? .15 : 0);
+    return [Math.round((8 + CLASSES[char.cls].st.Ataque * 2 + P.lv * 1.5) * (.9 + Math.random() * .2) * (c ? 2 : 1) * (1 + .04 * (P.wl || 0)) * (buf.dmg > 0 ? 1.3 : 1)), c];
   }
   function doAttack() {
+    if (buf.crit > 0) queueMicrotask(() => { buf.crit--; });
     const p = E.player.position, r = E.player.rotation.y, fx = Math.sin(r), fz = Math.cos(r), rg = char.cls === 1 || char.cls === 2, R = rg ? 9 : 3.2;
     const dist = m => Math.hypot(m.g.position.x - p.x, m.g.position.z - p.z);
     mons.filter(m => { const d = dist(m); return d < R + m.r && ((m.g.position.x - p.x) * fx + (m.g.position.z - p.z) * fz) / (d || 1) > (rg ? .6 : .1); })
@@ -1122,7 +1127,7 @@ function initUI(E) {
     mons.slice().forEach(m => {
       const g = m.g, q = g.position, dx = p.x - q.x, dz = p.z - q.z, d = Math.hypot(dx, dz);
       if (d > (m.d.boss ? 260 : 100)) return rmMon(m);
-      m.cd -= dt; m.flash = Math.max(0, m.flash - dt);
+      m.cd -= dt; m.flash = Math.max(0, m.flash - dt); if (m.frz > 0) { m.frz -= dt; m.mat.emissive.setHex(0x3a7aff); return; }
       if (d < (m.agro ? 40 : 14)) { if (d > 1.6 * m.sz) { const sp = m.d.spd * dt; q.x += dx / d * sp; q.z += dz / d * sp; } g.rotation.y = Math.atan2(dx, dz); }
       else { m.w -= dt; if (m.w < 0) { m.w = 2 + Math.random() * 3; m.wa = Math.random() * 6.28; } q.x += Math.sin(m.wa) * m.d.spd * .3 * dt; q.z += Math.cos(m.wa) * m.d.spd * .3 * dt; g.rotation.y = m.wa; }
       if (d < 2.1 * m.sz && m.cd <= 0) { m.cd = 1.3; hurt(m.dmg); }
@@ -1205,6 +1210,82 @@ function initUI(E) {
       const g = r.g.position; g.x += (r.tx - g.x) * k; g.z += (r.tz - g.z) * k; g.y = E.W.H(g.x, g.z);
       r.g.rotation.y += Math.atan2(Math.sin(r.tr - r.g.rotation.y), Math.cos(r.tr - r.g.rotation.y)) * k; r.g.visible = play;
     });
+  });
+  /* ── v0.006: habilidades 2 e 3, itens do passe equipáveis, forja e emote ── */
+  var cosReady = false, mascot = null, emoteT = 0;
+  P.eq = P.eq || {}; P.wl = P.wl || 0;
+  const buf = { dmg: 0, crit: 0, shield: 0, shT: 0, pois: 0, regen: 0 }, cds = [0, 0];
+  const sl = i => (P.sk[char.cls] || [])[i] || 0;
+  const heal = f => { hp = Math.min(maxHp(), hp + maxHp() * f); updHp(); };
+  const fwd = d => { const p = E.player.position, r = E.player.rotation.y; p.x = Math.max(-HS + 4, Math.min(HS - 4, p.x + Math.sin(r) * d)); p.z = Math.max(-HS + 4, Math.min(HS - 4, p.z + Math.cos(r) * d)); p.y = E.W.H(p.x, p.z); };
+  const aoe = (x, z, r, k, f) => mons.slice().filter(m => Math.hypot(m.g.position.x - x, m.g.position.z - z) < r + m.r).forEach(m => { const [d, c] = pdmg(); hit(m, Math.round(d * k), c); if (f) f(m); });
+  function useSkill(slot) {
+    if (G.mode !== 'play' || cds[slot - 1] > 0) return;
+    cds[slot - 1] = slot === 1 ? 12 : 25;
+    const c = char.cls, m = 1 + .15 * sl(slot), p = E.player.position; burst(p, 0xd9a441, 12);
+    if (slot === 1) {
+      if (c === 0) { buf.dmg = 8; heal(.1); } if (c === 1) buf.crit = 3; if (c === 2) { buf.shield = (40 + P.lv * 8) * m; buf.shT = 8; }
+      if (c === 3) buf.pois = 10; if (c === 4) { heal(.35 * m); buf.regen = 6; }
+      toast(SK[c][1]); return;
+    }
+    if (c === 0) for (let i = 0; i < 4; i++) { fwd(2); aoe(p.x, p.z, 2.5, .55 * m); }
+    if (c === 1) { aoe(p.x, p.z, 4, 1.5 * m); fwd(-8); }
+    if (c === 2) aoe(p.x, p.z, 9, 1.8 * m, mm => { mm.frz = 3; });
+    if (c === 3) { fwd(8); buf.crit = 2; aoe(p.x, p.z, 3, 1.5 * m); }
+    if (c === 4) { aoe(p.x, p.z, 9, 2.2 * m); heal(.15); }
+    toast(SK[c][2]);
+  }
+  addEventListener('keydown', e => {
+    if (/INPUT|TEXTAREA|SELECT/.test(e.target.tagName) || G.mode !== 'play') return;
+    const k = e.key.toLowerCase();
+    if (k === 'l') useSkill(1); if (k === 'o') useSkill(2);
+    if (k === 'b') { if (P.eq[REW[3]]) emoteT = 1.2; else toast('Equipe um Emote do Passe no Perfil.'); }
+  });
+  $('bSk2').addEventListener('pointerdown', e => { e.preventDefault(); useSkill(1); });
+  $('bSk3').addEventListener('pointerdown', e => { e.preventDefault(); useSkill(2); });
+
+  /* cosméticos equipados (viram parte do personagem) */
+  function cosm(g) {
+    if (!cosReady) return; mascot = null;
+    const eq = i => P.eq[REW[i]], col = n => /Elite/.test(n) ? 0xd9a441 : 0x9fe0ff;
+    const add = (geo, c, x, y, z, ry = 0, rz = 0, em = true, op = 1) => {
+      const m = new T.Mesh(geo, new T.MeshStandardMaterial({ color: c, emissive: em ? c : 0, emissiveIntensity: .6, transparent: op < 1, opacity: op, roughness: .5 }));
+      m.position.set(x, y, z); m.rotation.set(0, ry, rz); g.add(m); return m;
+    };
+    if (eq(1)) [-1, 1].forEach(s => add(new T.BoxGeometry(1.1, .08, .6), col(eq(1)), s * .8, 1.5, -.6, s * .5, -s * .5));
+    if (eq(2)) add(new T.SphereGeometry(1.6, 16, 12), col(eq(2)), 0, 1.2, 0, 0, 0, true, .15);
+    if (eq(0)) [-1, 1].forEach(s => add(new T.SphereGeometry(.34, 10, 8), col(eq(0)), s * .72, 1.6, 0, 0, 0, false));
+    if (eq(6)) g.traverse(o => { if (o.isMesh && [0xcfd3d8, 0x8a5a2b].includes(o.material.color.getHex())) { o.material.emissive.setHex(col(eq(6))); o.material.emissiveIntensity = .6; } });
+    if (eq(5)) mascot = add(new T.SphereGeometry(.22, 10, 8), col(eq(5)), 1.3, 2.4, 0);
+  }
+  function renderBag(B) {
+    const mt = Object.entries(P.mat).filter(([, v]) => v > 0), tot = mt.reduce((a, [, v]) => a + v, 0), fg = h('button', 'btn', 'Forjar arma (+4% dano) · 5 materiais');
+    B.append(h('h3', '', 'Mochila'), h('p', '', (mt.map(([k, v]) => k + ' ×' + v).join(', ') || 'Sem materiais.') + ' · Arma Nv. ' + P.wl));
+    fg.disabled = tot < 5;
+    fg.onclick = () => { let n = 5; for (const k in P.mat) { const t = Math.min(n, P.mat[k]); P.mat[k] -= t; n -= t; if (!n) break; } P.wl++; saveP(); toast('Arma Nv. ' + P.wl); renderPro(); };
+    B.append(fg, h('h3', '', 'Itens do Passe'));
+    if (P.eq[REW[4]]) B.append(h('p', '', 'Título: ' + P.eq[REW[4]]));
+    if (!P.inv.length) B.append(h('p', '', 'Resgate itens no Passe.'));
+    P.inv.forEach(n => {
+      const on = Object.values(P.eq).includes(n), b = h('button', 'btn' + (on ? ' on' : ''), (on ? '✓ ' : '') + n), t = REW.find(r => n.startsWith(r));
+      b.style.margin = '3px'; b.onclick = () => { if (on) delete P.eq[t]; else P.eq[t] = n; saveP(); applyChar(); renderPro(); }; B.append(b);
+    });
+  }
+  cosReady = true; applyChar();
+
+  /* laço: recargas, buffs, veneno, mascote, emote */
+  let bt = '';
+  E.updaters.push(dt => {
+    cds[0] = Math.max(0, cds[0] - dt); cds[1] = Math.max(0, cds[1] - dt);
+    const t2 = cds[0] > 0 ? String(Math.ceil(cds[0])) : '🛡️', t3 = cds[1] > 0 ? String(Math.ceil(cds[1])) : '💥';
+    if (bt !== t2 + t3) { bt = t2 + t3; $('bSk2').textContent = t2; $('bSk3').textContent = t3; }
+    buf.dmg = Math.max(0, buf.dmg - dt); buf.pois = Math.max(0, buf.pois - dt);
+    if (buf.shT > 0) { buf.shT -= dt; if (buf.shT <= 0) buf.shield = 0; }
+    if (mascot) { const t = Date.now() / 600; mascot.position.set(Math.cos(t) * 1.3, 2.4 + Math.sin(t * 2) * .2, Math.sin(t) * 1.3); }
+    if (G.mode !== 'play') return;
+    if (buf.regen > 0) { buf.regen -= dt; heal(.04 * dt); }
+    if (emoteT > 0) { emoteT -= dt; const p = E.player.position; E.player.rotation.y += 9 * dt; p.y = E.W.H(p.x, p.z) + (emoteT > 0 ? Math.abs(Math.sin(emoteT * 7)) * .7 : 0); }
+    mons.slice().forEach(m => { if (m.pois > 0) { m.pois -= dt; m.pt = (m.pt || 0) - dt; if (m.pt <= 0) { m.pt = 1; hit(m, Math.max(2, Math.round(pdmg()[0] * .25)), false); } } });
   });
   document.body.dataset.mode = 'start';
 }
