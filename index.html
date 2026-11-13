@@ -120,16 +120,6 @@
             to { filter: drop-shadow(0 0 14px #f59e0b); }
         }
 
-        .admin-bar-chart {
-            display: flex; align-items: flex-end; gap: 12px; height: 140px;
-            background: #000; border: 1px solid var(--steel-border); padding: 12px; border-radius: 8px; margin-top: 10px;
-        }
-        .admin-bar-col {
-            flex: 1; background: var(--accent-color); border-radius: 4px 4px 0 0;
-            text-align: center; color: #000; font-weight: bold; font-size: 10px; font-family: 'Orbitron';
-            transition: height 0.5s ease;
-        }
-
         .bg-particles {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             pointer-events: none; z-index: 0; overflow: hidden;
@@ -350,7 +340,7 @@
 <body id="mainBody" class="theme-oled">
 
     <div class="broadcast-ticker" id="broadcastTicker">
-        <marquee id="broadcastText">⚡ AVISO GLOBAL: Bem-vindos ao WaveCombat Hub v0.465!</marquee>
+        <marquee id="broadcastText">⚡ AVISO GLOBAL: Bem-vindos ao WaveCombat Hub v0.466!</marquee>
     </div>
 
     <div class="bg-particles" id="bgParticles"></div>
@@ -398,12 +388,12 @@
     <div class="modal-overlay" id="modalAlertEmail" style="z-index: 3600;">
         <div class="modal-card" style="text-align: center; border-color: var(--gold-warning);">
             <h3 style="font-family:'Orbitron'; color:var(--gold-warning); margin-bottom:10px;">⚠️ Lembrete de Segurança</h3>
-            <p style="font-size:12px; color:#94a3b8; margin-bottom:15px;">Sua conta ainda não possui um e-mail de recuperação vinculado. Cadastre um e-mail para não perder o acesso no futuro:</p>
+            <p style="font-size:12px; color:#94a3b8; margin-bottom:15px;">Sua conta ainda não possui um e-mail de recuperação vinculado. Cadastre um e-mail para salvar permanentemente na nuvem:</p>
             <form onsubmit="salvarEmailRecuperacaoDirect(event)" style="display:flex; flex-direction:column; gap:10px;">
                 <input type="email" id="inputVinculoEmailPrompt" placeholder="Digite seu e-mail principal..." class="auth-input" required style="text-align:center;">
                 <div style="display:flex; gap:10px;">
                     <button type="button" class="btn-gaming btn-danger" onclick="fecharModalAlertEmail()" style="flex:1; padding:8px; font-size:11px;">Depois</button>
-                    <button type="submit" class="btn-gaming" style="flex:1; padding:8px; font-size:11px; background:var(--gold-warning); color:#000;">Vincular E-mail</button>
+                    <button type="submit" class="btn-gaming" style="flex:1; padding:8px; font-size:11px; background:var(--gold-warning); color:#000;">Vincular & Salvar</button>
                 </div>
             </form>
         </div>
@@ -432,8 +422,8 @@
 
             <div class="form-panel" id="panelRegistro">
                 <form class="auth-form" onsubmit="fazerRegistroPlataforma(event)">
-                    <input type="text" id="regUser" placeholder="Escolha um Nick de Jogador" class="auth-input" required>
-                    <input type="email" id="regEmail" placeholder="Seu E-mail (Para recuperar senha)" class="auth-input" required>
+                    <input type="text" id="regUser" placeholder="Escolha um Nick de Jogador (Único)" class="auth-input" required>
+                    <input type="email" id="regEmail" placeholder="Seu E-mail (Salvo na Nuvem)" class="auth-input" required>
                     <input type="password" id="regPass" placeholder="Crie uma Senha" class="auth-input" required>
                     <button type="submit" class="btn-gaming" onclick="tocarSomLevelUp()" style="width:100%; padding:10px; background:#22c55e; color:#000;">Criar Minha Conta</button>
                 </form>
@@ -805,16 +795,6 @@
         <div class="admin-container">
             <h3 style="color:var(--accent-color); font-family:'Orbitron'; text-align:center; margin-bottom:15px; font-size:16px;">⚙️ PAINEL ADMINISTRATIVO COMPLETO</h3>
 
-            <div class="admin-block" style="margin-bottom: 15px;">
-                <h4 style="color:var(--accent-color);">📊 Gráficos de Acessos e Estatísticas (Tempo Real)</h4>
-                <div class="admin-bar-chart" id="adminBarChartContainer">
-                    <div class="admin-bar-col" style="height: 60%;" title="Jogo 1">60%</div>
-                    <div class="admin-bar-col" style="height: 85%;" title="Jogo 2">85%</div>
-                    <div class="admin-bar-col" style="height: 40%;" title="Jogo 3">40%</div>
-                    <div class="admin-bar-col" style="height: 95%;" title="Jogo 4">95%</div>
-                </div>
-            </div>
-
             <div class="admin-block" style="margin-bottom: 15px; border-color: var(--gold-warning);">
                 <h4 style="color:var(--gold-warning);">📢 Envio de Mensagens em Massa via Correio (Com Recompensa)</h4>
                 <input type="text" id="admMassTitulo" placeholder="Título do Comunicado Geral..." class="auth-input" style="font-size:11px;">
@@ -891,7 +871,7 @@
                 <div id="adminListaInfluenciadoresContainer" style="max-height:220px; overflow-y:auto; display:flex; flex-direction:column; gap:6px;"></div>
             </div>
 
-            <h4 style="color:#fff; margin-bottom:10px; font-family:'Orbitron'; font-size:14px; margin-top:15px;">🎮 Gestão de Games na Nuvem (Personalização Expandida)</h4>
+            <h4 style="color:#fff; margin-bottom:10px; font-family:'Orbitron'; font-size:14px; margin-top:15px;">🎮 Gestão de Games na Nuvem (Personalização & Capas)</h4>
             <div id="adminListaJogos" style="display:flex; flex-direction:column; gap:10px;"></div>
 
             <div style="text-align:center; margin-top:15px;">
@@ -901,7 +881,7 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.465 (Full Fixed & Stable Release)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.466 (Full Cloud Sync & Fixed Release)</strong>
     </footer>
 
     <script>
@@ -1077,10 +1057,10 @@
                 usuarioLogado.email = emailDigitado;
                 localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
                 fecharModalAlertEmail();
-                mostrarToast("✉️ E-mail de recuperação vinculado com sucesso!");
+                mostrarToast("✉️ E-mail salvo permanentemente na nuvem com sucesso!");
                 atualizarPerfilExpandidoUI();
             } catch(err) {
-                alert("Erro ao vincular e-mail.");
+                alert("Erro ao salvar e-mail na nuvem.");
             }
         }
 
@@ -1091,7 +1071,7 @@
                     await supabaseClient.from('usuarios').update({ email: '' }).eq('id_jogador', String(usuarioLogado.id));
                     usuarioLogado.email = '';
                     localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
-                    mostrarToast("🗑️ E-mail desvinculado da conta com sucesso!");
+                    mostrarToast("🗑️ E-mail desvinculado da nuvem com sucesso!");
                     atualizarPerfilExpandidoUI();
                 } catch(e) {
                     alert("Erro ao desvincular e-mail.");
@@ -1305,7 +1285,7 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.save();
             ctx.translate(radius, radius);
-            ctx.rotate(-Math.PI / 2); // Alinha o setor 0 com o topo
+            ctx.rotate(-Math.PI / 2);
 
             wheelSectors.forEach((sector, i) => {
                 const angle = i * arcSize;
@@ -1381,9 +1361,7 @@
             const randomSector = Math.floor(Math.random() * numSectors);
             const arcDeg = 360 / numSectors;
             
-            // Cálculo exato para a seta do topo (12 horas) apontar para o setor sorteado
             const targetDeg = 360 * 5 + (360 - (randomSector * arcDeg + arcDeg / 2));
-
             canvas.style.transform = `rotate(${targetDeg}deg)`;
 
             setTimeout(async () => {
@@ -1442,7 +1420,7 @@
             precosElementos.forEach(el => {
                 let valOriginal = parseFloat(el.getAttribute('data-valor'));
                 if (temCupom) {
-                    let valDesconto = valOriginal * 0.90; // 10% de desconto
+                    let valDesconto = valOriginal * 0.90;
                     el.innerHTML = `<span style="text-decoration: line-through; color: #64748b; font-size: 11px;">R$ ${valOriginal.toFixed(2).replace('.', ',')}</span> <span style="color: #22c55e;">R$ ${valDesconto.toFixed(2).replace('.', ',')} (10% OFF)</span>`;
                 } else {
                     el.textContent = `R$ ${valOriginal.toFixed(2).replace('.', ',')}`;
@@ -1960,7 +1938,7 @@
             
             let valorCobrado = valorBase;
             if (cupomDigitado) {
-                valorCobrado = valorBase * 0.90; // Aplica 10% de desconto no Pix se houver cupom
+                valorCobrado = valorBase * 0.90;
             }
 
             const saldoEl = document.getElementById('userDiamondBalance');
@@ -2005,7 +1983,8 @@
             try {
                 const { data } = await supabaseClient.from('usuarios').select('*').eq('email', emailInput.trim()).maybeSingle();
                 if(data) {
-                    alert(`✅ Sua senha é: ${data.pass}\n(Dica: Anote em um lugar seguro!)`);
+                    alert(`✅ Sua senha é: ${data.pass}
+(Dica: Anote em um lugar seguro!)`);
                 } else {
                     alert("❌ Nenhum usuário encontrado com este e-mail.");
                 }
@@ -2298,18 +2277,20 @@
             const u = document.getElementById('regUser').value.trim();
             const email = document.getElementById('regEmail').value.trim();
             const p = document.getElementById('regPass').value;
+            
             let users = await obterUsuariosCadastrados();
             if(users.some(x => x.nick && x.nick.toLowerCase() === u.toLowerCase())) {
-                alert("Este nick já existe! Escolha outro.");
+                alert("❌ Este nick já possui uma conta registrada! Cada nick possui um ID único permanente. Faça login na sua conta existente.");
                 return;
             }
+
             const novoId = Math.floor(100000000 + Math.random() * 900000000).toString();
             try {
                 await supabaseClient.from('usuarios').insert([{ id_jogador: novoId, nick: u, email: email, pass: p }]);
                 usuarioLogado = { nick: u, email: email, isAdm: false, id: novoId, bio: 'Disponível', instagram: '', youtube: '', tiktok: '' };
                 localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
                 
-                mostrarToast("✨ Conta criada com sucesso!");
+                mostrarToast("✨ Conta criada e salva na nuvem com sucesso!");
                 document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(u, novoId);
                 fecharModalAuth();
                 atualizarAbasPerfilUI();
@@ -2354,7 +2335,7 @@
                 atualizarAbasPerfilUI();
                 carregarSaldoDiamantesSite();
 
-                if (!achou.email || achou.email.trim() === '') {
+                if (!usuarioLogado.email || usuarioLogado.email.trim() === '') {
                     document.getElementById('modalAlertEmail').style.display = 'flex';
                 }
             } else {
@@ -2773,7 +2754,6 @@
             if(painelAdmAberto) renderizarJogosAdmin();
         }
 
-        // GESTÃO DE JOGOS NO ADM COM ACORDEÃO EXPANSÍVEL (PERSONALIZAÇÃO)
         function renderizarJogosAdmin() {
             const container = document.getElementById('adminListaJogos');
             if(!container) return;
@@ -2786,7 +2766,7 @@
                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:5px;">
                         <span style="color:var(--accent-color); font-weight:bold; font-size:12px;">📂 ${jogo.nome} (${formatarNumero(jogo.acessos || 0)})</span>
                         <div style="display:flex; gap:4px; align-items:center;">
-                            <button type="button" class="btn-gaming" onclick="toggleExpandirEdicaoJogo('${jogo.id}')" style="font-size:9px; padding:3px 8px; background:var(--gold-warning); color:#000;">⚙️ Personalizar</button>
+                            <button type="button" class="btn-gaming" onclick="toggleExpandirEdicaoJogo('${jogo.id}')" style="font-size:9px; padding:3px 8px; background:var(--gold-warning); color:#000;">⚙️ Personalizar & Capa</button>
                             <button type="button" class="btn-gaming" onclick="tentarExecutarJogo(${JSON.stringify(jogo).replace(/"/g, '&quot;')}); tocarSomClique();" style="font-size:9px; padding:3px 6px;">🎮 Testar</button>
                             <button type="button" class="btn-gaming ${jogo.publicado ? 'btn-danger' : 'btn-success'}" onclick="togglePublicarJogo('${jogo.id}')" style="font-size:9px; padding:3px 6px;">
                                 ${jogo.publicado ? '👁️ Ocultar' : '🚀 Publicar'}
@@ -2798,7 +2778,13 @@
                         <input type="text" id="adm_cat_${jogo.id}" value="${jogo.categoria || ''}" placeholder="Categoria (Arcade, Estratégia...)" class="auth-input" style="font-size:11px;">
                         <textarea id="adm_desc_${jogo.id}" placeholder="Descrição do jogo..." class="auth-input" style="font-size:11px; height:50px;">${jogo.desc || ''}</textarea>
                         <input type="text" id="adm_arq_${jogo.id}" value="${jogo.arquivo || ''}" placeholder="Arquivo ou URL do Jogo" class="auth-input" style="font-size:11px;">
-                        <input type="text" id="adm_img_${jogo.id}" value="${jogo.img || ''}" placeholder="URL da Capa/Imagem" class="auth-input" style="font-size:11px;">
+                        
+                        <div style="display:flex; gap:6px; align-items:center;">
+                            <input type="file" id="adm_capa_file_${jogo.id}" accept="image/*" style="font-size:10px; flex:1; color:#fff;">
+                            <button type="button" class="btn-gaming" onclick="enviarCapaJogoAdmin('${jogo.id}')" style="font-size:10px; padding:6px; background:var(--accent-color); color:#000;">📤 Enviar Capa p/ Nuvem</button>
+                        </div>
+                        <input type="text" id="adm_img_${jogo.id}" value="${jogo.img || ''}" placeholder="URL da Capa/Imagem (Supabase Storage)" class="auth-input" style="font-size:11px;">
+                        
                         <button type="button" class="btn-gaming" onclick="salvarEdicaoJogoNuvem('${jogo.id}')" style="font-size:10px; padding:6px; background:#22c55e; color:#000;">💾 Salvar Alterações na Nuvem</button>
                     </div>
                 `;
@@ -2810,6 +2796,25 @@
             const painel = document.getElementById(`edit_game_${id}`);
             if (painel) {
                 painel.style.display = (painel.style.display === 'flex' ? 'none' : 'flex');
+            }
+        }
+
+        async function enviarCapaJogoAdmin(id) {
+            const fileInput = document.getElementById(`adm_capa_file_${id}`);
+            if (!fileInput || !fileInput.files[0]) {
+                alert("Selecione um arquivo de imagem de capa primeiro.");
+                return;
+            }
+            const f = fileInput.files[0];
+            const fileName = `capa_jogo_${id}_${Date.now()}_${f.name}`;
+            const { error } = await supabaseClient.storage.from('capas').upload(fileName, f);
+            if (!error) {
+                const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/capas/${fileName}`;
+                document.getElementById(`adm_img_${id}`).value = publicUrl;
+                mostrarToast("🖼️ Capa do jogo enviada para a nuvem com sucesso!");
+                registrarLogAdmin('UPLOAD_CAPA', `Enviada capa para o jogo ID: ${id}`);
+            } else {
+                alert("Erro ao fazer upload da capa para o Storage do Supabase.");
             }
         }
 
