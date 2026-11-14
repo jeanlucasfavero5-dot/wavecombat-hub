@@ -43,7 +43,7 @@ input,select{background:#0008;padding:2px 6px;border:1px solid #22d3ee44;color:#
   <div><div class="text-xl font-bold"><span id="nick">Carregando…</span><span id="vf" class="text-cyan-300"></span></div>
    <div class="text-xs flex items-center gap-2">Nv <b id="lv">1</b><div class="w-36 h-2 bg-white/10"><div id="xpb" class="h-2 bg-cyan-400" style="width:0"></div></div></div></div>
   <div class="ml-auto text-center leading-none"><div class="text-3xl font-bold tracking-widest" style="text-shadow:0 0 14px #22d3ee">CAPAS ROYALE</div><div id="ver" class="text-orange-400 text-sm"></div></div>
-  <div class="card ml-auto flex items-center gap-2 py-1">💎 <b id="dia">0</b><button class="bg-orange-500 px-2 rounded" onclick="toast('Recarga indisponível na v0.001')">+</button></div>
+  <div class="card ml-auto flex items-center gap-2 py-1">🏆 <b id="rpv">0</b> RP · 💎 <b id="dia">0</b><button class="bg-orange-500 px-2 rounded" onclick="toast('Recarga indisponível nesta versão')">+</button></div>
  </div>
  <div id="nav" class="flex flex-wrap gap-2 p-3"></div>
  <div class="absolute inset-x-0 top-32 bottom-0 p-4 overflow-auto">
@@ -90,7 +90,7 @@ input,select{background:#0008;padding:2px 6px;border:1px solid #22d3ee44;color:#
 
 <script>
 /* ===== CONFIG / SUPABASE ===== */
-const VER='0.004';
+const VER='0.005';
 const SB_URL='https://ipqjeacdfiomcxfuixdj.supabase.co',SB_KEY='sb_publishable_EWW84q_43YbOvMwB_Rua-A_X465PbLP';
 // Nomes de coluna aceitos (ajuste se seu banco usar outros)
 const COLS={nick:['nick','nickname','nome','username'],ver:['verificado','verified','is_verified'],dia:['diamantes','quantidade','saldo','diamonds']};
@@ -105,7 +105,7 @@ S.set=Object.assign({q:'Alto',sh:'Médias',res:'Alta',fps:60,mus:70,sfx:80,voz:5
 const save=()=>{try{localStorage.cr=JSON.stringify(S)}catch(e){}};
 const lvl=()=>1+Math.floor(S.xp/200);
 function toast(t){const d=document.createElement('div');d.className='fixed top-24 left-1/2 -translate-x-1/2 card';d.style.zIndex=99;d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),2200)}
-function draw(){$('nick').textContent=me.nick;$('vf').textContent=me.ver?' ✔':'';$('dia').textContent=me.dia;$('lv').textContent=lvl();$('xpb').style.width=(S.xp%200)/2+'%'}
+function draw(){$('nick').textContent=me.nick;$('vf').textContent=me.ver?' ✔':'';$('dia').textContent=me.dia;$('lv').textContent=lvl();$('rpv').textContent=S.rp;$('xpb').style.width=(S.xp%200)/2+'%'}
 async function loadDia(){ // saldo de diamantes
  const r=await sb.from('carteira_diamantes').select('*').eq('id_jogador',pid).maybeSingle();
  if(r.data){me.dia=+pick(r.data,COLS.dia)||0;me.dc=COLS.dia.find(c=>c in r.data)}draw()}
@@ -115,7 +115,7 @@ async function loadMe(){ // nick + selo
   if(u.data){me.nick=pick(u.data,COLS.nick)||me.nick;me.ver=!!pick(u.data,COLS.ver);if(u.data.rp!=null)S.rp=+u.data.rp;if(u.data.kills!=null)S.kills=+u.data.kills;modesUI()}
   await loadDia();
   sb.channel('w'+pid).on('postgres_changes',{event:'*',schema:'public',table:'carteira_diamantes',filter:'id_jogador=eq.'+pid},loadDia).subscribe();
-  sb.channel('u'+pid).on('postgres_changes',{event:'*',schema:'public',table:'usuarios',filter:'id_jogador=eq.'+pid},p=>{const d=p.new;if(d){me.nick=pick(d,COLS.nick)||me.nick;me.ver=!!pick(d,COLS.ver);draw();opts()}}).subscribe();setInterval(loadDia,20000)}catch(e){console.warn(e);toast('Sem conexão com o Supabase')}
+  sb.channel('u'+pid).on('postgres_changes',{event:'*',schema:'public',table:'usuarios',filter:'id_jogador=eq.'+pid},p=>{const d=p.new;if(d){me.nick=pick(d,COLS.nick)||me.nick;me.ver=!!pick(d,COLS.ver);if(d.rp!=null)S.rp=+d.rp;if(d.kills!=null)S.kills=+d.kills;draw();opts();modesUI()}}).subscribe();setInterval(loadDia,20000)}catch(e){console.warn(e);toast('Sem conexão com o Supabase')}
  draw();opts()}
 
 /* ===== CHAT (Supabase Realtime broadcast/presence) ===== */
@@ -231,6 +231,7 @@ function start(){
  const pa=rnd(0,T2);g.pl={x:-Math.cos(pa)*1700,y:-Math.sin(pa)*1700,dx:Math.cos(pa),dy:Math.sin(pa),z:1400,t:0};g.ph=0;yaw=pa;
  g.pads=g.twr.map(w=>({x:w.x+55,y:w.y}));for(let i=0;i<4;i++){const q=rnd(0,T2),r=rnd(100,1100);g.pads.push({x:Math.cos(q)*r,y:Math.sin(q)*r})}
  g.zip=[];for(let i=0;i<g.twr.length-1;i++){const A=g.twr[i],B=g.twr[i+1];g.zip.push([{x:A.x,y:A.y,w:hAt(A.x,A.y)+146},{x:B.x,y:B.y,w:hAt(B.x,B.y)+146}])}
+ g.twr.slice(0,3).forEach(A=>{let C=null,m=1e9;for(const b of g.bld){const d=Math.hypot(b.x-A.x,b.y-A.y);if(d>250&&d<m){m=d;C=b}}if(C)g.zip.push([{x:A.x,y:A.y,w:hAt(A.x,A.y)+146},{x:C.x,y:C.y,w:C.gy+80}])});
  g.fd=[];g.adt=40;g.ents.forEach(e=>{e.x=g.pl.x;e.y=g.pl.y;e.dest=g.bld[Math.floor(rnd(0,g.bld.length))]})}
 
 function push(e,r){ // colisão com paredes e troncos
