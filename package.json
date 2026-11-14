@@ -1,0 +1,9 @@
+{
+  "name": "rise-rpg",
+  "version": "0.5.0",
+  "private": true,
+  "main": "rise-rpg-hub.js",
+  "scripts": { "start": "node rise-rpg-hub.js" },
+  "engines": { "node": ">=18" },
+  "dependencies": { "socket.io": "^4.7.5" }
+}
