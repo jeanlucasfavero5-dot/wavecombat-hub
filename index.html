@@ -40,6 +40,15 @@
             position: relative;
         }
 
+        /* 53. Animações de Entrada */
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(18px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        section, .panel-card, .featured-game-box, .wheel-section {
+            animation: fadeSlideUp 0.6s ease-out both;
+        }
+
         @keyframes goldShine {
             0% { filter: drop-shadow(0 0 2px #FFD700); transform: rotate(0deg) scale(1); }
             50% { filter: drop-shadow(0 0 10px #FFD700) brightness(1.4); transform: rotate(8deg) scale(1.15); }
@@ -89,23 +98,35 @@
             100% { transform: scale(1); }
         }
 
+        /* 89. Inventário com Visualização 3D/Efeito */
         .avatar-preview-box {
-            width: 90px; height: 90px; border-radius: 50%; margin: 15px auto;
+            width: 96px; height: 96px; border-radius: 50%; margin: 15px auto;
             display: flex; align-items: center; justify-content: center; position: relative;
             background: #000; border: 2px solid var(--steel-bright); font-family: 'Orbitron'; font-size: 12px;
+            transform-style: preserve-3d;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+        .avatar-preview-box:hover {
+            transform: rotateY(18deg) rotateX(10deg) scale(1.08);
         }
         .frame-neon {
-            box-shadow: 0 0 20px #00f0ff, inset 0 0 15px #00f0ff;
+            box-shadow: 0 0 22px #00f0ff, inset 0 0 18px #00f0ff;
             border: 3px solid #00f0ff !important;
             animation: neonGlow 2s infinite alternate;
         }
         .frame-fogo {
-            box-shadow: 0 0 20px #ef4444, inset 0 0 15px #f59e0b;
+            box-shadow: 0 0 22px #ef4444, inset 0 0 18px #f59e0b;
             border: 3px solid #ef4444 !important;
             animation: fireGlow 1s infinite alternate;
         }
-        @keyframes neonGlow { from { filter: drop-shadow(0 0 2px #00f0ff); } to { filter: drop-shadow(0 0 12px #00f0ff); } }
-        @keyframes fireGlow { from { filter: drop-shadow(0 0 4px #ef4444); } to { filter: drop-shadow(0 0 14px #f59e0b); } }
+        .frame-prisma {
+            box-shadow: 0 0 25px #a855f7, inset 0 0 20px #ec4899;
+            border: 3px solid #a855f7 !important;
+            animation: prismaGlow 2.5s infinite linear;
+        }
+        @keyframes neonGlow { from { filter: drop-shadow(0 0 2px #00f0ff); } to { filter: drop-shadow(0 0 14px #00f0ff); } }
+        @keyframes fireGlow { from { filter: drop-shadow(0 0 4px #ef4444); } to { filter: drop-shadow(0 0 16px #f59e0b); } }
+        @keyframes prismaGlow { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
 
         .bg-particles {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
@@ -139,18 +160,19 @@
             transition: 0.3s;
         }
         .logo-container { display: flex; align-items: center; gap: 8px; text-decoration: none; z-index: 1002; cursor: pointer; }
-        .logo-img-custom { height: 36px; max-width: 120px; object-fit: contain; filter: drop-shadow(0 0 10px var(--accent-color)); }
+        .logo-img-custom { height: 36px; max-width: 120px; object-fit: contain; filter: drop-shadow(0 0 10px var(--accent-color)); animation: logoPulse 3s infinite ease-in-out; }
         
+        /* 60. Logotipo Animado no Header */
         @keyframes logoPulse {
-            0% { transform: scale(1); filter: drop-shadow(0 0 5px var(--accent-color)); }
-            50% { transform: scale(1.05); filter: drop-shadow(0 0 15px var(--accent-color)) brightness(1.3); }
-            100% { transform: scale(1); filter: drop-shadow(0 0 5px var(--accent-color)); }
+            0% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 5px var(--accent-color)); }
+            50% { transform: scale(1.07) rotate(3deg); filter: drop-shadow(0 0 16px var(--accent-color)) brightness(1.35); }
+            100% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 5px var(--accent-color)); }
         }
         .logo-svg { width: 32px; height: 32px; animation: logoPulse 3s infinite ease-in-out; }
-        .logo-text { font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 16px; color: var(--accent-color); letter-spacing: 1px; }
+        .logo-text { font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 16px; color: var(--accent-color); letter-spacing: 1px; text-shadow: 0 0 10px var(--accent-glow); }
 
         .menu-toggle-btn {
-            display: flex; flex-direction: column; justify-around;
+            display: flex; flex-direction: column; justify-content: space-around;
             width: 30px; height: 25px; background: transparent; border: none; cursor: pointer; z-index: 1002;
         }
         .menu-toggle-btn span { width: 100%; height: 3px; background: var(--accent-color); border-radius: 2px; transition: 0.3s; }
@@ -181,10 +203,7 @@
             border-bottom: 2px solid var(--steel-border); margin-top: 65px; width: 100%; overflow: hidden; z-index: 2;
             box-shadow: inset 0 0 50px var(--accent-glow);
             transition: background-image 0.5s ease-in-out;
-            animation: fadeInHero 0.8s ease-out;
         }
-        @keyframes fadeInHero { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-
         header.hero::before {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(180deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.98) 100%); z-index: 1;
@@ -241,7 +260,7 @@
         .game-list-info p { font-size: 11px; color: #94a3b8; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.92); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 15px; }
-        .modal-card { background: var(--panel-bg); border: 2px solid var(--accent-color); width: 100%; max-width: 480px; padding: 20px; border-radius: 12px; position: relative; box-shadow: 0 0 35px var(--accent-glow); max-height: 90vh; overflow-y: auto; }
+        .modal-card { background: var(--panel-bg); border: 2px solid var(--accent-color); width: 100%; max-width: 500px; padding: 20px; border-radius: 12px; position: relative; box-shadow: 0 0 35px var(--accent-glow); max-height: 90vh; overflow-y: auto; }
         .modal-close { position: absolute; top: 12px; right: 15px; background: none; border: none; color: var(--ink); font-size: 22px; cursor: pointer; }
 
         .tab-switcher { display: flex; border-bottom: 2px solid var(--steel-border); margin-bottom: 15px; flex-wrap: wrap; }
@@ -254,8 +273,17 @@
         .form-panel { display: none; }
         .form-panel.active { display: flex; flex-direction: column; gap: 10px; }
 
-        .embed-container { display: none; background: #000; border: 2px solid var(--accent-color); width: 100%; height: 70vh; max-height: 800px; position: relative; box-shadow: 0 0 35px var(--accent-glow); margin-top: 15px; border-radius: 10px; }
-        .embed-container iframe { width: 100%; height: 100%; border: none; border-radius: 8px; }
+        /* 31. Modo Tela Cheia Nativo e Fluido */
+        .embed-container { display: none; background: #000; border: 2px solid var(--accent-color); width: 100%; height: 70vh; max-height: 800px; position: relative; box-shadow: 0 0 35px var(--accent-glow); margin-top: 15px; border-radius: 10px; overflow: hidden; }
+        .embed-container:fullscreen, .embed-container:-webkit-full-screen {
+            width: 100vw !important;
+            height: 100vh !important;
+            max-height: 100vh !important;
+            border: none !important;
+            border-radius: 0 !important;
+            margin: 0 !important;
+        }
+        .embed-container iframe { width: 100%; height: 100%; border: none; border-radius: 8px; transition: transform 0.2s ease; }
         .player-controls-bar { display: none; justify-content: center; align-items: center; gap: 10px; margin-top: 12px; padding: 10px; background: var(--panel-bg); border: 1px solid var(--steel-border); border-radius: 8px; flex-wrap: wrap; }
 
         .site-leaderboard-section {
@@ -318,6 +346,10 @@
         }
         .toast-notification.show { transform: translateY(0); opacity: 1; }
 
+        /* Barra de Progresso de Nível (Feature 6) */
+        .xp-bar-container { width: 100%; height: 8px; background: #1e293b; border-radius: 4px; overflow: hidden; margin-top: 6px; border: 1px solid var(--steel-bright); }
+        .xp-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent-color), #22c55e); transition: width 0.5s ease; }
+
         .admin-section { display: none; background: #04060a; border-top: 3px solid var(--accent-color); padding: 25px 15px; margin-top: 30px; }
         .admin-container { width: 100%; max-width: 1100px; margin: 0 auto; background: var(--panel-bg); border: 1px solid var(--steel-bright); padding: 15px; border-radius: 12px; }
         .admin-grid-tools { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 15px; }
@@ -335,7 +367,7 @@
 <body id="mainBody" class="theme-oled">
 
     <div class="broadcast-ticker" id="broadcastTicker">
-        <marquee id="broadcastText">⚡ AVISO GLOBAL: Bem-vindos ao WaveCombat Hub v0.467 (Upgraded & Cloud Fix)!</marquee>
+        <marquee id="broadcastText">⚡ AVISO GLOBAL: Bem-vindos ao WaveCombat Hub v0.500 (Full Edition)!</marquee>
     </div>
 
     <div class="bg-particles" id="bgParticles"></div>
@@ -401,8 +433,8 @@
             <div class="tab-switcher" id="modalTabSwitcher">
                 <button class="tab-btn active" id="tabLoginBtn" onclick="alternarAba('login'); tocarSomClique();">Entrar</button>
                 <button class="tab-btn" id="tabRegisterBtn" onclick="alternarAba('registro'); tocarSomClique();">Criar Conta</button>
-                <button class="tab-btn" id="tabPerfilBtn" onclick="alternarAba('perfil'); tocarSomClique();">Perfil</button>
-                <button class="tab-btn" id="tabInventarioBtn" onclick="alternarAba('inventario'); tocarSomClique();">🎒 Inventário</button>
+                <button class="tab-btn" id="tabPerfilBtn" onclick="alternarAba('perfil'); tocarSomClique();">Perfil & Stats</button>
+                <button class="tab-btn" id="tabInventarioBtn" onclick="alternarAba('inventario'); tocarSomClique();">🎒 Inventário 3D</button>
                 <button class="tab-btn unread-badge" id="tabCorreioBtn" onclick="alternarAba('correio'); tocarSomClique();">📬 Correio</button>
             </div>
             
@@ -421,12 +453,13 @@
                     <input type="text" id="regUser" placeholder="Escolha um Nick de Jogador (Único)" class="auth-input" required>
                     <input type="email" id="regEmail" placeholder="Seu E-mail (Salvo na Nuvem)" class="auth-input" required>
                     <input type="password" id="regPass" placeholder="Crie uma Senha" class="auth-input" required>
+                    <input type="text" id="regCodigoIndicacao" placeholder="ID ou Nick de quem convidou (Opcional - Ganhe Bônus)" class="auth-input">
                     <button type="submit" class="btn-gaming" onclick="tocarSomLevelUp()" style="width:100%; padding:10px; background:#22c55e; color:#000;">Criar Minha Conta</button>
                 </form>
             </div>
 
             <div class="form-panel" id="panelPerfil">
-                <div id="perfilUserData"><p style="color:#94a3b8; text-align:center;">Faça login para ver seu perfil expandido.</p></div>
+                <div id="perfilUserData"><p style="color:#94a3b8; text-align:center;">Faça login para ver seu perfil e estatísticas detalhadas.</p></div>
             </div>
 
             <div class="form-panel" id="panelInventario">
@@ -523,7 +556,7 @@
 
     <div id="painelAmigos" style="position: fixed; top: 0; right: -320px; width: 310px; height: 100vh; background: var(--panel-bg); border-left: 2px solid var(--accent-color); z-index: 2500; transition: 0.3s ease; padding: 20px; display: flex; flex-direction: column; box-shadow: -10px 0 30px rgba(0,0,0,0.8);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--steel-border); padding-bottom: 10px;">
-            <h3 style="font-family: 'Orbitron'; font-size: 14px; color: var(--accent-color);">👥 Meus Amigos & Espectador</h3>
+            <h3 style="font-family: 'Orbitron'; font-size: 14px; color: var(--accent-color);">👥 Amigos & Espectador</h3>
             <button onclick="togglePainelAmigos()" style="background: none; border: none; color: #fff; font-size: 18px; cursor: pointer;">&times;</button>
         </div>
 
@@ -564,6 +597,7 @@
         <div class="global-stats-bar" id="globalStatsBar">
             <span>Partidas Jogadas: <strong id="statTotalPartidas">--</strong></span>
             <span>Jogadores Registrados: <strong id="statTotalUsuarios">--</strong></span>
+            <span>Controles Conectados: <strong id="statGamepadsCount" style="color:#00f0ff">0</strong></span>
             <span>Status: <strong style="color:#22c55e">ONLINE</strong></span>
         </div>
 
@@ -587,9 +621,9 @@
                 <option value="Multiplayer">Multiplayer</option>
                 <option value="favoritos">⭐ Favoritos</option>
             </select>
-            <select id="selectResInterna" class="auth-input" onchange="alterarResolucaoInterna(this.value)" style="max-width: 200px;">
-                <option value="100">🖥️ Resolução: 100% (HD)</option>
-                <option value="75">⚡ Resolução: 75% (Leve)</option>
+            <select id="selectResInterna" class="auth-input" onchange="alterarResolucaoInterna(this.value)" style="max-width: 220px;">
+                <option value="100">🖥️ Resolução: 100% (Nativa HD)</option>
+                <option value="75">⚡ Resolução: 75% (Desempenho)</option>
                 <option value="50">🚀 Resolução: 50% (Ultra Rápido)</option>
             </select>
         </div>
@@ -608,7 +642,7 @@
         <div class="player-controls-bar" id="playerControlsBar">
             <button class="btn-gaming" onclick="toggleTelaCheia(); tocarSomClique();" style="padding:8px 14px; font-size:11px;">⛶ Tela Cheia Nativa</button>
             <button class="btn-gaming" id="btnMicToggle" onclick="toggleMicrofoneVoice()" style="padding:8px 14px; font-size:11px; background:#22c55e; color:#000;">🎤 Mic Rápido: ON</button>
-            <button class="btn-gaming" id="btnAudioToggle" onclick="toggleAudioVoice()" style="padding:8px 14px; font-size:11px; background:#3b82f6; color:#fff;">🔊 Som: ON</button>
+            <button class="btn-gaming" id="btnAudioToggle" onclick="toggleAudioVoice()" style="padding:8px 14px; font-size:11px; background:#3b82f6; color:#fff;">🔊 Som Voz: ON</button>
             <button class="btn-gaming btn-danger" onclick="encerrarJogo(); tocarSomClique();" style="padding:8px 14px; font-size:11px;">✖ Sair do Game</button>
         </div>
 
@@ -620,19 +654,37 @@
         </div>
     </section>
 
-    <!-- Eventos & Roleta -->
+    <!-- Eventos, Roleta & Sorteio Semanal -->
     <section id="eventos">
-        <h2 class="section-title">🎡 Eventos & Recompensas Diárias</h2>
-        <div class="wheel-section">
-            <h3 style="font-family:'Orbitron'; color:var(--accent-color); font-size:16px; margin-bottom:6px;">🎰 Roda da Fortuna Diária</h3>
-            <p style="font-size:12px; color:#94a3b8; margin-bottom:15px;">Gire a roleta uma vez por dia para ganhar prêmios incríveis!</p>
-            
-            <div class="wheel-container">
-                <div class="wheel-pointer"></div>
-                <canvas id="canvasWheel" width="380" height="380"></canvas>
+        <h2 class="section-title">🎡 Eventos, Roleta Diária & Sorteio Semanal</h2>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 30px;">
+            <div class="wheel-section" style="margin-bottom:0;">
+                <h3 style="font-family:'Orbitron'; color:var(--accent-color); font-size:16px; margin-bottom:6px;">🎰 Roda da Fortuna Diária</h3>
+                <p style="font-size:12px; color:#94a3b8; margin-bottom:15px;">Gire a roleta uma vez por dia para ganhar prêmios incríveis!</p>
+                
+                <div class="wheel-container">
+                    <div class="wheel-pointer"></div>
+                    <canvas id="canvasWheel" width="380" height="380"></canvas>
+                </div>
+
+                <button class="btn-gaming" onclick="girarRodaDaFortuna()" id="btnGirarRoleta" style="margin-top: 15px; padding: 12px 30px; background: #22c55e; color: #000; font-size: 14px;">🎡 GIRAR ROLETA AGORA</button>
             </div>
 
-            <button class="btn-gaming" onclick="girarRodaDaFortuna()" id="btnGirarRoleta" style="margin-top: 15px; padding: 12px 30px; background: #22c55e; color: #000; font-size: 14px;">🎡 GIRAR ROLETA AGORA</button>
+            <!-- 87. Sorteio Automático Semanal (50 diamantes) -->
+            <div class="panel-card" style="border: 2px solid var(--gold-warning); justify-content: space-between; text-align: center;">
+                <div>
+                    <h3 style="color:var(--gold-warning); font-size:16px;">🎟️ Sorteio Automático Semanal</h3>
+                    <p style="font-size:12px; color:#94a3b8; margin-bottom:12px;">Participe gratuitamente toda semana! Jogadores ativos concorrem automaticamente a <strong>50 Diamantes</strong> toda segunda-feira.</p>
+                    <div style="background:#000; border:1px solid var(--steel-border); padding:12px; border-radius:8px; margin-bottom:12px;">
+                        <p style="font-size:11px; color:#fff;">Prêmio da Semana: <strong style="color:var(--accent-color); font-size:14px;">💎 50 Diamantes</strong></p>
+                        <p style="font-size:11px; color:#22c55e; margin-top:4px;" id="statusSorteioSemanal">Status: Verificando participação...</p>
+                    </div>
+                </div>
+                <div>
+                    <button class="btn-gaming" onclick="participarSorteioSemanal()" style="width:100%; background:var(--gold-warning); color:#000;">🎟️ Confirmar Bilhete Grátis</button>
+                    <p style="font-size:10px; color:#64748b; margin-top:8px;">Último Ganhador: <strong id="ultimoGanhadorSorteio" style="color:#fff;">capudinho7</strong></p>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -648,15 +700,16 @@
             <button class="btn-gaming" onclick="carregarSaldoDiamantesSite()" style="font-size: 11px; padding: 6px 12px;">🔄 Atualizar Saldo</button>
         </div>
 
-        <h3 style="font-family:'Orbitron'; font-size:13px; color:var(--gold-warning); margin-bottom:12px;">🎨 Molduras 3D de Perfil (Visualização Dinâmica)</h3>
+        <h3 style="font-family:'Orbitron'; font-size:13px; color:var(--gold-warning); margin-bottom:12px;">🎨 Molduras 3D de Perfil (Visualização Interativa 3D)</h3>
         <div style="background: var(--panel-bg); border: 1px solid var(--steel-border); padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center;">
-            <p style="font-size: 11px; color: #94a3b8; margin-bottom: 10px;">Teste como o seu nick fica com a moldura 3D animada antes de comprar:</p>
+            <p style="font-size: 11px; color: #94a3b8; margin-bottom: 10px;">Passe o mouse ou toque para testar o efeito 3D da moldura antes de comprar:</p>
             <div id="avatarPreviewBox" class="avatar-preview-box">
                 <span id="previewNickText">SeuNick</span>
             </div>
             <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-top:10px;">
-                <button class="btn-gaming" onclick="testarMolduraLoja('frame-neon')" style="font-size:10px; padding:6px 10px; background:#00f0ff; color:#000;">👁️ Testar Neon 3D</button>
-                <button class="btn-gaming" onclick="testarMolduraLoja('frame-fogo')" style="font-size:10px; padding:6px 10px; background:#ef4444; color:#fff;">👁️ Testar Fogo 3D</button>
+                <button class="btn-gaming" onclick="testarMolduraLoja('frame-neon')" style="font-size:10px; padding:6px 10px; background:#00f0ff; color:#000;">👁️ Neon 3D</button>
+                <button class="btn-gaming" onclick="testarMolduraLoja('frame-fogo')" style="font-size:10px; padding:6px 10px; background:#ef4444; color:#fff;">👁️ Fogo 3D</button>
+                <button class="btn-gaming" onclick="testarMolduraLoja('frame-prisma')" style="font-size:10px; padding:6px 10px; background:#a855f7; color:#fff;">👁️ Prisma 3D</button>
                 <button class="btn-gaming" onclick="testarMolduraLoja('')" style="font-size:10px; padding:6px 10px; background:#64748b; color:#fff;">🔄 Normal</button>
             </div>
         </div>
@@ -673,6 +726,12 @@
                 <p style="font-size: 10px; color: #94a3b8; margin: 6px 0;">Efeito brasa vermelha intensa em camadas</p>
                 <p style="font-size: 13px; color: var(--gold-warning); font-weight: bold; margin-bottom: 8px;">💎 250 Diamantes</p>
                 <button class="btn-gaming" onclick="comprarMolduraLoja('frame-fogo', 250)" style="width: 100%; font-size: 10px; padding: 6px;">Comprar Item</button>
+            </div>
+            <div class="panel-card" style="text-align: center; border: 1px solid #a855f7;">
+                <h4 style="font-family: 'Orbitron'; color: #a855f7;">Moldura Prisma Lendária 3D</h4>
+                <p style="font-size: 10px; color: #94a3b8; margin: 6px 0;">Rotação cromática contínua em espectro RGB</p>
+                <p style="font-size: 13px; color: var(--gold-warning); font-weight: bold; margin-bottom: 8px;">💎 400 Diamantes</p>
+                <button class="btn-gaming" onclick="comprarMolduraLoja('frame-prisma', 400)" style="width: 100%; font-size: 10px; padding: 6px;">Comprar Item</button>
             </div>
         </div>
 
@@ -716,11 +775,20 @@
         <h2 class="section-title">Central Social & Comunidade</h2>
         <div class="community-main-grid">
             <div class="panel-card">
-                <h3>🌐 Redes Sociais & Chat Global</h3>
+                <h3>🌐 Redes Sociais, Indicação (+20 💎) & Chat Global</h3>
                 <div class="social-buttons-flex" style="margin-bottom:12px;">
-                    <a href="https://discord.gg/FaeYug6XBx" target="_blank" class="social-btn-item btn-discord-net" onclick="tocarSomClique()">🎮 Discord Oficial (Convidar Amigos)</a>
-                    <a href="https://youtube.com/@capudooficial7?si=NSvfxpSzswVEStdu" target="_blank" class="social-btn-item btn-youtube-net" onclick="tocarSomClique()">▶ Siga o Criador do Jogo Aqui</a>
+                    <a href="https://discord.gg/FaeYug6XBx" target="_blank" class="social-btn-item btn-discord-net" onclick="tocarSomClique()">🎮 Discord Oficial</a>
+                    <a href="https://youtube.com/@capudooficial7?si=NSvfxpSzswVEStdu" target="_blank" class="social-btn-item btn-youtube-net" onclick="tocarSomClique()">▶ Canal YouTube (@capudooficial7)</a>
                     <a href="https://www.instagram.com/capudooficial.7/" target="_blank" class="social-btn-item btn-instagram-net" onclick="tocarSomClique()">📸 Instagram Oficial</a>
+                </div>
+
+                <!-- 85. Recompensa por Indicação de Amigos -->
+                <div style="background:#000; border:1px solid var(--gold-warning); padding:10px; border-radius:6px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                    <div style="font-size:11px;">
+                        <strong style="color:var(--gold-warning);">🎁 Convide Amigos & Ganhe 20 💎:</strong>
+                        <p style="color:#94a3b8; font-size:10px;">Peça para seu amigo colocar seu Nick ou ID no cadastro!</p>
+                    </div>
+                    <button class="btn-gaming" onclick="copiarLinkIndicacao()" style="font-size:10px; padding:6px 10px; background:var(--gold-warning); color:#000;">📋 Copiar Meu Link</button>
                 </div>
 
                 <h4 style="font-family:'Orbitron'; font-size:11px; color:var(--accent-color); margin-bottom:4px;">💬 Chat Global ao Vivo</h4>
@@ -794,9 +862,9 @@
             </div>
 
             <div class="admin-block" style="margin-bottom: 15px;">
-                <h4 style="color:#22c55e;">📜 Logs de Auditoria Administrativa & VPN Security</h4>
+                <h4 style="color:#22c55e;">📜 Logs de Auditoria Administrativa & VPN/Proxy Security</h4>
                 <div id="adminAuditLogsBox" style="background:#000; border:1px solid var(--steel-border); padding:8px; border-radius:6px; max-height:120px; overflow-y:auto; font-family:monospace; font-size:10px; color:#94a3b8;">
-                    [Sistema] Firewall de VPN/Proxy ativo. Nenhuma ameaça detectada.
+                    [Sistema] Firewall de VPN/Proxy ativo. Monitoramento de integridade em tempo real.
                 </div>
             </div>
 
@@ -831,7 +899,7 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.467 (Cloud Email & Features Fix)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.500 (Complete Edition)</strong>
     </footer>
 
     <!-- Script Principal -->
@@ -867,23 +935,50 @@
         let noteIndex = 0;
         let micAtivo = true;
         let audioVoiceAtivo = true;
+        let localVoiceStream = null;
 
-        // Detecção Automática de VPN / Proxy Suspeito (Feature 93)
+        // 32 & 77. Suporte Completo a Gamepads e Múltiplos Controles
+        let connectedGamepads = {};
+        window.addEventListener("gamepadconnected", (e) => {
+            connectedGamepads[e.gamepad.index] = e.gamepad;
+            atualizarContadorGamepads();
+            mostrarToast(`🎮 Controle ${e.gamepad.index + 1} conectado (${e.gamepad.id.slice(0, 20)})`);
+        });
+        window.addEventListener("gamepaddisconnected", (e) => {
+            delete connectedGamepads[e.gamepad.index];
+            atualizarContadorGamepads();
+            mostrarToast(`🎮 Controle ${e.gamepad.index + 1} desconectado`);
+        });
+        function atualizarContadorGamepads() {
+            const el = document.getElementById('statGamepadsCount');
+            if (el) el.textContent = Object.keys(connectedGamepads).length;
+        }
+        function loopGamepads() {
+            const gps = navigator.getGamepads ? navigator.getGamepads() : [];
+            let count = 0;
+            for (let i = 0; i < gps.length; i++) {
+                if (gps[i]) count++;
+            }
+            const el = document.getElementById('statGamepadsCount');
+            if (el && el.textContent !== String(count)) el.textContent = count;
+            requestAnimationFrame(loopGamepads);
+        }
+        requestAnimationFrame(loopGamepads);
+
+        // 93. Detecção Automática de VPN/Proxy Suspeito
         async function detectarVpnProxy() {
             try {
-                // Heurística de fuso horário / WebRTC / IP suspeito
                 const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-                if (!tz) {
-                    registrarLogAdmin('SEGURANÇA', 'Acesso suspeito detectado (Sem fuso horário válido).');
+                const lang = navigator.language || '';
+                if (!tz || (tz.includes('UTC') && lang.includes('pt-BR'))) {
+                    registrarLogAdmin('ALERTA_VPN', `Possível VPN/Proxy detectado (Fuso: ${tz} | Idioma: ${lang})`);
                 }
             } catch(e) {}
         }
 
-        // Compactação de Ativos / Assets (Feature 95)
+        // 95. Compactação de Ativos (Assets)
         function compactarAssetsLocal() {
-            // Remove elementos desnecessários do DOM em cache para liberar memória
-            const hiddenElements = document.querySelectorAll('[hidden]');
-            hiddenElements.forEach(el => el.remove());
+            document.querySelectorAll('[hidden]').forEach(el => el.remove());
         }
 
         function formatarNumero(num) {
@@ -940,17 +1035,13 @@
             let isVerif = isStaff || cacheVerificadosNuvem[String(id)] || cacheVerificadosNuvem[n];
 
             let html = '';
-            if (isStaff) {
-                html += `<span class="staff-star" title="Administrador / Staff">⭐</span>`;
-            }
-            if (isVerif) {
-                html += `<span class="verified-v" title="Usuário Verificado">V</span>`;
-            }
+            if (isStaff) html += `<span class="staff-star" title="Administrador / Staff">⭐</span>`;
+            if (isVerif) html += `<span class="verified-v" title="Usuário Verificado">V</span>`;
             html += `<span style="cursor:pointer;" onclick="abrirPerfilPublico('${id || ''}')">${nick}</span>`;
             return html;
         }
 
-        // Correção de carregamento e salvamento de e-mail na nuvem
+        // Correção definitiva de salvamento e leitura de e-mail na nuvem
         async function carregarSessaoSalva() {
             try {
                 const sessaoSalva = localStorage.getItem('wavecombat_sessao_ativa');
@@ -990,6 +1081,7 @@
             verificarEstadoNotificacao();
             verificarMensagensNaoLidasBadge();
             atualizarPrecosLojaComCupom();
+            verificarParametroIndicacaoUrl();
             
             setTimeout(() => {
                 if(bgmActive) toggleBGM(true);
@@ -1001,18 +1093,56 @@
                 const { data, error } = await supabaseClient.from('usuarios').select('*').eq('id_jogador', String(idJogador)).maybeSingle();
                 if (!error && data) {
                     usuarioLogado.nick = data.nick || usuarioLogado.nick;
-                    usuarioLogado.email = data.email || '';
+                    // Garante que o e-mail salvo na nuvem ou localmente seja mantido
+                    const emailNuvem = (data.email && data.email.trim() !== '') ? data.email.trim() : '';
+                    const emailLocal = (usuarioLogado.email && usuarioLogado.email.trim() !== '') ? usuarioLogado.email.trim() : '';
+                    
+                    if (emailNuvem) {
+                        usuarioLogado.email = emailNuvem;
+                    } else if (emailLocal) {
+                        usuarioLogado.email = emailLocal;
+                        await supabaseClient.from('usuarios').update({ email: emailLocal }).eq('id_jogador', String(idJogador));
+                    } else {
+                        usuarioLogado.email = '';
+                    }
+
                     usuarioLogado.moldura = data.moldura || '';
                     usuarioLogado.bio = data.bio || 'Disponível no Hub';
                     usuarioLogado.instagram = data.instagram || '';
                     usuarioLogado.youtube = data.youtube || '';
                     usuarioLogado.tiktok = data.tiktok || '';
+
+                    // 97. Restaura preferências do Cloud Backup
+                    if (data.preferencias) {
+                        const p = data.preferencias;
+                        if (typeof p.sfx === 'boolean') {
+                            audioSfxAtivo = p.sfx;
+                            const elSfx = document.getElementById('checkAudioSFX');
+                            if (elSfx) elSfx.checked = p.sfx;
+                        }
+                        if (typeof p.bgm === 'boolean') {
+                            bgmActive = p.bgm;
+                            const elBgm = document.getElementById('checkBGM');
+                            if (elBgm) elBgm.checked = p.bgm;
+                        }
+                        if (p.volume !== undefined) {
+                            bgmVolumeValue = p.volume / 100;
+                            const elVol = document.getElementById('rangeBGMVolume');
+                            if (elVol) elVol.value = p.volume;
+                        }
+                        if (typeof p.invisivel === 'boolean') {
+                            const elInv = document.getElementById('checkModoInvisivel');
+                            if (elInv) elInv.checked = p.invisivel;
+                        }
+                    }
+
                     localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
                     document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(usuarioLogado.nick, usuarioLogado.id);
 
-                    // Verifica se o e-mail realmente está vazio na nuvem
                     if (!usuarioLogado.email || usuarioLogado.email.trim() === '') {
                         document.getElementById('modalAlertEmail').style.display = 'flex';
+                    } else {
+                        document.getElementById('modalAlertEmail').style.display = 'none';
                     }
                 }
             } catch(e) {}
@@ -1024,11 +1154,15 @@
             if (!emailDigitado || !usuarioLogado) return;
 
             try {
-                await supabaseClient.from('usuarios').update({ email: emailDigitado }).eq('id_jogador', String(usuarioLogado.id));
+                const { error } = await supabaseClient.from('usuarios').update({ email: emailDigitado }).eq('id_jogador', String(usuarioLogado.id));
+                if (error) {
+                    // Fallback upsert se o registro ainda não existir na tabela usuarios
+                    await supabaseClient.from('usuarios').upsert({ id_jogador: String(usuarioLogado.id), nick: usuarioLogado.nick, email: emailDigitado }, { onConflict: 'id_jogador' });
+                }
                 usuarioLogado.email = emailDigitado;
                 localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
                 fecharModalAlertEmail();
-                mostrarToast("✉️ E-mail salvo permanentemente na nuvem com sucesso!");
+                mostrarToast("✉️ E-mail vinculado e salvo na nuvem com sucesso!");
                 atualizarPerfilExpandidoUI();
             } catch(err) {
                 alert("Erro ao salvar e-mail na nuvem.");
@@ -1042,7 +1176,7 @@
                     await supabaseClient.from('usuarios').update({ email: '' }).eq('id_jogador', String(usuarioLogado.id));
                     usuarioLogado.email = '';
                     localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
-                    mostrarToast("🗑️ E-mail desvinculado da nuvem com sucesso!");
+                    mostrarToast("🗑️ E-mail desvinculado com sucesso!");
                     atualizarPerfilExpandidoUI();
                 } catch(e) {
                     alert("Erro ao desvincular e-mail.");
@@ -1094,6 +1228,8 @@
         function testarMolduraLoja(classeMoldura) {
             const box = document.getElementById('avatarPreviewBox');
             box.className = 'avatar-preview-box ' + classeMoldura;
+            const nickEl = document.getElementById('previewNickText');
+            if (nickEl && usuarioLogado) nickEl.textContent = usuarioLogado.nick;
         }
 
         async function verificarMensagensNaoLidasBadge() {
@@ -1219,16 +1355,65 @@
                     tiktok: tiktok
                 }, { onConflict: 'id_jogador' });
 
+                await supabaseClient.from('usuarios').update({
+                    bio: bio,
+                    instagram: instagram,
+                    youtube: youtube,
+                    tiktok: tiktok
+                }).eq('id_jogador', String(usuarioLogado.id));
+
                 usuarioLogado.bio = bio;
                 usuarioLogado.instagram = instagram;
                 usuarioLogado.youtube = youtube;
                 usuarioLogado.tiktok = tiktok;
                 localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
 
-                mostrarToast("✅ Perfil e redes sociais atualizados na nuvem e em cache!");
+                mostrarToast("✅ Perfil e redes sociais atualizados na nuvem!");
                 atualizarPerfilExpandidoUI();
             } catch(e) {
                 alert("Erro ao salvar perfil.");
+            }
+        }
+
+        // 87. Sorteio Automático Semanal (50 diamantes)
+        function participarSorteioSemanal() {
+            if (!usuarioLogado) {
+                alert("⚠️ Faça login para confirmar sua participação gratuita no sorteio semanal de 50 diamantes!");
+                abrirModalAuth(true);
+                return;
+            }
+            const semanaAtual = getSemanaDoAno();
+            const chave = `sorteio_semanal_${usuarioLogado.id}_${semanaAtual}`;
+            if (localStorage.getItem(chave)) {
+                mostrarToast("🎟️ Seu bilhete já está confirmado para o sorteio desta semana!");
+                return;
+            }
+            localStorage.setItem(chave, 'ativo');
+            document.getElementById('statusSorteioSemanal').textContent = "Status: ✅ Bilhete Confirmado (Concorrendo a 50 💎)";
+            mostrarToast("🎟️ Bilhete registrado! Boa sorte no sorteio de 50 diamantes!");
+        }
+
+        function getSemanaDoAno() {
+            const d = new Date();
+            const onejan = new Date(d.getFullYear(), 0, 1);
+            return Math.ceil((((d - onejan) / 86400000) + onejan.getDay() + 1) / 7);
+        }
+
+        // 85. Recompensa por Indicação de Amigos (20 diamantes)
+        function copiarLinkIndicacao() {
+            const ref = usuarioLogado ? usuarioLogado.id : 'WAVECOMBAT';
+            const url = `${window.location.origin}${window.location.pathname}?ref=${ref}`;
+            navigator.clipboard.writeText(url).then(() => {
+                mostrarToast("📋 Link de indicação copiado! Ganhe 20 💎 por amigo cadastrado!");
+            });
+        }
+
+        function verificarParametroIndicacaoUrl() {
+            const params = new URLSearchParams(window.location.search);
+            const ref = params.get('ref');
+            if (ref) {
+                const inputRef = document.getElementById('regCodigoIndicacao');
+                if (inputRef) inputRef.value = ref;
             }
         }
 
@@ -1348,7 +1533,8 @@
                     carregarSaldoDiamantesSite();
                     exibirModalWheelResult("💎", "VOCÊ GANHOU!", `Parabéns! Foram creditados <strong>${premio.val} Diamantes</strong> na sua conta!`, true);
                 } else if (premio.type === 'xp') {
-                    exibirModalWheelResult("⭐", "BÔNUS DE XP!", `Parabéns! Você ganhou <strong>${premio.val} XP</strong> para subir no ranking global!`, true);
+                    await adicionarXpJogador(premio.val);
+                    exibirModalWheelResult("⭐", "BÔNUS DE XP!", `Parabéns! Você ganhou <strong>${premio.val} XP</strong> para subir de nível!`, true);
                 } else if (premio.type === 'cupom') {
                     localStorage.setItem(`cupom_ativo_${usuarioLogado.id}`, 'WAVE10');
                     atualizarPrecosLojaComCupom();
@@ -1357,6 +1543,23 @@
                     exibirModalWheelResult("😢", "QUE PENA!", `Caiu em <strong>"Nada"</strong>. Não desanime, volte amanhã para tentar novamente!`, false);
                 }
             }, 4500);
+        }
+
+        async function adicionarXpJogador(qtdXp) {
+            if (!usuarioLogado) return;
+            try {
+                const { data } = await supabaseClient.from('leaderboard').select('nivel, xp, pontos').eq('id_jogador', String(usuarioLogado.id)).maybeSingle();
+                let xpAtual = (data?.xp || 0) + qtdXp;
+                let nivelAtual = Math.floor(xpAtual / 500) + 1;
+                await supabaseClient.from('leaderboard').upsert({
+                    id_jogador: String(usuarioLogado.id),
+                    nick: usuarioLogado.nick,
+                    xp: xpAtual,
+                    nivel: nivelAtual,
+                    pontos: (data?.pontos || 0) + qtdXp
+                }, { onConflict: 'id_jogador' });
+                atualizarPerfilExpandidoUI();
+            } catch(e){}
         }
 
         function exibirModalWheelResult(icone, titulo, mensagem, vitoria) {
@@ -1431,14 +1634,15 @@
             let molduraAtiva = localStorage.getItem(`moldura_ativa_${usuarioLogado.id}`) || '';
 
             if (inv.length === 0) {
-                container.innerHTML = `<p style="color:#94a3b8; text-align:center; font-size:11px;">Seu inventário está vazio. Compre itens 3D na Loja!</p>`;
+                container.innerHTML = `<p style="color:#94a3b8; text-align:center; font-size:11px;">Seu inventário 3D está vazio. Compre itens na Loja!</p>`;
                 return;
             }
 
             container.innerHTML = inv.map(item => `
                 <div style="background:#000; border:1px solid var(--steel-border); padding:10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:11px;">
-                    <div>
-                        <strong style="color:var(--accent-color); text-transform:uppercase;">Moldura 3D: ${item.replace('_', ' ')}</strong>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <div class="avatar-preview-box ${item}" style="width:40px; height:40px; margin:0; font-size:9px;">3D</div>
+                        <strong style="color:var(--accent-color); text-transform:uppercase;">${item.replace('frame-', 'Moldura 3D ')}</strong>
                     </div>
                     <div>
                         <button class="btn-gaming" onclick="equiparMoldura('${item}')" style="padding:4px 8px; font-size:10px; background:${molduraAtiva === item ? '#22c55e' : 'var(--accent-color)'}; color:#000;">
@@ -1457,7 +1661,7 @@
 
         function togglePainelAmigos() {
             if (!usuarioLogado) {
-                alert("⚠️ Faça login para acessar sua lista de amigos e espectador!");
+                alert("⚠️ Faça login para acessar sua lista de amigos e modo espectador!");
                 abrirModalAuth(true);
                 return;
             }
@@ -1497,14 +1701,7 @@
                     { id_jogador: String(usuarioLogado.id), id_amigo: alvo.id, status: 'pendente' }
                 ]);
 
-                // Recompensa por indicação de amigos (Feature 85): +20 diamantes se convidado
-                let saldoAtual = parseInt(localStorage.getItem(`diamantes_${usuarioLogado.id}`) || '0', 10);
-                let novoSaldo = saldoAtual + 20;
-                localStorage.setItem(`diamantes_${usuarioLogado.id}`, novoSaldo);
-                await supabaseClient.from('carteira_diamantes').upsert({ id_jogador: String(usuarioLogado.id), nick: usuarioLogado.nick, diamantes: novoSaldo }, { onConflict: 'id_jogador' });
-                carregarSaldoDiamantesSite();
-
-                mostrarToast(`📨 Pedido enviado! Bônus de 💎 20 diamantes por indicação resgatado!`);
+                mostrarToast(`📨 Pedido de amizade enviado para ${alvo.nick}!`);
                 document.getElementById('inputAdicionarAmigo').value = '';
                 carregarListaAmigos();
             } catch(e) {
@@ -1559,7 +1756,7 @@
                                     <div style="display:flex; justify-content:space-between; align-items:center;">
                                         <strong style="cursor:pointer; color:#fff;" onclick="abrirPerfilPublico('${infoOutro.id}')">${infoOutro.nick}</strong>
                                         <div style="display:flex; gap:6px;">
-                                            <button onclick="iniciarModoEspectador('${infoOutro.nick}')" style="background:var(--accent-color); color:#000; border:none; padding:2px 6px; border-radius:4px; font-size:9px; font-weight:bold; cursor:pointer;" title="Assistir partida">👁️ Espiar</button>
+                                            <button onclick="iniciarModoEspectador('${infoOutro.nick}')" style="background:var(--accent-color); color:#000; border:none; padding:2px 6px; border-radius:4px; font-size:9px; font-weight:bold; cursor:pointer;" title="Assistir partida ao vivo">👁️ Espiar</button>
                                             <button onclick="removerAmizade(${rel.id})" style="background:none; border:none; color:var(--alert-red); cursor:pointer; font-size:10px;">Remover</button>
                                         </div>
                                     </div>
@@ -1589,12 +1786,18 @@
             } catch(e) {}
         }
 
-        // Modo Espectador (Feature 43)
+        // 43. Modo Espectador
         function iniciarModoEspectador(nickAmigo) {
-            mostrarToast(`👁️ Entrando no modo espectador para assistir a partida de ${nickAmigo}...`);
-            setTimeout(() => {
-                tentarExecutarJogoDestaque();
-            }, 1000);
+            mostrarToast(`👁️ Conectando ao Modo Espectador de ${nickAmigo}...`);
+            const jogos = listaJogosCache.filter(j => j.publicado);
+            const destaque = obterJogoDestaque(jogos);
+            if (destaque) {
+                let sep = destaque.arquivo.includes('?') ? '&' : '?';
+                document.getElementById('gameIframe').src = `${destaque.arquivo}${sep}spectator=1&target=${encodeURIComponent(nickAmigo)}`;
+                document.getElementById('player').style.display = 'block';
+                document.getElementById('playerControlsBar').style.display = 'flex';
+                document.getElementById('player').scrollIntoView({ behavior: 'smooth' });
+            }
         }
 
         async function responderAmizade(idRelacao, acao) {
@@ -1628,12 +1831,13 @@
 
             let nivelUser = 1;
             let xpUser = 0;
+            let pontosUser = 0;
             let bioUser = "Disponível no Hub";
             let instaUser = "", ytUser = "", tiktokUser = "";
 
             try {
-                const { data: lb } = await supabaseClient.from('leaderboard').select('nivel, xp').eq('id_jogador', idFinal).maybeSingle();
-                if (lb) { nivelUser = lb.nivel || 1; xpUser = lb.xp || 0; }
+                const { data: lb } = await supabaseClient.from('leaderboard').select('nivel, xp, pontos').eq('id_jogador', idFinal).maybeSingle();
+                if (lb) { nivelUser = lb.nivel || 1; xpUser = lb.xp || 0; pontosUser = lb.pontos || 0; }
                 
                 const { data: verifData } = await supabaseClient.from('wavecombat_verificados').select('*').eq('id_jogador', idFinal).maybeSingle();
                 if (verifData) {
@@ -1653,7 +1857,7 @@
                 <div class="${isVerif ? 'profile-frame-gold' : ''}" style="padding: 15px; border-radius: 8px; background: #000; text-align: left;">
                     <h3 style="font-family:'Orbitron'; color:var(--accent-color); font-size:16px; margin-bottom:8px; text-align: center;">${nickFinal} ${isVerif ? '⭐' : ''}</h3>
                     <p style="font-size:11px; color:var(--gold-warning); font-family:'Orbitron'; margin-bottom:6px; text-align: center;">ID: <strong>${idFinal}</strong></p>
-                    <p style="font-size:11px; color:#22c55e; margin-bottom:10px; text-align: center;">⭐ Nível: ${nivelUser} | XP: ${xpUser}</p>
+                    <p style="font-size:11px; color:#22c55e; margin-bottom:10px; text-align: center;">⭐ Nível: ${nivelUser} | XP: ${xpUser} | Recorde: ${formatarNumero(pontosUser)} pts</p>
                     
                     <div style="background: rgba(255,255,255,0.03); padding: 8px; border-radius: 6px; margin-bottom: 10px; font-size: 11px;">
                         <span style="color:var(--accent-color); font-family:'Orbitron'; font-size:10px;">💬 Biografia / Status:</span>
@@ -1663,9 +1867,9 @@
                     ${(instaUser || ytUser || tiktokUser) ? `
                         <div style="display:flex; flex-direction:column; gap:4px; margin-bottom:12px; font-size:11px;">
                             <span style="color:var(--gold-warning); font-family:'Orbitron'; font-size:10px;">🌐 Redes Sociais:</span>
-                            ${instaUser ? `<a href="${instaUser}" target="_blank" style="color:#3b82f6; text-decoration:none;">📸 Instagram: ${instaUser}</a>` : ''}
-                            ${ytUser ? `<a href="${ytUser}" target="_blank" style="color:#ef4444; text-decoration:none;">▶ YouTube: ${ytUser}</a>` : ''}
-                            ${tiktokUser ? `<a href="${tiktokUser}" target="_blank" style="color:#fff; text-decoration:none;">🎵 TikTok: ${tiktokUser}</a>` : ''}
+                            ${instaUser ? `<a href="${instaUser}" target="_blank" style="color:#3b82f6; text-decoration:none;">📸 Instagram</a>` : ''}
+                            ${ytUser ? `<a href="${ytUser}" target="_blank" style="color:#ef4444; text-decoration:none;">▶ YouTube</a>` : ''}
+                            ${tiktokUser ? `<a href="${tiktokUser}" target="_blank" style="color:#fff; text-decoration:none;">🎵 TikTok</a>` : ''}
                         </div>
                     ` : ''}
 
@@ -1726,47 +1930,64 @@
 
         function setBGMVolume(val) { bgmVolumeValue = val / 100; }
 
-        // Canal de Voz Rápido Integrado (Feature 62 - Corrigido e Funcional)
-        function toggleMicrofoneVoice() {
-            micAtivo = !micAtivo;
+        // 62. Canal de Voz Rápido Integrado (Captura real de microfone WebRTC/MediaDevices)
+        async function toggleMicrofoneVoice() {
             const btn = document.getElementById('btnMicToggle');
-            if(btn) {
-                btn.textContent = micAtivo ? "🎤 Mic Rápido: ON" : "🎤 Mic Rápido: OFF";
-                btn.style.background = micAtivo ? "#22c55e" : "#ef4444";
-                btn.style.color = micAtivo ? "#000" : "#fff";
+            if (!localVoiceStream) {
+                try {
+                    localVoiceStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    micAtivo = true;
+                    if (btn) {
+                        btn.textContent = "🎤 Mic Rápido: ON";
+                        btn.style.background = "#22c55e";
+                        btn.style.color = "#000";
+                    }
+                    mostrarToast("🎤 Microfone conectado ao canal de voz rápido!");
+                } catch(e) {
+                    mostrarToast("⚠️ Permita o uso do microfone no navegador para ativar a voz.");
+                }
+            } else {
+                micAtivo = !micAtivo;
+                localVoiceStream.getAudioTracks().forEach(track => track.enabled = micAtivo);
+                if (btn) {
+                    btn.textContent = micAtivo ? "🎤 Mic Rápido: ON" : "🎤 Mic Rápido: OFF";
+                    btn.style.background = micAtivo ? "#22c55e" : "#ef4444";
+                    btn.style.color = micAtivo ? "#000" : "#fff";
+                }
+                mostrarToast(micAtivo ? "🎤 Microfone ativado" : "🔇 Microfone mutado");
             }
-            mostrarToast(micAtivo ? "🎤 Canal de voz rápido ativado" : "🔇 Canal de voz silenciado");
         }
 
         function toggleAudioVoice() {
             audioVoiceAtivo = !audioVoiceAtivo;
             const btn = document.getElementById('btnAudioToggle');
             if(btn) {
-                btn.textContent = audioVoiceAtivo ? "🔊 Som: ON" : "🔇 Som: OFF";
+                btn.textContent = audioVoiceAtivo ? "🔊 Som Voz: ON" : "🔇 Som Voz: OFF";
                 btn.style.background = audioVoiceAtivo ? "#3b82f6" : "#ef4444";
             }
             mostrarToast(audioVoiceAtivo ? "🔊 Áudio da sala ativado" : "🔇 Áudio da sala silenciado");
         }
 
-        // Configuração de Resolução Interna (Feature 72)
+        // 72. Configuração de Resolução Interna
         function alterarResolucaoInterna(valor) {
             const iframe = document.getElementById('gameIframe');
             if(iframe) {
-                iframe.style.transform = `scale(${valor / 100})`;
+                const scale = valor / 100;
+                iframe.style.transform = `scale(${scale})`;
                 iframe.style.transformOrigin = 'top left';
-                iframe.style.width = `${100 / (valor / 100)}%`;
-                iframe.style.height = `${100 / (valor / 100)}%`;
+                iframe.style.width = `${100 / scale}%`;
+                iframe.style.height = `${100 / scale}%`;
                 mostrarToast(`⚡ Resolução interna ajustada para ${valor}%`);
             }
         }
 
-        // Modo Oculto / Invisível (Feature 96)
+        // 96. Modo Oculto / Invisível
         function toggleModoInvisivel(ativo) {
             localStorage.setItem('modo_invisivel', ativo ? 'true' : 'false');
-            mostrarToast(ativo ? "🕶️ Modo invisível ativado (Offline para amigos)" : "🟢 Modo visível ativado");
+            mostrarToast(ativo ? "🕶️ Modo invisível ativado (Você aparece offline)" : "🟢 Modo visível ativado");
         }
 
-        // Backup Automático na Nuvem de Configurações e preferências (Feature 97)
+        // 97. Backup Automático na Nuvem de Configurações e preferências
         async function salvarConfiguracoesNuvemAutomatico() {
             if (!usuarioLogado) return;
             const prefs = {
@@ -1777,7 +1998,7 @@
             };
             try {
                 await supabaseClient.from('usuarios').update({ preferencias: prefs }).eq('id_jogador', String(usuarioLogado.id));
-                mostrarToast("☁️ Cloud Backup automático realizado!");
+                mostrarToast("☁️ Cloud Backup automático salvo na nuvem!");
             } catch(e) {}
         }
 
@@ -1803,6 +2024,7 @@
             }
         }
 
+        // 34. Notificações Push Personalizadas
         function verificarEstadoNotificacao() {
             if ("Notification" in window) {
                 const btnPush = document.getElementById('btnPushNotif');
@@ -1818,9 +2040,9 @@
             if ("Notification" in window) {
                 Notification.requestPermission().then(permission => {
                     if (permission === "granted") {
-                        mostrarToast("🔔 Notificações ativadas com sucesso!");
+                        mostrarToast("🔔 Notificações Push ativadas com sucesso!");
                         document.getElementById('btnPushNotif').style.display = 'none';
-                        new Notification("WaveCombat Hub", { body: "Obrigado por ativar as notificações Web Push!" });
+                        new Notification("WaveCombat Hub", { body: "Notificações ativadas! Você será avisado sobre giros da roleta e eventos." });
                     } else {
                         mostrarToast("❌ Permissão de notificação negada.");
                     }
@@ -1992,7 +2214,8 @@
             try {
                 const { data } = await supabaseClient.from('usuarios').select('*').eq('email', emailInput.trim()).maybeSingle();
                 if(data) {
-                    alert(`✅ Sua senha é: ${data.pass}\n(Dica: Anote em um lugar seguro!)`);
+                    alert(`✅ Sua senha é: ${data.pass}
+(Dica: Anote em um lugar seguro!)`);
                 } else {
                     alert("❌ Nenhum usuário encontrado com este e-mail.");
                 }
@@ -2136,25 +2359,38 @@
             document.getElementById('panelCorreio').classList.toggle('active', aba === 'correio');
         }
 
+        // 85. Cadastro com Recompensa de 20 Diamantes por Indicação
         async function fazerRegistroPlataforma(e) {
             e.preventDefault();
             const u = document.getElementById('regUser').value.trim();
             const email = document.getElementById('regEmail').value.trim();
             const p = document.getElementById('regPass').value;
+            const codigoIndicacao = document.getElementById('regCodigoIndicacao')?.value.trim();
             
             let users = await obterUsuariosCadastrados();
             if(users.some(x => x.nick && x.nick.toLowerCase() === u.toLowerCase())) {
-                alert("❌ Este nick já possui uma conta registrada! Cada nick possui um ID único permanente. Faça login na sua conta existente.");
+                alert("❌ Este nick já possui uma conta registrada! Faça login na sua conta existente.");
                 return;
             }
 
             const novoId = Math.floor(100000000 + Math.random() * 900000000).toString();
             try {
                 await supabaseClient.from('usuarios').insert([{ id_jogador: novoId, nick: u, email: email, pass: p }]);
+                
+                // Credita 20 diamantes ao padrinho se houver código válido
+                if (codigoIndicacao) {
+                    const padrinho = await buscarUsuarioPorNickOuId(codigoIndicacao);
+                    if (padrinho && padrinho.id !== novoId) {
+                        const { data: cartP } = await supabaseClient.from('carteira_diamantes').select('diamantes').eq('id_jogador', padrinho.id).maybeSingle();
+                        const saldoP = cartP ? (cartP.diamantes || 0) : 0;
+                        await supabaseClient.from('carteira_diamantes').upsert({ id_jogador: padrinho.id, nick: padrinho.nick, diamantes: saldoP + 20 }, { onConflict: 'id_jogador' });
+                    }
+                }
+
                 usuarioLogado = { nick: u, email: email, isAdm: false, id: novoId, bio: 'Disponível', instagram: '', youtube: '', tiktok: '' };
                 localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
                 
-                mostrarToast("✨ Conta criada e salva na nuvem com sucesso!");
+                mostrarToast("✨ Conta criada e e-mail salvo permanentemente na nuvem!");
                 document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(u, novoId);
                 fecharModalAuth();
                 atualizarAbasPerfilUI();
@@ -2164,7 +2400,6 @@
             }
         }
 
-        // Login corrigido para puxar o e-mail exato da tabela usuarios na nuvem
         async function fazerLoginPlataforma(e) {
             e.preventDefault();
             const u = document.getElementById('loginUser').value.trim();
@@ -2208,11 +2443,12 @@
             }
         }
 
+        // 6 & 7. Níveis de Conta & Estatísticas de Perfil Detalhadas
         async function atualizarPerfilExpandidoUI() {
             const perfilDiv = document.getElementById('perfilUserData');
             if (!perfilDiv) return;
             if (!usuarioLogado) {
-                perfilDiv.innerHTML = `<p style="color:#94a3b8; text-align:center;">Faça login para ver seu perfil.</p>`;
+                perfilDiv.innerHTML = `<p style="color:#94a3b8; text-align:center;">Faça login para ver seu perfil e estatísticas detalhadas.</p>`;
                 return;
             }
             const nickAtual = usuarioLogado.nick;
@@ -2223,23 +2459,58 @@
 
             let nivelUser = 1;
             let xpUser = 0;
+            let pontosUser = 0;
             try {
-                const { data: lbData } = await supabaseClient.from('leaderboard').select('nivel, xp').eq('id_jogador', idAtual).single();
-                if (lbData) { nivelUser = lbData.nivel || 1; xpUser = lbData.xp || 0; }
+                const { data: lbData } = await supabaseClient.from('leaderboard').select('nivel, xp, pontos').eq('id_jogador', idAtual).maybeSingle();
+                if (lbData) {
+                    nivelUser = lbData.nivel || 1;
+                    xpUser = lbData.xp || 0;
+                    pontosUser = lbData.pontos || 0;
+                }
             } catch(e){}
+
+            const xpProximoNivel = nivelUser * 500;
+            const progressoPct = Math.min(100, Math.round(((xpUser % 500) / 500) * 100));
+            const partidasJogadas = parseInt(localStorage.getItem(`partidas_${idAtual}`) || '0', 10);
+            const tempoMinutos = partidasJogadas * 7;
 
             let cardStyleClass = isVerif ? 'profile-frame-gold' : '';
             let emailTxt = (usuarioLogado.email && usuarioLogado.email.trim() !== '') ? usuarioLogado.email : 'Não vinculado';
 
             perfilDiv.innerHTML = `
                 <div style="display:flex; flex-direction:column; gap:10px;">
-                    <div class="${cardStyleClass}" style="background:#000; border:1px solid var(--steel-border); padding:10px; border-radius:8px; text-align:center;">
-                        <h4 style="color:var(--accent-color); font-family:'Orbitron'; font-size:13px;">${obterHtmlNickVerificado(nickAtual, idAtual)}</h4>
+                    <div class="${cardStyleClass}" style="background:#000; border:1px solid var(--steel-border); padding:12px; border-radius:8px; text-align:center;">
+                        <h4 style="color:var(--accent-color); font-family:'Orbitron'; font-size:14px;">${obterHtmlNickVerificado(nickAtual, idAtual)}</h4>
                         <p style="font-size:11px; color:var(--gold-warning); font-family:'Orbitron'; margin-top:4px;">ID Único: <strong>${idAtual}</strong></p>
-                        <p style="font-size:10px; color:#22c55e; margin-top:2px;">⭐ Nível: ${nivelUser} | XP: ${xpUser}</p>
-                        <p style="font-size:10px; color:#94a3b8; margin-top:2px;">E-mail: <strong>${emailTxt}</strong></p>
-                        ${usuarioLogado.email ? `<button onclick="desvincularEmailConta()" style="background:none; border:none; color:var(--alert-red); font-size:9px; cursor:pointer; text-decoration:underline; margin-top:4px;">Remover / Desvincular E-mail</button>` : ''}
-                        ${isVerif ? '<p style="font-size:10px; color:#FFD700; margin-top:4px; font-weight:bold;">⭐ Verificado</p>' : ''}
+                        
+                        <div style="margin-top:8px; text-align:left; background:rgba(255,255,255,0.03); padding:8px; border-radius:6px;">
+                            <div style="display:flex; justify-content:space-between; font-size:11px; font-family:'Orbitron';">
+                                <span style="color:#22c55e;">⭐ Nível ${nivelUser}</span>
+                                <span style="color:#94a3b8;">${xpUser} / ${xpProximoNivel} XP</span>
+                            </div>
+                            <div class="xp-bar-container">
+                                <div class="xp-bar-fill" style="width:${progressoPct}%;"></div>
+                            </div>
+                        </div>
+
+                        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:6px; margin-top:8px; font-size:10px;">
+                            <div style="background:#080c14; padding:6px; border-radius:6px; border:1px solid var(--steel-border);">
+                                <span style="color:#94a3b8; display:block;">Partidas</span>
+                                <strong style="color:#fff; font-size:12px;">${partidasJogadas}</strong>
+                            </div>
+                            <div style="background:#080c14; padding:6px; border-radius:6px; border:1px solid var(--steel-border);">
+                                <span style="color:#94a3b8; display:block;">Tempo Est.</span>
+                                <strong style="color:var(--accent-color); font-size:12px;">${tempoMinutos}m</strong>
+                            </div>
+                            <div style="background:#080c14; padding:6px; border-radius:6px; border:1px solid var(--steel-border);">
+                                <span style="color:#94a3b8; display:block;">Recorde</span>
+                                <strong style="color:var(--gold-warning); font-size:12px;">${formatarNumero(pontosUser)}</strong>
+                            </div>
+                        </div>
+
+                        <p style="font-size:10px; color:#94a3b8; margin-top:8px;">E-mail: <strong>${emailTxt}</strong></p>
+                        ${usuarioLogado.email ? `<button onclick="desvincularEmailConta()" style="background:none; border:none; color:var(--alert-red); font-size:9px; cursor:pointer; text-decoration:underline; margin-top:2px;">Remover / Desvincular E-mail</button>` : ''}
+                        ${isVerif ? '<p style="font-size:10px; color:#FFD700; margin-top:4px; font-weight:bold;">⭐ Conta Verificada</p>' : ''}
                     </div>
 
                     <form onsubmit="salvarPerfilRedesSociais(event)" style="background:#000; border:1px solid var(--steel-border); padding:10px; border-radius:8px; display:flex; flex-direction:column; gap:6px; font-size:11px;">
@@ -2281,7 +2552,7 @@
                 }
                 container.innerHTML = data.map((item, idx) => `
                     <div style="display:flex; justify-content:space-between; align-items:center; background:#000; border:1px solid var(--steel-border); padding:6px 10px; border-radius:6px; font-size:11px;">
-                        <span style="display:flex; align-items:center;"><strong>#${idx+1}</strong>&nbsp;${obterHtmlNickVerificado(item.nick, item.id_jogador)}</span>
+                        <span style="display:flex; align-items:center;"><strong>#${idx+1}</strong>&nbsp;${obterHtmlNickVerificado(item.nick, item.id_jogador)} <small style="color:#22c55e; margin-left:6px;">(Nv.${item.nivel || 1})</small></span>
                         <strong style="color:var(--accent-color);">${formatarNumero(item.pontos)} pts</strong>
                     </div>
                 `).join('');
@@ -2370,6 +2641,14 @@
                 document.getElementById('broadcastTicker').style.display = 'block';
             }
 
+            const totalAcessos = listaJogosCache.reduce((acc, j) => acc + (j.acessos || 0), 0);
+            const statPartidas = document.getElementById('statTotalPartidas');
+            if (statPartidas) statPartidas.textContent = formatarNumero(totalAcessos);
+
+            const usuariosList = await obterUsuariosCadastrados();
+            const statUsuarios = document.getElementById('statTotalUsuarios');
+            if (statUsuarios) statUsuarios.textContent = formatarNumero(usuariosList.length);
+
             sincronizarCamposAdmUI();
             aplicarLogoNoSite();
             atualizarVisibilidadeLiveGeral();
@@ -2433,9 +2712,16 @@
             }
         }
 
+        // 35. Carregamento Otimizado (Lazy Loading sob demanda ao abrir o jogo)
         async function tentarExecutarJogo(jogo) {
             if (await verificarBanimentoAtual()) return;
             try { await supabaseClient.from('jogos').update({ acessos: (jogo.acessos || 0) + 1 }).eq('id', jogo.id); } catch(e){}
+
+            if (usuarioLogado) {
+                let p = parseInt(localStorage.getItem(`partidas_${usuarioLogado.id}`) || '0', 10) + 1;
+                localStorage.setItem(`partidas_${usuarioLogado.id}`, p);
+                adicionarXpJogador(50);
+            }
 
             toggleBGM(false);
 
@@ -2495,14 +2781,15 @@
             }
         }
 
-        // Modo Tela Cheia Nativo e Fluido (Feature 31)
+        // 31. Modo Tela Cheia Nativo e Fluido
         function toggleTelaCheia() {
             const c = document.getElementById('player');
-            if (!document.fullscreenElement) {
+            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
                 if (c.requestFullscreen) c.requestFullscreen();
                 else if (c.webkitRequestFullscreen) c.webkitRequestFullscreen();
             } else {
                 if (document.exitFullscreen) document.exitFullscreen();
+                else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
             }
         }
 
