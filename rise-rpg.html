@@ -192,6 +192,17 @@ body[data-mode=play] #xpb{display:block}
 .mz{position:absolute;left:-32px;width:28px;height:28px;font-size:16px}#mmP{top:0}#mmM{top:34px}
 #mmW.xl{width:min(86vh,86vw,520px);height:min(86vh,86vw,520px)}
 #bDod{right:calc(30px + var(--safe-r));bottom:calc(42px + 78px*var(--s) + var(--safe-b))}
+.pc{width:92px}.pc.lab{width:74px;position:sticky;left:0;z-index:1;background:#0a100d}
+.pc b{font-size:13px;opacity:.7}.pc.ok b{opacity:1}
+.cell{height:76px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--bone);font:600 11px system-ui,sans-serif;padding:4px;text-align:center}
+button.cell{cursor:pointer}.cell.fr{border-color:rgba(111,154,98,.7)}.cell.el{border-color:rgba(217,164,65,.8);background:linear-gradient(rgba(217,164,65,.16),rgba(217,164,65,.04))}
+.cell.em{opacity:.25;border-style:dashed}.cell .ic{font-size:26px}.cell small{font-size:10px;opacity:.85}.cell.can{box-shadow:0 0 12px rgba(255,210,74,.7)}.cell.got,.cell:disabled{opacity:.55}
+.lab .cell{font:700 12px Cinzel,serif;letter-spacing:.08em}
+#mpb{display:none;position:fixed;z-index:6;left:50%;bottom:calc(34px + var(--safe-b));transform:translateX(-50%);width:min(40vw,260px);height:8px;background:rgba(0,0,0,.55);border:1px solid var(--line);border-radius:4px;overflow:hidden;pointer-events:none}
+body[data-mode=play] #mpb{display:block}#mpF{display:block;height:100%;background:linear-gradient(90deg,#2a5fb0,#5ac8ff)}
+#sk{bottom:calc(50px + var(--safe-b))}#talk{bottom:calc(112px + var(--safe-b))}
+.skc u{position:absolute;right:3px;bottom:1px;font:700 11px system-ui,sans-serif;text-decoration:none;color:#fff}
+#bPot{right:calc(42px + 78px*var(--s) + var(--safe-r));bottom:calc(42px + 78px*var(--s) + var(--safe-b))}
 </style>
 </head>
 <body>
@@ -238,7 +249,7 @@ body[data-mode=play] #xpb{display:block}
   <input id="mTo" placeholder="ID do destinatário" style="display:none">
   <div class="row2" style="margin:0"><input id="mIn" maxlength="140" placeholder="Escreva uma mensagem" style="flex:1"><button class="btn" id="mSend" style="flex:none">Enviar</button></div>
 </div>
-<div id="tc"><div id="joy"><i></i></div><button id="bSkl" aria-label="Habilidade">✨</button><button id="bSk2" aria-label="Habilidade 2">🛡️</button><button id="bSk3" aria-label="Habilidade 3">💥</button><button id="bDod" aria-label="Esquivar">🌀</button><button id="bAtk" aria-label="Atacar">⚔️</button></div>
+<div id="tc"><div id="joy"><i></i></div><button id="bSkl" aria-label="Habilidade">✨</button><button id="bSk2" aria-label="Habilidade 2">🛡️</button><button id="bSk3" aria-label="Habilidade 3">💥</button><button id="bDod" aria-label="Esquivar">🌀</button><button id="bPot" aria-label="Poção">🧪</button><button id="bAtk" aria-label="Atacar">⚔️</button></div>
 <div id="cg"><div id="cgP"><div id="cgL"></div><div class="row2"><input id="cgI" maxlength="140" placeholder="Mensagem"><button class="btn" id="cgS" style="flex:none">Enviar</button></div></div><button class="ib" id="cgH" aria-label="Chat geral">💬<b id="cgBd">!</b></button></div>
 <div id="mmW"><canvas id="mm" width="240" height="240"></canvas><button id="mmX" class="ib" aria-label="Fechar mapa">✕</button><button class="ib mz" id="mmP" aria-label="Aproximar">+</button><button class="ib mz" id="mmM" aria-label="Afastar">−</button></div><div id="coords"></div>
 <div id="pPro" class="pan big"><div class="rowh"><button class="btn px">← Voltar</button><h3>Perfil</h3></div><div id="proB"></div></div>
@@ -246,7 +257,7 @@ body[data-mode=play] #xpb{display:block}
 <div id="pPass" class="pan big"><div class="rowh"><button class="btn px">← Lobby</button><h3>Passe</h3></div><div id="passB"></div></div>
 <div id="hp"><i id="hpF"></i><span id="hpT"></span></div><div id="hurt"></div><div id="qt"></div><button class="btn" id="talk">💬 Falar (E)</button>
 <div id="pNpc" class="pan"><h3 id="npcN"></h3><div id="npcB"></div><div class="row2" id="npcA"></div></div>
-<div id="vig"></div><div id="sk"></div><div id="xpb"><i id="xpF"></i></div><div id="tgt"><span id="tgtN"></span><i><b id="tgtF"></b></i></div><div id="ban"></div>
+<div id="vig"></div><div id="sk"></div><div id="mpb"><i id="mpF"></i></div><div id="xpb"><i id="xpF"></i></div><div id="tgt"><span id="tgtN"></span><i><b id="tgtF"></b></i></div><div id="ban"></div>
 <div id="toast"></div>
 <div id="rot"><div class="ph">📱</div>Gire a tela<small>RISE RPG funciona na horizontal</small></div>
 
@@ -272,7 +283,7 @@ const URL_ID = (params.get('id') || '').trim();
 const PLAYER_ID = URL_ID || '0'; // fallback para testes locais
 const $ = id => document.getElementById(id);
 const fmt = n => Number(n).toLocaleString('pt-BR');
-const VERSION = '0.010'; // suba a cada atualização enviada
+const VERSION = '0.011'; // suba a cada atualização enviada
 const DIA = {};
 const G = { mode: 'start' };
 let NICK = 'Visitante';
@@ -811,7 +822,7 @@ function initUI(E) {
   const keys = {}, joy = { x: 0, y: 0 };
   let atk = 0, dash = 0, cd = 0;
   const attack = () => { if (G.mode === 'play' && atk <= 0) { atk = .3; doAttack(); } };
-  const skill = () => { if (G.mode === 'play' && cd <= 0) { dash = .25 + .05 * ((P.sk[char.cls] || [])[0] || 0); cd = 1.5; doSkill(); } };
+  const skill = () => { if (G.mode === 'play' && cd <= 0 && useMp(15)) { dash = .25 + .05 * ((P.sk[char.cls] || [])[0] || 0); cd = 1.5; doSkill(); } };
   addEventListener('keydown', e => {
     if (/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return;
     const k = e.key.toLowerCase(); keys[k] = 1;
@@ -938,17 +949,19 @@ function initUI(E) {
     bc.onclick = () => { let n = 0; for (let l = 1; l <= MAXL; l++) { n += claim('f', l); n += claim('e', l); } saveP(); renderPass(); toast(n ? n + ' itens resgatados!' : 'Nada para resgatar.'); };
     top.style.flexWrap = 'wrap'; top.append(be, ba, bc);
     B.append(top, h('p', '', 'Nível do passe: ' + lvlNow() + '/' + MAXL + ' · Grátis: a cada 5 níveis · Elite: todos os níveis'));
-    const g = h('div', 'pg');
+    const g = h('div', 'pg'), lab = h('div', 'pc lab');
+    lab.append(h('b', '', 'Nível'), h('div', 'cell fr', 'GRÁTIS'), h('div', 'cell el', 'ELITE')); g.append(lab);
     for (let l = 1; l <= MAXL; l++) {
-      const c = h('div', 'pc' + (l <= lvlNow() ? ' ok' : '')); c.append(h('b', '', 'Nv. ' + l));
+      const c = h('div', 'pc' + (l <= lvlNow() ? ' ok' : '')); c.append(h('b', '', String(l)));
       ['f', 'e'].forEach(k => {
-        if (k === 'f' && l % 5) { c.append(h('i', '', '—')); return; }
-        const got = P.claimed.includes(ck(k, l)), x = h('button', 'btn' + (got ? ' on' : ''), (got ? '✓ ' : can(k, l) ? '' : '🔒 ') + rew(l, k));
-        x.disabled = got || !can(k, l); x.onclick = () => { claim(k, l); saveP(); renderPass(); }; c.append(x);
+        if (k === 'f' && l % 5) { c.append(h('div', 'cell em', '')); return; }
+        const got = P.claimed.includes(ck(k, l)), ok = can(k, l), nm = rew(l, k), x = h('button', 'cell ' + (k === 'e' ? 'el' : 'fr') + (got ? ' got' : ok ? ' can' : ''));
+        x.append(h('span', 'ic', nm.split(' ')[0]), h('small', '', got ? '✓ Resgatado' : ok ? 'Resgatar' : (k === 'e' && !P.elite) ? '🔒 Elite' : '🔒 Nv.' + l));
+        x.title = nm; x.disabled = got || !ok; x.onclick = () => { claim(k, l); saveP(); renderPass(); }; c.append(x);
       });
       g.append(c);
     }
-    B.append(g);
+    B.append(g); g.scrollLeft = Math.max(0, (lvlNow() - 3) * 98);
   }
   const RND = { pPro: renderPro, pClan: renderClan, pPass: renderPass };
   document.querySelectorAll('[data-p]').forEach(b => { b.onclick = () => panel(b.dataset.p); });
@@ -1048,7 +1061,7 @@ function initUI(E) {
   const GBar = new T.BoxGeometry(1, .12, .04).translate(.5, 0, 0), GD = new T.OctahedronGeometry(.25), GP = new T.BoxGeometry(.14, .14, .14);
   const mons = [], drops = [], parts = [], bossDead = {};
   let hp = -1, hurtT = 0, spT = 0, bsT = 0, qT = 0, beamT = 0, curNpc = 0, near = -1;
-  const maxHp = () => 60 + CLASSES[char.cls].st.Vida * 12 + (P.lv - 1) * 10;
+  const maxHp = () => 60 + CLASSES[char.cls].st.Vida * 12 + (P.lv - 1) * 10 + gs('hp');
   const updHp = () => { const m = maxHp(); $('hpF').style.width = Math.max(0, hp / m * 100) + '%'; $('hpT').textContent = Math.ceil(hp) + ' / ' + m + ' · Nv. ' + P.lv; };
 
   function mkMon(d) {
@@ -1091,15 +1104,15 @@ function initUI(E) {
   /* dano e morte */
   function hurt(n) {
     if (invT > 0) { dmgText(E.player.position, 'esquivou', false, '#9fe0ff'); return; }
-    n = Math.max(1, Math.round(n * (1 - CLASSES[char.cls].st.Defesa * .04)));
+    n = Math.max(1, Math.round(n * (1 - Math.min(.8, CLASSES[char.cls].st.Defesa * .04 + gs('def') / 100))));
     if (buf.shield > 0) { const a = Math.min(buf.shield, n); buf.shield -= a; n -= a; if (n <= 0) { dmgText(E.player.position, 'bloqueado', false, '#7fb0ff'); return; } }
     hp -= n;
     const e = $('hurt'); e.classList.remove('on'); void e.offsetWidth; e.classList.add('on'); dmgText(E.player.position, '-' + n, false, '#ff6b5a');
     if (hp <= 0) { hp = maxHp(); if (D.on) exitDungeon(); E.player.position.set(0, 0, 0); clearAll(); toast('Você caiu! Voltou ao ponto inicial.'); }
-    hurtT = 5; updHp();
+    hurtT = 5; shk = Math.max(shk, .15); updHp();
   }
   function hit(m, dmg, crit) {
-    m.hp -= dmg; m.flash = .12; m.agro = true; if (buf.pois > 0) m.pois = 6; tgt = m; tgtT = 4; dmgText(m.g.position, String(dmg), crit); burst(m.g.position, crit ? 0xffd24a : 0xffffff, crit ? 10 : 6);
+    m.hp -= dmg; m.flash = .12; m.agro = true; if (buf.pois > 0) m.pois = 6; tgt = m; tgtT = 4; if (crit || m.d.boss) shk = Math.max(shk, crit ? .12 : .06); dmgText(m.g.position, String(dmg), crit); burst(m.g.position, crit ? 0xffd24a : 0xffffff, crit ? 10 : 6);
     m.fill.scale.x = Math.max(.001, m.hp / m.max) * 1.1;
     if (m.hp <= 0) kill(m);
   }
@@ -1108,7 +1121,7 @@ function initUI(E) {
   }
   function kill(m) {
     const d = m.d, q = m.g.position;
-    burst(q, d.col, 16); addXP(Math.round(d.xp * m.lv * (m.elite ? 3 : 1)));
+    burst(q, d.col, 16); addXP(Math.round(d.xp * m.lv * (m.elite ? 3 : 1))); giveGold(Math.round(d.xp * .6 * m.lv * (m.elite ? 3 : 1)), q); rollGear(m, q);
     if (Math.random() < .7 || d.boss || m.elite) dropItem(d.drop, q.x + 1, q.z, d.col);
     if (d.boss) { dropItem(d.drop, q.x - 1, q.z, d.col); dropItem(d.drop, q.x, q.z + 1.5, d.col); bossDead[m.key] = Date.now(); }
     if (Math.random() < .2) dropItem('Poção de Vida', q.x, q.z - 1, 0xff4a6a);
@@ -1116,19 +1129,27 @@ function initUI(E) {
     saveP(); rmMon(m); updQt(); npcMarks();
   }
   function pdmg() {
-    const c = buf.crit > 0 || Math.random() < .12 + (char.cls === 3 ? .15 : 0);
-    return [Math.round((8 + CLASSES[char.cls].st.Ataque * 2 + P.lv * 1.5) * (.9 + Math.random() * .2) * (c ? 2 : 1) * (1 + .04 * (P.wl || 0)) * (buf.dmg > 0 ? 1.3 : 1)), c];
+    const c = buf.crit > 0 || Math.random() < .12 + (char.cls === 3 ? .15 : 0) + gs('crit') / 100;
+    return [Math.round((8 + CLASSES[char.cls].st.Ataque * 2 + P.lv * 1.5 + gs('dmg')) * (.9 + Math.random() * .2) * (c ? 2 : 1) * (1 + .04 * (P.wl || 0)) * (buf.dmg > 0 ? 1.3 : 1)), c];
   }
   function doAttack() {
     if (buf.crit > 0) queueMicrotask(() => { buf.crit--; });
-    const p = E.player.position, r = E.player.rotation.y, fx = Math.sin(r), fz = Math.cos(r), rg = char.cls === 1 || char.cls === 2, R = rg ? 9 : 3.2;
+    const p = E.player.position, r = E.player.rotation.y, fx_ = Math.sin(r), fz = Math.cos(r), rg = char.cls === 1 || char.cls === 2, R = rg ? 9 : 3.2, col = CC[char.cls];
     const dist = m => Math.hypot(m.g.position.x - p.x, m.g.position.z - p.z);
-    mons.filter(m => { const d = dist(m); return d < R + m.r && ((m.g.position.x - p.x) * fx + (m.g.position.z - p.z) * fz) / (d || 1) > (rg ? .6 : .1); })
-      .sort((a, b) => dist(a) - dist(b)).slice(0, rg ? 1 : 3).forEach(m => { hit(m, ...pdmg()); if (rg) beam(p, m.g.position, char.cls === 2 ? 0x8a6aff : 0xd9a441); });
+    if (!rg) slashFx(p, r, col);
+    mons.filter(m => { const d = dist(m); return d < R + m.r && ((m.g.position.x - p.x) * fx_ + (m.g.position.z - p.z) * fz) / (d || 1) > (rg ? .6 : .1); })
+      .sort((a, b) => dist(a) - dist(b)).slice(0, rg ? 1 : 3).forEach(m => {
+        const [d, c] = pdmg();
+        if (rg) projectile(p, m.g.position, col, () => { if (mons.includes(m)) { hit(m, d, c); gainMp(2); applyOnHit(m); } });
+        else {
+          hit(m, d, c); gainMp(3);
+          if (mons.includes(m)) { applyOnHit(m); if (!m.d.boss) { const dx = m.g.position.x - p.x, dz = m.g.position.z - p.z, k = Math.hypot(dx, dz) || 1; m.g.position.x += dx / k * 1.2; m.g.position.z += dz / k * 1.2; } }
+        }
+      });
   }
   function doSkill() {
-    const p = E.player.position, mul = 1.4 + .15 * ((P.sk[char.cls] || [])[0] || 0); burst(p, 0xd9a441, 14);
-    mons.filter(m => Math.hypot(m.g.position.x - p.x, m.g.position.z - p.z) < 5.5 + m.r).forEach(m => { const [d, c] = pdmg(); hit(m, Math.round(d * mul), c); });
+    const p = E.player.position, mul = 1.4 + .15 * ((P.sk[char.cls] || [])[0] || 0); burst(p, CC[char.cls], 14); ringFx(p, CC[char.cls], 5.5);
+    mons.filter(m => Math.hypot(m.g.position.x - p.x, m.g.position.z - p.z) < 5.5 + m.r).forEach(m => { const [d, c] = pdmg(); hit(m, Math.round(d * mul), c); if (char.cls === 2) m.brn = 5; if (char.cls === 0) m.stn = .8; });
   }
 
   /* NPCs e missões */
@@ -1209,8 +1230,9 @@ function initUI(E) {
     mons.slice().forEach(m => {
       const g = m.g, q = g.position, dx = p.x - q.x, dz = p.z - q.z, d = Math.hypot(dx, dz);
       if (d > (m.d.boss ? 260 : 100)) return rmMon(m);
-      m.cd -= dt; m.flash = Math.max(0, m.flash - dt); if (m.frz > 0) { m.frz -= dt; m.mat.emissive.setHex(0x3a7aff); return; }
-      if (d < (m.agro ? 40 : 14)) { if (d > 1.6 * m.sz) { const sp = m.d.spd * dt; q.x += dx / d * sp; q.z += dz / d * sp; } g.rotation.y = Math.atan2(dx, dz); }
+      m.cd -= dt; m.flash = Math.max(0, m.flash - dt); if (m.stn > 0) { m.stn -= dt; m.mat.emissive.setHex(0xffd24a); return; }
+      if (m.frz > 0) { m.frz -= dt; m.mat.emissive.setHex(0x3a7aff); return; }
+      if (d < (m.agro ? 40 : 14)) { if (d > 1.6 * m.sz) { const sp = m.d.spd * dt * (m.slw > 0 ? .5 : 1); q.x += dx / d * sp; q.z += dz / d * sp; } g.rotation.y = Math.atan2(dx, dz); }
       else { m.w -= dt; if (m.w < 0) { m.w = 2 + Math.random() * 3; m.wa = Math.random() * 6.28; } q.x += Math.sin(m.wa) * m.d.spd * .3 * dt; q.z += Math.cos(m.wa) * m.d.spd * .3 * dt; g.rotation.y = m.wa; }
       if (d < 2.1 * m.sz && m.cd <= 0) { m.cd = 1.3; hurt(m.dmg); }
       q.y = E.W.H(q.x, q.z); m.mat.emissive.setHex(m.flash > 0 ? 0xffffff : 0); m.bar.quaternion.copy(g.quaternion).invert().multiply(E.camera.quaternion);
@@ -1218,7 +1240,7 @@ function initUI(E) {
     drops.slice().forEach(o => {
       o.t -= dt; o.m.rotation.y += dt * 2; o.m.position.y = o.y + Math.sin(o.t * 4) * .15;
       if (Math.hypot(o.m.position.x - p.x, o.m.position.z - p.z) < 2.2) {
-        if (o.name === 'Poção de Vida') { hp = Math.min(maxHp(), hp + maxHp() * .4); updHp(); toast('+40% de vida'); } else { P.mat[o.name] = (P.mat[o.name] || 0) + 1; toast('+1 ' + o.name); saveP(); updQt(); npcMarks(); }
+        if (o.gear) { addGear(o.gear); } else if (o.name === 'Poção de Vida') { P.pot = Math.min(9, P.pot + 1); saveP(); toast('+1 Poção (Q para usar)'); } else { P.mat[o.name] = (P.mat[o.name] || 0) + 1; toast('+1 ' + o.name); saveP(); updQt(); npcMarks(); }
         o.t = 0;
       }
       if (o.t <= 0) { E.scene.remove(o.m); drops.splice(drops.indexOf(o), 1); }
@@ -1303,18 +1325,19 @@ function initUI(E) {
   const aoe = (x, z, r, k, f) => mons.slice().filter(m => Math.hypot(m.g.position.x - x, m.g.position.z - z) < r + m.r).forEach(m => { const [d, c] = pdmg(); hit(m, Math.round(d * k), c); if (f) f(m); });
   function useSkill(slot) {
     if (G.mode !== 'play' || cds[slot - 1] > 0) return;
+    if (!useMp(slot === 1 ? 25 : 45)) return;
     cds[slot - 1] = slot === 1 ? 12 : 25;
-    const c = char.cls, m = 1 + .15 * sl(slot), p = E.player.position; burst(p, 0xd9a441, 12);
+    const c = char.cls, m = 1 + .15 * sl(slot), p = E.player.position; burst(p, CC[c], 12); ringFx(p, CC[c], slot === 1 ? 3 : 9); if (slot === 2) pillarFx(p, CC[c]);
     if (slot === 1) {
       if (c === 0) { buf.dmg = 8; heal(.1); } if (c === 1) buf.crit = 3; if (c === 2) { buf.shield = (40 + P.lv * 8) * m; buf.shT = 8; }
       if (c === 3) buf.pois = 10; if (c === 4) { heal(.35 * m); buf.regen = 6; }
       toast(SK[c][1]); return;
     }
-    if (c === 0) for (let i = 0; i < 4; i++) { fwd(2); aoe(p.x, p.z, 2.5, .55 * m); }
+    if (c === 0) for (let i = 0; i < 4; i++) { fwd(2); aoe(p.x, p.z, 2.5, .55 * m, mm => { mm.stn = .6; }); }
     if (c === 1) { aoe(p.x, p.z, 4, 1.5 * m); fwd(-8); }
     if (c === 2) aoe(p.x, p.z, 9, 1.8 * m, mm => { mm.frz = 3; });
-    if (c === 3) { fwd(8); buf.crit = 2; aoe(p.x, p.z, 3, 1.5 * m); }
-    if (c === 4) { aoe(p.x, p.z, 9, 2.2 * m); heal(.15); }
+    if (c === 3) { fwd(8); buf.crit = 2; aoe(p.x, p.z, 3, 1.5 * m, mm => { mm.bld = 6; }); }
+    if (c === 4) { aoe(p.x, p.z, 9, 2.2 * m, mm => { mm.stn = 1.5; }); heal(.15); }
     toast(SK[c][2]);
   }
   addEventListener('keydown', e => {
@@ -1345,7 +1368,7 @@ function initUI(E) {
     B.append(h('h3', '', 'Mochila'), h('p', '', (mt.map(([k, v]) => k + ' ×' + v).join(', ') || 'Sem materiais.') + ' · Arma Nv. ' + P.wl));
     fg.disabled = tot < 5;
     fg.onclick = () => { let n = 5; for (const k in P.mat) { const t = Math.min(n, P.mat[k]); P.mat[k] -= t; n -= t; if (!n) break; } P.wl++; saveP(); toast('Arma Nv. ' + P.wl); renderPro(); };
-    B.append(fg, h('h3', '', 'Itens do Passe'));
+    B.append(fg); gearUi(B); B.append(h('h3', '', 'Itens do Passe'));
     if (P.eq[REW[4]]) B.append(h('p', '', 'Título: ' + P.eq[REW[4]]));
     if (!P.inv.length) B.append(h('p', '', 'Resgate itens no Passe.'));
     P.inv.forEach(n => {
@@ -1562,10 +1585,10 @@ function initUI(E) {
       if (!m.d.boss) return;
       if (!m.rage && m.hp < m.max * .3) { m.rage = 1; m.dmg *= 1.3; burst(m.g.position, 0xff3030, 20); toast(m.d.n + ' enfureceu!'); }
       m.sl = (m.sl === undefined ? 6 : m.sl) - dt;
-      if (m.sl <= 0 && !m.sw) m.sw = .8;
+      if (m.sl <= 0 && !m.sw) { m.sw = .8; ringFx(m.g.position, 0xff2020, 4 * m.sz + 2); }
       if (m.sw > 0) {
         m.sw -= dt; m.mat.emissive.setHex(0xff2020);
-        if (m.sw <= 0) { m.sw = 0; m.sl = m.rage ? 4 : 7; burst(m.g.position, 0xff6030, 24); if (Math.hypot(p.x - m.g.position.x, p.z - m.g.position.z) < 4 * m.sz + 2) hurt(m.dmg * 1.2); }
+        if (m.sw <= 0) { m.sw = 0; m.sl = m.rage ? 4 : 7; burst(m.g.position, 0xff6030, 24); shk = .3; if (Math.hypot(p.x - m.g.position.x, p.z - m.g.position.z) < 4 * m.sz + 2) hurt(m.dmg * 1.2); }
       }
     });
     vT -= dt; if (vT > 0 || D.on) return; vT = .1;
@@ -1576,6 +1599,83 @@ function initUI(E) {
       for (let a = -2; a <= 2; a++) for (let b = -2; b <= 2; b++) { const x = ci + a, z = cj + b; if (x < 0 || z < 0 || x >= EXN || z >= EXN) continue; const k = z * EXN + x; if (P.exp[k] !== '1') { P.exp = P.exp.slice(0, k) + '1' + P.exp.slice(k + 1); ch = true; } }
       if (ch) saveP();
     }
+  });
+  /* ── v0.011: mana, status (queimar/sangrar/atordoar/lentidão), VFX, tremor de tela, equipamentos com raridade, ouro e poções ── */
+  var mp = -1, shk = 0;
+  P.gold = P.gold || 0; P.pot = P.pot || 0; P.gear = P.gear || {}; P.bag = P.bag || [];
+  const CC = [0xcfd3d8, 0x9fd36a, 0x8a6aff, 0xb070ff, 0xffe28a];
+  const RAR = [['Comum', '#cfd3d8', 1], ['Raro', '#4aa3df', 1.5], ['Épico', '#b070ff', 2.2], ['Lendário', '#ffb040', 3.2]], SLOTS = ['Arma', 'Armadura', 'Amuleto'];
+  const GN = { Arma: ['Espada', 'Cajado', 'Arco', 'Adaga', 'Maça'], Armadura: ['Peitoral', 'Manto', 'Couraça'], Amuleto: ['Amuleto', 'Anel', 'Talismã'] }, GA = ['de Ferro', 'Rúnico', 'Arcano', 'Real'];
+  const maxMp = () => 40 + CLASSES[char.cls].st.Mana * 10 + P.lv * 3, gainMp = n => { if (mp >= 0) mp = Math.min(maxMp(), mp + n); };
+  const gs = k => SLOTS.reduce((a, sl) => a + ((P.gear[sl] || {})[k] || 0), 0);
+  function useMp(n) { if (mp < 0) mp = maxMp(); if (mp < n) { toast('Mana insuficiente'); return false; } mp -= n; return true; }
+  function applyOnHit(m) { const r = Math.random(), c = char.cls; if (c === 2 && r < .25) m.brn = 4; if (c === 3 && r < .3) m.bld = 5; if (c === 1 && r < .2) m.slw = 3; if (c === 0 && r < .1) m.stn = 1; if (c === 4 && r < .3) heal(.01); }
+
+  /* efeitos visuais */
+  const RG = new T.RingGeometry(.6, 1, 32), SG = new T.RingGeometry(.9, 1.7, 14, 1, -.9, 1.8), PG = new T.CylinderGeometry(.5, .5, 8, 12, 1, true), OG = new T.SphereGeometry(.22, 8, 6), BG = new T.BoxGeometry(.4, .4, .4), vfx = [];
+  const fmat = c => new T.MeshBasicMaterial({ color: c, transparent: true, side: T.DoubleSide, depthWrite: false });
+  function addFx(m, d, f, mat) { E.scene.add(m); vfx.push({ m, t: d, d, f, mat }); }
+  function ringFx(pos, col, r) { const mm = fmat(col), m = new T.Mesh(RG, mm); m.rotation.x = -Math.PI / 2; m.position.set(pos.x, pos.y + .15, pos.z); addFx(m, .45, (o, k) => { o.scale.setScalar(.3 + k * r); mm.opacity = 1 - k; }, mm); }
+  function slashFx(pos, r, col) { const g = new T.Group(), mm = fmat(col), m = new T.Mesh(SG, mm); m.rotation.x = -Math.PI / 2; g.add(m); g.position.set(pos.x, pos.y + 1, pos.z); g.rotation.y = r - Math.PI / 2; addFx(g, .25, (o, k) => { o.scale.setScalar(1 + k * .6); mm.opacity = 1 - k; }, mm); }
+  function pillarFx(pos, col) { const mm = fmat(col), m = new T.Mesh(PG, mm); m.position.set(pos.x, pos.y + 4, pos.z); addFx(m, .7, (o, k) => { o.scale.set(1 + k, 1, 1 + k); mm.opacity = (1 - k) * .6; }, mm); }
+  function projectile(a, b, col, done) { const mm = fmat(col), m = new T.Mesh(OG, mm), sx = a.x, sy = a.y + 1.4, sz = a.z; m.position.set(sx, sy, sz); addFx(m, .2, (o, k) => { o.position.set(sx + (b.x - sx) * k, sy + (b.y + 1 - sy) * k, sz + (b.z - sz) * k); if (k >= 1) done(); }, mm); }
+
+  /* ouro, equipamentos, poções */
+  function giveGold(n, pos) { P.gold += n; dmgText(pos, '+' + n + '🪙', false, '#ffd24a'); saveP(); }
+  function genGear(lv, minR) {
+    const x = Math.random(), r = Math.max(minR || 0, x < .6 ? 0 : x < .88 ? 1 : x < .97 ? 2 : 3), sl = SLOTS[Math.floor(Math.random() * 3)], sc = RAR[r][2], b = 2 + lv * 1.2;
+    const it = { slot: sl, r, nome: GN[sl][Math.floor(Math.random() * GN[sl].length)] + ' ' + GA[r], dmg: 0, hp: 0, def: 0, crit: 0 };
+    if (sl === 'Arma') { it.dmg = Math.round(b * 2 * sc); if (r > 1) it.crit = Math.round(3 * sc); }
+    if (sl === 'Armadura') { it.hp = Math.round(b * 8 * sc); it.def = Math.round(2 * sc); }
+    if (sl === 'Amuleto') { it.hp = Math.round(b * 3 * sc); it.crit = Math.round(2 * sc); it.dmg = Math.round(b * sc); }
+    return it;
+  }
+  function rollGear(m, q) {
+    if (Math.random() >= (m.d.boss ? 1 : m.elite ? .45 : .1)) return;
+    const it = genGear(Math.round(P.lv + m.lv * 3), m.d.boss ? 2 : 0), mesh = new T.Mesh(BG, new T.MeshBasicMaterial({ color: parseInt(RAR[it.r][1].slice(1), 16) }));
+    mesh.position.set(q.x - 1, E.W.H(q.x, q.z) + .6, q.z + 1); E.scene.add(mesh); drops.push({ m: mesh, name: it.nome, gear: it, y: mesh.position.y, t: 90 });
+  }
+  const price = it => Math.round((it.dmg + it.hp / 4 + it.def * 3 + it.crit * 4 + 5) * RAR[it.r][2] * 2);
+  function addGear(it) {
+    if (P.bag.length >= 30) { giveGold(price(it), E.player.position); toast('Mochila cheia: item vendido'); return; }
+    P.bag.push(it); saveP(); if (it.r >= 2) banner('ITEM ' + RAR[it.r][0].toUpperCase(), it.nome); else toast('Item: ' + it.nome);
+  }
+  const stat = it => [it.dmg && '+' + it.dmg + ' dano', it.hp && '+' + it.hp + ' vida', it.def && '+' + it.def + '% def', it.crit && '+' + it.crit + '% crít'].filter(Boolean).join(' · ');
+  function gearUi(B) {
+    B.append(h('h3', '', 'Equipamento · 🪙 ' + P.gold + ' · 🧪 ' + P.pot));
+    SLOTS.forEach(sl => { const it = P.gear[sl], q = h('p', '', sl + ': ' + (it ? it.nome + ' (' + RAR[it.r][0] + ') ' + stat(it) : '—')); if (it) q.style.color = RAR[it.r][1]; B.append(q); });
+    const buy = h('button', 'btn', 'Comprar poção · 60 🪙'); buy.disabled = P.gold < 60 || P.pot >= 9; buy.onclick = () => { P.gold -= 60; P.pot++; saveP(); renderPro(); }; B.append(buy);
+    P.bag.forEach((it, i) => {
+      const row = h('div', 'row2'), t = h('span', '', it.nome + ' · ' + it.slot + ' · ' + stat(it)), e = h('button', 'btn', 'Equipar'), v = h('button', 'btn', price(it) + '🪙');
+      t.style.flex = '3'; t.style.color = RAR[it.r][1]; e.style.flex = v.style.flex = '1';
+      e.onclick = () => { P.bag.splice(i, 1); const old = P.gear[it.slot]; P.gear[it.slot] = it; if (old) P.bag.push(old); saveP(); renderPro(); };
+      v.onclick = () => { P.bag.splice(i, 1); P.gold += price(it); saveP(); renderPro(); };
+      row.append(t, e, v); B.append(row);
+    });
+  }
+  function usePot() { if (G.mode !== 'play') return; if (!P.pot) return toast('Sem poções'); if (hp >= maxHp()) return; P.pot--; heal(.4); ringFx(E.player.position, 0x4ade80, 3); saveP(); }
+  $('bPot').addEventListener('pointerdown', e => { e.preventDefault(); usePot(); });
+  addEventListener('keydown', e => { if (!/INPUT|TEXTAREA|SELECT/.test(e.target.tagName) && e.key.toLowerCase() === 'q') usePot(); });
+  const pc = h('div', 'skc'), potN = h('u', '', '0'); pc.append(h('b', '', 'Q'), h('span', '', '🧪'), potN); $('sk').append(pc);
+
+  let gT = 0;
+  E.updaters.push(dt => {
+    for (let i = vfx.length - 1; i >= 0; i--) { const f = vfx[i]; f.t -= dt; f.f(f.m, Math.min(1, 1 - f.t / f.d)); if (f.t <= 0) { E.scene.remove(f.m); f.mat.dispose(); vfx.splice(i, 1); } }
+    if (shk > 0) { shk -= dt; E.camera.position.x += (Math.random() - .5) * shk * 4; E.camera.position.y += (Math.random() - .5) * shk * 4; }
+    if (G.mode !== 'play') return;
+    if (mp >= 0) mp = Math.min(maxMp(), mp + maxMp() * .02 * dt);
+    mons.slice().forEach(m => {   // efeitos de status
+      if (m.slw > 0) m.slw -= dt;
+      [['brn', .5, 0xff7a2a, 3], ['bld', 1, 0xc01818, 4]].forEach(([k, iv, col, mul]) => {
+        if (!(m[k] > 0) || !mons.includes(m)) return;
+        m[k] -= dt; m[k + 't'] = (m[k + 't'] || 0) - dt;
+        if (m[k + 't'] <= 0) { m[k + 't'] = iv; burst(m.g.position, col, 3); hit(m, Math.max(2, Math.round((3 + P.lv) * mul / 3)), false); }
+      });
+    });
+    gT -= dt; if (gT > 0) return; gT = .1;
+    if (mp < 0) mp = maxMp();
+    if (hp > maxHp()) { hp = maxHp(); updHp(); }
+    $('mpF').style.width = Math.min(100, mp / maxMp() * 100) + '%'; potN.textContent = String(P.pot);
   });
   document.body.dataset.mode = 'start';
 }
