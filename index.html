@@ -40,7 +40,6 @@
             position: relative;
         }
 
-        /* 53. Animações de Entrada */
         @keyframes fadeSlideUp {
             from { opacity: 0; transform: translateY(18px); }
             to { opacity: 1; transform: translateY(0); }
@@ -98,7 +97,6 @@
             100% { transform: scale(1); }
         }
 
-        /* 89. Inventário com Visualização 3D/Efeito */
         .avatar-preview-box {
             width: 96px; height: 96px; border-radius: 50%; margin: 15px auto;
             display: flex; align-items: center; justify-content: center; position: relative;
@@ -162,7 +160,6 @@
         .logo-container { display: flex; align-items: center; gap: 8px; text-decoration: none; z-index: 1002; cursor: pointer; }
         .logo-img-custom { height: 36px; max-width: 120px; object-fit: contain; filter: drop-shadow(0 0 10px var(--accent-color)); animation: logoPulse 3s infinite ease-in-out; }
         
-        /* 60. Logotipo Animado no Header */
         @keyframes logoPulse {
             0% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 5px var(--accent-color)); }
             50% { transform: scale(1.07) rotate(3deg); filter: drop-shadow(0 0 16px var(--accent-color)) brightness(1.35); }
@@ -273,7 +270,6 @@
         .form-panel { display: none; }
         .form-panel.active { display: flex; flex-direction: column; gap: 10px; }
 
-        /* 31. Modo Tela Cheia Nativo e Fluido */
         .embed-container { display: none; background: #000; border: 2px solid var(--accent-color); width: 100%; height: 70vh; max-height: 800px; position: relative; box-shadow: 0 0 35px var(--accent-glow); margin-top: 15px; border-radius: 10px; overflow: hidden; }
         .embed-container:fullscreen, .embed-container:-webkit-full-screen {
             width: 100vw !important;
@@ -346,7 +342,6 @@
         }
         .toast-notification.show { transform: translateY(0); opacity: 1; }
 
-        /* Barra de Progresso de Nível (Feature 6) */
         .xp-bar-container { width: 100%; height: 8px; background: #1e293b; border-radius: 4px; overflow: hidden; margin-top: 6px; border: 1px solid var(--steel-bright); }
         .xp-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent-color), #22c55e); transition: width 0.5s ease; }
 
@@ -937,7 +932,6 @@
         let audioVoiceAtivo = true;
         let localVoiceStream = null;
 
-        // 32 & 77. Suporte Completo a Gamepads e Múltiplos Controles
         let connectedGamepads = {};
         window.addEventListener("gamepadconnected", (e) => {
             connectedGamepads[e.gamepad.index] = e.gamepad;
@@ -965,7 +959,6 @@
         }
         requestAnimationFrame(loopGamepads);
 
-        // 93. Detecção Automática de VPN/Proxy Suspeito
         async function detectarVpnProxy() {
             try {
                 const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -976,7 +969,6 @@
             } catch(e) {}
         }
 
-        // 95. Compactação de Ativos (Assets)
         function compactarAssetsLocal() {
             document.querySelectorAll('[hidden]').forEach(el => el.remove());
         }
@@ -1041,7 +1033,6 @@
             return html;
         }
 
-        // Correção definitiva de salvamento e leitura de e-mail na nuvem
         async function carregarSessaoSalva() {
             try {
                 const sessaoSalva = localStorage.getItem('wavecombat_sessao_ativa');
@@ -1093,7 +1084,6 @@
                 const { data, error } = await supabaseClient.from('usuarios').select('*').eq('id_jogador', String(idJogador)).maybeSingle();
                 if (!error && data) {
                     usuarioLogado.nick = data.nick || usuarioLogado.nick;
-                    // Garante que o e-mail salvo na nuvem ou localmente seja mantido
                     const emailNuvem = (data.email && data.email.trim() !== '') ? data.email.trim() : '';
                     const emailLocal = (usuarioLogado.email && usuarioLogado.email.trim() !== '') ? usuarioLogado.email.trim() : '';
                     
@@ -1112,7 +1102,6 @@
                     usuarioLogado.youtube = data.youtube || '';
                     usuarioLogado.tiktok = data.tiktok || '';
 
-                    // 97. Restaura preferências do Cloud Backup
                     if (data.preferencias) {
                         const p = data.preferencias;
                         if (typeof p.sfx === 'boolean') {
@@ -1156,7 +1145,6 @@
             try {
                 const { error } = await supabaseClient.from('usuarios').update({ email: emailDigitado }).eq('id_jogador', String(usuarioLogado.id));
                 if (error) {
-                    // Fallback upsert se o registro ainda não existir na tabela usuarios
                     await supabaseClient.from('usuarios').upsert({ id_jogador: String(usuarioLogado.id), nick: usuarioLogado.nick, email: emailDigitado }, { onConflict: 'id_jogador' });
                 }
                 usuarioLogado.email = emailDigitado;
@@ -1375,7 +1363,6 @@
             }
         }
 
-        // 87. Sorteio Automático Semanal (50 diamantes)
         function participarSorteioSemanal() {
             if (!usuarioLogado) {
                 alert("⚠️ Faça login para confirmar sua participação gratuita no sorteio semanal de 50 diamantes!");
@@ -1399,7 +1386,6 @@
             return Math.ceil((((d - onejan) / 86400000) + onejan.getDay() + 1) / 7);
         }
 
-        // 85. Recompensa por Indicação de Amigos (20 diamantes)
         function copiarLinkIndicacao() {
             const ref = usuarioLogado ? usuarioLogado.id : 'WAVECOMBAT';
             const url = `${window.location.origin}${window.location.pathname}?ref=${ref}`;
@@ -1786,7 +1772,6 @@
             } catch(e) {}
         }
 
-        // 43. Modo Espectador
         function iniciarModoEspectador(nickAmigo) {
             mostrarToast(`👁️ Conectando ao Modo Espectador de ${nickAmigo}...`);
             const jogos = listaJogosCache.filter(j => j.publicado);
@@ -1930,7 +1915,6 @@
 
         function setBGMVolume(val) { bgmVolumeValue = val / 100; }
 
-        // 62. Canal de Voz Rápido Integrado (Captura real de microfone WebRTC/MediaDevices)
         async function toggleMicrofoneVoice() {
             const btn = document.getElementById('btnMicToggle');
             if (!localVoiceStream) {
@@ -1968,7 +1952,6 @@
             mostrarToast(audioVoiceAtivo ? "🔊 Áudio da sala ativado" : "🔇 Áudio da sala silenciado");
         }
 
-        // 72. Configuração de Resolução Interna
         function alterarResolucaoInterna(valor) {
             const iframe = document.getElementById('gameIframe');
             if(iframe) {
@@ -1981,13 +1964,11 @@
             }
         }
 
-        // 96. Modo Oculto / Invisível
         function toggleModoInvisivel(ativo) {
             localStorage.setItem('modo_invisivel', ativo ? 'true' : 'false');
             mostrarToast(ativo ? "🕶️ Modo invisível ativado (Você aparece offline)" : "🟢 Modo visível ativado");
         }
 
-        // 97. Backup Automático na Nuvem de Configurações e preferências
         async function salvarConfiguracoesNuvemAutomatico() {
             if (!usuarioLogado) return;
             const prefs = {
@@ -2024,7 +2005,6 @@
             }
         }
 
-        // 34. Notificações Push Personalizadas
         function verificarEstadoNotificacao() {
             if ("Notification" in window) {
                 const btnPush = document.getElementById('btnPushNotif');
@@ -2214,8 +2194,7 @@
             try {
                 const { data } = await supabaseClient.from('usuarios').select('*').eq('email', emailInput.trim()).maybeSingle();
                 if(data) {
-                    alert(`✅ Sua senha é: ${data.pass}
-(Dica: Anote em um lugar seguro!)`);
+                    alert(`✅ Sua senha é: ${data.pass}\n(Dica: Anote em um lugar seguro!)`);
                 } else {
                     alert("❌ Nenhum usuário encontrado com este e-mail.");
                 }
@@ -2359,7 +2338,6 @@
             document.getElementById('panelCorreio').classList.toggle('active', aba === 'correio');
         }
 
-        // 85. Cadastro com Recompensa de 20 Diamantes por Indicação
         async function fazerRegistroPlataforma(e) {
             e.preventDefault();
             const u = document.getElementById('regUser').value.trim();
@@ -2377,7 +2355,6 @@
             try {
                 await supabaseClient.from('usuarios').insert([{ id_jogador: novoId, nick: u, email: email, pass: p }]);
                 
-                // Credita 20 diamantes ao padrinho se houver código válido
                 if (codigoIndicacao) {
                     const padrinho = await buscarUsuarioPorNickOuId(codigoIndicacao);
                     if (padrinho && padrinho.id !== novoId) {
@@ -2443,7 +2420,6 @@
             }
         }
 
-        // 6 & 7. Níveis de Conta & Estatísticas de Perfil Detalhadas
         async function atualizarPerfilExpandidoUI() {
             const perfilDiv = document.getElementById('perfilUserData');
             if (!perfilDiv) return;
@@ -2712,7 +2688,6 @@
             }
         }
 
-        // 35. Carregamento Otimizado (Lazy Loading sob demanda ao abrir o jogo)
         async function tentarExecutarJogo(jogo) {
             if (await verificarBanimentoAtual()) return;
             try { await supabaseClient.from('jogos').update({ acessos: (jogo.acessos || 0) + 1 }).eq('id', jogo.id); } catch(e){}
@@ -2781,7 +2756,6 @@
             }
         }
 
-        // 31. Modo Tela Cheia Nativo e Fluido
         function toggleTelaCheia() {
             const c = document.getElementById('player');
             if (!document.fullscreenElement && !document.webkitFullscreenElement) {
