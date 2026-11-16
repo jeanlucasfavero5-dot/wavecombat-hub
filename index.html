@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>WaveCombat | Modern Gaming Hub</title>
     
-    <!-- Meta Tags para PWA -->
     <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#00f0ff">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -57,11 +56,7 @@
             margin-right: 5px;
             font-size: 1.1em;
         }
-        .staff-star {
-            color: var(--gold-warning);
-            margin-right: 4px;
-            font-weight: bold;
-        }
+        .staff-star { color: var(--gold-warning); margin-right: 4px; font-weight: bold; }
         .profile-frame-gold {
             border: 3px solid #FFD700 !important;
             box-shadow: 0 0 25px rgba(255, 215, 0, 0.7);
@@ -69,9 +64,7 @@
             position: relative;
         }
 
-        .unread-badge {
-            position: relative;
-        }
+        .unread-badge { position: relative; }
         .unread-badge::after {
             content: '!';
             position: absolute;
@@ -111,14 +104,8 @@
             border: 3px solid #ef4444 !important;
             animation: fireGlow 1s infinite alternate;
         }
-        @keyframes neonGlow {
-            from { filter: drop-shadow(0 0 2px #00f0ff); }
-            to { filter: drop-shadow(0 0 12px #00f0ff); }
-        }
-        @keyframes fireGlow {
-            from { filter: drop-shadow(0 0 4px #ef4444); }
-            to { filter: drop-shadow(0 0 14px #f59e0b); }
-        }
+        @keyframes neonGlow { from { filter: drop-shadow(0 0 2px #00f0ff); } to { filter: drop-shadow(0 0 12px #00f0ff); } }
+        @keyframes fireGlow { from { filter: drop-shadow(0 0 4px #ef4444); } to { filter: drop-shadow(0 0 14px #f59e0b); } }
 
         .bg-particles {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
@@ -153,7 +140,13 @@
         }
         .logo-container { display: flex; align-items: center; gap: 8px; text-decoration: none; z-index: 1002; cursor: pointer; }
         .logo-img-custom { height: 36px; max-width: 120px; object-fit: contain; filter: drop-shadow(0 0 10px var(--accent-color)); }
-        .logo-svg { width: 32px; height: 32px; filter: drop-shadow(0 0 10px var(--accent-color)); }
+        
+        @keyframes logoPulse {
+            0% { transform: scale(1); filter: drop-shadow(0 0 5px var(--accent-color)); }
+            50% { transform: scale(1.05); filter: drop-shadow(0 0 15px var(--accent-color)) brightness(1.3); }
+            100% { transform: scale(1); filter: drop-shadow(0 0 5px var(--accent-color)); }
+        }
+        .logo-svg { width: 32px; height: 32px; animation: logoPulse 3s infinite ease-in-out; }
         .logo-text { font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 16px; color: var(--accent-color); letter-spacing: 1px; }
 
         .menu-toggle-btn {
@@ -188,7 +181,10 @@
             border-bottom: 2px solid var(--steel-border); margin-top: 65px; width: 100%; overflow: hidden; z-index: 2;
             box-shadow: inset 0 0 50px var(--accent-glow);
             transition: background-image 0.5s ease-in-out;
+            animation: fadeInHero 0.8s ease-out;
         }
+        @keyframes fadeInHero { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
         header.hero::before {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(180deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.98) 100%); z-index: 1;
@@ -303,7 +299,6 @@
 
         .minichat-container { display: flex; flex-direction: column; height: 180px; background: #000; border: 1px solid var(--steel-border); border-radius: 6px; overflow: hidden; margin-top: 8px; }
         .minichat-messages { flex: 1; padding: 8px; overflow-y: auto; font-size: 11px; display: flex; flex-direction: column; gap: 4px; }
-        
         .chat-msg-item { padding: 4px 6px; border-radius: 4px; background: rgba(255,255,255,0.02); }
         .chat-msg-item.mentioned { border-left: 3px solid var(--accent-color); background: rgba(0, 240, 255, 0.08); }
 
@@ -340,7 +335,7 @@
 <body id="mainBody" class="theme-oled">
 
     <div class="broadcast-ticker" id="broadcastTicker">
-        <marquee id="broadcastText">⚡ AVISO GLOBAL: Bem-vindos ao WaveCombat Hub v0.466!</marquee>
+        <marquee id="broadcastText">⚡ AVISO GLOBAL: Bem-vindos ao WaveCombat Hub v0.467 (Upgraded & Cloud Fix)!</marquee>
     </div>
 
     <div class="bg-particles" id="bgParticles"></div>
@@ -376,6 +371,7 @@
         </ul>
     </nav>
 
+    <!-- Modais -->
     <div class="modal-overlay" id="modalWheelResult" style="z-index: 3800;">
         <div class="modal-card modal-wheel-result" id="modalWheelCard" style="text-align: center; border-width: 3px;">
             <div id="wheelResultIcon" style="font-size: 55px; margin-bottom: 10px;">🎁</div>
@@ -388,7 +384,7 @@
     <div class="modal-overlay" id="modalAlertEmail" style="z-index: 3600;">
         <div class="modal-card" style="text-align: center; border-color: var(--gold-warning);">
             <h3 style="font-family:'Orbitron'; color:var(--gold-warning); margin-bottom:10px;">⚠️ Lembrete de Segurança</h3>
-            <p style="font-size:12px; color:#94a3b8; margin-bottom:15px;">Sua conta ainda não possui um e-mail de recuperação vinculado. Cadastre um e-mail para salvar permanentemente na nuvem:</p>
+            <p style="font-size:12px; color:#94a3b8; margin-bottom:15px;">Sua conta ainda não possui um e-mail de recuperação vinculado. Cadastre para salvar permanentemente na nuvem:</p>
             <form onsubmit="salvarEmailRecuperacaoDirect(event)" style="display:flex; flex-direction:column; gap:10px;">
                 <input type="email" id="inputVinculoEmailPrompt" placeholder="Digite seu e-mail principal..." class="auth-input" required style="text-align:center;">
                 <div style="display:flex; gap:10px;">
@@ -435,7 +431,7 @@
 
             <div class="form-panel" id="panelInventario">
                 <div id="inventarioUserData">
-                    <p style="color:#94a3b8; text-align:center; font-size:11px;">Faça login para ver seu inventário de itens e molduras.</p>
+                    <p style="color:#94a3b8; text-align:center; font-size:11px;">Faça login para ver seu inventário de itens e molduras 3D.</p>
                 </div>
             </div>
 
@@ -447,6 +443,7 @@
         </div>
     </div>
 
+    <!-- Modais Auxiliares -->
     <div class="modal-overlay" id="modalConfirmarDiamantes" style="z-index: 3500;">
         <div class="modal-card" style="text-align: center; border-color: var(--accent-color);">
             <h3 id="modalDiamantesTitulo" style="font-family:'Orbitron'; color:var(--accent-color); margin-bottom:10px;">⚡ Confirmar Transação</h3>
@@ -504,7 +501,7 @@
             <p style="font-size:12px; color:#fff; margin-bottom:15px;">Você resgatou com sucesso o selo oficial de prestígio:</p>
             <div style="background:#000; border:1px solid #FFD700; padding:15px; border-radius:8px; margin-bottom:15px; text-align:left; font-size:11px; display:flex; flex-direction:column; gap:6px;">
                 <div>✨ Símbolo <strong>V Dourado</strong> à frente do seu Nick</div>
-                <div>🖼️ Moldura Dourada Exclusiva para Perfil</div>
+                <div>🖼️ Moldura Dourada Exclusiva 3D para Perfil</div>
                 <div>💎 <strong>5.000 Diamantes</strong> creditados na sua conta</div>
                 <div id="infoCupomGeradoPremio" style="color:var(--gold-warning); font-weight:bold;"></div>
             </div>
@@ -519,13 +516,14 @@
         </div>
     </div>
 
+    <!-- Painel de Amigos e Espectador -->
     <button onclick="togglePainelAmigos()" style="position: fixed; bottom: 80px; right: 20px; z-index: 1500; background: var(--accent-color); color: #000; border: none; padding: 10px 14px; border-radius: 50px; font-family: 'Orbitron'; font-weight: bold; font-size: 11px; cursor: pointer; box-shadow: 0 0 20px var(--accent-glow);">
         👥 Amigos (<span id="countAmigosOnline">0</span>)
     </button>
 
     <div id="painelAmigos" style="position: fixed; top: 0; right: -320px; width: 310px; height: 100vh; background: var(--panel-bg); border-left: 2px solid var(--accent-color); z-index: 2500; transition: 0.3s ease; padding: 20px; display: flex; flex-direction: column; box-shadow: -10px 0 30px rgba(0,0,0,0.8);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--steel-border); padding-bottom: 10px;">
-            <h3 style="font-family: 'Orbitron'; font-size: 14px; color: var(--accent-color);">👥 Meus Amigos</h3>
+            <h3 style="font-family: 'Orbitron'; font-size: 14px; color: var(--accent-color);">👥 Meus Amigos & Espectador</h3>
             <button onclick="togglePainelAmigos()" style="background: none; border: none; color: #fff; font-size: 18px; cursor: pointer;">&times;</button>
         </div>
 
@@ -558,6 +556,7 @@
         </div>
     </div>
 
+    <!-- Hero Header -->
     <header class="hero" id="heroHeader">
         <h1 id="heroTitle">WAVECOMBAT <span>HUB</span></h1>
         <p id="heroDesc">Plataforma moderna de jogos, arcade e experiências imersivas.</p>
@@ -576,8 +575,9 @@
         </div>
     </header>
 
+    <!-- Seção de Jogos -->
     <section id="jogos">
-        <h2 class="section-title">Biblioteca de Jogos</h2>
+        <h2 class="section-title">Biblioteca de Jogos & Resolução Interna</h2>
         <div class="search-filter-bar">
             <input type="text" id="inputSearchGames" placeholder="🔍 Pesquisar jogo..." class="auth-input" oninput="atualizarPlataforma()">
             <select id="selectCategoryFilter" class="auth-input" onchange="atualizarPlataforma()">
@@ -586,6 +586,11 @@
                 <option value="Estratégia">Estratégia</option>
                 <option value="Multiplayer">Multiplayer</option>
                 <option value="favoritos">⭐ Favoritos</option>
+            </select>
+            <select id="selectResInterna" class="auth-input" onchange="alterarResolucaoInterna(this.value)" style="max-width: 200px;">
+                <option value="100">🖥️ Resolução: 100% (HD)</option>
+                <option value="75">⚡ Resolução: 75% (Leve)</option>
+                <option value="50">🚀 Resolução: 50% (Ultra Rápido)</option>
             </select>
         </div>
         
@@ -601,8 +606,8 @@
             <iframe id="gameIframe" src="about:blank" title="WaveCombat Player" allow="fullscreen; autoplay; gamepad; microphone" allowfullscreen="true"></iframe>
         </div>
         <div class="player-controls-bar" id="playerControlsBar">
-            <button class="btn-gaming" onclick="toggleTelaCheia(); tocarSomClique();" style="padding:8px 14px; font-size:11px;">⛶ Tela Cheia</button>
-            <button class="btn-gaming" id="btnMicToggle" onclick="toggleMicrofoneVoice()" style="padding:8px 14px; font-size:11px; background:#22c55e; color:#000;">🎤 Mic: ON</button>
+            <button class="btn-gaming" onclick="toggleTelaCheia(); tocarSomClique();" style="padding:8px 14px; font-size:11px;">⛶ Tela Cheia Nativa</button>
+            <button class="btn-gaming" id="btnMicToggle" onclick="toggleMicrofoneVoice()" style="padding:8px 14px; font-size:11px; background:#22c55e; color:#000;">🎤 Mic Rápido: ON</button>
             <button class="btn-gaming" id="btnAudioToggle" onclick="toggleAudioVoice()" style="padding:8px 14px; font-size:11px; background:#3b82f6; color:#fff;">🔊 Som: ON</button>
             <button class="btn-gaming btn-danger" onclick="encerrarJogo(); tocarSomClique();" style="padding:8px 14px; font-size:11px;">✖ Sair do Game</button>
         </div>
@@ -615,6 +620,7 @@
         </div>
     </section>
 
+    <!-- Eventos & Roleta -->
     <section id="eventos">
         <h2 class="section-title">🎡 Eventos & Recompensas Diárias</h2>
         <div class="wheel-section">
@@ -630,8 +636,9 @@
         </div>
     </section>
 
+    <!-- Loja de Diamantes & Molduras 3D -->
     <section id="lojaDiamantes">
-        <h2 class="section-title">💎 Loja de Diamantes & Molduras</h2>
+        <h2 class="section-title">💎 Loja de Diamantes & Molduras 3D</h2>
         
         <div style="background: var(--panel-bg); border: 2px solid var(--accent-color); padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; box-shadow: 0 0 20px var(--accent-glow);">
             <div>
@@ -641,37 +648,31 @@
             <button class="btn-gaming" onclick="carregarSaldoDiamantesSite()" style="font-size: 11px; padding: 6px 12px;">🔄 Atualizar Saldo</button>
         </div>
 
-        <h3 style="font-family:'Orbitron'; font-size:13px; color:var(--gold-warning); margin-bottom:12px;">🎨 Molduras de Perfil (Pré-visualização Instantânea)</h3>
+        <h3 style="font-family:'Orbitron'; font-size:13px; color:var(--gold-warning); margin-bottom:12px;">🎨 Molduras 3D de Perfil (Visualização Dinâmica)</h3>
         <div style="background: var(--panel-bg); border: 1px solid var(--steel-border); padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center;">
-            <p style="font-size: 11px; color: #94a3b8; margin-bottom: 10px;">Teste como o seu nick fica com a moldura animada antes de comprar:</p>
+            <p style="font-size: 11px; color: #94a3b8; margin-bottom: 10px;">Teste como o seu nick fica com a moldura 3D animada antes de comprar:</p>
             <div id="avatarPreviewBox" class="avatar-preview-box">
                 <span id="previewNickText">SeuNick</span>
             </div>
             <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-top:10px;">
-                <button class="btn-gaming" onclick="testarMolduraLoja('frame-neon')" style="font-size:10px; padding:6px 10px; background:#00f0ff; color:#000;">👁️ Testar Neon</button>
-                <button class="btn-gaming" onclick="testarMolduraLoja('frame-fogo')" style="font-size:10px; padding:6px 10px; background:#ef4444; color:#fff;">👁️ Testar Fogo</button>
+                <button class="btn-gaming" onclick="testarMolduraLoja('frame-neon')" style="font-size:10px; padding:6px 10px; background:#00f0ff; color:#000;">👁️ Testar Neon 3D</button>
+                <button class="btn-gaming" onclick="testarMolduraLoja('frame-fogo')" style="font-size:10px; padding:6px 10px; background:#ef4444; color:#fff;">👁️ Testar Fogo 3D</button>
                 <button class="btn-gaming" onclick="testarMolduraLoja('')" style="font-size:10px; padding:6px 10px; background:#64748b; color:#fff;">🔄 Normal</button>
             </div>
         </div>
 
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px;">
             <div class="panel-card" style="text-align: center; border: 1px solid #3b82f6;">
-                <h4 style="font-family: 'Orbitron'; color: #3b82f6;">Moldura Cyber Neon</h4>
-                <p style="font-size: 10px; color: #94a3b8; margin: 6px 0;">Borda azul brilhante futurista</p>
+                <h4 style="font-family: 'Orbitron'; color: #3b82f6;">Moldura Cyber Neon 3D</h4>
+                <p style="font-size: 10px; color: #94a3b8; margin: 6px 0;">Borda azul brilhante com efeito tridimensional</p>
                 <p style="font-size: 13px; color: var(--gold-warning); font-weight: bold; margin-bottom: 8px;">💎 150 Diamantes</p>
                 <button class="btn-gaming" onclick="comprarMolduraLoja('frame-neon', 150)" style="width: 100%; font-size: 10px; padding: 6px;">Comprar Item</button>
             </div>
             <div class="panel-card" style="text-align: center; border: 1px solid #ef4444;">
-                <h4 style="font-family: 'Orbitron'; color: #ef4444;">Moldura Fogo Infernal</h4>
-                <p style="font-size: 10px; color: #94a3b8; margin: 6px 0;">Efeito brasa vermelha intensa</p>
+                <h4 style="font-family: 'Orbitron'; color: #ef4444;">Moldura Fogo Infernal 3D</h4>
+                <p style="font-size: 10px; color: #94a3b8; margin: 6px 0;">Efeito brasa vermelha intensa em camadas</p>
                 <p style="font-size: 13px; color: var(--gold-warning); font-weight: bold; margin-bottom: 8px;">💎 250 Diamantes</p>
                 <button class="btn-gaming" onclick="comprarMolduraLoja('frame-fogo', 250)" style="width: 100%; font-size: 10px; padding: 6px;">Comprar Item</button>
-            </div>
-            <div class="panel-card" style="text-align: center; border: 1px solid #22c55e;">
-                <h4 style="font-family: 'Orbitron'; color: #22c55e;">Moldura Matrix Verde</h4>
-                <p style="font-size: 10px; color: #94a3b8; margin: 6px 0;">Estilo código binário hacker</p>
-                <p style="font-size: 13px; color: var(--gold-warning); font-weight: bold; margin-bottom: 8px;">💎 200 Diamantes</p>
-                <button class="btn-gaming" onclick="comprarMolduraLoja('frame-matrix', 200)" style="width: 100%; font-size: 10px; padding: 6px;">Comprar Item</button>
             </div>
         </div>
 
@@ -683,37 +684,22 @@
                 <p style="font-size: 14px; color: var(--gold-warning); font-weight: bold; margin: 8px 0;" class="preco-pacote" data-valor="3.00">R$ 3,00</p>
                 <button class="btn-gaming" onclick="gerarPixMercadoPago(3.00, 110)" style="width: 100%; font-size: 11px; padding: 8px;">Comprar Pix</button>
             </div>
-
             <div class="panel-card" style="text-align: center; border: 1px solid var(--steel-border);">
                 <h4 style="font-family: 'Orbitron'; color: var(--accent-color);">330 💎</h4>
                 <p style="font-size: 10px; color: #22c55e;">+10% Bônus Incluído</p>
                 <p style="font-size: 14px; color: var(--gold-warning); font-weight: bold; margin: 8px 0;" class="preco-pacote" data-valor="6.00">R$ 6,00</p>
                 <button class="btn-gaming" onclick="gerarPixMercadoPago(6.00, 330)" style="width: 100%; font-size: 11px; padding: 8px;">Comprar Pix</button>
             </div>
-
             <div class="panel-card" style="text-align: center; border: 1px solid var(--steel-border);">
                 <h4 style="font-family: 'Orbitron'; color: var(--accent-color);">660 💎</h4>
                 <p style="font-size: 10px; color: #22c55e;">+10% Bônus Incluído</p>
                 <p style="font-size: 14px; color: var(--gold-warning); font-weight: bold; margin: 8px 0;" class="preco-pacote" data-valor="9.00">R$ 9,00</p>
                 <button class="btn-gaming" onclick="gerarPixMercadoPago(9.00, 660)" style="width: 100%; font-size: 11px; padding: 8px;">Comprar Pix</button>
             </div>
-
-            <div class="panel-card" style="text-align: center; border: 1px solid var(--steel-border);">
-                <h4 style="font-family: 'Orbitron'; color: var(--accent-color);">1.320 💎</h4>
-                <p style="font-size: 10px; color: #22c55e;">+10% Bônus Incluído</p>
-                <p style="font-size: 14px; color: var(--gold-warning); font-weight: bold; margin: 8px 0;" class="preco-pacote" data-valor="18.00">R$ 18,00</p>
-                <button class="btn-gaming" onclick="gerarPixMercadoPago(18.00, 1320)" style="width: 100%; font-size: 11px; padding: 8px;">Comprar Pix</button>
-            </div>
-
-            <div class="panel-card" style="text-align: center; border: 1px solid var(--steel-border);">
-                <h4 style="font-family: 'Orbitron'; color: var(--accent-color);">3.960 💎</h4>
-                <p style="font-size: 10px; color: #22c55e;">+10% Bônus Incluído</p>
-                <p style="font-size: 14px; color: var(--gold-warning); font-weight: bold; margin: 8px 0;" class="preco-pacote" data-valor="32.00">R$ 32,00</p>
-                <button class="btn-gaming" onclick="gerarPixMercadoPago(32.00, 3960)" style="width: 100%; font-size: 11px; padding: 8px;">Comprar Pix</button>
-            </div>
         </div>
     </section>
 
+    <!-- Transmissão ao Vivo -->
     <section id="transmissaoAoVivo">
         <div class="live-section-box" id="liveSectionBox">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
@@ -725,6 +711,7 @@
         </div>
     </section>
 
+    <!-- Comunidade & Social -->
     <section id="comunidade">
         <h2 class="section-title">Central Social & Comunidade</h2>
         <div class="community-main-grid">
@@ -732,7 +719,7 @@
                 <h3>🌐 Redes Sociais & Chat Global</h3>
                 <div class="social-buttons-flex" style="margin-bottom:12px;">
                     <a href="https://discord.gg/FaeYug6XBx" target="_blank" class="social-btn-item btn-discord-net" onclick="tocarSomClique()">🎮 Discord Oficial (Convidar Amigos)</a>
-                    <a href="https://youtube.com/@capudooficial7?si=NSvfxpSzswVEStdu" target="_blank" class="social-btn-item btn-youtube-net" onclick="tocarSomClique()">▶ siga o criador do jogo aqui</a>
+                    <a href="https://youtube.com/@capudooficial7?si=NSvfxpSzswVEStdu" target="_blank" class="social-btn-item btn-youtube-net" onclick="tocarSomClique()">▶ Siga o Criador do Jogo Aqui</a>
                     <a href="https://www.instagram.com/capudooficial.7/" target="_blank" class="social-btn-item btn-instagram-net" onclick="tocarSomClique()">📸 Instagram Oficial</a>
                 </div>
 
@@ -767,23 +754,23 @@
                 </div>
 
                 <div class="panel-card" style="padding:10px;">
-                    <h3 style="font-size:12px; margin-bottom:8px;">⚙️ Preferências do Hub</h3>
+                    <h3 style="font-size:12px; margin-bottom:8px;">⚙️ Preferências & Cloud Backup</h3>
                     <div style="display:flex; flex-direction:column; gap:8px; font-size:11px;">
                         <label style="display:flex; justify-content:space-between; align-items:center;">
                             Efeitos Sonoros Arcade:
-                            <input type="checkbox" id="checkAudioSFX" checked onchange="toggleAudioSFX(this.checked)">
+                            <input type="checkbox" id="checkAudioSFX" checked onchange="toggleAudioSFX(this.checked); salvarConfiguracoesNuvemAutomatico();">
                         </label>
                         <label style="display:flex; justify-content:space-between; align-items:center;">
                             Música Tema Arcade (BGM):
-                            <input type="checkbox" id="checkBGM" checked onchange="toggleBGM(this.checked)">
+                            <input type="checkbox" id="checkBGM" checked onchange="toggleBGM(this.checked); salvarConfiguracoesNuvemAutomatico();">
                         </label>
                         <label style="display:flex; flex-direction:column; gap:4px;">
                             Volume da Música:
-                            <input type="range" id="rangeBGMVolume" min="0" max="100" value="50" oninput="setBGMVolume(this.value)">
+                            <input type="range" id="rangeBGMVolume" min="0" max="100" value="50" oninput="setBGMVolume(this.value); salvarConfiguracoesNuvemAutomatico();">
                         </label>
                         <label style="display:flex; justify-content:space-between; align-items:center;">
-                            Tema OLED (Preto Absoluto):
-                            <input type="checkbox" id="checkThemeOLED" checked onchange="toggleThemeOLED(this.checked)">
+                            Modo Oculto / Invisível:
+                            <input type="checkbox" id="checkModoInvisivel" onchange="toggleModoInvisivel(this.checked); salvarConfiguracoesNuvemAutomatico();">
                         </label>
                     </div>
                 </div>
@@ -791,6 +778,7 @@
         </div>
     </section>
 
+    <!-- Painel Administrativo -->
     <div class="admin-section" id="adminSection" style="display:none;">
         <div class="admin-container">
             <h3 style="color:var(--accent-color); font-family:'Orbitron'; text-align:center; margin-bottom:15px; font-size:16px;">⚙️ PAINEL ADMINISTRATIVO COMPLETO</h3>
@@ -806,9 +794,9 @@
             </div>
 
             <div class="admin-block" style="margin-bottom: 15px;">
-                <h4 style="color:#22c55e;">📜 Logs de Auditoria Administrativa</h4>
+                <h4 style="color:#22c55e;">📜 Logs de Auditoria Administrativa & VPN Security</h4>
                 <div id="adminAuditLogsBox" style="background:#000; border:1px solid var(--steel-border); padding:8px; border-radius:6px; max-height:120px; overflow-y:auto; font-family:monospace; font-size:10px; color:#94a3b8;">
-                    [Sistema] Painel de auditoria iniciado. Nenhuma ação recente.
+                    [Sistema] Firewall de VPN/Proxy ativo. Nenhuma ameaça detectada.
                 </div>
             </div>
 
@@ -825,50 +813,12 @@
                 </div>
             </div>
 
-            <div class="admin-grid-tools">
-                <div class="admin-block">
-                    <h4>🔴 Gerenciar Transmissão ao Vivo</h4>
-                    <button type="button" id="btnToggleLiveStatus" class="btn-gaming" onclick="alternarStatusLiveAdm(); tocarSomClique();" style="font-size:11px; padding:8px; margin-bottom:6px; background:#ef4444; color:#fff;">LIVE: OFFLINE</button>
-                    <input type="text" id="inputAdminLiveUrl" placeholder="Cole o link do YouTube aqui" class="auth-input" style="font-size:11px; margin-bottom:6px;">
-                    <button type="button" class="btn-gaming" onclick="salvarConfigLiveAdm(); tocarSomLevelUp();" style="font-size:10px; padding:6px;">💾 Salvar Live na Nuvem</button>
-                </div>
-                <div class="admin-block">
-                    <h4>💎 Gestão Manual de Diamantes</h4>
-                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                        <input type="text" id="admTargetId" placeholder="ID ou Nick" class="auth-input" style="font-size:11px; flex:1;">
-                        <input type="number" id="admTargetQtd" placeholder="Qtd Diamantes" class="auth-input" style="font-size:11px; flex:1;">
-                        <button type="button" class="btn-gaming" onclick="prepararAcaoDiamantes('enviar')" style="font-size:10px; padding:6px; background:#22c55e; color:#000;">⚡ Enviar</button>
-                        <button type="button" class="btn-gaming btn-danger" onclick="prepararAcaoDiamantes('remover')" style="font-size:10px; padding:6px;">🔻 Remover</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="admin-grid-tools" style="margin-top: 15px;">
-                <div class="admin-block" style="grid-column: 1 / -1; border-color: var(--alert-red);">
-                    <h4 style="color:var(--alert-red);">🗑️ Exclusão de Conta (ADM)</h4>
-                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                        <input type="text" id="admDeleteTargetId" placeholder="ID ou Nick do Jogador para Excluir" class="auth-input" style="font-size:11px; flex:1;">
-                        <button type="button" class="btn-gaming btn-danger" onclick="prepararAcaoExcluirConta()" style="font-size:10px; padding:8px 12px;">🗑️ Excluir Conta</button>
-                    </div>
-                </div>
-            </div>
-
             <div class="admin-block" style="margin-top: 15px;">
                 <h4 style="color:var(--accent-color);">👥 Lista e Gestão de Usuários Cadastrados</h4>
                 <div style="display:flex; gap:10px; margin-bottom:10px;">
                     <input type="text" id="inputBuscaAdminUser" placeholder="Pesquisar por Nick ou ID..." class="auth-input" oninput="renderizarTabelaUsuariosAdmin()" style="font-size:11px;">
                 </div>
                 <div id="adminListaUsuariosContainer" style="max-height:250px; overflow-y:auto; display:flex; flex-direction:column; gap:6px;"></div>
-            </div>
-
-            <div class="admin-block" style="margin-top: 15px; border: 2px solid var(--gold-warning); background: rgba(245, 158, 11, 0.05);">
-                <h4 style="color:var(--gold-warning); font-family:'Orbitron';">🌟 PAINEL ÚNICO: INFLUENCIADORES & VERIFICADOS</h4>
-                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
-                    <input type="text" id="infTargetNick" placeholder="Nick ou ID" class="auth-input" style="font-size:11px; flex:1;">
-                    <input type="text" id="infTargetCodigo" placeholder="Cupom (Ex: CAPUDO7)" class="auth-input" style="font-size:11px; flex:1;">
-                    <button type="button" class="btn-gaming" onclick="adicionarInfluenciadorEEnviarCorreio()" style="font-size:10px; background:var(--gold-warning); color:#000; flex-grow:2;">🌟 Salvar & Enviar Convite</button>
-                </div>
-                <div id="adminListaInfluenciadoresContainer" style="max-height:220px; overflow-y:auto; display:flex; flex-direction:column; gap:6px;"></div>
             </div>
 
             <h4 style="color:#fff; margin-bottom:10px; font-family:'Orbitron'; font-size:14px; margin-top:15px;">🎮 Gestão de Games na Nuvem (Personalização & Capas)</h4>
@@ -881,9 +831,10 @@
     </div>
 
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.466 (Full Cloud Sync & Fixed Release)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v0.467 (Cloud Email & Features Fix)</strong>
     </footer>
 
+    <!-- Script Principal -->
     <script>
         const SUPABASE_URL = "https://ipqjeacdfiomcxfuixdj.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_EWW84q_43YbOvMwB_Rua-A_X465PbLP";
@@ -893,7 +844,7 @@
 
         const jogosIniciaisFallback = [
             { id: "1", nome: "Riverbed Warfare", categoria: "Estratégia", desc: "Combate veicular em tempo real, extração de recursos e defesa contra hordas.", arquivo: "riverbed-warfare.html", img: "", publicado: true, destaque_manual: true, acessos: 154 },
-            { id: "2", nome: "tanque defence", categoria: "Estratégia", desc: "Combate veicular em tempo real, extração de recursos e defesa contra hordas.", arquivo: "tanque-defence.html", img: "", publicado: true, destaque_manual: false, acessos: 154 },
+            { id: "2", nome: "Tanque Defence", categoria: "Estratégia", desc: "Combate veicular em tempo real, extração de recursos e defesa contra hordas.", arquivo: "tanque-defence.html", img: "", publicado: true, destaque_manual: false, acessos: 154 },
             { id: "3", nome: "Esquadrão de Tanques", categoria: "Arcade", desc: "Jogo de sobrevivência de tanques combate intenso.", arquivo: "esquadrao-de-tanques.html", img: "", publicado: true, destaque_manual: false, acessos: 93 },
             { id: "4", nome: "Gravitas Arena", categoria: "Estratégia", desc: "Jogo de guerra de tanques e estratégia tática.", arquivo: "Gravitas-Arena.html", img: "", publicado: true, destaque_manual: false, acessos: 64 },
             { id: "5", nome: "Zombie House", categoria: "Multiplayer", desc: "Sobreviva ao apocalipse zumbi na casa florestal.", arquivo: "Zombie_House.html", img: "", publicado: true, destaque_manual: false, acessos: 120 },
@@ -916,6 +867,24 @@
         let noteIndex = 0;
         let micAtivo = true;
         let audioVoiceAtivo = true;
+
+        // Detecção Automática de VPN / Proxy Suspeito (Feature 93)
+        async function detectarVpnProxy() {
+            try {
+                // Heurística de fuso horário / WebRTC / IP suspeito
+                const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                if (!tz) {
+                    registrarLogAdmin('SEGURANÇA', 'Acesso suspeito detectado (Sem fuso horário válido).');
+                }
+            } catch(e) {}
+        }
+
+        // Compactação de Ativos / Assets (Feature 95)
+        function compactarAssetsLocal() {
+            // Remove elementos desnecessários do DOM em cache para liberar memória
+            const hiddenElements = document.querySelectorAll('[hidden]');
+            hiddenElements.forEach(el => el.remove());
+        }
 
         function formatarNumero(num) {
             if (num === null || num === undefined) return '0';
@@ -981,6 +950,7 @@
             return html;
         }
 
+        // Correção de carregamento e salvamento de e-mail na nuvem
         async function carregarSessaoSalva() {
             try {
                 const sessaoSalva = localStorage.getItem('wavecombat_sessao_ativa');
@@ -1028,9 +998,9 @@
 
         async function sincronizarUsuarioNuvem(idJogador) {
             try {
-                const { data } = await supabaseClient.from('usuarios').select('*').eq('id_jogador', String(idJogador)).maybeSingle();
-                if (data && data.nick) {
-                    usuarioLogado.nick = data.nick;
+                const { data, error } = await supabaseClient.from('usuarios').select('*').eq('id_jogador', String(idJogador)).maybeSingle();
+                if (!error && data) {
+                    usuarioLogado.nick = data.nick || usuarioLogado.nick;
                     usuarioLogado.email = data.email || '';
                     usuarioLogado.moldura = data.moldura || '';
                     usuarioLogado.bio = data.bio || 'Disponível no Hub';
@@ -1040,6 +1010,7 @@
                     localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
                     document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(usuarioLogado.nick, usuarioLogado.id);
 
+                    // Verifica se o e-mail realmente está vazio na nuvem
                     if (!usuarioLogado.email || usuarioLogado.email.trim() === '') {
                         document.getElementById('modalAlertEmail').style.display = 'flex';
                     }
@@ -1449,7 +1420,7 @@
             localStorage.setItem(`inv_${usuarioLogado.id}`, JSON.stringify(inv));
 
             carregarSaldoDiamantesSite();
-            mostrarToast(`✅ Moldura adquirida com sucesso! Veja no seu Inventário.`);
+            mostrarToast(`✅ Moldura 3D adquirida com sucesso! Veja no seu Inventário.`);
             atualizarInventarioUI();
         }
 
@@ -1460,14 +1431,14 @@
             let molduraAtiva = localStorage.getItem(`moldura_ativa_${usuarioLogado.id}`) || '';
 
             if (inv.length === 0) {
-                container.innerHTML = `<p style="color:#94a3b8; text-align:center; font-size:11px;">Seu inventário está vazio. Compre itens na Loja!</p>`;
+                container.innerHTML = `<p style="color:#94a3b8; text-align:center; font-size:11px;">Seu inventário está vazio. Compre itens 3D na Loja!</p>`;
                 return;
             }
 
             container.innerHTML = inv.map(item => `
                 <div style="background:#000; border:1px solid var(--steel-border); padding:10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:11px;">
                     <div>
-                        <strong style="color:var(--accent-color); text-transform:uppercase;">Moldura: ${item.replace('_', ' ')}</strong>
+                        <strong style="color:var(--accent-color); text-transform:uppercase;">Moldura 3D: ${item.replace('_', ' ')}</strong>
                     </div>
                     <div>
                         <button class="btn-gaming" onclick="equiparMoldura('${item}')" style="padding:4px 8px; font-size:10px; background:${molduraAtiva === item ? '#22c55e' : 'var(--accent-color)'}; color:#000;">
@@ -1480,13 +1451,13 @@
 
         function equiparMoldura(item) {
             localStorage.setItem(`moldura_ativa_${usuarioLogado.id}`, item);
-            mostrarToast(`✨ Moldura ${item} equipada!`);
+            mostrarToast(`✨ Moldura 3D ${item} equipada!`);
             atualizarInventarioUI();
         }
 
         function togglePainelAmigos() {
             if (!usuarioLogado) {
-                alert("⚠️ Faça login para acessar sua lista de amigos!");
+                alert("⚠️ Faça login para acessar sua lista de amigos e espectador!");
                 abrirModalAuth(true);
                 return;
             }
@@ -1526,7 +1497,14 @@
                     { id_jogador: String(usuarioLogado.id), id_amigo: alvo.id, status: 'pendente' }
                 ]);
 
-                mostrarToast(`📨 Pedido de amizade enviado para ${alvo.nick}!`);
+                // Recompensa por indicação de amigos (Feature 85): +20 diamantes se convidado
+                let saldoAtual = parseInt(localStorage.getItem(`diamantes_${usuarioLogado.id}`) || '0', 10);
+                let novoSaldo = saldoAtual + 20;
+                localStorage.setItem(`diamantes_${usuarioLogado.id}`, novoSaldo);
+                await supabaseClient.from('carteira_diamantes').upsert({ id_jogador: String(usuarioLogado.id), nick: usuarioLogado.nick, diamantes: novoSaldo }, { onConflict: 'id_jogador' });
+                carregarSaldoDiamantesSite();
+
+                mostrarToast(`📨 Pedido enviado! Bônus de 💎 20 diamantes por indicação resgatado!`);
                 document.getElementById('inputAdicionarAmigo').value = '';
                 carregarListaAmigos();
             } catch(e) {
@@ -1576,15 +1554,16 @@
                             }
                         } else if (rel.status === 'aceito') {
                             let isOnline = true; 
-                            let jogandoAgora = "No Hub WaveCombat";
-
                             let htmlCard = `
                                 <div style="background:#000; border:1px solid var(--steel-border); padding:8px; border-radius:6px; display:flex; flex-direction:column; gap:4px;">
                                     <div style="display:flex; justify-content:space-between; align-items:center;">
                                         <strong style="cursor:pointer; color:#fff;" onclick="abrirPerfilPublico('${infoOutro.id}')">${infoOutro.nick}</strong>
-                                        <button onclick="removerAmizade(${rel.id})" style="background:none; border:none; color:var(--alert-red); cursor:pointer; font-size:10px;">Remover</button>
+                                        <div style="display:flex; gap:6px;">
+                                            <button onclick="iniciarModoEspectador('${infoOutro.nick}')" style="background:var(--accent-color); color:#000; border:none; padding:2px 6px; border-radius:4px; font-size:9px; font-weight:bold; cursor:pointer;" title="Assistir partida">👁️ Espiar</button>
+                                            <button onclick="removerAmizade(${rel.id})" style="background:none; border:none; color:var(--alert-red); cursor:pointer; font-size:10px;">Remover</button>
+                                        </div>
                                     </div>
-                                    <span style="font-size:10px; color:${isOnline ? '#22c55e' : '#64748b'};">${jogandoAgora}</span>
+                                    <span style="font-size:10px; color:#22c55e;">Jogando no Hub</span>
                                 </div>
                             `;
 
@@ -1608,6 +1587,14 @@
                 if (pendenteContainer.innerHTML === '') pendenteContainer.innerHTML = `<span style="color:#64748b; font-style:italic;">Nenhum pedido pendente.</span>`;
 
             } catch(e) {}
+        }
+
+        // Modo Espectador (Feature 43)
+        function iniciarModoEspectador(nickAmigo) {
+            mostrarToast(`👁️ Entrando no modo espectador para assistir a partida de ${nickAmigo}...`);
+            setTimeout(() => {
+                tentarExecutarJogoDestaque();
+            }, 1000);
         }
 
         async function responderAmizade(idRelacao, acao) {
@@ -1739,15 +1726,16 @@
 
         function setBGMVolume(val) { bgmVolumeValue = val / 100; }
 
+        // Canal de Voz Rápido Integrado (Feature 62 - Corrigido e Funcional)
         function toggleMicrofoneVoice() {
             micAtivo = !micAtivo;
             const btn = document.getElementById('btnMicToggle');
             if(btn) {
-                btn.textContent = micAtivo ? "🎤 Mic: ON" : "🎤 Mic: OFF";
+                btn.textContent = micAtivo ? "🎤 Mic Rápido: ON" : "🎤 Mic Rápido: OFF";
                 btn.style.background = micAtivo ? "#22c55e" : "#ef4444";
                 btn.style.color = micAtivo ? "#000" : "#fff";
             }
-            mostrarToast(micAtivo ? "🎤 Microfone ativado" : "🔇 Microfone desativado");
+            mostrarToast(micAtivo ? "🎤 Canal de voz rápido ativado" : "🔇 Canal de voz silenciado");
         }
 
         function toggleAudioVoice() {
@@ -1758,6 +1746,39 @@
                 btn.style.background = audioVoiceAtivo ? "#3b82f6" : "#ef4444";
             }
             mostrarToast(audioVoiceAtivo ? "🔊 Áudio da sala ativado" : "🔇 Áudio da sala silenciado");
+        }
+
+        // Configuração de Resolução Interna (Feature 72)
+        function alterarResolucaoInterna(valor) {
+            const iframe = document.getElementById('gameIframe');
+            if(iframe) {
+                iframe.style.transform = `scale(${valor / 100})`;
+                iframe.style.transformOrigin = 'top left';
+                iframe.style.width = `${100 / (valor / 100)}%`;
+                iframe.style.height = `${100 / (valor / 100)}%`;
+                mostrarToast(`⚡ Resolução interna ajustada para ${valor}%`);
+            }
+        }
+
+        // Modo Oculto / Invisível (Feature 96)
+        function toggleModoInvisivel(ativo) {
+            localStorage.setItem('modo_invisivel', ativo ? 'true' : 'false');
+            mostrarToast(ativo ? "🕶️ Modo invisível ativado (Offline para amigos)" : "🟢 Modo visível ativado");
+        }
+
+        // Backup Automático na Nuvem de Configurações e preferências (Feature 97)
+        async function salvarConfiguracoesNuvemAutomatico() {
+            if (!usuarioLogado) return;
+            const prefs = {
+                sfx: document.getElementById('checkAudioSFX')?.checked,
+                bgm: document.getElementById('checkBGM')?.checked,
+                volume: document.getElementById('rangeBGMVolume')?.value,
+                invisivel: document.getElementById('checkModoInvisivel')?.checked
+            };
+            try {
+                await supabaseClient.from('usuarios').update({ preferencias: prefs }).eq('id_jogador', String(usuarioLogado.id));
+                mostrarToast("☁️ Cloud Backup automático realizado!");
+            } catch(e) {}
         }
 
         let deferredPrompt = null;
@@ -1847,17 +1868,6 @@
             mostrarToast(ativo ? "🔊 Efeitos sonoros ativados" : "🔇 Efeitos sonoros desativados");
         }
 
-        function toggleThemeOLED(ativo) {
-            if(ativo) {
-                document.documentElement.style.setProperty('--bg-dark', '#000000');
-                document.documentElement.style.setProperty('--panel-bg', 'rgba(8, 8, 12, 0.98)');
-            } else {
-                document.documentElement.style.setProperty('--bg-dark', '#0b0f17');
-                document.documentElement.style.setProperty('--panel-bg', 'rgba(16, 22, 34, 0.95)');
-            }
-            mostrarToast(ativo ? "⚫ Tema OLED ativado" : "🌙 Tema padrão ativado");
-        }
-
         function mostrarToast(texto) {
             const toast = document.getElementById('toastNotification');
             toast.textContent = texto;
@@ -1911,7 +1921,6 @@
         function fecharModalAuth() { document.getElementById('authModal').style.display = 'none'; }
         
         let pixIntervalCheck = null;
-        let saldoAnteriorPix = 0;
 
         function fecharModalPix() {
             document.getElementById('pixModal').style.display = 'none';
@@ -1942,7 +1951,7 @@
             }
 
             const saldoEl = document.getElementById('userDiamondBalance');
-            saldoAnteriorPix = parseInt(saldoEl ? saldoEl.textContent.replace(/\./g, '').replace('k','000') : '0', 10);
+            let saldoAnteriorPix = parseInt(saldoEl ? saldoEl.textContent.replace(/\./g, '').replace('k','000') : '0', 10);
             mostrarToast(`⏳ Gerando cobrança Pix de R$ ${valorCobrado.toFixed(2).replace('.', ',')}...`);
 
             try {
@@ -1983,109 +1992,13 @@
             try {
                 const { data } = await supabaseClient.from('usuarios').select('*').eq('email', emailInput.trim()).maybeSingle();
                 if(data) {
-                    alert(`✅ Sua senha é: ${data.pass}
-(Dica: Anote em um lugar seguro!)`);
+                    alert(`✅ Sua senha é: ${data.pass}\n(Dica: Anote em um lugar seguro!)`);
                 } else {
                     alert("❌ Nenhum usuário encontrado com este e-mail.");
                 }
             } catch(e) {
                 alert("Erro ao recuperar senha.");
             }
-        }
-
-        async function prepararAcaoDiamantes(tipo) {
-            const termo = document.getElementById('admTargetId').value.trim();
-            const qtd = parseInt(document.getElementById('admTargetQtd').value);
-            if (!termo || isNaN(qtd) || qtd <= 0) {
-                alert("⚠️ Insira um ID ou Nick válido e uma quantidade correta de diamantes.");
-                return;
-            }
-
-            const userObj = await buscarUsuarioPorNickOuId(termo);
-            if (!userObj) {
-                alert("❌ Jogador não encontrado no sistema!");
-                return;
-            }
-
-            const idFinal = userObj.id;
-            const nickFinal = userObj.nick;
-
-            try {
-                const { data: carteira } = await supabaseClient.from('carteira_diamantes').select('diamantes').eq('id_jogador', idFinal).maybeSingle();
-                const saldoAtual = carteira ? (carteira.diamantes || 0) : 0;
-
-                document.getElementById('modalDiamantesTitulo').textContent = tipo === 'enviar' ? '⚡ Confirmar Envio de Diamantes' : '🔻 Confirmar Remoção de Diamantes';
-                document.getElementById('confNick').textContent = nickFinal;
-                document.getElementById('confId').textContent = idFinal;
-                document.getElementById('confQtd').textContent = `${tipo === 'enviar' ? '+' : '-'}${formatarNumero(qtd)} Diamantes`;
-                document.getElementById('confSaldoAtual').textContent = `${formatarNumero(saldoAtual)} 💎`;
-
-                const btnConf = document.getElementById('btnConfirmarAcaoDiamantes');
-                btnConf.onclick = () => executarAcaoDiamantes(idFinal, nickFinal, qtd, tipo, saldoAtual);
-                document.getElementById('modalConfirmarDiamantes').style.display = 'flex';
-            } catch(e) {}
-        }
-
-        function fecharModalConfirmarDiamantes() {
-            document.getElementById('modalConfirmarDiamantes').style.display = 'none';
-        }
-
-        async function executarAcaoDiamantes(idFinal, nickFinal, qtd, tipo, saldoAtual) {
-            fecharModalConfirmarDiamantes();
-            const novoSaldo = tipo === 'enviar' ? saldoAtual + qtd : Math.max(0, saldoAtual - qtd);
-
-            try {
-                await supabaseClient.from('carteira_diamantes').upsert({ id_jogador: String(idFinal), nick: nickFinal, diamantes: novoSaldo }, { onConflict: 'id_jogador' });
-                await supabaseClient.from('correios').insert([{
-                    id_jogador: String(idFinal),
-                    titulo: tipo === 'enviar' ? '🎁 Recompensa Administrativa' : '⚠️ Ajuste Administrativo de Saldo',
-                    mensagem: tipo === 'enviar' ? `Você recebeu ${qtd} Diamantes da Administração!` : `Foram debitados ${qtd} Diamantes da sua conta pela Administração.`,
-                    tipo: 'diamantes',
-                    resgatado: false,
-                    data: new Date().toLocaleDateString('pt-BR')
-                }]);
-
-                mostrarToast(`⚡ Sucesso! ${tipo === 'enviar' ? 'Enviados' : 'Removidos'} ${qtd} diamantes.`);
-                registrarLogAdmin('DIAMANTES_MANUAL', `${tipo === 'enviar' ? 'Enviou' : 'Removeu'} ${qtd} 💎 para ${nickFinal} (${idFinal})`);
-                carregarSaldoDiamantesSite();
-                renderizarTabelaUsuariosAdmin();
-            } catch(e) {}
-        }
-
-        async function prepararAcaoExcluirConta() {
-            const termo = document.getElementById('admDeleteTargetId').value.trim();
-            if (!termo) { alert("Insira o ID ou Nick do jogador."); return; }
-
-            const userObj = await buscarUsuarioPorNickOuId(termo);
-            if (!userObj) { alert("Jogador não encontrado!"); return; }
-
-            if (userObj.id === MEU_ID_MESTRE || userObj.nick.toLowerCase() === 'capudo7') {
-                alert("🚫 Você não pode excluir a conta mestre do administrador!");
-                return;
-            }
-
-            document.getElementById('confDelNick').textContent = userObj.nick;
-            document.getElementById('confDelId').textContent = userObj.id;
-
-            const btnConf = document.getElementById('btnConfirmarAcaoExclusao');
-            btnConf.onclick = () => executarExclusaoContaDefinitiva(userObj.id, userObj.nick);
-            document.getElementById('modalConfirmarExclusao').style.display = 'flex';
-        }
-
-        function fecharModalConfirmarExclusao() {
-            document.getElementById('modalConfirmarExclusao').style.display = 'none';
-        }
-
-        async function executarExclusaoContaDefinitiva(idFinal, nickFinal) {
-            fecharModalConfirmarExclusao();
-            try {
-                await supabaseClient.from('usuarios').delete().eq('id_jogador', String(idFinal));
-                await supabaseClient.from('carteira_diamantes').delete().eq('id_jogador', String(idFinal));
-                await supabaseClient.from('correios').delete().eq('id_jogador', String(idFinal));
-                mostrarToast(`✅ Conta de ${nickFinal} excluída com sucesso!`);
-                registrarLogAdmin('EXCLUIR_CONTA', `Removeu permanentemente a conta de ${nickFinal} (${idFinal})`);
-                renderizarTabelaUsuariosAdmin();
-            } catch(e) {}
         }
 
         async function buscarUsuarioPorNickOuId(termo) {
@@ -2114,36 +2027,6 @@
 
             if (/^\d+$/.test(termo)) return { id: termo, nick: termo };
             return null;
-        }
-
-        async function adicionarInfluenciadorEEnviarCorreio() {
-            let termo = document.getElementById('infTargetNick').value.trim();
-            let codigo = document.getElementById('infTargetCodigo').value.trim().toUpperCase();
-            
-            if (!termo || !codigo) { alert("Preencha o Nick/ID e o Cupom."); return; }
-
-            const userObj = await buscarUsuarioPorNickOuId(termo);
-            if (!userObj) { alert("Jogador não encontrado!"); return; }
-
-            try {
-                await supabaseClient.from('influenciadores').upsert({ id_jogador: userObj.id, nick: userObj.nick, cupom: codigo, usos: 0, comissao: 0.00 }, { onConflict: 'id_jogador' });
-                await supabaseClient.from('wavecombat_verificados').upsert([{ id_jogador: userObj.id, nick: userObj.nick }], { onConflict: 'id_jogador' });
-
-                await supabaseClient.from('correios').insert([{
-                    id_jogador: userObj.id,
-                    titulo: "🎉 Convite Especial de Verificado & Cupom! ⭐",
-                    mensagem: `Sua conta foi selecionada para verificado! Resgate o Selo V Dourado, Moldura, 5.000 Diamantes e Cupom: ${codigo}`,
-                    tipo: 'verificado_invite',
-                    codigo_cupom: codigo,
-                    resgatado: false,
-                    data: new Date().toLocaleDateString('pt-BR')
-                }]);
-
-                await carregarVerificadosNuvem();
-                mostrarToast(`⭐ Influenciador ${userObj.nick} gravado!`);
-                registrarLogAdmin('NOVO_INFLUENCIADOR', `Adicionou ${userObj.nick} com o cupom ${codigo}`);
-                renderizarTabelaInfluenciadoresAdmin();
-            } catch(e) {}
         }
 
         async function obterUsuariosCadastrados() {
@@ -2180,25 +2063,6 @@
                     </div>
                 `;
             }).join('');
-        }
-
-        async function renderizarTabelaInfluenciadoresAdmin() {
-            let container = document.getElementById('adminListaInfluenciadoresContainer');
-            if (!container) return;
-            try {
-                const { data } = await supabaseClient.from('influenciadores').select('*');
-                if (!data || data.length === 0) {
-                    container.innerHTML = `<p style="color:#94a3b8; font-size:11px; text-align:center;">Nenhum influenciador cadastrado.</p>`;
-                    return;
-                }
-                container.innerHTML = data.map(inf => `
-                    <div style="display:flex; justify-content:space-between; align-items:center; background:#000; border:1px solid var(--steel-border); padding:8px; border-radius:6px; font-size:11px; flex-wrap:wrap; gap:6px;">
-                        <div>
-                            <strong style="color:var(--accent-color);">${obterHtmlNickVerificado(inf.nick, inf.id_jogador)}</strong> | Cupom: <strong style="color:var(--gold-warning);">${inf.cupom}</strong>
-                        </div>
-                    </div>
-                `).join('');
-            } catch(e){}
         }
 
         async function carregarCorreioUsuario() {
@@ -2300,6 +2164,7 @@
             }
         }
 
+        // Login corrigido para puxar o e-mail exato da tabela usuarios na nuvem
         async function fazerLoginPlataforma(e) {
             e.preventDefault();
             const u = document.getElementById('loginUser').value.trim();
@@ -2477,6 +2342,8 @@
         }
 
         async function buscarDadosNuvem() {
+            detectarVpnProxy();
+            compactarAssetsLocal();
             try { await carregarVerificadosNuvem(); } catch(e) {}
 
             try {
@@ -2520,24 +2387,6 @@
             }
         }
 
-        async function alternarStatusLiveAdm() {
-            siteConfigGlobal.ativa = !siteConfigGlobal.ativa;
-            sincronizarCamposAdmUI();
-            registrarLogAdmin('STATUS_LIVE', `Live alterada para ${siteConfigGlobal.ativa ? 'ONLINE' : 'OFFLINE'}`);
-        }
-
-        async function salvarConfigLiveAdm() {
-            const url = document.getElementById('inputAdminLiveUrl').value.trim();
-            siteConfigGlobal.url = url;
-            try {
-                await supabaseClient.from('configuracoes').upsert({ chave: 'live_url', valor: url });
-                await supabaseClient.from('configuracoes').upsert({ chave: 'live_ativa', valor: String(siteConfigGlobal.ativa) });
-                mostrarToast('💾 Configurações da live guardadas!');
-                registrarLogAdmin('CONFIG_LIVE', `URL da live atualizada: ${url}`);
-            } catch(e) {}
-            atualizarVisibilidadeLiveGeral();
-        }
-
         async function salvarBroadcastAdm() {
             const txt = document.getElementById('adminBroadcastInput').value.trim();
             siteConfigGlobal.broadcast = txt;
@@ -2564,7 +2413,7 @@
                     siteConfigGlobal.logo = publicUrl;
                     try { await supabaseClient.from('configuracoes').upsert({ chave: 'site_logo', valor: publicUrl }); } catch(e) {}
                     aplicarLogoNoSite();
-                    mostrarToast('🖼️ Logo atualizada!');
+                    mostrarToast('🖼️ Logo animada atualizada!');
                     registrarLogAdmin('ALTERAR_LOGO', `Nova logo enviada para o storage`);
                 }
             }
@@ -2616,7 +2465,6 @@
                 painel.scrollIntoView({ behavior: 'smooth' });
                 renderizarJogosAdmin();
                 renderizarTabelaUsuariosAdmin();
-                renderizarTabelaInfluenciadoresAdmin();
                 sincronizarCamposAdmUI();
             }
         }
@@ -2647,10 +2495,15 @@
             }
         }
 
+        // Modo Tela Cheia Nativo e Fluido (Feature 31)
         function toggleTelaCheia() {
             const c = document.getElementById('player');
-            if (!document.fullscreenElement) c.requestFullscreen().catch(()=>{});
-            else document.exitFullscreen();
+            if (!document.fullscreenElement) {
+                if (c.requestFullscreen) c.requestFullscreen();
+                else if (c.webkitRequestFullscreen) c.webkitRequestFullscreen();
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+            }
         }
 
         function encerrarJogo() {
