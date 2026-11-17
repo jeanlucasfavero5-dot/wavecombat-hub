@@ -1,15 +1,3 @@
-A geração automatizada do arquivo para download direto encontrou uma limitação técnica nesta tentativa. Abaixo está o código 100% consolidado, corrigido e unificado das três versões enviadas (index (1)_2.html, index (2).html e index_3.html), pronto para você salvar como index.html.
-Principais Correções e Unificações Realizadas:
- * Unificação das 3 Versões Sem Perda de Recursos:
-   * Tema Dinâmico RGB e Fallback Automático (index (2)): Extração automática da paleta de cores da capa do jogo em destaque (extrairCorDinamicaImagem + gerarCorFallbackPorNome), atualizando --accent-color, --accent-glow e theme-color.
-   * Avatar 3D e Pré-visualização de Molduras (index_3 + index (2)): Inclusão da prévia interativa 3D (testarMolduraLoja) com animações neonGlow, fireGlow e prismaGlow, mantendo a trava de compra única (molduras_[id]) e bloqueio visual automático dos botões na loja.
-   * Painel de Influenciadores, Comissões e Cupons (index (2)): Sistema completo de cadastro de influenciadores com desconto automático de 10%, cálculo de 30% de comissão (saldo_comissao) e botão de reset mensal.
-   * Gestão Completa de Jogos no Painel ADM (index_3 + index (2)): Upload direto de capas para o Supabase Storage (enviarCapaJogoAdmin), alternância de publicação (togglePublicarJogo), teste rápido e definição de destaque manual.
-   * Correções de Bugs Críticos:
-     * Corrigida a chamada inexistente banirJogadorAdm(...) na lista de denúncias do ADM para alternarBanimentoJogadorAdm(...).
-     * Corrigida a gravação do influenciador_id no cacheCuponsNuvem para que o crédito de 30% de comissão funcione em todas as compras com cupom.
-     * Integrado o crédito de +20 💎 no cadastro por código/link de indicação (fazerRegistroPlataforma) e o envio automático do código de cupom ao resgatar o selo Verificado no correio.
-     * Mantidos o Seletor de Resolução Interna (100%, 75%, 50%), Sons da Roda da Fortuna (tocarSomResultadoRoleta), Notificações Push, Detecção de VPN/Proxy e Compactação de Assets.
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
