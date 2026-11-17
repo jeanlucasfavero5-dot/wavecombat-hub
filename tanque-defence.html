@@ -8,6 +8,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // ID do jogador logado, enviado pelo Hub (index_2.html) ao abrir o jogo no iframe: jogo.html?id=577082415
+        window.WC_ID_URL = (new URLSearchParams(window.location.search).get('id') || '').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 40);
+    </script>
     <!-- Three.js (3D). Os loaders de .gltf/.glb e .obj ficam em three/addons/ -->
     <script type="importmap">
     {
@@ -645,6 +650,8 @@
         }
 
         #adm-overlay { z-index: 130; }
+        .td-ok { color: #22c55e; font-weight: 900; margin-left: 3px; text-shadow: 0 0 6px rgba(34, 197, 94, 0.6); }
+        .td-dia { font-weight: 800; color: #67e8f9; font-size: 0.8rem; }
         .td-id { font: 600 0.7rem monospace; color: #94a3b8; }
         .td-adm { font-size: 0.65rem; font-weight: 900; color: #1f1300; background: linear-gradient(180deg, #fde68a, #f59e0b); padding: 1px 6px; border-radius: 8px; }
         .td-jogador { position: absolute; top: 46px; left: 10px; font-size: 10px; font-weight: 700; color: #fde68a; text-shadow: 0 1px 3px #000; pointer-events: none; opacity: 0.9; }
@@ -761,7 +768,7 @@
 
         <div class="inicio-base">
             <!-- JOGADOR: identidade vem do WaveCombat Hub (localStorage), sem login -->
-            <div id="player-box" class="td-boasvindas">🛡️ <strong id="player-nick"></strong> <span id="player-id" class="td-id"></span> <span id="player-adm" class="td-adm hidden">👑 ADM</span></div>
+            <div id="player-box" class="td-boasvindas">🛡️ <strong id="player-nick"></strong><span id="player-ok" class="td-ok hidden">✔</span> <span id="player-id" class="td-id"></span> <span id="player-dia" class="td-dia"></span> <span id="player-adm" class="td-adm hidden">👑 ADM</span></div>
             <button id="btn-adm-inicio" class="td-mini hidden">👑 Painel ADM</button>
 
             <div class="inicio-cta inicio-cta-td piscar">
@@ -772,7 +779,7 @@
                 <button id="btn-start-fullscreen" class="td-mini">🔲 Expandir Tela Cheia</button>
                 <a href="https://youtube.com/@capudooficial7?si=0pe1kJfQaeM4orgV" target="_blank" rel="noopener" class="td-mini td-yt">▶️ Siga o Criador</a>
             </div>
-            <div class="inicio-versao">Versão: <b>v0.013</b></div>
+            <div class="inicio-versao">Versão: <b>v0.014</b></div>
         </div>
     </div>
 
@@ -855,7 +862,7 @@
                 <span>🌊 Melhor onda: <strong id="td-melhor" class="text-cyan-400">0</strong>/30</span>
             </div>
 
-            <div class="td-jogador-q">👤 <b id="td-jogador-nick"></b> · <span id="td-jogador-id"></span> <span id="td-jogador-adm" class="td-adm hidden">👑 ADM</span></div>
+            <div class="td-jogador-q">👤 <b id="td-jogador-nick"></b><span id="td-jogador-ok" class="td-ok hidden">✔</span> · <span id="td-jogador-id"></span> · <span id="td-jogador-dia" class="td-dia"></span> <span id="td-jogador-adm" class="td-adm hidden">👑 ADM</span></div>
 
             <div class="td-abas">
                 <button class="td-aba ativa" data-aba="base">🏰 Base</button>
@@ -920,7 +927,7 @@
 
     <script>
         /* =========================================================
-           TANQUE DEFENCE  (v0.013)
+           TANQUE DEFENCE  (v0.014)
            ========================================================= */
 
         /* --- ESTADO GLOBAL & DADOS DE SAVE --- */
@@ -1003,9 +1010,11 @@
         // Mostra nick/ID (vindos do WaveCombat Hub) na tela inicial, no Quartel e no HUD da partida
         function atualizarTelaInicio() {
             const set = (id, t) => { const el = document.getElementById(id); if (el) el.innerText = t; };
-            set('player-nick', player.name); set('player-id', 'ID ' + player.id);
-            set('td-jogador-nick', player.name); set('td-jogador-id', 'ID ' + player.id);
-            set('td-hud-jogador', `👤 ${player.name} · #${player.id}${player.admin ? ' 👑' : ''}`);
+            const dia = player.diamantes === null ? '💎 …' : '💎 ' + fmtNum(player.diamantes);
+            set('player-nick', player.name); set('player-id', 'ID ' + player.id); set('player-dia', dia);
+            set('td-jogador-nick', player.name); set('td-jogador-id', 'ID ' + player.id); set('td-jogador-dia', dia);
+            set('td-hud-jogador', `👤 ${player.name}${player.oficial ? ' ✔' : ''} · ${dia}${player.admin ? ' 👑' : ''}`);
+            ['player-ok', 'td-jogador-ok'].forEach(id => document.getElementById(id).classList.toggle('hidden', !player.oficial));
             ['player-adm', 'td-jogador-adm'].forEach(id => document.getElementById(id).classList.toggle('hidden', !player.admin));
             ['btn-adm-inicio', 'btn-adm-quartel', 'btn-adm-config'].forEach(id => document.getElementById(id).classList.toggle('hidden', !player.admin));
         }
@@ -4753,30 +4762,101 @@
         /* --- IDENTIDADE (WaveCombat Hub) E CONTA ADM --- */
 
         const WC_ADM = { nick: 'capudo7', id: '162028398' };
-        const player = { name: 'Comandante', id: '', admin: false };
+        const player = { name: 'Comandante', id: '', admin: false, oficial: false, diamantes: null, online: false };
+
+        /* WC-INI */
+        function wcAtualizarAdmin() { player.admin = player.name.toLowerCase() === WC_ADM.nick && player.id === WC_ADM.id; }
 
         function wcCarregarIdentidade() {
             let playerNick = null, playerId = null;
+            const idUrl = window.WC_ID_URL || '';   // ?id= enviado pelo Hub (iframe)
             try {
                 playerNick = localStorage.getItem('wavecombat_nick');
                 playerId = localStorage.getItem('wavecombat_id');
             } catch (e) { /* storage bloqueado: usa só a memória */ }
-            if (!playerId) {   // aberto direto, sem passar pelo site
+            if (idUrl) {
+                if (playerId !== idUrl) playerNick = null;   // o nick guardado era de outra conta
+                playerId = idUrl;
+                try { localStorage.setItem('wavecombat_id', idUrl); } catch (e) { }
+            }
+            if (!playerId) {   // aberto direto, sem passar pelo Hub
                 playerId = String(Math.floor(100000000 + Math.random() * 900000000));
                 try { localStorage.setItem('wavecombat_id', playerId); } catch (e) { }
             }
             if (!playerNick) {
                 playerNick = 'Player_' + String(playerId).substring(0, 4);
-                try { localStorage.setItem('wavecombat_nick', playerNick); } catch (e) { }
+                if (!idUrl) { try { localStorage.setItem('wavecombat_nick', playerNick); } catch (e) { } }
             }
             player.id = String(playerId).trim();
             player.name = String(playerNick).trim().slice(0, 20) || ('Player_' + player.id.substring(0, 4));
-            player.admin = player.name.toLowerCase() === WC_ADM.nick && player.id === WC_ADM.id;
+            wcAtualizarAdmin();
             nomeJogador = player.name;
             nickConfirmado = true;
         }
+
+        // ---- Supabase (nick oficial + diamantes em tempo real) ----
+        const WC_SB = { url: 'https://ipqjeacdfiomcxfuixdj.supabase.co', key: 'sb_publishable_EWW84q_43YbOvMwB_Rua-A_X465PbLP' };
+        let wcSb = null, wcAvisouOffline = false;
+
+        function wcAvisoRede() {
+            if (wcAvisouOffline) return;
+            wcAvisouOffline = true;
+            try { mostrarAviso('⚠️ Sem conexão com o Hub — usando dados locais.'); } catch (e) { }
+        }
+        function wcLerNick(r) { const v = r && (r.nick ?? r.nome ?? r.username ?? r.usuario); return v ? String(v).trim() : ''; }
+        function wcLerDiamantes(r) {
+            if (!r) return null;
+            const n = Number(r.diamantes ?? r.saldo ?? r.quantidade ?? r.diamantes_total);
+            return Number.isFinite(n) ? n : null;
+        }
+        function wcAplicarDiamantes(r) {
+            const d = wcLerDiamantes(r);
+            if (d === null) return;
+            player.diamantes = d;
+            atualizarTelaInicio();
+        }
+
+        async function wcSincronizar() {
+            if (!wcSb || !player.id) return;
+            try {
+                const [u, c] = await Promise.all([
+                    wcSb.from('usuarios').select('*').eq('id_jogador', player.id).maybeSingle(),
+                    wcSb.from('carteira_diamantes').select('*').eq('id_jogador', player.id).maybeSingle()
+                ]);
+                if (u.error || c.error) throw (u.error || c.error);
+                const nick = wcLerNick(u.data);
+                if (nick) {
+                    player.name = nick.slice(0, 20); player.oficial = true; nomeJogador = player.name;
+                    try { localStorage.setItem('wavecombat_nick', player.name); } catch (e) { }
+                    wcAtualizarAdmin();
+                }
+                const d = wcLerDiamantes(c.data);
+                player.diamantes = d === null ? 0 : d;
+                player.online = true; wcAvisouOffline = false;
+            } catch (e) {
+                player.online = false; wcAvisoRede();
+            }
+            atualizarTelaInicio();
+        }
+
+        function wcIniciarSupabase() {
+            if (!window.supabase || !window.supabase.createClient) { wcAvisoRede(); return; }
+            try { wcSb = window.supabase.createClient(WC_SB.url, WC_SB.key); } catch (e) { wcAvisoRede(); return; }
+            wcSincronizar();
+            try {   // tempo real: qualquer mudança na carteira atualiza o HUD na hora
+                wcSb.channel('carteira-' + player.id)
+                    .on('postgres_changes', { event: '*', schema: 'public', table: 'carteira_diamantes', filter: `id_jogador=eq.${player.id}` }, pl => wcAplicarDiamantes(pl.new))
+                    .subscribe();
+            } catch (e) { }
+            setInterval(wcSincronizar, 20000);   // reforço caso o Realtime não esteja ativo na tabela
+            document.addEventListener('visibilitychange', () => { if (!document.hidden) wcSincronizar(); });
+        }
+        /* WC-FIM */
+
         if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wcCarregarIdentidade);
         else wcCarregarIdentidade();
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wcIniciarSupabase);
+        else wcIniciarSupabase();
 
         const adm = { elixirInf: false, deus: false };
 
