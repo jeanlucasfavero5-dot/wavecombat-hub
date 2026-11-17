@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Esquadrão de Tanques</title>
+    <script>
+        // O site principal (Hub) abre este jogo num <iframe> e passa o ID do jogador na URL: jogo.html?id=577082415
+        (function () {
+            var id = '';
+            try { id = new URLSearchParams(window.location.search).get('id') || ''; } catch (e) { /* navegador antigo: sem ID na URL */ }
+            window.WC_ID_URL = String(id).replace(/[^A-Za-z0-9_-]/g, '').slice(0, 32);
+        })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&display=swap" rel="stylesheet">
@@ -934,6 +942,10 @@
         }
         .wc-v.hidden { display: none; }
         .sv-mini.sv-yt { text-transform: none; }
+        .sv-boasvindas .sv-dia { display: inline-block; margin-left: 8px; font: 800 0.72rem/1 ui-monospace, Menlo, Consolas, monospace; color: #67e8f9; }
+        .sv-boasvindas .sv-dia b, .hud-jogador .wc-dia, .pausa-jogador .wc-dia { color: #67e8f9; font-weight: 800; }
+        .wc-v { font-size: 0.78em; }
+        .hud-badge.hud-jogador { text-overflow: ellipsis; }
         .sv-mini.sv-yt::before { content: "▶️"; }
 
         .wc-fab {
@@ -1049,7 +1061,7 @@
 
         <div class="inicio-base">
             <!-- JOGADOR: nick e ID vêm do WaveCombat Hub (localStorage), sem login -->
-            <div id="welcome-box" class="sv-boasvindas">🪖 <strong id="welcome-name"></strong><span class="wc-v hidden" data-wcv title="Verificado">V</span><span class="sv-id">ID <span id="welcome-id"></span></span><span class="adm-tag adm-so hidden">ADM</span></div>
+            <div id="welcome-box" class="sv-boasvindas">🪖 <strong id="welcome-name"></strong><span class="wc-v hidden" data-wcv title="Verificado">&#10004;&#xFE0E;</span><span class="sv-id">ID <span id="welcome-id"></span></span><span class="sv-dia" title="Diamantes">💎 <b class="wc-dia">0</b></span><span class="adm-tag adm-so hidden">ADM</span></div>
 
             <div class="inicio-cta inicio-cta-sv piscar">
                 <button id="btn-start-to-lobby" class="sv-iniciar"><span>▶ INICIAR</span></button>
@@ -1062,7 +1074,7 @@
                 <button id="btn-start-fullscreen" class="sv-mini">🔲 Expandir Tela Cheia</button>
                 <a href="https://youtube.com/@capudooficial7?si=NSvfxpSzswVEStdu" target="_blank" rel="noopener" class="sv-mini sv-yt">siga o criador do jogo aqui</a>
             </div>
-            <div class="inicio-versao">Versão: <b>v0.015</b></div>
+            <div class="inicio-versao">Versão: <b>v0.016</b></div>
         </div>
     </div>
 
@@ -1072,7 +1084,7 @@
             <h1 class="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-200 mb-1">
                 GARAGEM DE GUERRA
             </h1>
-            <p class="jogador-linha">🪖 <b id="menu-jogador-nick"></b><span class="wc-v hidden" data-wcv title="Verificado">V</span> · ID <span id="menu-jogador-id"></span><span class="adm-tag adm-so hidden">ADM</span></p>
+            <p class="jogador-linha">🪖 <b id="menu-jogador-nick"></b><span class="wc-v hidden" data-wcv title="Verificado">&#10004;&#xFE0E;</span> · ID <span id="menu-jogador-id"></span><span class="adm-tag adm-so hidden">ADM</span></p>
             <p class="text-xs text-gray-300 mb-1">Toque em um tanque para selecioná-lo: melhore com moedas ou funda com outro igual!</p>
             <p class="text-[11px] text-yellow-300 mb-1">👑 O tanque de maior nível lidera a batalha. Os níveis não têm limite!</p>
             <div id="leader-info" class="text-[11px] text-gray-200 bg-gray-900/70 rounded-lg p-2 mb-2 border border-yellow-500/30"></div>
@@ -1152,7 +1164,7 @@
             <div class="hud-badge">🪙 <span id="hud-gold-session">0</span> <span style="font-size:0.7rem; opacity:0.85;">→ 💰 <span id="hud-gold-recebe">0</span></span></div>
             <div class="hud-badge">❤️ <span id="hud-hp">0</span></div>
             <div class="hud-badge">⬆️ Nv <span id="hud-level">1</span></div>
-            <div id="hud-jogador" class="hud-badge hud-jogador">🪖 <b id="hud-nick"></b><span class="wc-v hidden" data-wcv title="Verificado">V</span> · #<span id="hud-id"></span><span id="hud-adm-estado"></span><span class="adm-tag adm-so hidden">ADM</span></div>
+            <div id="hud-jogador" class="hud-badge hud-jogador">🪖 <b id="hud-nick"></b><span class="wc-v hidden" data-wcv title="Verificado">&#10004;&#xFE0E;</span> · #<span id="hud-id"></span> · 💎<span class="wc-dia">0</span><span id="hud-adm-estado"></span><span class="adm-tag adm-so hidden">ADM</span></div>
             <div id="boss-hud-badge" class="hud-badge hidden" style="border-color:#ef4444; background:rgba(239,68,68,0.2); color:#ef4444;">
                 👹 CHEFÃO ATIVO!
             </div>
@@ -1276,7 +1288,7 @@
                     <div class="pausa-ico">⏸</div>
                     <h1 class="pausa-titulo">PAUSADO</h1>
                     <div id="pausa-modo" class="pausa-chip">🛡️ Sobrevivência</div>
-                    <div class="pausa-jogador">🪖 <b id="pausa-nick"></b><span class="wc-v hidden" data-wcv title="Verificado">V</span> · ID <span id="pausa-id"></span><span class="adm-tag adm-so hidden">ADM</span></div>
+                    <div class="pausa-jogador">🪖 <b id="pausa-nick"></b><span class="wc-v hidden" data-wcv title="Verificado">&#10004;&#xFE0E;</span> · ID <span id="pausa-id"></span> · 💎 <span class="wc-dia">0</span><span class="adm-tag adm-so hidden">ADM</span></div>
                 </div>
                 <div class="pausa-corpo">
                     <div class="pausa-grid">
@@ -1408,7 +1420,7 @@
             <div class="wc-perfil">
                 <div id="wc-avatar" class="wc-avatar">?</div>
                 <div>
-                    <div class="wc-perfil-nick"><b id="wc-p-nick"></b><span class="wc-v hidden" data-wcv title="Verificado">V</span></div>
+                    <div class="wc-perfil-nick"><b id="wc-p-nick"></b><span class="wc-v hidden" data-wcv title="Verificado">&#10004;&#xFE0E;</span></div>
                     <div class="wc-perfil-id">ID <span id="wc-p-id"></span> · 💎 <span id="wc-p-dia">0</span></div>
                 </div>
             </div>
@@ -1462,7 +1474,7 @@
 
     <script>
         /* =========================================================
-           ESQUADRÃO DE TANQUES  (v0.015)
+           ESQUADRÃO DE TANQUES  (v0.016)
            ========================================================= */
 
         /* --- BALANCEAMENTO (ajuste aqui sem mexer no resto) --- */
@@ -1773,7 +1785,9 @@
             supabaseKey: 'sb_publishable_EWW84q_43YbOvMwB_Rua-A_X465PbLP',
             tabela: 'carteira_diamantes',                 // id_jogador, nick, diamantes
             tabelaAmigos: 'wavecombat_amigos',            // lista oficial de amigos do site
-            tabelaVerificados: 'wavecombat_verificados',  // selo "V" dourado
+            tabelaVerificados: 'wavecombat_verificados',  // selo verificado
+            tabelaUsuarios: 'usuarios',                   // id_jogador + nick oficial do Hub
+            supabaseLib: 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',
             rpcPontuacao: 'atualizar_pontuacao',          // p_id_jogador, p_nick, p_pontos
             socket: 'https://wavecombat-hub.onrender.com',   // servidor central (Socket.io)
             gameId: 'esquadrao-de-tanques',               // isola os eventos/salas deste jogo no servidor
@@ -1785,6 +1799,10 @@
         const WC_SERVER = window.WC_SERVER = WC_HUB.socket;
         const ADM_CONTA = { nick: 'capudo7', ids: ['162028398', WC_HUB.idMestre] };
         const player = { name: 'Convidado', nickHub: '', id: 'CONVIDADO', adm: false, convidado: true, verificado: false };
+        const WC_ID_URL = String(window.WC_ID_URL || '');   // ?id= da URL (lido no <head>); manda sobre o localStorage
+        const WC_SELO = '\u2714\uFE0E';                     // ✔ do selo de verificado
+        const WC_COLS_NICK = ['nick', 'nickname', 'nome', 'name', 'username', 'apelido'];            // coluna do nick em `usuarios`
+        const WC_COLS_VERIF = ['verificado', 'verified', 'is_verified', 'selo_verificado'];            // coluna do selo em `usuarios`
 
         function lerLS(chave) { try { return localStorage.getItem(chave); } catch (e) { return null; } }
         function gravarLS(chave, valor) { try { localStorage.setItem(chave, valor); } catch (e) { /* storage bloqueado: vale só nesta sessão */ } }
@@ -1804,12 +1822,21 @@
             return /^\d{6,}$/.test(t) ? { id: t, nick: '' } : { id: '', nick: t };
         }
 
-        const wc = { base: null, ultimoLocal: null, pronto: false, ocupado: false, repetir: false, timer: null, poll: null, nickPendente: false, ultimaTentativa: 0 };
+        const wc = { base: null, ultimoLocal: null, pronto: false, ocupado: false, repetir: false, timer: null, poll: null, nickPendente: false, ultimaTentativa: 0, perfil: null, canais: [] };
+
+        function wcLerPerfil(id) {
+            try { const o = JSON.parse(lerLS('esquadrao_wc_perfil')); return o && o.id === id ? o : null; } catch (e) { return null; }
+        }
 
         function identificarJogador() {
             const sessao = lerSessaoHub();
-            const id = String(lerLS('wavecombat_id') || sessao.id || '').trim().slice(0, 32);
-            const nickHub = String(lerLS('wavecombat_nick') || sessao.nick || '').trim().slice(0, 40);
+            const idLocal = String(lerLS('wavecombat_id') || sessao.id || '').trim().slice(0, 32);
+            const id = WC_ID_URL || idLocal;   // o ID passado pelo Hub na URL manda
+            // o nick guardado no navegador só vale se for da mesma conta do ID em uso
+            const nickLocal = (!WC_ID_URL || WC_ID_URL === idLocal) ? String(lerLS('wavecombat_nick') || sessao.nick || '').trim().slice(0, 40) : '';
+            if (id && (!wc.perfil || wc.perfil.id !== id)) wc.perfil = wcLerPerfil(id);   // último nick oficial (tabela usuarios) visto neste aparelho
+            const nickOficial = id && wc.perfil && wc.perfil.id === id ? String(wc.perfil.nick || '') : '';
+            const nickHub = (nickOficial || nickLocal).slice(0, 40);
             const nick = nickHub.slice(0, 16);   // na tela cabe menos que o nick completo do Hub
             const idAntes = player.id;
 
@@ -1817,7 +1844,7 @@
             player.id = id || 'CONVIDADO';
             player.name = nick || (id ? 'Jogador' : 'Convidado');
             player.nickHub = nickHub;
-            wc.nickPendente = !!id && !nick;   // nick real vem da carteira do Supabase
+            wc.nickPendente = !!id && !nick;   // o nick real vem de `usuarios` (ou, na falta dele, da carteira do Supabase)
             player.adm = !player.convidado && player.name.toLowerCase() === ADM_CONTA.nick && ADM_CONTA.ids.includes(player.id);
             nomeJogador = player.name;
             if (jogadorTanquePrincipal) {
@@ -1874,15 +1901,58 @@
             };
         }
 
+        function wcCriarClienteReal() {
+            const url = window.SUPABASE_URL || WC_HUB.supabaseUrl;
+            const key = window.SUPABASE_KEY || window.SUPABASE_ANON_KEY || WC_HUB.supabaseKey;
+            // sem sessão de login guardada: o jogo só lê/grava com a chave pública (as regras ficam no RLS do Supabase)
+            return window.supabase.createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } });
+        }
+
         function wcCliente() {
             if (window.supabaseClient) return window.supabaseClient;
             try {
                 if (window.parent && window.parent !== window && window.parent.supabaseClient) return (window.supabaseClient = window.parent.supabaseClient);
             } catch (e) { /* Hub em outro domínio: segue com o próprio cliente */ }
-            const url = window.SUPABASE_URL || WC_HUB.supabaseUrl;
-            const key = window.SUPABASE_KEY || window.SUPABASE_ANON_KEY || WC_HUB.supabaseKey;
-            if (window.supabase && typeof window.supabase.createClient === 'function') return (window.supabaseClient = window.supabase.createClient(url, key));
-            return (window.supabaseClient = wcClienteLeve(url, key));
+            if (window.supabase && typeof window.supabase.createClient === 'function') {
+                try { return (window.supabaseClient = wcCriarClienteReal()); } catch (e) { console.warn('[WC] createClient falhou, usando o cliente leve:', e); }
+            }
+            return (window.supabaseClient = wcClienteLeve(window.SUPABASE_URL || WC_HUB.supabaseUrl, window.SUPABASE_KEY || window.SUPABASE_ANON_KEY || WC_HUB.supabaseKey));
+        }
+
+        // Baixa o @supabase/supabase-js@2 sem travar o jogo: se o CDN falhar, o cliente leve (REST) assume.
+        let wcLib = null;
+        function wcCarregarSupabaseLib() {
+            if (wcLib) return wcLib;
+            wcLib = new Promise(ok => {
+                if (window.supabase && typeof window.supabase.createClient === 'function') { ok(true); return; }
+                const el = document.createElement('script');
+                el.src = WC_HUB.supabaseLib;
+                el.async = true;
+                el.crossOrigin = 'anonymous';
+                el.onload = () => ok(!!(window.supabase && typeof window.supabase.createClient === 'function'));
+                el.onerror = () => { el.remove(); ok(false); };
+                // só depois do carregamento da página (ou 2,5 s): um CDN lento não pode segurar o "load" do iframe do Hub
+                let injetado = false;
+                const injetar = () => { if (injetado) return; injetado = true; document.head.appendChild(el); };
+                if (document.readyState === 'complete') injetar();
+                else { window.addEventListener('load', injetar, { once: true }); setTimeout(injetar, 2500); }
+            }).then(ok => { if (ok) wcTrocarParaLib(); return ok; });
+            return wcLib;
+        }
+
+        // a biblioteca chegou (mesmo atrasada): troca o cliente leve pelo oficial e liga o tempo real
+        function wcTrocarParaLib() {
+            const atual = window.supabaseClient;
+            if (atual && !atual.leve) return;   // já é o cliente do Hub ou o oficial
+            try { window.supabaseClient = wcCriarClienteReal(); } catch (e) { console.warn('[WC] createClient falhou:', e); return; }
+            if (atual && wc.pronto && !player.convidado) wcLigarTempoReal();   // chegou atrasada: o jogo já estava usando o cliente leve
+        }
+
+        // espera (no máximo 4 s) a biblioteca antes da primeira consulta; depois disso o jogo segue com o que tiver
+        function wcAguardarSupabase() {
+            if (window.supabaseClient && !window.supabaseClient.leve) return Promise.resolve();
+            try { if (window.parent && window.parent !== window && window.parent.supabaseClient) return Promise.resolve(); } catch (e) { /* outro domínio */ }
+            return Promise.race([wcCarregarSupabaseLib(), new Promise(ok => setTimeout(ok, 4000))]);
         }
 
         // Toda consulta ao Supabase/Hub passa por aqui: se o servidor não responder em 10 s a chamada
@@ -1890,8 +1960,11 @@
         function wcComTimeout(promessa, ms) {
             let t;
             const limite = new Promise(res => { t = setTimeout(() => res({ data: null, error: { message: 'tempo esgotado', timeout: true } }), ms || 10000); });
-            return Promise.race([Promise.resolve(promessa).catch(e => ({ data: null, error: { message: String((e && e.message) || e) } })), limite])
-                .finally(() => clearTimeout(t));
+            const consulta = Promise.resolve(promessa).then(r => {
+                if (r && r.error && typeof r.error === 'object' && r.error.status == null && r.status) { try { r.error.status = r.status; } catch (e) { /* erro congelado */ } }
+                return r;
+            }).catch(e => ({ data: null, error: { message: String((e && e.message) || e) } }));
+            return Promise.race([consulta, limite]).finally(() => clearTimeout(t));
         }
 
         // Saúde de cada recurso (carteira, amigos, selo V, ranking): erro repetido espera cada vez mais
@@ -1924,9 +1997,16 @@
             gravarLS('wavecombat_diamonds', String(dadosGaragem.diamantes | 0));   // a loja do Hub lê o mesmo saldo
         }
 
-        function wcAtualizarTela() {
+        // mostra o saldo de 💎 em todos os lugares: garagem, tela inicial, HUD da partida e pausa
+        function wcAtualizarDiamantes() {
+            const txt = fmtNum(dadosGaragem.diamantes);
             const el = document.getElementById('menu-diamantes');
-            if (el) el.innerText = fmtNum(dadosGaragem.diamantes);
+            if (el) el.innerText = txt;
+            document.querySelectorAll('.wc-dia').forEach(e => { if (e.textContent !== txt) e.textContent = txt; });
+        }
+
+        function wcAtualizarTela() {
+            wcAtualizarDiamantes();
             const adm = document.getElementById('adm-overlay');
             if (adm && !adm.classList.contains('hidden')) atualizarPainelAdm();
         }
@@ -2001,6 +2081,7 @@
 
         // chamado a cada salvarJogo(): se os 💎 mudaram aqui, envia ao Supabase
         function wcAoSalvar() {
+            wcAtualizarDiamantes();
             if (player.convidado || !wc.pronto) return;
             if ((dadosGaragem.diamantes | 0) !== wc.ultimoLocal) { wc.ultimoLocal = dadosGaragem.diamantes | 0; wcAgendar(); }
         }
@@ -2022,12 +2103,112 @@
             wc.base = player.convidado ? null : wcLerBase(player.id);
             wc.ultimoLocal = dadosGaragem.diamantes | 0;
             clearInterval(wc.poll);
-            if (typeof wcSocialAposConta === 'function') wcSocialAposConta();   // amigos, chat, selo V e Socket.io da conta atual
+            wcDesligarTempoReal();
+            if (typeof wcSocialAposConta === 'function') wcSocialAposConta();   // amigos, chat, selo ✔ e Socket.io da conta atual
+            wcAtualizarDiamantes();
             if (player.convidado) return;
             const dica = lerLS('wavecombat_diamonds');   // último saldo que o Hub conhece (vale até a nuvem responder)
             if (dica !== null && dica !== '' && Number.isFinite(Number(dica))) { wcMesclar(Number(dica)); wcAtualizarTela(); salvarJogo(); }
-            wc.poll = setInterval(() => { if (!document.hidden) wcSincronizar(); }, WC_HUB.pollMs);
-            wcSincronizar(true);
+            wc.poll = setInterval(() => { if (!document.hidden) { wcSincronizar(); wcCarregarPerfil(); } }, WC_HUB.pollMs);
+            const conta = player.id;
+            // a biblioteca do Supabase carrega em segundo plano (no máximo 4 s de espera); o jogo já está na tela
+            wcAguardarSupabase().then(() => {
+                if (conta !== player.id) return;
+                wcSincronizar(true);          // 💎 de `carteira_diamantes`
+                wcCarregarIdentidadeNuvem();  // nick oficial (`usuarios`) e selo ✔
+                wcLigarTempoReal();
+            });
+        }
+
+        /* --- Perfil oficial: nick (tabela usuarios) + selo ✔ --- */
+
+        function wcPerfilDeLinha(l) {
+            l = l || {};
+            const nick = WC_COLS_NICK.map(c => l[c]).find(v => typeof v === 'string' && v.trim()) || '';
+            let verificado = null;
+            for (const c of WC_COLS_VERIF) {
+                if (l[c] == null) continue;
+                verificado = l[c] === true || l[c] === 1 || /^(true|t|1|sim|yes|s)$/i.test(String(l[c]).trim());
+                break;
+            }
+            return { nick: nick.trim().slice(0, 40), verificado };
+        }
+
+        function wcRecalcularVerificado() {
+            const id = player.id;
+            const v = !player.convidado && ((!!wc.perfil && wc.perfil.id === id && wc.perfil.verificado === true) || wcVerif.get(id) === true);
+            gravarLS('esquadrao_wc_verif', JSON.stringify({ id, v }));
+            if (v !== player.verificado) { player.verificado = v; aplicarIdentidadeNaInterface(); }
+        }
+
+        // chega o perfil da tabela `usuarios` (consulta ou tempo real): nick oficial manda sobre o do navegador
+        function wcAplicarPerfil(p) {
+            if (player.convidado) return;
+            const novo = { id: player.id, nick: p.nick || (wc.perfil && wc.perfil.id === player.id ? wc.perfil.nick : '') || '', verificado: p.verificado };
+            const igual = wc.perfil && wc.perfil.id === novo.id && wc.perfil.nick === novo.nick && wc.perfil.verificado === novo.verificado;
+            wc.perfil = novo;
+            if (!igual) gravarLS('esquadrao_wc_perfil', JSON.stringify(novo));
+            identificarJogador();   // recalcula nome, ADM e telas com o nick oficial
+            if (!player.adm && typeof admFechar === 'function') admFechar();
+            wcRecalcularVerificado();
+        }
+
+        async function wcCarregarPerfil() {
+            if (player.convidado || !wcPodeTentar('usuarios')) return;
+            const conta = player.id;
+            try {
+                const r = await wcComTimeout(wcCliente().from(WC_HUB.tabelaUsuarios).select('*').eq('id_jogador', conta).limit(1).maybeSingle());
+                if (r.error) { wcRegistrar('usuarios', r.error); return; }
+                wcRegistrar('usuarios', null);
+                if (conta !== player.id || !r.data) return;
+                wcAplicarPerfil(wcPerfilDeLinha(r.data));
+            } catch (e) { wcRegistrar('usuarios', { message: String((e && e.message) || e) }); }
+        }
+
+        async function wcCarregarIdentidadeNuvem() {
+            await Promise.all([wcCarregarPerfil(), wcCarregarVerificado()]);
+            wcRecalcularVerificado();
+        }
+
+        /* --- Tempo real (postgres_changes): 💎 e nick mudam na tela assim que o Hub grava --- */
+
+        function wcDesligarTempoReal() {
+            const lista = wc.canais;
+            wc.canais = [];
+            lista.forEach(c => { try { c.sb.removeChannel(c.canal); } catch (e) { /* já fechado */ } });
+        }
+
+        function wcAoNuvemMudou(valor) {
+            const v = Number(valor);
+            if (player.convidado || !wc.pronto || valor === null || valor === '' || !Number.isFinite(v)) return;
+            if (wc.ocupado) { wc.repetir = true; return; }   // há uma sincronização em curso: refaz logo depois
+            if (v === wc.base) return;                       // eco do que este jogo acabou de enviar
+            const pendente = wcMesclar(v);
+            wcGravarBase();
+            wcAtualizarTela();
+            salvarJogo();
+            if (pendente !== 0) wcAgendar();
+        }
+
+        function wcLigarTempoReal() {
+            if (player.convidado) { wcDesligarTempoReal(); return; }
+            let sb;
+            try { sb = wcCliente(); } catch (e) { return; }
+            if (!sb || sb.leve || typeof sb.channel !== 'function') return;   // cliente leve: só consulta periódica (15 s)
+            const conta = player.id;
+            if (wc.canais.length && wc.canais.every(c => c.sb === sb && c.conta === conta)) return;   // já ligado a esta conta/cliente
+            wcDesligarTempoReal();
+            const assinar = (tabela, aoMudar) => {
+                try {
+                    const canal = sb.channel('esquadrao-' + tabela + '-' + conta + '-' + Math.random().toString(36).slice(2, 8))
+                        .on('postgres_changes', { event: '*', schema: 'public', table: tabela, filter: 'id_jogador=eq.' + conta },
+                            p => { if (conta === player.id && p && p.new) aoMudar(p.new); })
+                        .subscribe(st => { if (st === 'CHANNEL_ERROR' || st === 'TIMED_OUT') console.warn('[WC] tempo real indisponível em ' + tabela + ' (' + st + '): segue com a consulta periódica.'); });
+                    wc.canais.push({ sb, canal, conta });
+                } catch (e) { console.warn('[WC] tempo real:', (e && e.message) || e); }
+            };
+            assinar(WC_HUB.tabela, l => wcAoNuvemMudou(l.diamantes));
+            assinar(WC_HUB.tabelaUsuarios, l => wcAplicarPerfil(wcPerfilDeLinha(l)));
         }
 
         /* --- Ranking Global: envia a pontuação ao fim da partida (procedure atualizar_pontuacao) --- */
@@ -2108,7 +2289,7 @@
             const v = document.createElement('span');
             v.className = 'wc-v';
             v.title = 'Verificado';
-            v.textContent = 'V';
+            v.textContent = WC_SELO;
             return ativo ? v : document.createTextNode('');
         }
 
@@ -2116,10 +2297,8 @@
             if (player.convidado) return;
             const conta = player.id;
             await wcVerificarIds([conta]);
-            if (conta !== player.id || !wcVerif.has(conta)) return;
-            player.verificado = wcVerif.get(conta);
-            gravarLS('esquadrao_wc_verif', JSON.stringify({ id: conta, v: player.verificado }));
-            aplicarIdentidadeNaInterface();
+            if (conta !== player.id) return;
+            wcRecalcularVerificado();   // ✔ se `usuarios` ou `wavecombat_verificados` marcam o jogador
         }
 
         /* --- Socket.io (carregado só quando precisa; nunca trava o jogo) --- */
@@ -2694,7 +2873,7 @@
             clearTimeout(wcNet.inicio);
             if (!player.convidado) {
                 // fora do caminho da inicialização: o jogo já está na tela quando começa a falar com o Hub
-                wcNet.inicio = setTimeout(() => { wcCarregarVerificado(); wcConectar(); }, 2500);
+                wcNet.inicio = setTimeout(wcConectar, 2500);
             }
         }
 
@@ -4188,7 +4367,7 @@
             if (slotSelecionado !== null && !(dadosGaragem.slots[slotSelecionado] > 0)) slotSelecionado = null;
 
             document.getElementById('menu-gold').innerText = fmtNum(dadosGaragem.ouro);
-            document.getElementById('menu-diamantes').innerText = fmtNum(dadosGaragem.diamantes);
+            wcAtualizarDiamantes();
             document.getElementById('buy-price').innerText = fmtNum(dadosGaragem.precoCompra);
             document.getElementById('player-rank-name').innerText = obterPatente(dadosGaragem.pontosRank);
             document.getElementById('player-rank-pts').innerText = dadosGaragem.pontosRank;
@@ -6971,7 +7150,8 @@
         /* --- INICIALIZAÇÃO E EVENTOS --- */
 
         function inicializar() {
-            identificarJogador();   // nick + ID do Hub (ou Convidado)
+            identificarJogador();   // ID da URL (?id=) ou do Hub + nick (ou Convidado)
+            wcCarregarSupabaseLib();   // @supabase/supabase-js@2 em segundo plano (nunca trava a inicialização)
             carregarJogo();
             wcAposCarregar();       // liga a sincronização dos 💎 com o Supabase
             wcSocialIniciar();      // amigos, chat e partida online (a conexão só começa depois, em segundo plano)

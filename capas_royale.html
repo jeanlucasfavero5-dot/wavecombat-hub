@@ -31,6 +31,9 @@ input,select{background:#0008;padding:2px 6px;border:1px solid #22d3ee44;color:#
 .ico{width:64px;height:64px;border-radius:14px;background:linear-gradient(#0b2a4acc,#06182ecc);border:2px solid #22d3ee88;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:26px;cursor:pointer;box-shadow:0 0 14px #22d3ee33}.ico small{font-size:10px;letter-spacing:1px}.ico:active{background:#22d3ee44}
 @media (max-height:480px){.ico{width:52px;height:52px;font-size:20px}}
 .tbn{position:absolute;opacity:.62}.tbn.on{opacity:1;background:#22d3eeaa}
+#heroes,#hdesc,#v-home>.text-xs{display:none}
+#v-home.on{align-items:flex-end}
+@media (max-height:420px){.ico{width:46px;height:46px;font-size:18px}.ico small{font-size:8px}}
 </style></head><body>
 
 <div id="rot"><div class="text-7xl" style="animation:rt 2.4s infinite">📱</div><div class="text-3xl font-bold mt-4 text-orange-400">GIRE A TELA</div><div class="opacity-80 mt-1">O jogo é na horizontal. Vire o aparelho.</div></div>
@@ -53,7 +56,7 @@ input,select{background:#0008;padding:2px 6px;border:1px solid #22d3ee44;color:#
   <div id="v-home" class="view text-center">
    <div class="flex-1"></div>
    <div id="heroes" class="my-3"></div><div id="hdesc" class="text-sm opacity-70 mb-2"></div>
-   <div id="modes" class="mb-4"></div>
+   <div id="modes" class="mb-2"></div>
    <button class="btn px-16 py-4 text-3xl font-bold" onclick="play()">JOGAR</button>
    <div class="text-xs opacity-60 mt-3">WASD mover · Mouse olhar (clique na tela p/ capturar) · Botão esq. atirar · Shift jetpack/boost · Espaço salto · Q habilidade · F veículo · E pegar arma · G emote · V câmera 1ª/3ª pessoa · Roda = zoom</div>
   </div>
@@ -68,8 +71,8 @@ input,select{background:#0008;padding:2px 6px;border:1px solid #22d3ee44;color:#
   <div id="v-opt" class="view"></div>
  </div>
  <div id="side" class="absolute inset-0 pointer-events-none">
-  <div class="absolute left-3 top-24 flex flex-col gap-3 pointer-events-auto"><div class="ico" onclick="go('pass')">🏆<small>PASSE</small></div><div class="ico" onclick="go('pass')">📋<small>MISSÕES</small></div><div class="ico" onclick="go('guild')">🛡️<small>GUILDA</small></div></div>
-  <div class="absolute right-3 top-24 flex flex-col gap-3 pointer-events-auto"><div class="ico" onclick="go('shop')">🛒<small>LOJA</small></div><div class="ico" onclick="go('hero')">🦸<small>HERÓIS</small></div><div class="ico" onclick="go('opt')">⚙️<small>OPÇÕES</small></div></div></div>
+  <div class="absolute left-3 top-[76px] grid grid-cols-2 gap-2 pointer-events-auto"><div class="ico" onclick="go('pass')">🏆<small>PASSE</small></div><div class="ico" onclick="go('pass')">📋<small>MISSÕES</small></div><div class="ico" onclick="go('pass')">🎁<small>PRÊMIOS</small></div><div class="ico" onclick="go('guild')">🛡️<small>GUILDA</small></div><div class="ico" onclick="go('guild')">👥<small>AMIGOS</small></div><div class="ico" onclick="toast('Ranking: '+S.rp+' RP · '+S.kills+' abates')">🏅<small>RANKING</small></div></div>
+  <div class="absolute right-3 top-[76px] grid grid-cols-2 gap-2 pointer-events-auto"><div class="ico" onclick="go('shop')">🛒<small>LOJA</small></div><div class="ico" onclick="go('hero')">🦸<small>HERÓIS</small></div><div class="ico" onclick="heroTab('pack')">🎒<small>MOCHILAS</small></div><div class="ico" onclick="heroTab('gun')">🔫<small>ARMAS</small></div><div class="ico" onclick="heroTab('veh')">🚙<small>VEÍCULOS</small></div><div class="ico" onclick="go('opt')">⚙️<small>OPÇÕES</small></div></div></div>
  <button id="xv" class="hidden ico" style="position:absolute;right:14px;top:84px;width:46px;height:46px;z-index:30" onclick="go('home')">✕</button>
  <!-- chat flutuante -->
  <button id="chatbtn" class="fixed bottom-3 left-3 w-12 h-12 rounded-full bg-cyan-500/80 text-2xl" style="z-index:41" onclick="chatT()">💬</button>
@@ -97,7 +100,7 @@ input,select{background:#0008;padding:2px 6px;border:1px solid #22d3ee44;color:#
 
 <script>
 /* ===== CONFIG / SUPABASE ===== */
-const VER='0.008';
+const VER='0.009';
 const SB_URL='https://ipqjeacdfiomcxfuixdj.supabase.co',SB_KEY='sb_publishable_EWW84q_43YbOvMwB_Rua-A_X465PbLP';
 // Nomes de coluna aceitos (ajuste se seu banco usar outros)
 const COLS={nick:['nick','nickname','nome','username'],ver:['verificado','verified','is_verified'],dia:['diamantes','quantidade','saldo','diamonds']};
@@ -197,7 +200,7 @@ async function buyPrem(){if(S.prem||!(await spend(600)))return;S.prem=1;save();p
 function opts(){
  const sel=(k,l,o)=>`<label class="block">${l} <select onchange="S.set.${k}=isNaN(this.value)?this.value:+this.value;save();applyGfx()">${o.map(v=>`<option ${v==S.set[k]?'selected':''}>${v}</option>`).join('')}</select></label>`;
  const rg=(k,l,a,b,s)=>`<label class="block">${l} <input type="range" min="${a}" max="${b}" step="${s}" value="${S.set[k]}" oninput="S.set.${k}=+this.value;save()"></label>`;
- $('v-opt').innerHTML=`<div class="card max-w-md mx-auto space-y-2"><b>Gráficos</b>${sel('q','Qualidade geral',['Baixo','Médio','Alto'])}${sel('sh','Sombras',['Desligadas','Médias','Altas'])}${sel('res','Texturas/Resolução',['Baixa','Média','Alta'])}${sel('fps','FPS',[30,60,120])}<b>Áudio</b>${rg('sfx','Efeitos',0,100,1)}${rg('mus','Música',0,100,1)}${rg('voz','Chat de voz',0,100,1)}<b>Controles</b>${rg('sens','Sensibilidade de mira',.5,2,.1)}${sel('lay','Layout',['PC','Mobile'])}<b>Conta</b><div>ID: ${pid||'—'}<br>Nick: ${esc(me.nick)}</div></div>`}
+ $('v-opt').innerHTML=`<div class="card max-w-md mx-auto space-y-2"><b>Gráficos</b>${sel('q','Qualidade geral',['Baixo','Médio','Alto'])}${sel('sh','Sombras',['Desligadas','Médias','Altas'])}${sel('res','Texturas/Resolução',['Baixa','Média','Alta'])}${sel('fps','FPS',[30,60,120])}<b>Áudio</b>${rg('sfx','Efeitos',0,100,1)}${rg('mus','Música',0,100,1)}${rg('voz','Chat de voz',0,100,1)}<b>Controles</b>${rg('sens','Sensibilidade de mira',.5,2,.1)}${sel('lay','Layout',['PC','Mobile'])}<b>Controles</b><div class="text-xs opacity-80">WASD mover · Mouse olhar (clique p/ capturar) · Botão esq. atirar · Shift jetpack/boost · Espaço salto · Q habilidade · F veículo · E pegar/reviver · R reviver · C dash · G emote · V câmera 1ª/3ª · Roda zoom</div><b>Conta</b><div>ID: ${pid||'—'}<br>Nick: ${esc(me.nick)}</div></div>`}
 
 /* ===== GAMEPLAY ===== */
 const cv=$('g'),mmx=$('mm').getContext('2d');
@@ -529,12 +532,12 @@ function scene3D(dt){
  dome.scale.set(Math.max(z.r,2),1,Math.max(z.r,2));dome.position.set(z.x,60,z.y);tex.offset.set(T*.01,-T*.05);dome.material.color.set(z.st?0xff3b5c:0x38bdf8);
  sun.position.set(ph.x+240,380,ph.y+140);sun.target.position.set(ph.x,0,ph.y);
  // câmera em terceira pessoa (mouse = yaw/pitch, roda = zoom)
- const D=(P.veh?230:P.in?420:P.drop?150:95)*zoom*(sh?1.12:1),cp=Math.cos(pitch),gy=hAt(ph.x,ph.y)+(P.z||0),px=ph.x-Math.cos(yaw)*D*cp-Math.sin(yaw)*12,pz=ph.y-Math.sin(yaw)*D*cp+Math.cos(yaw)*12;
- {let tk=1;const cy=gy+30+Math.sin(pitch)*D;
- for(let k=.1;k<=1;k+=.06){const x=ph.x+(px-ph.x)*k,z=ph.y+(pz-ph.y)*k,y=gy+30+(cy-gy-30)*k;if(gq(g.wg,x,z).some(w=>Math.abs(x-w.x)<w.w/2+10&&Math.abs(z-w.y)<w.h/2+10&&y<w.gh+w.ht)){tk=Math.max(.12,k-.12);break}}
- const qx=ph.x+(px-ph.x)*tk,qz=ph.y+(pz-ph.y)*tk;const cw=Math.max(gy+30+(cy-gy-30)*tk,hAt(qx,qz)+8);cam.position.set(qx,cw,qz);CAM.x=qx;CAM.y=qz;CAM.w=cw}
- {const lx=ph.x+Math.cos(yaw)*60-Math.sin(yaw)*12,lw=gy+26,lz=ph.y+Math.sin(yaw)*60+Math.cos(yaw)*12;cam.lookAt(lx,lw,lz);const dx=lx-CAM.x,dy=lz-CAM.y,dw=lw-CAM.w,L=Math.hypot(dx,dy,dw)||1;AIM={x:CAM.x,y:CAM.y,w:CAM.w,dx:dx/L,dy:dy/L,dw:dw/L}}
- if(fp){const ex=ph.x+Math.cos(yaw)*6,ez=ph.y+Math.sin(yaw)*6,ey=hAt(ph.x,ph.y)+(P.z||0)+34,lp=(pitch-.35)*1.6;cam.position.set(ex,ey,ez);cam.lookAt(ex+Math.cos(yaw)*Math.cos(lp)*100,ey-Math.sin(lp)*100,ez+Math.sin(yaw)*Math.cos(lp)*100);AIM={x:ex,y:ez,w:ey,dx:Math.cos(yaw)*Math.cos(lp),dy:Math.sin(yaw)*Math.cos(lp),dw:-Math.sin(lp)}}
+ const D=(P.veh?230:P.in?420:P.drop?150:95)*zoom*(sh?1.12:1),lp=(pitch-.35)*1.3,cl=Math.cos(lp),fx=Math.cos(yaw)*cl,fy=Math.sin(yaw)*cl,fw=-Math.sin(lp),
+  gy=hAt(ph.x,ph.y)+(P.z||0),pvx=ph.x-(fp?0:Math.sin(yaw)*12),pvz=ph.y+(fp?0:Math.cos(yaw)*12),pvw=gy+(fp?34:P.veh?52:40);
+ let tk=1;const cdx=-fx*D,cdz=-fy*D,cdw=-fw*D; // câmera atrás do pivô, oposta à direção da mira
+ if(!fp)for(let k=.1;k<=1;k+=.06){const x=pvx+cdx*k,z=pvz+cdz*k,y=pvw+cdw*k;if(gq(g.wg,x,z).some(w=>Math.abs(x-w.x)<w.w/2+10&&Math.abs(z-w.y)<w.h/2+10&&y<w.gh+w.ht)){tk=Math.max(.12,k-.12);break}}
+ const qx=fp?pvx+fx*6:pvx+cdx*tk,qz=fp?pvz+fy*6:pvz+cdz*tk,cw=Math.max(fp?pvw+fw*6:pvw+cdw*tk,hAt(qx,qz)+8);
+ cam.position.set(qx,cw,qz);cam.lookAt(qx+fx*100,cw+fw*100,qz+fy*100);CAM.x=qx;CAM.y=qz;CAM.w=cw;AIM={x:qx,y:qz,w:cw,dx:fx,dy:fy,dw:fw};
  cam.fov+=((60+(sh?12:0)+(P.drop&&!P.pc?18:0))-cam.fov)*Math.min(1,dt*6);cam.updateProjectionMatrix();
  g.rf.forEach((r,i)=>{const b=g.bld[i];r.visible=!(b.t!==2&&Math.abs(P.x-b.x)<b.w/2&&Math.abs(P.y-b.y)<b.h/2&&P.z<b.wh-8)});planes3D();for(let i=0;i<NP;i++)if(pLife[i]>0){pLife[i]-=dt;const v=pVel[i];pPos[i*3]+=v[0]*dt;pPos[i*3+1]+=v[1]*dt;pPos[i*3+2]+=v[2]*dt;if(pLife[i]<=0)pPos[i*3+1]=-9999}
  pts.geometry.attributes.position.needsUpdate=pts.geometry.attributes.color.needsUpdate=true}
@@ -636,6 +639,7 @@ function fs(){const d=document.documentElement;if(document.fullscreenElement){do
  try{const r=(d.requestFullscreen||d.webkitRequestFullscreen).call(d);if(r&&r.then)r.then(()=>{try{screen.orientation.lock('landscape').catch(()=>{})}catch(e){}}).catch(()=>toast('Tela cheia bloqueada: o iframe precisa de allow="fullscreen"'))}catch(e){toast('Tela cheia indisponível neste navegador')}}
 /* ===== v0.007 ===== */
 const TC8=['#4ade80','#f87171','#fbbf24','#a78bfa','#38bdf8','#fb923c','#f472b6','#2dd4bf'],TCH=[0x22ff88,0xff4d4d,0xfbbf24,0xa78bfa,0x38bdf8,0xfb923c,0xf472b6,0x2dd4bf];
+function heroTab(k){WT=k;go('hero');hub()}
 function fpT(){FPS1=!FPS1;$('fpb').textContent=FPS1?'👁 3ª PESSOA':'👁 1ª PESSOA'}
 // qualidade adaptativa: se o FPS cair, desliga bloom, reduz resolução e depois sombras
 function autoQ(dt){aqT+=dt;aqN++;if(aqT<3)return;const f=aqN/aqT;aqT=aqN=0;if(f>=Math.min(S.set.fps,60)*.72||AQ>=3)return;AQ++;
@@ -659,7 +663,7 @@ function hud(){const z=g.z,wp=P.veh?null:P.wp;
 onkeydown=e=>{if(/INPUT|SELECT/.test(e.target.tagName))return;const k=e.key.toLowerCase();keys[k]=1;if(!g||g.over)return;
  if(k===' '){e.preventDefault();if(!e.repeat)hop()}if(k==='q')qab();if(k==='f'&&!e.repeat)fveh();if(k==='c'&&!e.repeat)adash();if(k==='v'&&!e.repeat)fpT();if(k==='g'&&P.m&&P.m.em)P.em=2.2};
 onkeyup=e=>keys[e.key.toLowerCase()]=0;
-onmousemove=e=>{if(!g||g.over||!(document.pointerLockElement===cv||(e.buttons&2)))return;yaw+=e.movementX*.0022*S.set.sens;pitch=Math.max(-.15,Math.min(P.drop?1.4:1,pitch+e.movementY*.002*S.set.sens))};
+onmousemove=e=>{if(!g||g.over||!(document.pointerLockElement===cv||(e.buttons&2)))return;yaw+=e.movementX*.0022*S.set.sens;pitch=Math.max(-.5,Math.min(P.drop?1.4:1.1,pitch+e.movementY*.002*S.set.sens))};
 cv.onmousedown=e=>{if(e.button===0){ms.d=1;if(g&&P.in)jump(P)}};onmouseup=()=>ms.d=0;cv.oncontextmenu=e=>e.preventDefault();
 cv.onclick=()=>{if(g&&!g.over&&document.pointerLockElement!==cv&&cv.requestPointerLock)cv.requestPointerLock()};
 cv.onwheel=e=>{zoom=Math.max(.6,Math.min(1.8,zoom+e.deltaY*.001))};
@@ -672,12 +676,12 @@ const TB=[['🔫','fire',28,96,86],['⤒','sp',132,34,62],['🚀','sh',30,200,62
 $('tb').innerHTML=TB.map(b=>`<div data-k="${b[1]}" class="tbn" style="right:${b[2]}px;bottom:${b[3]}px;width:${b[4]}px;height:${b[4]}px;font-size:${b[4]*.42}px">${b[0]}</div>`).join('');
 function tbtn(k,d,el){if(el)el.classList.toggle('on',!!d);if(!g)return;if(k==='fire')ms.d=d;else if(k==='sp'){keys[' ']=d;if(d)hop()}else if(k==='sh')keys.shift=d;else if(k==='e')keys.e=d;else if(k==='r')keys.r=d;else if(d){if(k==='dash')adash();else if(k==='q')qab();else if(k==='f')fveh()}}
 tc.addEventListener('touchstart',e=>{e.preventDefault();for(const t of e.changedTouches){const el=document.elementFromPoint(t.clientX,t.clientY),k=el&&el.dataset&&el.dataset.k;
- if(k){TO[t.identifier]={k,el};tbtn(k,1,el)}
+ if(k){TO[t.identifier]={k,el,x:t.clientX,y:t.clientY};tbtn(k,1,el)}
  else if(t.clientX<innerWidth/2){TO[t.identifier]={j:1,x:t.clientX,y:t.clientY};const b=$('jb'),n=$('jk');b.classList.remove('hidden');n.classList.remove('hidden');b.style.left=t.clientX-60+'px';b.style.top=t.clientY-60+'px';n.style.left=t.clientX-28+'px';n.style.top=t.clientY-28+'px'}
  else TO[t.identifier]={l:1,x:t.clientX,y:t.clientY}}},{passive:false});
 tc.addEventListener('touchmove',e=>{e.preventDefault();for(const t of e.changedTouches){const o=TO[t.identifier];if(!o)continue;
  if(o.j){let dx=t.clientX-o.x,dy=t.clientY-o.y;const d=Math.hypot(dx,dy);if(d>55){dx*=55/d;dy*=55/d}TJ.x=Math.abs(dx)<7?0:dx/55;TJ.y=Math.abs(dy)<7?0:dy/55;$('jk').style.left=o.x+dx-28+'px';$('jk').style.top=o.y+dy-28+'px'}
- else if(o.l&&g){yaw+=(t.clientX-o.x)*.006*S.set.sens;pitch=Math.max(-.15,Math.min(P.drop?1.4:1,pitch+(t.clientY-o.y)*.005*S.set.sens));o.x=t.clientX;o.y=t.clientY}}},{passive:false});
+ else if((o.l||o.k==='fire')&&g){yaw+=(t.clientX-o.x)*.006*S.set.sens;pitch=Math.max(-.5,Math.min(P.drop?1.4:1.1,pitch+(t.clientY-o.y)*.005*S.set.sens));o.x=t.clientX;o.y=t.clientY}}},{passive:false});
 const tend=e=>{for(const t of e.changedTouches){const o=TO[t.identifier];if(!o)continue;if(o.k)tbtn(o.k,0,o.el);if(o.j){TJ.x=TJ.y=0;$('jb').classList.add('hidden');$('jk').classList.add('hidden')}delete TO[t.identifier]}};
 tc.addEventListener('touchend',tend);tc.addEventListener('touchcancel',tend);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncAll()});
