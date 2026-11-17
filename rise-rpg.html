@@ -205,6 +205,8 @@ body[data-mode=play] #mpb{display:block}#mpF{display:block;height:100%;backgroun
 #bPot{right:calc(42px + 78px*var(--s) + var(--safe-r));bottom:calc(42px + 78px*var(--s) + var(--safe-b))}
 #bossb{display:none;position:fixed;z-index:6;top:calc(84px + var(--safe-t));left:50%;transform:translateX(-50%);width:min(60vw,340px);text-align:center;font:700 13px Cinzel,serif;color:#e8c8ff;text-shadow:0 2px 4px #000;pointer-events:none}
 #bossb i{display:block;height:10px;margin-top:3px;background:#1a0e24;border:1px solid #b070ff;border-radius:5px;overflow:hidden}#bossF{display:block;height:100%;background:linear-gradient(90deg,#7a1fa2,#c27bff)}
+#tut{display:none;position:fixed;z-index:6;left:50%;bottom:calc(150px + var(--safe-b));transform:translateX(-50%);padding:6px 14px;font-size:13px;text-align:center;background:var(--panel);border:1px solid var(--gold);border-radius:10px;pointer-events:none}
+body[data-mode=play] #tut{display:block}
 </style>
 </head>
 <body>
@@ -260,7 +262,7 @@ body[data-mode=play] #mpb{display:block}#mpF{display:block;height:100%;backgroun
 <div id="pPass" class="pan big"><div class="rowh"><button class="btn px">← Lobby</button><h3>Passe</h3></div><div id="passB"></div></div>
 <div id="hp"><i id="hpF"></i><span id="hpT"></span></div><div id="hurt"></div><div id="qt"></div><button class="btn" id="talk">💬 Falar (E)</button>
 <div id="pNpc" class="pan"><h3 id="npcN"></h3><div id="npcB"></div><div class="row2" id="npcA"></div></div>
-<div id="vig"></div><div id="sk"></div><div id="mpb"><i id="mpF"></i></div><div id="xpb"><i id="xpF"></i></div><div id="tgt"><span id="tgtN"></span><i><b id="tgtF"></b></i></div><div id="bossb"><span id="bossN"></span><i><b id="bossF"></b></i></div><div id="ban"></div>
+<div id="vig"></div><div id="sk"></div><div id="mpb"><i id="mpF"></i></div><div id="xpb"><i id="xpF"></i></div><div id="tgt"><span id="tgtN"></span><i><b id="tgtF"></b></i></div><div id="bossb"><span id="bossN"></span><i><b id="bossF"></b></i></div><div id="tut"></div><div id="ban"></div>
 <div id="toast"></div>
 <div id="rot"><div class="ph">📱</div>Gire a tela<small>RISE RPG funciona na horizontal</small></div>
 
@@ -286,7 +288,7 @@ const URL_ID = (params.get('id') || '').trim();
 const PLAYER_ID = URL_ID || '0'; // fallback para testes locais
 const $ = id => document.getElementById(id);
 const fmt = n => Number(n).toLocaleString('pt-BR');
-const VERSION = '0.013'; // suba a cada atualização enviada
+const VERSION = '0.014'; // suba a cada atualização enviada
 const DIA = {};
 const G = { mode: 'start' };
 let NICK = 'Visitante';
@@ -862,7 +864,7 @@ function initUI(E) {
     let iy = (keys.w || keys.arrowup ? 1 : 0) - (keys.s || keys.arrowdown ? 1 : 0) + joy.y;
     const len = Math.hypot(ix, iy); if (len > 1) { ix /= len; iy /= len; }
     if (len > .05) {
-      const sp = (3.5 + CLASSES[char.cls].st.Velocidade * .45) * (dash > 0 ? 3 : 1) * ADM.spd;
+      const sp = (3.5 + CLASSES[char.cls].st.Velocidade * .45) * (dash > 0 ? 3 : 1) * ADM.spd * (1 + P.at.dex * .01);
       const dx = .7071 * (ix - iy), dz = -.7071 * (ix + iy);
       p.x = Math.max(-HS + 4, Math.min(HS - 4, p.x + dx * sp * dt)); p.z = Math.max(-HS + 4, Math.min(HS - 4, p.z + dz * sp * dt)); p.y = E.W.H(p.x, p.z);
       const r = Math.atan2(dx, dz), d = Math.atan2(Math.sin(r - E.player.rotation.y), Math.cos(r - E.player.rotation.y));
@@ -884,7 +886,7 @@ function initUI(E) {
     B.append(h('p', '', NICK + ' ✔️ · ID ' + PLAYER_ID), h('h3', '', 'Nível ' + P.lv));
     const r = h('div', 'st'), i = h('i'), b = h('b'); b.style.width = P.xp / need(P.lv) * 100 + '%'; i.append(b); r.append(h('span', '', P.xp + '/' + need(P.lv)), i); B.append(r);
     B.append(h('p', '', CLASSES[char.cls].nome + ' · Pontos de habilidade: ' + P.sp));
-    renderBag(B);
+    renderAttr(B); renderBag(B);
     const ks = P.sk[char.cls] = P.sk[char.cls] || [0, 0, 0];
     SK[char.cls].forEach((n, k) => {
       const row = h('div', 'row2'), t = h('span', '', n + ' — Nv. ' + ks[k] + '/5'), u = h('button', 'btn', '+');
@@ -1611,8 +1613,8 @@ function initUI(E) {
   const CC = [0xcfd3d8, 0x9fd36a, 0x8a6aff, 0xb070ff, 0xffe28a];
   const RAR = [['Comum', '#cfd3d8', 1], ['Raro', '#4aa3df', 1.5], ['Épico', '#b070ff', 2.2], ['Lendário', '#ffb040', 3.2]], SLOTS = ['Arma', 'Armadura', 'Amuleto'];
   const GN = { Arma: ['Espada', 'Cajado', 'Arco', 'Adaga', 'Maça'], Armadura: ['Peitoral', 'Manto', 'Couraça'], Amuleto: ['Amuleto', 'Anel', 'Talismã'] }, GA = ['de Ferro', 'Rúnico', 'Arcano', 'Real'];
-  const maxMp = () => 40 + CLASSES[char.cls].st.Mana * 10 + P.lv * 3, gainMp = n => { if (mp >= 0) mp = Math.min(maxMp(), mp + n); };
-  const gs = k => SLOTS.reduce((a, sl) => a + ((P.gear[sl] || {})[k] || 0), 0);
+  const maxMp = () => 40 + CLASSES[char.cls].st.Mana * 10 + P.lv * 3 + P.at.int * 6, gainMp = n => { if (mp >= 0) mp = Math.min(maxMp(), mp + n); };
+  const gs = k => Math.round((SLOTS.reduce((a, sl) => { const it = P.gear[sl]; return a + (it ? (it[k] || 0) * (1 + .12 * (it.up || 0)) : 0); }, 0) + attr(k)) * 10) / 10;
   function useMp(n) { if (mp < 0) mp = maxMp(); if (mp < n) { toast('Mana insuficiente'); return false; } mp -= n; return true; }
   function applyOnHit(m) { const r = Math.random(), c = char.cls; if (c === 2 && r < .25) m.brn = 4; if (c === 3 && r < .3) m.bld = 5; if (c === 1 && r < .2) m.slw = 3; if (c === 0 && r < .1) m.stn = 1; if (c === 4 && r < .3) heal(.01); }
 
@@ -1645,10 +1647,15 @@ function initUI(E) {
     if (P.bag.length >= 30) { giveGold(price(it), E.player.position); toast('Mochila cheia: item vendido'); return; }
     P.bag.push(it); saveP(); if (it.r >= 2) banner('ITEM ' + RAR[it.r][0].toUpperCase(), it.nome); else toast('Item: ' + it.nome);
   }
-  const stat = it => [it.dmg && '+' + it.dmg + ' dano', it.hp && '+' + it.hp + ' vida', it.def && '+' + it.def + '% def', it.crit && '+' + it.crit + '% crít'].filter(Boolean).join(' · ');
+  const stat = it => { const m = 1 + .12 * (it.up || 0), r = v => Math.round(v * m); return [it.dmg && '+' + r(it.dmg) + ' dano', it.hp && '+' + r(it.hp) + ' vida', it.def && '+' + r(it.def) + '% def', it.crit && '+' + r(it.crit) + '% crít'].filter(Boolean).join(' · '); };
   function gearUi(B) {
     B.append(h('h3', '', 'Equipamento · 🪙 ' + P.gold + ' · 🧪 ' + P.pot));
-    SLOTS.forEach(sl => { const it = P.gear[sl], q = h('p', '', sl + ': ' + (it ? it.nome + ' (' + RAR[it.r][0] + ') ' + stat(it) : '—')); if (it) q.style.color = RAR[it.r][1]; B.append(q); });
+    SLOTS.forEach(sl => {
+      const it = P.gear[sl], q = h('p', '', sl + ': ' + (it ? it.nome + (it.up ? ' +' + it.up : '') + ' (' + RAR[it.r][0] + ') ' + stat(it) : '—')); B.append(q);
+      if (!it) return;
+      q.style.color = RAR[it.r][1]; const u = it.up || 0, cost = Math.round(80 * (1 + u) * RAR[it.r][2]), up = h('button', 'btn', u >= 5 ? 'Máximo +5' : 'Aprimorar +' + (u + 1) + ' · ' + cost + ' 🪙');
+      up.disabled = u >= 5 || P.gold < cost; up.onclick = () => { P.gold -= cost; it.up = u + 1; saveP(); renderPro(); }; B.append(up);
+    });
     const buy = h('button', 'btn', 'Comprar poção · 60 🪙'); buy.disabled = P.gold < 60 || P.pot >= 9; buy.onclick = () => { P.gold -= 60; P.pot++; saveP(); renderPro(); }; B.append(buy);
     P.bag.forEach((it, i) => {
       const row = h('div', 'row2'), t = h('span', '', it.nome + ' · ' + it.slot + ' · ' + stat(it)), e = h('button', 'btn', 'Equipar'), v = h('button', 'btn', price(it) + '🪙');
@@ -1765,6 +1772,29 @@ function initUI(E) {
   const bm = MD[rnd('m') % MD.length], bn = 6 + rnd('n') % 8;
   QS.push({ id: 'bd' + dk, npc: 3, nome: 'Caça do Dia', desc: 'Derrote ' + bn + ' ' + bm.n + '.', t: 'kill', alvo: bm.n, n: bn, xp: 120 + bn * 25, sp: 0, gold: 60 + bn * 12 });
   updQt(); npcMarks();
+  /* ── v0.014: atributos, aprimoramento de equipamentos, redistribuir pontos e tutorial ── */
+  P.at = Object.assign({ str: 0, vit: 0, dex: 0, int: 0 }, P.at); P.tut = P.tut || 0;
+  function attr(k) { return ({ dmg: P.at.str * 1.5, hp: P.at.vit * 10, def: P.at.vit * .3, crit: P.at.dex * .5 })[k] || 0; }
+  function renderAttr(B) {
+    const spent = P.at.str + P.at.vit + P.at.dex + P.at.int, free = 3 * (P.lv - 1) - spent;
+    B.append(h('h3', '', 'Atributos · pontos: ' + free));
+    [['str', 'Força', '+1,5 dano'], ['vit', 'Vitalidade', '+10 vida, +0,3% def'], ['dex', 'Destreza', '+0,5% crít, +1% velocidade'], ['int', 'Inteligência', '+6 mana']].forEach(([k, n, d]) => {
+      const row = h('div', 'row2'), t = h('span', '', n + ' ' + P.at[k] + ' (' + d + ')'), u = h('button', 'btn', '+');
+      row.style.alignItems = 'center'; t.style.flex = '1'; u.style.flex = 'none'; u.disabled = free < 1; u.onclick = () => { P.at[k]++; saveP(); renderPro(); }; row.append(t, u); B.append(row);
+    });
+    const rs = h('button', 'btn', 'Redistribuir pontos · 100 🪙'); rs.disabled = P.gold < 100 || (spent === 0 && !(P.sk[char.cls] || []).some(v => v));
+    rs.onclick = () => { P.gold -= 100; P.at = { str: 0, vit: 0, dex: 0, int: 0 }; P.sp += (P.sk[char.cls] || []).reduce((a, v) => a + v, 0); P.sk[char.cls] = [0, 0, 0]; saveP(); renderPro(); };
+    B.append(rs);
+  }
+  const TUT = ['Mova-se com WASD ou o joystick', 'Ataque com Espaço (ou ⚔️) — K, L e O são habilidades', 'Fale com um NPC perto do início (E) e aceite uma missão'];
+  let tuT = 0;
+  E.updaters.push(dt => {
+    if (G.mode !== 'play') return; tuT -= dt; if (tuT > 0) return; tuT = .5;
+    const el = $('tut'), p = E.player.position;
+    if (P.tut >= TUT.length) { el.style.display = 'none'; return; }
+    el.style.display = ''; el.textContent = '📘 ' + TUT[P.tut];
+    if ([Math.hypot(p.x, p.z) > 5, P.kills >= 1 || atk > 0, Object.keys(P.q).length > 0][P.tut]) { P.tut++; saveP(); toast(P.tut >= TUT.length ? 'Tutorial concluído!' : 'Ótimo!'); }
+  });
   document.body.dataset.mode = 'start';
 }
 
