@@ -283,7 +283,7 @@ const URL_ID = (params.get('id') || '').trim();
 const PLAYER_ID = URL_ID || '0'; // fallback para testes locais
 const $ = id => document.getElementById(id);
 const fmt = n => Number(n).toLocaleString('pt-BR');
-const VERSION = '0.011'; // suba a cada atualização enviada
+const VERSION = '0.012'; // suba a cada atualização enviada
 const DIA = {};
 const G = { mode: 'start' };
 let NICK = 'Visitante';
@@ -888,6 +888,7 @@ function initUI(E) {
       row.style.alignItems = 'center'; t.style.flex = '1'; u.style.flex = 'none'; u.disabled = P.sp < 1 || ks[k] >= 5;
       u.onclick = () => { P.sp--; ks[k]++; saveP(); renderPro(); }; row.append(t, u); B.append(row);
     });
+    renderAch(B);
   }
 
   /* clã (Supabase: rise-clas.sql) */
@@ -988,7 +989,7 @@ function initUI(E) {
 
   /* perfil pelo nick, minimapa que segue o jogador (expansível), coordenadas, sol e mundo em chunks */
   $('plate').onclick = () => panel('pPro');
-  $('mm').onclick = () => { if (!$('mmW').classList.contains('xl')) { fz = 1; mt = 0; $('mmW').classList.add('xl'); } }; $('mmX').onclick = () => { $('mmW').classList.remove('xl'); mt = 0; };
+  $('mm').onclick = e => { if (!$('mmW').classList.contains('xl')) { fz = 1; mt = 0; $('mmW').classList.add('xl'); toast('Toque numa vila ou portal descoberto para viajar.'); } else travelClick(e); }; $('mmX').onclick = () => { $('mmW').classList.remove('xl'); mt = 0; };
   const mc = $('mm').getContext('2d'); let mt = 0, lastB = -1;
   function drawMap(p) {
     const xl = $('mmW').classList.contains('xl'), cvs = $('mm'), S = xl ? 480 : 240, half = S / 2;
@@ -1121,7 +1122,7 @@ function initUI(E) {
   }
   function kill(m) {
     const d = m.d, q = m.g.position;
-    burst(q, d.col, 16); addXP(Math.round(d.xp * m.lv * (m.elite ? 3 : 1))); giveGold(Math.round(d.xp * .6 * m.lv * (m.elite ? 3 : 1)), q); rollGear(m, q);
+    burst(q, d.col, 16); addXP(Math.round(d.xp * m.lv * (m.elite ? 3 : 1))); giveGold(Math.round(d.xp * .6 * m.lv * (m.elite ? 3 : 1)), q); rollGear(m, q); P.kills = (P.kills || 0) + 1; if (d.boss) P.bk = (P.bk || 0) + 1;
     if (Math.random() < .7 || d.boss || m.elite) dropItem(d.drop, q.x + 1, q.z, d.col);
     if (d.boss) { dropItem(d.drop, q.x - 1, q.z, d.col); dropItem(d.drop, q.x, q.z + 1.5, d.col); bossDead[m.key] = Date.now(); }
     if (Math.random() < .2) dropItem('Poção de Vida', q.x, q.z - 1, 0xff4a6a);
@@ -1676,6 +1677,44 @@ function initUI(E) {
     if (mp < 0) mp = maxMp();
     if (hp > maxHp()) { hp = maxHp(); updHp(); }
     $('mpF').style.width = Math.min(100, mp / maxMp() * 100) + '%'; potN.textContent = String(P.pot);
+  });
+  /* ── v0.012: viagem rápida pelo mapa e conquistas ── */
+  P.ach = P.ach || {}; P.kills = P.kills || 0; P.bk = P.bk || 0;
+  let tv = null, aT = 0;
+  function travelClick(e) {
+    if (!e || D.on) return;
+    const p = E.player.position, r = $('mm').getBoundingClientRect(), R = HS / fz, cx = fz === 1 ? 0 : p.x, cz = fz === 1 ? 0 : p.z;
+    const wx = cx + ((e.clientX - r.left) / r.width - .5) * 2 * R, wz = cz + ((e.clientY - r.top) / r.height - .5) * 2 * R, tol = 16 / r.width * 2 * R, k = Math.ceil(tol / CH) + 1;
+    let best = null, bd = tol;
+    for (let a = Math.floor(wx / CH) - k; a <= Math.floor(wx / CH) + k; a++) for (let b = Math.floor(wz / CH) - k; b <= Math.floor(wz / CH) + k; b++) {
+      const st = E.W.structAt(a, b); if (!st || (st.type !== 4 && st.type !== 5) || !explored(st.x, st.z)) continue;
+      const d = Math.hypot(st.x - wx, st.z - wz); if (d < bd) { bd = d; best = st; }
+    }
+    if (!best) return;
+    const cost = 20 + Math.round(Math.hypot(best.x - p.x, best.z - p.z) / 25);
+    if (hurtT > 0) return toast('Não dá para viajar em combate.');
+    if (!tv || tv.x !== best.x || tv.z !== best.z || Date.now() - tv.t > 4000) { tv = { x: best.x, z: best.z, t: Date.now() }; return toast('Viajar para ' + SN[best.type] + ' por ' + cost + ' 🪙? Toque de novo.'); }
+    if (P.gold < cost) return toast('Ouro insuficiente (' + cost + ' 🪙).');
+    P.gold -= cost; tv = null; clearAll(); p.set(best.x + 9, E.W.H(best.x + 9, best.z), best.z); E.camTarget.set(p.x, p.y + 1, p.z);
+    $('mmW').classList.remove('xl'); mt = 0; saveP(); banner('VIAGEM', SN[best.type]);
+  }
+  const ACH = [
+    ['a1', 'Primeiro Sangue', 'Derrote 1 monstro', () => P.kills >= 1, 50, 20],
+    ['a2', 'Caçador', 'Derrote 50 monstros', () => P.kills >= 50, 300, 150],
+    ['a3', 'Lenda Viva', 'Derrote 300 monstros', () => P.kills >= 300, 1500, 800],
+    ['a4', 'Mata-Chefes', 'Derrote 5 chefes', () => P.bk >= 5, 800, 400],
+    ['a5', 'Explorador', 'Descubra os 8 biomas', () => P.seen.length >= 8, 600, 300],
+    ['a6', 'Cartógrafo', 'Explore 30% do mapa', () => (P.exp.match(/1/g) || []).length >= 1733, 700, 350],
+    ['a7', 'Veterano', 'Chegue ao nível 15', () => P.lv >= 15, 500, 250],
+    ['a8', 'Colecionador', 'Tenha um item Lendário', () => P.bag.some(i => i.r === 3) || SLOTS.some(sl => P.gear[sl] && P.gear[sl].r === 3), 1000, 500]
+  ];
+  function renderAch(B) {
+    B.append(h('h3', '', 'Conquistas ' + ACH.filter(a => P.ach[a[0]]).length + '/' + ACH.length));
+    ACH.forEach(a => B.append(h('p', '', (P.ach[a[0]] ? '🏆 ' : '🔒 ') + a[1] + ' — ' + a[2] + ' (+' + a[4] + ' XP, +' + a[5] + ' 🪙)')));
+  }
+  E.updaters.push(dt => {
+    if (G.mode !== 'play') return; aT -= dt; if (aT > 0) return; aT = 2;
+    ACH.forEach(a => { if (!P.ach[a[0]] && a[3]()) { P.ach[a[0]] = 1; P.gold += a[5]; addXP(a[4]); saveP(); banner('CONQUISTA', a[1] + ' · +' + a[4] + ' XP · +' + a[5] + ' 🪙'); } });
   });
   document.body.dataset.mode = 'start';
 }
