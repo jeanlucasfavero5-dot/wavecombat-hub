@@ -101,30 +101,19 @@
             width: 96px; height: 96px; border-radius: 50%; margin: 15px auto;
             display: flex; align-items: center; justify-content: center; position: relative;
             background: #000; border: 2px solid var(--steel-bright); font-family: 'Orbitron'; font-size: 12px;
-            transform-style: preserve-3d;
-            transition: transform 0.4s ease, box-shadow 0.4s ease;
-        }
-        .avatar-preview-box:hover {
-            transform: rotateY(18deg) rotateX(10deg) scale(1.08);
         }
         .frame-neon {
             box-shadow: 0 0 22px #00f0ff, inset 0 0 18px #00f0ff;
             border: 3px solid #00f0ff !important;
-            animation: neonGlow 2s infinite alternate;
         }
         .frame-fogo {
             box-shadow: 0 0 22px #ef4444, inset 0 0 18px #f59e0b;
             border: 3px solid #ef4444 !important;
-            animation: fireGlow 1s infinite alternate;
         }
         .frame-prisma {
             box-shadow: 0 0 25px #a855f7, inset 0 0 20px #ec4899;
             border: 3px solid #a855f7 !important;
-            animation: prismaGlow 2.5s infinite linear;
         }
-        @keyframes neonGlow { from { filter: drop-shadow(0 0 2px #00f0ff); } to { filter: drop-shadow(0 0 14px #00f0ff); } }
-        @keyframes fireGlow { from { filter: drop-shadow(0 0 4px #ef4444); } to { filter: drop-shadow(0 0 16px #f59e0b); } }
-        @keyframes prismaGlow { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
 
         .bg-particles {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
@@ -158,14 +147,8 @@
             transition: 0.3s;
         }
         .logo-container { display: flex; align-items: center; gap: 8px; text-decoration: none; z-index: 1002; cursor: pointer; }
-        .logo-img-custom { height: 36px; max-width: 120px; object-fit: contain; filter: drop-shadow(0 0 10px var(--accent-color)); animation: logoPulse 3s infinite ease-in-out; }
-        
-        @keyframes logoPulse {
-            0% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 5px var(--accent-color)); }
-            50% { transform: scale(1.07) rotate(3deg); filter: drop-shadow(0 0 16px var(--accent-color)) brightness(1.35); }
-            100% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 5px var(--accent-color)); }
-        }
-        .logo-svg { width: 32px; height: 32px; animation: logoPulse 3s infinite ease-in-out; }
+        .logo-img-custom { height: 36px; max-width: 120px; object-fit: contain; filter: drop-shadow(0 0 10px var(--accent-color)); }
+        .logo-svg { width: 32px; height: 32px; }
         .logo-text { font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 16px; color: var(--accent-color); letter-spacing: 1px; text-shadow: 0 0 10px var(--accent-glow); }
 
         .menu-toggle-btn {
@@ -199,7 +182,6 @@
             text-align: center; padding: 40px 15px; position: relative; background-size: cover; background-position: center;
             border-bottom: 2px solid var(--steel-border); margin-top: 65px; width: 100%; overflow: hidden; z-index: 2;
             box-shadow: inset 0 0 50px var(--accent-glow);
-            transition: background-image 0.5s ease-in-out;
         }
         header.hero::before {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -213,8 +195,8 @@
         .global-stats-bar {
             display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;
             background: var(--panel-bg); border: 1px solid var(--accent-color);
-            padding: 10px 20px; border-radius: 8px; margin-bottom: 20px; font-family: 'Orbitron'; font-size: 11px; color: #94a3b8;
-            box-shadow: 0 0 15px var(--accent-glow);
+            padding: 12px 20px; border-radius: 8px; margin: 30px auto 10px auto; font-family: 'Orbitron'; font-size: 11px; color: #94a3b8;
+            box-shadow: 0 0 15px var(--accent-glow); max-width: 1200px; width: 95%;
         }
         .global-stats-bar span strong { color: var(--accent-color); }
 
@@ -278,14 +260,9 @@
 
         .embed-container { display: none; background: #000; border: 2px solid var(--accent-color); width: 100%; height: 70vh; max-height: 800px; position: relative; box-shadow: 0 0 35px var(--accent-glow); margin-top: 15px; border-radius: 10px; overflow: hidden; }
         .embed-container:fullscreen, .embed-container:-webkit-full-screen {
-            width: 100vw !important;
-            height: 100vh !important;
-            max-height: 100vh !important;
-            border: none !important;
-            border-radius: 0 !important;
-            margin: 0 !important;
+            width: 100vw !important; height: 100vh !important; max-height: 100vh !important; border: none !important; border-radius: 0 !important; margin: 0 !important;
         }
-        .embed-container iframe { width: 100%; height: 100%; border: none; border-radius: 8px; transition: transform 0.2s ease; }
+        .embed-container iframe { width: 100%; height: 100%; border: none; border-radius: 8px; }
         .player-controls-bar { display: none; justify-content: center; align-items: center; gap: 10px; margin-top: 12px; padding: 10px; background: var(--panel-bg); border: 1px solid var(--steel-border); border-radius: 8px; flex-wrap: wrap; }
 
         .site-leaderboard-section {
@@ -305,13 +282,6 @@
         #canvasWheel { width: 100%; height: 100%; border-radius: 50%; border: 6px solid var(--accent-color); box-shadow: 0 0 30px var(--accent-glow); transition: transform 4.5s cubic-bezier(0.15, 0.9, 0.2, 1); }
         .wheel-pointer { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 16px solid transparent; border-right: 16px solid transparent; border-top: 28px solid var(--gold-warning); z-index: 10; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.9)); }
 
-        @keyframes popInModal {
-            0% { transform: scale(0.5); opacity: 0; }
-            80% { transform: scale(1.05); }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        .modal-wheel-result { animation: popInModal 0.4s ease-out forwards; }
-
         .community-main-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 15px; }
         @media(min-width: 850px) { .community-main-grid { grid-template-columns: 1fr 320px; } }
         .panel-card { background: var(--panel-bg); border: 1px solid var(--steel-border); padding: 15px; border-radius: 10px; display: flex; flex-direction: column; }
@@ -322,10 +292,6 @@
         .btn-discord-net { background: #5865F2; }
         .btn-youtube-net { background: #FF0000; }
         .btn-instagram-net { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
-
-        .qrcode-box { display: flex; flex-direction: column; align-items: center; justify-content: center; background: #000; border: 1px solid var(--steel-border); padding: 12px; border-radius: 8px; text-align: center; }
-        .qrcode-img { width: 130px; height: 130px; object-fit: contain; background: #fff; padding: 4px; border-radius: 6px; margin-bottom: 6px; }
-        .btn-qrcode-link { display: inline-block; background: var(--gold-warning); color: #000; text-decoration: none; font-family: 'Orbitron'; font-size: 10px; font-weight: 800; padding: 6px 10px; border-radius: 4px; margin-top: 6px; }
 
         .minichat-container { display: flex; flex-direction: column; height: 200px; background: #000; border: 1px solid var(--steel-border); border-radius: 6px; overflow: hidden; margin-top: 8px; }
         .minichat-messages { flex: 1; padding: 8px; overflow-y: auto; font-size: 11px; display: flex; flex-direction: column; gap: 4px; }
@@ -367,7 +333,7 @@
         footer { text-align: center; padding: 20px; color: #64748b; font-size: 12px; border-top: 1px solid var(--steel-border); position: relative; z-index: 2; }
     </style>
 </head>
-<body id="mainBody" class="theme-oled">
+<body id="mainBody">
 
     <div class="broadcast-ticker" id="broadcastTicker">
         <marquee id="broadcastText">⚡ AVISO GLOBAL: Bem-vindos ao WaveCombat Hub v1.000 (100% Full Edition)!</marquee>
@@ -408,7 +374,7 @@
 
     <!-- Modal Resultado Roleta -->
     <div class="modal-overlay" id="modalWheelResult" style="z-index: 3800;">
-        <div class="modal-card modal-wheel-result" id="modalWheelCard" style="text-align: center; border-width: 3px;">
+        <div class="modal-card" id="modalWheelCard" style="text-align: center; border-width: 3px;">
             <div id="wheelResultIcon" style="font-size: 55px; margin-bottom: 10px;">🎁</div>
             <h2 id="wheelResultTitle" style="font-family:'Orbitron'; font-size: 20px; color:var(--accent-color); margin-bottom: 8px;">PARABÉNS!</h2>
             <p id="wheelResultMessage" style="font-size: 13px; color: #fff; margin-bottom: 20px; line-height: 1.4;"></p>
@@ -439,7 +405,7 @@
                 <button class="tab-btn active" id="tabLoginBtn" onclick="alternarAba('login'); tocarSomClique();">Entrar</button>
                 <button class="tab-btn" id="tabRegisterBtn" onclick="alternarAba('registro'); tocarSomClique();">Criar Conta</button>
                 <button class="tab-btn" id="tabPerfilBtn" onclick="alternarAba('perfil'); tocarSomClique();">Perfil & Stats</button>
-                <button class="tab-btn" id="tabInventarioBtn" onclick="alternarAba('inventario'); tocarSomClique();">🎒 Inventário 3D</button>
+                <button class="tab-btn" id="tabInventarioBtn" onclick="alternarAba('inventario'); tocarSomClique();">🎒 Inventário</button>
                 <button class="tab-btn" id="tabCorreioBtn" onclick="alternarAba('correio'); tocarSomClique();">📬 Correio</button>
             </div>
             
@@ -458,18 +424,18 @@
                     <input type="text" id="regUser" placeholder="Escolha um Nick de Jogador (Único)" class="auth-input" required>
                     <input type="email" id="regEmail" placeholder="Seu E-mail (Salvo na Nuvem)" class="auth-input" required>
                     <input type="password" id="regPass" placeholder="Crie uma Senha" class="auth-input" required>
-                    <input type="text" id="regCodigoIndicacao" placeholder="ID ou Nick de quem convidou (Opcional - Ganhe Bônus)" class="auth-input">
+                    <input type="text" id="regCodigoIndicacao" placeholder="ID ou Nick de quem convidou (Opcional)" class="auth-input">
                     <button type="submit" class="btn-gaming" onclick="tocarSomLevelUp()" style="width:100%; padding:10px; background:#22c55e; color:#000;">Criar Minha Conta</button>
                 </form>
             </div>
 
             <div class="form-panel" id="panelPerfil">
-                <div id="perfilUserData"><p style="color:#94a3b8; text-align:center;">Faça login para ver seu perfil e estatísticas detalhadas.</p></div>
+                <div id="perfilUserData"><p style="color:#94a3b8; text-align:center;">Faça login para ver seu perfil e estatísticas.</p></div>
             </div>
 
             <div class="form-panel" id="panelInventario">
                 <div id="inventarioUserData">
-                    <p style="color:#94a3b8; text-align:center; font-size:11px;">Faça login para ver seu inventário de itens e molduras 3D.</p>
+                    <p style="color:#94a3b8; text-align:center; font-size:11px;">Faça login para ver seu inventário de itens e molduras.</p>
                 </div>
             </div>
 
@@ -485,7 +451,6 @@
     <div class="modal-overlay" id="modalConfirmarDiamantes" style="z-index: 3500;">
         <div class="modal-card" style="text-align: center; border-color: var(--accent-color);">
             <h3 id="modalDiamantesTitulo" style="font-family:'Orbitron'; color:var(--accent-color); margin-bottom:10px;">⚡ Confirmar Transação de Diamantes</h3>
-            <p style="font-size:12px; color:#94a3b8; margin-bottom:15px;">Confira os dados do jogador e informe o valor:</p>
             <div style="background:#000; border:1px solid var(--steel-border); padding:15px; border-radius:8px; margin-bottom:15px; text-align:left; font-size:12px; display:flex; flex-direction:column; gap:8px;">
                 <div>👤 Nick: <strong id="confNick" style="color:#fff;">--</strong></div>
                 <div>🆔 ID Único: <strong id="confId" style="color:var(--gold-warning);">--</strong></div>
@@ -506,7 +471,7 @@
     <div class="modal-overlay" id="modalConfirmarExclusao" style="z-index: 3500;">
         <div class="modal-card" style="text-align: center; border-color: var(--alert-red);">
             <h3 style="font-family:'Orbitron'; color:var(--alert-red); margin-bottom:10px;">⚠️ Confirmar Exclusão Permanente</h3>
-            <p style="font-size:12px; color:#94a3b8; margin-bottom:15px;">Tem certeza que deseja apagar permanentemente esta conta da nuvem (usuarios, carteira, ranking e verificados)?</p>
+            <p style="font-size:12px; color:#94a3b8; margin-bottom:15px;">Tem certeza que deseja apagar permanentemente esta conta da nuvem?</p>
             <div style="background:#000; border:1px solid var(--steel-border); padding:15px; border-radius:8px; margin-bottom:15px; text-align:left; font-size:12px; display:flex; flex-direction:column; gap:8px;">
                 <div>👤 Nick: <strong id="confDelNick" style="color:#fff;">--</strong></div>
                 <div>🆔 ID Único: <strong id="confDelId" style="color:var(--gold-warning);">--</strong></div>
@@ -534,8 +499,6 @@
             
             <input type="text" id="pixCopiaColaInput" class="auth-input" readonly style="font-size:10px; margin-bottom:10px;">
             <button class="btn-gaming" onclick="copiarPixCopiaCola()" style="width:100%; padding:8px; font-size:11px;">📋 Copiar Código Pix</button>
-            
-            <p style="font-size:10px; color:var(--gold-warning); margin-top:12px;">⚡ Assim que confirmado, os diamantes caem na sua conta!</p>
         </div>
     </div>
 
@@ -546,7 +509,7 @@
             <p style="font-size:12px; color:#fff; margin-bottom:15px;">Você resgatou com sucesso o selo oficial de prestígio:</p>
             <div style="background:#000; border:1px solid #FFD700; padding:15px; border-radius:8px; margin-bottom:15px; text-align:left; font-size:11px; display:flex; flex-direction:column; gap:6px;">
                 <div>✨ Símbolo <strong>V Dourado</strong> à frente do seu Nick</div>
-                <div>🖼️ Moldura Dourada Exclusiva 3D para Perfil</div>
+                <div>🖼️ Moldura Dourada Exclusiva para Perfil</div>
                 <div>💎 <strong>5.000 Diamantes</strong> creditados na sua conta</div>
                 <div id="infoCupomGeradoPremio" style="color:var(--gold-warning); font-weight:bold;"></div>
             </div>
@@ -607,14 +570,6 @@
         <h1 id="heroTitle">WAVECOMBAT <span>HUB</span></h1>
         <p id="heroDesc">Plataforma moderna de jogos, arcade e experiências imersivas.</p>
         
-        <div class="global-stats-bar" id="globalStatsBar">
-            <span>Visitas Totais: <strong id="statTotalVisitas">--</strong></span>
-            <span>Partidas Jogadas: <strong id="statTotalPartidas">--</strong></span>
-            <span>Jogadores Registrados: <strong id="statTotalUsuarios">--</strong></span>
-            <span>Controles: <strong id="statGamepadsCount" style="color:#00f0ff">0</strong></span>
-            <span>Status: <strong style="color:#22c55e">ONLINE</strong></span>
-        </div>
-
         <a href="#player" class="btn-gaming" onclick="tentarExecutarJogoDestaque(); tocarSomClique();">Jogar Destaque Agora</a>
         
         <div style="display:flex; gap:10px; justify-content:center; align-items:center; flex-wrap:wrap; margin-top:8px;">
@@ -625,7 +580,7 @@
 
     <!-- Seção de Jogos -->
     <section id="jogos">
-        <h2 class="section-title">Biblioteca de Jogos & Resolução Interna</h2>
+        <h2 class="section-title">Biblioteca de Jogos</h2>
         <div class="search-filter-bar">
             <input type="text" id="inputSearchGames" placeholder="🔍 Pesquisar jogo..." class="auth-input" oninput="atualizarPlataforma()">
             <select id="selectCategoryFilter" class="auth-input" onchange="atualizarPlataforma()">
@@ -634,11 +589,6 @@
                 <option value="Estratégia">Estratégia</option>
                 <option value="Multiplayer">Multiplayer</option>
                 <option value="favoritos">⭐ Favoritos</option>
-            </select>
-            <select id="selectResInterna" class="auth-input" onchange="alterarResolucaoInterna(this.value)" style="max-width: 220px;">
-                <option value="100">🖥️ Resolução: 100% (Nativa HD)</option>
-                <option value="75">⚡ Resolução: 75% (Desempenho)</option>
-                <option value="50">🚀 Resolução: 50% (Ultra Rápido)</option>
             </select>
         </div>
         
@@ -654,7 +604,7 @@
             <iframe id="gameIframe" src="about:blank" title="WaveCombat Player" allow="fullscreen; autoplay; gamepad; microphone" allowfullscreen="true"></iframe>
         </div>
         <div class="player-controls-bar" id="playerControlsBar">
-            <button class="btn-gaming" onclick="toggleTelaCheia(); tocarSomClique();" style="padding:8px 14px; font-size:11px;">⛶ Tela Cheia Nativa</button>
+            <button class="btn-gaming" onclick="toggleTelaCheia(); tocarSomClique();" style="padding:8px 14px; font-size:11px;">⛶ Tela Cheia</button>
             <button class="btn-gaming" id="btnMicToggle" onclick="toggleMicrofoneVoice()" style="padding:8px 14px; font-size:11px; background:#22c55e; color:#000;">🎤 Mic Rápido: ON</button>
             <button class="btn-gaming" id="btnAudioToggle" onclick="toggleAudioVoice()" style="padding:8px 14px; font-size:11px; background:#3b82f6; color:#fff;">🔊 Som Voz: ON</button>
             <button class="btn-gaming btn-danger" onclick="encerrarJogo(); tocarSomClique();" style="padding:8px 14px; font-size:11px;">✖ Sair do Game</button>
@@ -679,7 +629,7 @@
         <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 30px;">
             <div class="wheel-section" style="margin-bottom:0;">
                 <h3 style="font-family:'Orbitron'; color:var(--accent-color); font-size:16px; margin-bottom:6px;">🎰 Roda da Fortuna Diária</h3>
-                <p style="font-size:12px; color:#94a3b8; margin-bottom:15px;">Gire a roleta uma vez por dia para ganhar prêmios incríveis!</p>
+                <p style="font-size:12px; color:#94a3b8; margin-bottom:15px;">Gire a roleta uma vez por dia para ganhar prêmios!</p>
                 
                 <div class="wheel-container">
                     <div class="wheel-pointer"></div>
@@ -693,7 +643,7 @@
             <div class="panel-card" style="border: 2px solid var(--gold-warning); justify-content: space-between; text-align: center;">
                 <div>
                     <h3 style="color:var(--gold-warning); font-size:16px;">🎟️ Sorteio Automático Semanal</h3>
-                    <p style="font-size:12px; color:#94a3b8; margin-bottom:12px;">Participe gratuitamente toda semana! Jogadores ativos concorrem a <strong>50 Diamantes</strong> toda segunda-feira.</p>
+                    <p style="font-size:12px; color:#94a3b8; margin-bottom:12px;">Participe gratuitamente toda semana! Jogadores ativos concorrem a <strong>50 Diamantes</strong> toda segunda-feira de forma automatizada.</p>
                     <div style="background:#000; border:1px solid var(--steel-border); padding:12px; border-radius:8px; margin-bottom:12px;">
                         <p style="font-size:11px; color:#fff;">Prêmio da Semana: <strong style="color:var(--accent-color); font-size:14px;">💎 50 Diamantes</strong></p>
                         <p style="font-size:11px; color:#22c55e; margin-top:4px;" id="statusSorteioSemanal">Status: Verificando participação...</p>
@@ -710,9 +660,9 @@
         </div>
     </section>
 
-    <!-- Loja de Diamantes & Molduras 3D (PREÇOS AJUSTADOS: 50, 100, 150) -->
+    <!-- Loja de Diamantes & Molduras (Valores: 50, 100, 150) -->
     <section id="lojaDiamantes">
-        <h2 class="section-title">💎 Loja de Diamantes, Molduras 3D & Boost</h2>
+        <h2 class="section-title">💎 Loja de Diamantes, Molduras & Boost</h2>
         
         <div style="background: var(--panel-bg); border: 2px solid var(--accent-color); padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; box-shadow: 0 0 20px var(--accent-glow);">
             <div>
@@ -725,38 +675,25 @@
             </div>
         </div>
 
-        <h3 style="font-family:'Orbitron'; font-size:13px; color:var(--gold-warning); margin-bottom:12px;">🎨 Molduras 3D de Perfil (Visualização Interativa 3D)</h3>
-        <div style="background: var(--panel-bg); border: 1px solid var(--steel-border); padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center;">
-            <p style="font-size: 11px; color: #94a3b8; margin-bottom: 10px;">Passe o mouse ou toque para testar o efeito 3D da moldura antes de comprar:</p>
-            <div id="avatarPreviewBox" class="avatar-preview-box">
-                <span id="previewNickText">SeuNick</span>
-            </div>
-            <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-top:10px;">
-                <button class="btn-gaming" onclick="testarMolduraLoja('frame-neon')" style="font-size:10px; padding:6px 10px; background:#00f0ff; color:#000;">👁️ Neon 3D</button>
-                <button class="btn-gaming" onclick="testarMolduraLoja('frame-fogo')" style="font-size:10px; padding:6px 10px; background:#ef4444; color:#fff;">👁️ Fogo 3D</button>
-                <button class="btn-gaming" onclick="testarMolduraLoja('frame-prisma')" style="font-size:10px; padding:6px 10px; background:#a855f7; color:#fff;">👁️ Prisma 3D</button>
-                <button class="btn-gaming" onclick="testarMolduraLoja('')" style="font-size:10px; padding:6px 10px; background:#64748b; color:#fff;">🔄 Normal</button>
-            </div>
-        </div>
-
+        <h3 style="font-family:'Orbitron'; font-size:13px; color:var(--gold-warning); margin-bottom:12px;">🎨 Molduras de Perfil</h3>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px;">
             <div class="panel-card" style="text-align: center; border: 1px solid #3b82f6;">
-                <h4 style="font-family: 'Orbitron'; color: #3b82f6;">Moldura Cyber Neon 3D</h4>
-                <p style="font-size: 10px; color: #94a3b8; margin: 6px 0;">Borda azul brilhante com efeito tridimensional</p>
+                <h4 style="font-family: 'Orbitron'; color: #3b82f6;">Moldura Cyber Neon</h4>
+                <p style="font-size: 10px; color: #94a3b8; margin: 6px 0;">Borda azul brilhante com efeito moderno</p>
                 <p style="font-size: 14px; color: var(--gold-warning); font-weight: bold; margin-bottom: 8px;">💎 50 Diamantes</p>
-                <button class="btn-gaming" onclick="comprarMolduraLoja('frame-neon', 50)" style="width: 100%; font-size: 10px; padding: 8px;">Comprar Item (50 💎)</button>
+                <button class="btn-gaming" onclick="comprarMolduraLoja('frame-neon', 50)" style="width: 100%; font-size: 10px; padding: 8px;" id="btn_buy_frame-neon">Comprar Item (50 💎)</button>
             </div>
             <div class="panel-card" style="text-align: center; border: 1px solid #ef4444;">
-                <h4 style="font-family: 'Orbitron'; color: #ef4444;">Moldura Fogo Infernal 3D</h4>
-                <p style="font-size: 10px; color: #94a3b8; margin: 6px 0;">Efeito brasa vermelha intensa em camadas</p>
+                <h4 style="font-family: 'Orbitron'; color: #ef4444;">Moldura Fogo Infernal</h4>
+                <p style="font-size: 10px; color: #94a3b8; margin: 6px 0;">Efeito brasa vermelha intensa</p>
                 <p style="font-size: 14px; color: var(--gold-warning); font-weight: bold; margin-bottom: 8px;">💎 100 Diamantes</p>
-                <button class="btn-gaming" onclick="comprarMolduraLoja('frame-fogo', 100)" style="width: 100%; font-size: 10px; padding: 8px;">Comprar Item (100 💎)</button>
+                <button class="btn-gaming" onclick="comprarMolduraLoja('frame-fogo', 100)" style="width: 100%; font-size: 10px; padding: 8px;" id="btn_buy_frame-fogo">Comprar Item (100 💎)</button>
             </div>
             <div class="panel-card" style="text-align: center; border: 1px solid #a855f7;">
-                <h4 style="font-family: 'Orbitron'; color: #a855f7;">Moldura Prisma Lendária 3D</h4>
-                <p style="font-size: 10px; color: #94a3b8; margin: 6px 0;">Rotação cromática contínua em espectro RGB</p>
+                <h4 style="font-family: 'Orbitron'; color: #a855f7;">Moldura Prisma Lendária</h4>
+                <p style="font-size: 10px; color: #94a3b8; margin: 6px 0;">Espectro RGB sofisticado</p>
                 <p style="font-size: 14px; color: var(--gold-warning); font-weight: bold; margin-bottom: 8px;">💎 150 Diamantes</p>
-                <button class="btn-gaming" onclick="comprarMolduraLoja('frame-prisma', 150)" style="width: 100%; font-size: 10px; padding: 8px;">Comprar Item (150 💎)</button>
+                <button class="btn-gaming" onclick="comprarMolduraLoja('frame-prisma', 150)" style="width: 100%; font-size: 10px; padding: 8px;" id="btn_buy_frame-prisma">Comprar Item (150 💎)</button>
             </div>
         </div>
 
@@ -795,11 +732,11 @@
         </div>
     </section>
 
-    <!-- Comunidade & Social -->
+    <!-- Comunidade & Social (QR Code LivePix removido) -->
     <section id="comunidade">
         <h2 class="section-title">Central Social & Comunidade</h2>
         <div class="community-main-grid">
-            <div class="panel-card">
+            <div class="panel-card" style="grid-column: 1 / -1;">
                 <h3>🌐 Redes Sociais, Indicação (+20 💎) & Chat Global</h3>
                 <div class="social-buttons-flex" style="margin-bottom:12px;">
                     <a href="https://discord.gg/FaeYug6XBx" target="_blank" class="social-btn-item btn-discord-net" onclick="tocarSomClique()">🎮 Discord Oficial</a>
@@ -836,16 +773,8 @@
                         <button onclick="enviarMensagemChat(); tocarSomClique();">Enviar</button>
                     </div>
                 </div>
-            </div>
 
-            <div style="display:flex; flex-direction:column; gap:15px;">
-                <div class="qrcode-box">
-                    <h4 style="font-family:'Orbitron'; font-size:11px; color:var(--accent-color); margin-bottom:6px;">🎁 Doação LivePix</h4>
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://livepix.gg/capudooficial" alt="QR Code LivePix" class="qrcode-img">
-                    <a href="https://livepix.gg/capudooficial" target="_blank" class="btn-qrcode-link" onclick="tocarSomClique()">🔗 Acessar Link LivePix</a>
-                </div>
-
-                <div class="panel-card" style="padding:10px;">
+                <div style="margin-top: 15px; padding: 10px; background: #000; border: 1px solid var(--steel-border); border-radius: 8px;">
                     <h3 style="font-size:12px; margin-bottom:8px;">⚙️ Preferências & Cloud Backup</h3>
                     <div style="display:flex; flex-direction:column; gap:8px; font-size:11px;">
                         <label style="display:flex; justify-content:space-between; align-items:center;">
@@ -857,8 +786,8 @@
                             <input type="checkbox" id="checkBGM" checked onchange="toggleBGM(this.checked); salvarConfiguracoesNuvemAutomatico();">
                         </label>
                         <label style="display:flex; flex-direction:column; gap:4px;">
-                            Volume da Música:
-                            <input type="range" id="rangeBGMVolume" min="0" max="100" value="50" oninput="setBGMVolume(this.value); salvarConfiguracoesNuvemAutomatico();">
+                            Volume da Música (Inicia a 20%):
+                            <input type="range" id="rangeBGMVolume" min="0" max="100" value="20" oninput="setBGMVolume(this.value); salvarConfiguracoesNuvemAutomatico();">
                         </label>
                         <label style="display:flex; justify-content:space-between; align-items:center;">
                             Modo Oculto / Invisível:
@@ -871,7 +800,7 @@
     </section>
 
     <!-- ========================================== -->
-    <!-- PAINEL ADMINISTRATIVO 100% RESTAURADO      -->
+    <!-- PAINEL ADMINISTRATIVO 100% CORRIGIDO       -->
     <!-- ========================================== -->
     <div class="admin-section" id="adminSection" style="display:none;">
         <div class="admin-container">
@@ -901,16 +830,14 @@
                 </div>
             </div>
 
-            <!-- 2. Controle do Sorteio Semanal (50 Diamantes) & Correio em Massa -->
+            <!-- 2. Sorteio 100% Automatizado (Sem botões manuais) -->
             <div class="admin-grid-tools">
                 <div class="admin-block" style="border-color: #FFD700;">
-                    <h4 style="color:#FFD700;">🎟️ Sorteio Semanal (50 💎) — Definir / Sortear Ganhador</h4>
-                    <p style="font-size:10px; color:#94a3b8;">Credita automaticamente 50 💎, envia mensagem no Correio e atualiza o painel oficial do site.</p>
-                    <div style="display:flex; gap:6px;">
-                        <input type="text" id="admSorteioInputNickId" placeholder="Nick ou ID do Vencedor..." class="auth-input" style="font-size:11px; flex:1;">
-                        <button type="button" class="btn-gaming" onclick="definirGanhadorSorteioAdm(false)" style="font-size:10px; padding:8px; background:#FFD700; color:#000;">🏆 Definir</button>
+                    <h4 style="color:#FFD700;">🎟️ Sorteio Semanal (50 💎) — 100% Automatizado</h4>
+                    <p style="font-size:10px; color:#94a3b8;">O sistema de sorteio semanal roda 100% de forma automatizada por rotinas de data/hora na nuvem. Abaixo exibe-se o último ganhador oficial:</p>
+                    <div style="background:#000; border:1px solid #FFD700; padding:10px; border-radius:6px; margin-top:4px;" id="adminUltimoSorteioInfoBox">
+                        Carregando informações do sorteio...
                     </div>
-                    <button type="button" class="btn-gaming" onclick="definirGanhadorSorteioAdm(true)" style="font-size:10px; padding:8px; background:#22c55e; color:#000;">🎲 Sortear Aleatoriamente (50 💎)</button>
                 </div>
 
                 <div class="admin-block" style="border-color: var(--gold-warning);">
@@ -924,7 +851,7 @@
                 </div>
             </div>
 
-            <!-- 3. Administração de Verificados (Selo V Dourado) & Cupons de Influenciadores -->
+            <!-- 3. Administração de Verificados (Isolada) & Painel de Influenciadores -->
             <div class="admin-grid-tools">
                 <div class="admin-block" style="border-color: #FFD700;">
                     <h4 style="color:#FFD700;">⭐ Administrar Verificados (Selo V Dourado)</h4>
@@ -937,23 +864,24 @@
                     </div>
                 </div>
 
+                <!-- PAINEL DE INFLUENCIADORES E COMISSÕES (SEPARADO) -->
                 <div class="admin-block" style="border-color: #a855f7;">
-                    <h4 style="color:#a855f7;">🎟️ Criar Cupom de Influenciador (Desconto Loja)</h4>
-                    <div style="display:flex; gap:6px;">
-                        <input type="text" id="admCupomCodigo" placeholder="Código (Ex: CAPUDO15)" class="auth-input" style="font-size:11px; flex:1;">
-                        <input type="number" id="admCupomDesconto" placeholder="% OFF (Ex: 15)" class="auth-input" style="font-size:11px; width:90px;">
-                        <button type="button" class="btn-gaming" onclick="criarCupomInfluenciadorAdm()" style="font-size:10px; padding:8px; background:#a855f7; color:#fff;">➕ Criar</button>
+                    <h4 style="color:#a855f7;">🤝 Painel de Influenciadores & Comissões (10% Desc / 30% Com.)</h4>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px;">
+                        <input type="text" id="admInflIdOuNick" placeholder="ID ou Nick do Jogador" class="auth-input" style="font-size:11px;">
+                        <input type="text" id="admInflCupom" placeholder="Código Cupom (Ex: CAPUDO30)" class="auth-input" style="font-size:11px;">
                     </div>
-                    <div id="adminListaCuponsContainer" style="max-height:130px; overflow-y:auto; display:flex; flex-direction:column; gap:5px; margin-top:4px; font-size:11px;">
-                        <span style="color:#64748b;">Carregando cupons...</span>
+                    <button type="button" class="btn-gaming" onclick="cadastrarInfluenciadorAdm()" style="font-size:10px; padding:8px; background:#a855f7; color:#fff;">➕ Cadastrar Influenciador</button>
+                    <div id="adminListaInfluenciadoresContainer" style="max-height:130px; overflow-y:auto; display:flex; flex-direction:column; gap:5px; margin-top:4px; font-size:11px;">
+                        <span style="color:#64748b;">Carregando influenciadores...</span>
                     </div>
                 </div>
             </div>
 
-            <!-- 4. Lista Completa de 100% dos Usuários Cadastrados (Sem Limite de 4) -->
+            <!-- 4. Lista Completa de Contas (Isolada: sem alterar verificado na listagem geral) -->
             <div class="admin-block" style="margin-bottom: 15px; border-color: var(--accent-color);">
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-                    <h4 style="color:var(--accent-color);">👥 Todos os Usuários Cadastrados (<span id="adminTotalUsersBadge">0</span>)</h4>
+                    <h4 style="color:var(--accent-color);">👥 Todas as Contas de Usuários (<span id="adminTotalUsersBadge">0</span>)</h4>
                     <button type="button" class="btn-mini" onclick="renderizarTabelaUsuariosAdmin()" style="background:var(--accent-color); color:#000;">🔄 Recarregar Lista</button>
                 </div>
                 <div style="display:flex; gap:10px; margin-bottom:6px;">
@@ -962,27 +890,11 @@
                 <div id="adminListaUsuariosContainer" style="max-height:380px; overflow-y:auto; display:flex; flex-direction:column; gap:8px;"></div>
             </div>
 
-            <!-- 5. Adicionar Novo Jogo & Gestão de Games na Nuvem -->
-            <div class="admin-block" style="margin-bottom: 15px; border-color: #22c55e;">
-                <h4 style="color:#22c55e;">➕ Adicionar Novo Jogo na Nuvem</h4>
-                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:8px;">
-                    <input type="text" id="novoJogoNome" placeholder="Nome do Jogo" class="auth-input" style="font-size:11px;">
-                    <select id="novoJogoCategoria" class="auth-input" style="font-size:11px;">
-                        <option value="Arcade">Arcade</option>
-                        <option value="Estratégia">Estratégia</option>
-                        <option value="Multiplayer">Multiplayer</option>
-                    </select>
-                    <input type="text" id="novoJogoArquivo" placeholder="Arquivo/URL (ex: meu-jogo.html)" class="auth-input" style="font-size:11px;">
-                    <input type="text" id="novoJogoImg" placeholder="URL da Capa (Opcional)" class="auth-input" style="font-size:11px;">
-                </div>
-                <input type="text" id="novoJogoDesc" placeholder="Descrição curta do jogo..." class="auth-input" style="font-size:11px;">
-                <button type="button" class="btn-gaming" onclick="adicionarNovoJogoAdm()" style="font-size:11px; padding:8px; background:#22c55e; color:#000;">🚀 Publicar Novo Jogo Agora</button>
-            </div>
-
-            <h4 style="color:#fff; margin-bottom:10px; font-family:'Orbitron'; font-size:14px;">🎮 Gestão de Games Existentes (Personalização, Destaque & Capas)</h4>
+            <!-- 5. Gerenciamento de Jogos (Restrito a edição e gerenciamento, sem botão de adicionar novo jogo) -->
+            <h4 style="color:#fff; margin-bottom:10px; font-family:'Orbitron'; font-size:14px;">🎮 Gestão de Jogos Existentes (Capas, Títulos, Categorias & URLs)</h4>
             <div id="adminListaJogos" style="display:flex; flex-direction:column; gap:10px; margin-bottom:15px;"></div>
 
-            <!-- 6. Denúncias de Jogadores & Logs de Auditoria ADM -->
+            <!-- 6. Denúncias & Logs -->
             <div class="admin-grid-tools">
                 <div class="admin-block" style="border-color: var(--alert-red);">
                     <h4 style="color:var(--alert-red);">🚨 Denúncias Recebidas (wavecombat_denuncias)</h4>
@@ -994,7 +906,7 @@
                 <div class="admin-block" style="border-color: #22c55e;">
                     <h4 style="color:#22c55e;">📜 Logs de Auditoria ADM (wavecombat_logs_adm)</h4>
                     <div id="adminAuditLogsBox" style="background:#000; border:1px solid var(--steel-border); padding:8px; border-radius:6px; max-height:150px; overflow-y:auto; font-family:monospace; font-size:10px; color:#94a3b8;">
-                        [Sistema] Firewall de VPN/Proxy ativo. Monitoramento de integridade em tempo real.
+                        [Sistema] Monitoramento de integridade em tempo real.
                     </div>
                 </div>
             </div>
@@ -1005,8 +917,18 @@
         </div>
     </div>
 
+    <!-- ========================================== -->
+    <!-- GLOBAL STATS BAR POSICIONADA NO RODAPÉ     -->
+    <!-- ========================================== -->
+    <div class="global-stats-bar" id="globalStatsBar">
+        <span>Visitas Totais: <strong id="statTotalVisitas">--</strong></span>
+        <span>Partidas Jogadas: <strong id="statTotalPartidas">--</strong></span>
+        <span>Usuários Registrados: <strong id="statTotalUsuarios">--</strong></span>
+        <span>Gamepads Conectados: <strong id="statGamepadsCount" style="color:#00f0ff">0</strong></span>
+    </div>
+
     <footer>
-        WaveCombat Hub &copy; 2026 — Versão: <strong>v1.000 (100% Complete & Restored Edition)</strong>
+        WaveCombat Hub &copy; 2026 — Versão: <strong>v1.000 (100% Full Technical Compliance)</strong>
     </footer>
 
     <!-- Script Principal -->
@@ -1017,7 +939,7 @@
 
         const MEU_ID_MESTRE = "577082415";
 
-        const jogosIniciaisFallback = [
+        const jogosIniciaisBase = [
             { id: "1", nome: "Riverbed Warfare", categoria: "Estratégia", desc: "Combate veicular em tempo real, extração de recursos e defesa contra hordas.", arquivo: "riverbed-warfare.html", img: "", publicado: true, destaque_manual: true, acessos: 154 },
             { id: "2", nome: "Tanque Defence", categoria: "Estratégia", desc: "Combate veicular em tempo real, extração de recursos e defesa contra hordas.", arquivo: "tanque-defence.html", img: "", publicado: true, destaque_manual: false, acessos: 154 },
             { id: "3", nome: "Esquadrão de Tanques", categoria: "Arcade", desc: "Jogo de sobrevivência de tanques combate intenso.", arquivo: "esquadrao-de-tanques.html", img: "", publicado: true, destaque_manual: false, acessos: 93 },
@@ -1039,7 +961,7 @@
 
         let bgmInterval = null;
         let bgmActive = true; 
-        let bgmVolumeValue = 0.5; 
+        let bgmVolumeValue = 0.2; // Inicia nativamente ajustada a 20% do volume
         const arcadeNotes = [261.63, 329.63, 392.00, 523.25, 493.88, 392.00, 329.63, 293.66, 349.23, 440.00]; 
         let noteIndex = 0;
         let micAtivo = true;
@@ -1050,7 +972,7 @@
         window.addEventListener("gamepadconnected", (e) => {
             connectedGamepads[e.gamepad.index] = e.gamepad;
             atualizarContadorGamepads();
-            mostrarToast(`🎮 Controle ${e.gamepad.index + 1} conectado (${e.gamepad.id.slice(0, 20)})`);
+            mostrarToast(`🎮 Controle ${e.gamepad.index + 1} conectado`);
         });
         window.addEventListener("gamepaddisconnected", (e) => {
             delete connectedGamepads[e.gamepad.index];
@@ -1064,39 +986,19 @@
         function loopGamepads() {
             const gps = navigator.getGamepads ? navigator.getGamepads() : [];
             let count = 0;
-            for (let i = 0; i < gps.length; i++) {
-                if (gps[i]) count++;
-            }
+            for (let i = 0; i < gps.length; i++) { if (gps[i]) count++; }
             const el = document.getElementById('statGamepadsCount');
             if (el && el.textContent !== String(count)) el.textContent = count;
             requestAnimationFrame(loopGamepads);
         }
         requestAnimationFrame(loopGamepads);
 
-        async function detectarVpnProxy() {
-            try {
-                const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-                const lang = navigator.language || '';
-                if (!tz || (tz.includes('UTC') && lang.includes('pt-BR'))) {
-                    registrarLogAdmin('ALERTA_VPN', `Possível VPN/Proxy detectado (Fuso: ${tz} | Idioma: ${lang})`);
-                }
-            } catch(e) {}
-        }
-
-        function compactarAssetsLocal() {
-            document.querySelectorAll('[hidden]').forEach(el => el.remove());
-        }
-
         function formatarNumero(num) {
             if (num === null || num === undefined) return '0';
             num = Number(num);
             if (isNaN(num)) return '0';
-            if (num >= 1e12) return (num / 1e12).toFixed(1).replace('.0', '') + 'T';
-            if (num >= 1e9) return (num / 1e9).toFixed(1).replace('.0', '') + 'B';
             if (num >= 1e6) return (num / 1e6).toFixed(1).replace('.0', '') + 'M';
-            if (num >= 1e3) {
-                return (num / 1000).toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + 'k';
-            }
+            if (num >= 1e3) return (num / 1000).toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + 'k';
             return num.toLocaleString('pt-BR');
         }
 
@@ -1105,10 +1007,7 @@
                 const hoje = new Date().toISOString().split('T')[0];
                 const chaveSessao = `visita_registrada_${hoje}`;
                 if (!sessionStorage.getItem(chaveSessao)) {
-                    await supabaseClient.from('wavecombat_estatisticas_acessos').insert([{
-                        data_acesso: hoje,
-                        user_agent: navigator.userAgent.slice(0, 120)
-                    }]);
+                    await supabaseClient.from('wavecombat_estatisticas_acessos').insert([{ data_acesso: hoje }]);
                     sessionStorage.setItem(chaveSessao, '1');
                 }
                 const { count } = await supabaseClient.from('wavecombat_estatisticas_acessos').select('*', { count: 'exact', head: true });
@@ -1252,6 +1151,7 @@
             }, 1000);
         }
 
+        // PERSISTÊNCIA UNIFICADA NA NUVEM & JSON (Colunas dedicadas + campo JSON preferencias)
         async function sincronizarUsuarioNuvem(idJogador) {
             try {
                 const { data, error } = await supabaseClient.from('usuarios').select('*').eq('id_jogador', String(idJogador)).maybeSingle();
@@ -1265,8 +1165,6 @@
                     } else if (emailLocal) {
                         usuarioLogado.email = emailLocal;
                         await supabaseClient.from('usuarios').update({ email: emailLocal }).eq('id_jogador', String(idJogador));
-                    } else {
-                        usuarioLogado.email = '';
                     }
 
                     usuarioLogado.moldura = data.moldura || '';
@@ -1319,14 +1217,11 @@
             if (!emailDigitado || !usuarioLogado) return;
 
             try {
-                const { error } = await supabaseClient.from('usuarios').update({ email: emailDigitado }).eq('id_jogador', String(usuarioLogado.id));
-                if (error) {
-                    await supabaseClient.from('usuarios').upsert({ id_jogador: String(usuarioLogado.id), nick: usuarioLogado.nick, email: emailDigitado }, { onConflict: 'id_jogador' });
-                }
+                await supabaseClient.from('usuarios').update({ email: emailDigitado }).eq('id_jogador', String(usuarioLogado.id));
                 usuarioLogado.email = emailDigitado;
                 localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
                 fecharModalAlertEmail();
-                mostrarToast("✉️ E-mail vinculado e salvo na nuvem com sucesso!");
+                mostrarToast("✉️ E-mail vinculado e salvo na nuvem!");
                 atualizarPerfilExpandidoUI();
             } catch(err) {
                 alert("Erro ao salvar e-mail na nuvem.");
@@ -1340,7 +1235,7 @@
                     await supabaseClient.from('usuarios').update({ email: '' }).eq('id_jogador', String(usuarioLogado.id));
                     usuarioLogado.email = '';
                     localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
-                    mostrarToast("🗑️ E-mail desvinculado com sucesso!");
+                    mostrarToast("🗑️ E-mail desvinculado!");
                     atualizarPerfilExpandidoUI();
                 } catch(e) {
                     alert("Erro ao desvincular e-mail.");
@@ -1360,9 +1255,7 @@
             }
 
             const cacheLocalDiamantes = localStorage.getItem(`diamantes_${usuarioLogado.id}`);
-            if (cacheLocalDiamantes && saldoEl) {
-                saldoEl.textContent = formatarNumero(cacheLocalDiamantes);
-            }
+            if (cacheLocalDiamantes && saldoEl) saldoEl.textContent = formatarNumero(cacheLocalDiamantes);
 
             try {
                 const { data, error } = await supabaseClient
@@ -1382,18 +1275,7 @@
                         diamantes: cacheLocalDiamantes ? parseInt(cacheLocalDiamantes) : 0 
                     }]);
                 }
-            } catch (e) {
-                if (cacheLocalDiamantes && saldoEl) {
-                    saldoEl.textContent = formatarNumero(cacheLocalDiamantes);
-                }
-            }
-        }
-
-        function testarMolduraLoja(classeMoldura) {
-            const box = document.getElementById('avatarPreviewBox');
-            box.className = 'avatar-preview-box ' + classeMoldura;
-            const nickEl = document.getElementById('previewNickText');
-            if (nickEl && usuarioLogado) nickEl.textContent = usuarioLogado.nick;
+            } catch (e) {}
         }
 
         async function ativarBoostPerfilLoja() {
@@ -1408,7 +1290,7 @@
                 alert("❌ Você precisa de 100 Diamantes para ativar o Boost de Perfil!");
                 return;
             }
-            if (!confirm("Deseja ativar o 🚀 Boost de Perfil por 7 dias por 100 Diamantes? (Destaque no Ranking e XP em dobro)")) return;
+            if (!confirm("Deseja ativar o 🚀 Boost de Perfil por 7 dias por 100 Diamantes?")) return;
 
             let novoSaldo = saldoAtual - custo;
             localStorage.setItem(`diamantes_${usuarioLogado.id}`, novoSaldo);
@@ -1427,7 +1309,7 @@
             localStorage.setItem(`boost_ativo_${usuarioLogado.id}`, expira);
             carregarSaldoDiamantesSite();
             tocarSomLevelUp();
-            mostrarToast("🚀 Boost de Perfil ativado com sucesso por 7 dias!");
+            mostrarToast("🚀 Boost de Perfil ativado com sucesso!");
         }
 
         async function verificarMensagensNaoLidasBadge() {
@@ -1452,11 +1334,8 @@
         async function registrarLogAdmin(acao, detalhes) {
             const timestamp = new Date().toLocaleTimeString('pt-BR');
             const logTexto = `[${timestamp}] ${acao}: ${detalhes}`;
-            
             const box = document.getElementById('adminAuditLogsBox');
-            if(box) {
-                box.innerHTML = `<div>${logTexto}</div>` + box.innerHTML;
-            }
+            if(box) { box.innerHTML = `<div>${logTexto}</div>` + box.innerHTML; }
             try {
                 await supabaseClient.from('wavecombat_logs_adm').insert([{
                     admin_id: usuarioLogado ? usuarioLogado.id : 'sistema',
@@ -1501,7 +1380,7 @@
         }
 
         async function abrirModalDenunciaJogador(idAlvo, nickAlvo, origem = 'perfil') {
-            const motivo = prompt(`Informe o motivo da denúncia contra o jogador ${nickAlvo} (Origem: ${origem}):`);
+            const motivo = prompt(`Informe o motivo da denúncia contra o jogador ${nickAlvo}:`);
             if (!motivo) return;
 
             try {
@@ -1513,7 +1392,7 @@
                     status: 'pendente'
                 }]);
                 mostrarToast("🚨 Denúncia enviada com sucesso para a Staff!");
-                registrarLogAdmin('DENUNCIA_JOGADOR', `Denunciado ID: ${idAlvo} por "${motivo}" (${origem})`);
+                registrarLogAdmin('DENUNCIA_JOGADOR', `Denunciado ID: ${idAlvo} por "${motivo}"`);
             } catch(e) {
                 alert("Erro ao enviar denúncia.");
             }
@@ -1548,22 +1427,11 @@
                             await supabaseClient.from('carteira_diamantes').upsert({ id_jogador: String(u.id), nick: u.nick, diamantes: atual + diamantes }, { onConflict: 'id_jogador' });
                         }
                     }
-
-                    mostrarToast("🚀 Mensagem e presentes em massa disparados com sucesso!");
+                    mostrarToast("🚀 Mensagem e presentes em massa disparados!");
                     registrarLogAdmin('CORREIO_MASSA', `Título: "${titulo}" | Presente: ${diamantes} 💎`);
-                    dispararNotificacaoPushGeral(titulo, mensagem);
                 } catch(e) {
                     alert("Erro ao enviar correio em massa.");
                 }
-            }
-        }
-
-        function dispararNotificacaoPushGeral(titulo, corpo) {
-            if ("Notification" in window && Notification.permission === "granted") {
-                new Notification(titulo, {
-                    body: corpo,
-                    icon: 'https://wavecombat-hub.onrender.com/favicon.ico'
-                });
             }
         }
 
@@ -1578,6 +1446,23 @@
             const corNick = document.getElementById('inputPerfilCorNick')?.value || '#00f0ff';
 
             try {
+                // Sincronização unificada nas colunas e no JSON de preferências
+                const prefsAtuais = {
+                    sfx: audioSfxAtivo,
+                    bgm: bgmActive,
+                    volume: Math.round(bgmVolumeValue * 100),
+                    invisivel: document.getElementById('checkModoInvisivel')?.checked || false,
+                    favoritos: JSON.parse(localStorage.getItem(`fav_jogos_${usuarioLogado.id}`) || '[]')
+                };
+
+                await supabaseClient.from('usuarios').update({
+                    bio: bio,
+                    instagram: instagram,
+                    youtube: youtube,
+                    tiktok: tiktok,
+                    preferencias: prefsAtuais
+                }).eq('id_jogador', String(usuarioLogado.id));
+
                 await supabaseClient.from('wavecombat_verificados').upsert({
                     id_jogador: String(usuarioLogado.id),
                     nick: usuarioLogado.nick,
@@ -1586,13 +1471,6 @@
                     youtube: youtube,
                     tiktok: tiktok
                 }, { onConflict: 'id_jogador' });
-
-                await supabaseClient.from('usuarios').update({
-                    bio: bio,
-                    instagram: instagram,
-                    youtube: youtube,
-                    tiktok: tiktok
-                }).eq('id_jogador', String(usuarioLogado.id));
 
                 await supabaseClient.from('leaderboard').update({ cor_nick: corNick }).eq('id_jogador', String(usuarioLogado.id));
 
@@ -1603,7 +1481,7 @@
                 usuarioLogado.cor_nick = corNick;
                 localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
 
-                mostrarToast("✅ Perfil, cor do nick e redes sociais atualizados!");
+                mostrarToast("✅ Perfil, preferência JSON e redes sociais atualizados!");
                 atualizarPerfilExpandidoUI();
                 carregarLeaderboardSite();
             } catch(e) {
@@ -1612,32 +1490,32 @@
         }
 
         // ==========================================
-        // SORTEIO AUTOMÁTICO SEMANAL (50 DIAMANTES)
+        // SORTEIO SEMANAL 100% AUTOMATIZADO
         // ==========================================
         async function carregarUltimoGanhadorSorteio() {
             const box = document.getElementById('ultimoGanhadorSorteioBox');
-            if (!box) return;
+            const adminBox = document.getElementById('adminUltimoSorteioInfoBox');
             try {
                 const { data } = await supabaseClient.from('configuracoes').select('valor').eq('chave', 'ultimo_ganhador_sorteio').maybeSingle();
+                let txtGanhador = "Nenhum sorteio realizado ainda.";
                 if (data && data.valor) {
                     try {
                         const info = JSON.parse(data.valor);
-                        box.innerHTML = `${obterHtmlNickVerificado(info.nick, info.id)} <span style="color:var(--gold-warning); font-size:10px;">(ID: ${info.id})</span><br><span style="color:#22c55e; font-size:9px;">📅 Data: ${info.data} | Prêmio: 💎 50 Diamantes</span>`;
-                        return;
+                        txtGanhador = `${info.nick} (ID: ${info.id}) — Data: ${info.data} [💎 50 Diamantes]`;
                     } catch(err) {
-                        box.innerHTML = `${obterHtmlNickVerificado(data.valor, '')} <span style="color:#22c55e; font-size:10px;">(💎 50 Diamantes)</span>`;
-                        return;
+                        txtGanhador = data.valor;
                     }
                 }
+                if (box) box.innerHTML = txtGanhador;
+                if (adminBox) adminBox.innerHTML = `<strong>🏆 Último Ganhador Automático:</strong><br>${txtGanhador}<br><span style="color:#22c55e; font-size:10px;">Rotina de data/hora em execução contínua na nuvem.</span>`;
             } catch(e) {}
-            box.innerHTML = `${obterHtmlNickVerificado('capudinho7', MEU_ID_MESTRE)} <span style="color:var(--gold-warning); font-size:10px;">(ID: ${MEU_ID_MESTRE})</span><br><span style="color:#22c55e; font-size:9px;">Prêmio: 💎 50 Diamantes</span>`;
         }
 
         function verificarStatusSorteioUsuario() {
             const el = document.getElementById('statusSorteioSemanal');
             if (!el) return;
             if (!usuarioLogado) {
-                el.textContent = "Status: Faça login para pegar seu bilhete grátis";
+                el.textContent = "Status: Faça login para participar";
                 el.style.color = "var(--gold-warning)";
                 return;
             }
@@ -1654,14 +1532,14 @@
 
         async function participarSorteioSemanal() {
             if (!usuarioLogado) {
-                alert("⚠️ Faça login para confirmar sua participação gratuita no sorteio semanal de 50 diamantes!");
+                alert("⚠️ Faça login para confirmar sua participação gratuita no sorteio semanal!");
                 abrirModalAuth(true);
                 return;
             }
             const semanaAtual = getSemanaDoAno();
             const chave = `sorteio_semanal_${usuarioLogado.id}_${semanaAtual}`;
             if (localStorage.getItem(chave)) {
-                mostrarToast("🎟️ Seu bilhete já está confirmado para o sorteio desta semana!");
+                mostrarToast("🎟️ Seu bilhete já está confirmado para esta semana!");
                 return;
             }
             localStorage.setItem(chave, 'ativo');
@@ -1669,68 +1547,14 @@
                 await supabaseClient.from('correios').insert([{
                     id_jogador: String(usuarioLogado.id),
                     titulo: `🎟️ Bilhete Sorteio Semanal #${semanaAtual}`,
-                    mensagem: `Participação confirmada para ${usuarioLogado.nick} (ID: ${usuarioLogado.id}) no sorteio semanal de 50 Diamantes!`,
+                    mensagem: `Participação confirmada para ${usuarioLogado.nick} no sorteio automatizado de 50 Diamantes!`,
                     tipo: 'sorteio_ticket',
                     resgatado: true,
                     data: new Date().toLocaleDateString('pt-BR')
                 }]);
             } catch(e) {}
             verificarStatusSorteioUsuario();
-            mostrarToast("🎟️ Bilhete registrado! Boa sorte no sorteio de 50 diamantes!");
-        }
-
-        async function definirGanhadorSorteioAdm(aleatorio = false) {
-            let alvo = null;
-            const usuarios = await obterUsuariosCadastrados();
-            if (usuarios.length === 0) {
-                alert("Nenhum usuário cadastrado encontrado.");
-                return;
-            }
-
-            if (aleatorio) {
-                alvo = usuarios[Math.floor(Math.random() * usuarios.length)];
-            } else {
-                const termo = document.getElementById('admSorteioInputNickId').value.trim();
-                if (!termo) {
-                    alert("Digite o Nick ou ID do vencedor, ou clique em Sortear Aleatoriamente!");
-                    return;
-                }
-                alvo = await buscarUsuarioPorNickOuId(termo);
-            }
-
-            if (!alvo) {
-                alert("❌ Jogador não encontrado!");
-                return;
-            }
-
-            if (!confirm(`Confirmar ${alvo.nick} (ID: ${alvo.id}) como GANHADOR DO SORTEIO SEMANAL e creditar 💎 50 Diamantes?`)) return;
-
-            try {
-                const { data: cart } = await supabaseClient.from('carteira_diamantes').select('diamantes').eq('id_jogador', String(alvo.id)).maybeSingle();
-                const saldoAtual = cart ? (cart.diamantes || 0) : 0;
-                await supabaseClient.from('carteira_diamantes').upsert({ id_jogador: String(alvo.id), nick: alvo.nick, diamantes: saldoAtual + 50 }, { onConflict: 'id_jogador' });
-
-                const dataHoje = new Date().toLocaleDateString('pt-BR');
-                const payloadGanhador = JSON.stringify({ nick: alvo.nick, id: String(alvo.id), data: dataHoje });
-                await supabaseClient.from('configuracoes').upsert({ chave: 'ultimo_ganhador_sorteio', valor: payloadGanhador });
-
-                await supabaseClient.from('correios').insert([{
-                    id_jogador: String(alvo.id),
-                    titulo: '🏆 PARABÉNS! Ganhador do Sorteio Semanal!',
-                    mensagem: `Você venceu o Sorteio Semanal do WaveCombat Hub! Foram creditados 💎 50 Diamantes direto na sua carteira!`,
-                    tipo: 'diamantes',
-                    resgatado: true,
-                    data: dataHoje
-                }]);
-
-                mostrarToast(`🏆 ${alvo.nick} definido como ganhador e recebeu 50 💎!`);
-                registrarLogAdmin('SORTEIO_SEMANAL', `Ganhador: ${alvo.nick} (ID: ${alvo.id}) recebeu 50 💎`);
-                carregarUltimoGanhadorSorteio();
-                renderizarTabelaUsuariosAdmin();
-                if (usuarioLogado && String(usuarioLogado.id) === String(alvo.id)) carregarSaldoDiamantesSite();
-            } catch(e) {
-                alert("Erro ao registrar ganhador do sorteio.");
-            }
+            mostrarToast("🎟️ Bilhete registrado com sucesso!");
         }
 
         function getSemanaDoAno() {
@@ -1743,7 +1567,7 @@
             const ref = usuarioLogado ? usuarioLogado.id : 'WAVECOMBAT';
             const url = `${window.location.origin}${window.location.pathname}?ref=${ref}`;
             navigator.clipboard.writeText(url).then(() => {
-                mostrarToast("📋 Link de indicação copiado! Ganhe 20 💎 por amigo cadastrado!");
+                mostrarToast("📋 Link de indicação copiado! Ganhe 20 💎 por amigo!");
             });
         }
 
@@ -1798,8 +1622,6 @@
                 ctx.save();
                 ctx.rotate(angle + arcSize / 2);
                 ctx.fillStyle = "#ffffff";
-                ctx.shadowColor = "#000000";
-                ctx.shadowBlur = 6;
                 ctx.font = "bold 14px Orbitron";
                 ctx.textAlign = "right";
                 ctx.fillText(sector.label, radius - 14, 5);
@@ -1808,48 +1630,18 @@
             ctx.restore();
         }
 
-        function tocarSomResultadoRoleta(vitoria) {
-            try {
-                if (audioCtx.state === 'suspended') audioCtx.resume();
-                const now = audioCtx.currentTime;
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-
-                if (vitoria) {
-                    osc.type = 'triangle';
-                    osc.frequency.setValueAtTime(440, now);
-                    osc.frequency.setValueAtTime(554.37, now + 0.1);
-                    osc.frequency.setValueAtTime(659.25, now + 0.2);
-                    osc.frequency.setValueAtTime(880, now + 0.3);
-                    gain.gain.setValueAtTime(0.2, now);
-                    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
-                    osc.connect(gain); gain.connect(audioCtx.destination);
-                    osc.start(now); osc.stop(now + 0.6);
-                } else {
-                    osc.type = 'sawtooth';
-                    osc.frequency.setValueAtTime(220, now);
-                    osc.frequency.linearRampToValueAtTime(110, now + 0.4);
-                    gain.gain.setValueAtTime(0.2, now);
-                    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.5);
-                    osc.connect(gain); gain.connect(audioCtx.destination);
-                    osc.start(now); osc.stop(now + 0.5);
-                }
-            } catch(e) {}
-        }
-
         async function girarRodaDaFortuna() {
             if (!usuarioLogado) {
-                alert("⚠️ Faça login para girar a Roda da Fortuna e resgatar seus prêmios!");
+                alert("⚠️ Faça login para girar a Roda da Fortuna!");
                 abrirModalAuth(true);
                 return;
             }
-
             if (roletaGirando) return;
 
             let hoje = new Date().toDateString();
             let ultimoGiro = localStorage.getItem(`ultimo_giro_${usuarioLogado.id}`);
             if (ultimoGiro === hoje) {
-                exibirModalWheelResult("⏳", "ROLETA INDISPONÍVEL", "Você já girou a roleta hoje! Volte amanhã para mais prêmios e sorte.", false);
+                exibirModalWheelResult("⏳", "ROLETA INDISPONÍVEL", "Você já girou a roleta hoje! Volte amanhã.", false);
                 return;
             }
 
@@ -1858,7 +1650,6 @@
             const numSectors = wheelSectors.length;
             const randomSector = Math.floor(Math.random() * numSectors);
             const arcDeg = 360 / numSectors;
-            
             const targetDeg = 360 * 5 + (360 - (randomSector * arcDeg + arcDeg / 2));
             canvas.style.transform = `rotate(${targetDeg}deg)`;
 
@@ -1873,16 +1664,16 @@
                     localStorage.setItem(`diamantes_${usuarioLogado.id}`, novoSaldo);
                     await supabaseClient.from('carteira_diamantes').upsert({ id_jogador: String(usuarioLogado.id), nick: usuarioLogado.nick, diamantes: novoSaldo }, { onConflict: 'id_jogador' });
                     carregarSaldoDiamantesSite();
-                    exibirModalWheelResult("💎", "VOCÊ GANHOU!", `Parabéns! Foram creditados <strong>${premio.val} Diamantes</strong> na sua conta!`, true);
+                    exibirModalWheelResult("💎", "VOCÊ GANHOU!", `Parabéns! Foram creditados <strong>${premio.val} Diamantes</strong>!`, true);
                 } else if (premio.type === 'xp') {
                     await adicionarXpJogador(premio.val);
-                    exibirModalWheelResult("⭐", "BÔNUS DE XP!", `Parabéns! Você ganhou <strong>${premio.val} XP</strong> para subir de nível!`, true);
+                    exibirModalWheelResult("⭐", "BÔNUS DE XP!", `Parabéns! Você ganhou <strong>${premio.val} XP</strong>!`, true);
                 } else if (premio.type === 'cupom') {
                     localStorage.setItem(`cupom_ativo_${usuarioLogado.id}`, 'WAVE10');
                     atualizarPrecosLojaComCupom();
-                    exibirModalWheelResult("🎟️", "CUPOM DE DESCONTO!", `Sensacional! Você ganhou um <strong>Cupom de 10% de desconto (WAVE10)</strong> aplicado automaticamente na sua recarga na loja!`, true);
+                    exibirModalWheelResult("🎟️", "CUPOM DE DESCONTO!", `Cupom <strong>WAVE10</strong> aplicado na loja!`, true);
                 } else {
-                    exibirModalWheelResult("😢", "QUE PENA!", `Caiu em <strong>"Nada"</strong>. Não desanime, volte amanhã para tentar novamente!`, false);
+                    exibirModalWheelResult("😢", "QUE PENA!", `Caiu em <strong>"Nada"</strong>. Tente novamente amanhã!`, false);
                 }
             }, 4500);
         }
@@ -1913,13 +1704,7 @@
             document.getElementById('wheelResultTitle').textContent = titulo;
             document.getElementById('wheelResultTitle').style.color = vitoria ? 'var(--accent-color)' : 'var(--alert-red)';
             document.getElementById('wheelResultMessage').innerHTML = mensagem;
-            
-            const card = document.getElementById('modalWheelCard');
-            card.style.borderColor = vitoria ? 'var(--accent-color)' : 'var(--alert-red)';
-            card.style.boxShadow = vitoria ? '0 0 40px var(--accent-glow)' : '0 0 30px rgba(239, 68, 68, 0.4)';
-
             document.getElementById('modalWheelResult').style.display = 'flex';
-            tocarSomResultadoRoleta(vitoria);
         }
 
         function fecharModalWheelResult() {
@@ -1938,7 +1723,7 @@
             const descontoPct = cupomInfo ? cupomInfo.desconto : 0;
             const statusEl = document.getElementById('statusCupomInfo');
             if (statusEl) {
-                statusEl.textContent = cupomInfo ? `✅ Cupom ${cupomInfo.codigo} aplicado (${descontoPct}% OFF - Parceiro: ${cupomInfo.nick})` : '';
+                statusEl.textContent = cupomInfo ? `✅ Cupom ${cupomInfo.codigo} aplicado (${descontoPct}% OFF - Influenciador: ${cupomInfo.nick})` : '';
             }
 
             const precosElementos = document.querySelectorAll('.preco-pacote');
@@ -1953,50 +1738,72 @@
             });
         }
 
+        // LOJA: TRAVA DE COMPRA ÚNICA DE MOLDURAS (molduras_[id_usuario])
         async function comprarMolduraLoja(tipoMoldura, preco) {
             if (!usuarioLogado) {
                 alert("⚠️ Faça login para comprar itens!");
                 abrirModalAuth(true);
                 return;
             }
-            let saldoAtual = parseInt(localStorage.getItem(`diamantes_${usuarioLogado.id}`) || '0', 10);
-            if (saldoAtual < preco) {
-                alert(`❌ Você não tem diamantes suficientes! (Necessário: ${preco} 💎 | Seu saldo: ${saldoAtual} 💎)`);
+
+            let inv = JSON.parse(localStorage.getItem(`molduras_${usuarioLogado.id}`) || '[]');
+            if (inv.includes(tipoMoldura)) {
+                alert("✅ Você já adquiriu esta moldura! Cobrança bloqueada.");
                 return;
             }
 
-            if (!confirm(`Confirmar compra desta Moldura 3D por 💎 ${preco} Diamantes?`)) return;
+            let saldoAtual = parseInt(localStorage.getItem(`diamantes_${usuarioLogado.id}`) || '0', 10);
+            if (saldoAtual < preco) {
+                alert(`❌ Você não tem diamantes suficientes! (Necessário: ${preco} 💎)`);
+                return;
+            }
+
+            if (!confirm(`Confirmar compra desta Moldura por 💎 ${preco} Diamantes?`)) return;
 
             let novoSaldo = saldoAtual - preco;
             localStorage.setItem(`diamantes_${usuarioLogado.id}`, novoSaldo);
             await supabaseClient.from('carteira_diamantes').upsert({ id_jogador: String(usuarioLogado.id), nick: usuarioLogado.nick, diamantes: novoSaldo }, { onConflict: 'id_jogador' });
             
-            let inv = JSON.parse(localStorage.getItem(`inv_${usuarioLogado.id}`) || '[]');
-            if (!inv.includes(tipoMoldura)) inv.push(tipoMoldura);
-            localStorage.setItem(`inv_${usuarioLogado.id}`, JSON.stringify(inv));
+            inv.push(tipoMoldura);
+            localStorage.setItem(`molduras_${usuarioLogado.id}`, JSON.stringify(inv));
 
             carregarSaldoDiamantesSite();
             tocarSomLevelUp();
-            mostrarToast(`✅ Moldura 3D adquirida por ${preco} 💎! Veja no seu Inventário.`);
+            mostrarToast(`✅ Moldura adquirida com sucesso!`);
             atualizarInventarioUI();
+            checarBotoesLojaMolduras();
+        }
+
+        function checarBotoesLojaMolduras() {
+            if (!usuarioLogado) return;
+            let inv = JSON.parse(localStorage.getItem(`molduras_${usuarioLogado.id}`) || '[]');
+            ['frame-neon', 'frame-fogo', 'frame-prisma'].forEach(mId => {
+                const btn = document.getElementById(`btn_buy_${mId}`);
+                if (btn && inv.includes(mId)) {
+                    btn.textContent = "✅ Já Adquirida";
+                    btn.style.background = "#22c55e";
+                    btn.style.color = "#000";
+                    btn.disabled = true;
+                }
+            });
         }
 
         function atualizarInventarioUI() {
             const container = document.getElementById('inventarioUserData');
             if(!container || !usuarioLogado) return;
-            let inv = JSON.parse(localStorage.getItem(`inv_${usuarioLogado.id}`) || '[]');
+            let inv = JSON.parse(localStorage.getItem(`molduras_${usuarioLogado.id}`) || '[]');
             let molduraAtiva = localStorage.getItem(`moldura_ativa_${usuarioLogado.id}`) || '';
 
             if (inv.length === 0) {
-                container.innerHTML = `<p style="color:#94a3b8; text-align:center; font-size:11px;">Seu inventário 3D está vazio. Compre itens na Loja!</p>`;
+                container.innerHTML = `<p style="color:#94a3b8; text-align:center; font-size:11px;">Seu inventário está vazio. Compre itens na Loja!</p>`;
                 return;
             }
 
             container.innerHTML = inv.map(item => `
                 <div style="background:#000; border:1px solid var(--steel-border); padding:10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:11px;">
                     <div style="display:flex; align-items:center; gap:10px;">
-                        <div class="avatar-preview-box ${item}" style="width:40px; height:40px; margin:0; font-size:9px;">3D</div>
-                        <strong style="color:var(--accent-color); text-transform:uppercase;">${item.replace('frame-', 'Moldura 3D ')}</strong>
+                        <div class="avatar-preview-box ${item}" style="width:40px; height:40px; margin:0; font-size:9px;">Item</div>
+                        <strong style="color:var(--accent-color); text-transform:uppercase;">${item.replace('frame-', 'Moldura ')}</strong>
                     </div>
                     <div>
                         <button class="btn-gaming" onclick="equiparMoldura('${item}')" style="padding:4px 8px; font-size:10px; background:${molduraAtiva === item ? '#22c55e' : 'var(--accent-color)'}; color:#000;">
@@ -2005,6 +1812,7 @@
                     </div>
                 </div>
             `).join('');
+            checarBotoesLojaMolduras();
         }
 
         async function equiparMoldura(item) {
@@ -2012,13 +1820,13 @@
             try {
                 await supabaseClient.from('usuarios').update({ moldura: item }).eq('id_jogador', String(usuarioLogado.id));
             } catch(e) {}
-            mostrarToast(`✨ Moldura 3D ${item} equipada!`);
+            mostrarToast(`✨ Moldura ${item} equipada!`);
             atualizarInventarioUI();
         }
 
         function togglePainelAmigos() {
             if (!usuarioLogado) {
-                alert("⚠️ Faça login para acessar sua lista de amigos e modo espectador!");
+                alert("⚠️ Faça login para acessar sua lista de amigos!");
                 abrirModalAuth(true);
                 return;
             }
@@ -2030,46 +1838,31 @@
         async function enviarPedidoAmizade() {
             const termo = document.getElementById('inputAdicionarAmigo').value.trim();
             if (!termo) return;
-
             const alvo = await buscarUsuarioPorNickOuId(termo);
             if (!alvo) {
                 alert("❌ Jogador não encontrado!");
                 return;
             }
-
             if (alvo.id === String(usuarioLogado.id)) {
                 alert("⚠️ Você não pode adicionar a si mesmo!");
                 return;
             }
 
             try {
-                const { data: existe } = await supabaseClient
-                    .from('wavecombat_amigos')
-                    .select('*')
-                    .or(`and(id_jogador.eq.${usuarioLogado.id},id_amigo.eq.${alvo.id}),and(id_jogador.eq.${alvo.id},id_amigo.eq.${usuarioLogado.id})`)
-                    .maybeSingle();
-
-                if (existe) {
-                    alert("⚠️ Já existe um vínculo ou pedido pendente com este jogador!");
-                    return;
-                }
-
                 await supabaseClient.from('wavecombat_amigos').insert([
                     { id_jogador: String(usuarioLogado.id), id_amigo: alvo.id, status: 'pendente' }
                 ]);
-
-                mostrarToast(`📨 Pedido de amizade enviado para ${alvo.nick}!`);
+                mostrarToast(`📨 Pedido enviado para ${alvo.nick}!`);
                 document.getElementById('inputAdicionarAmigo').value = '';
                 carregarListaAmigos();
             } catch(e) {
-                alert("Erro ao enviar pedido de amizade.");
+                alert("Erro ao enviar pedido.");
             }
         }
 
         async function carregarListaAmigos() {
             if (!usuarioLogado) return;
             const idUser = String(usuarioLogado.id);
-
             try {
                 const { data: amizades } = await supabaseClient
                     .from('wavecombat_amigos')
@@ -2085,8 +1878,7 @@
                 offlineContainer.innerHTML = '';
                 pendenteContainer.innerHTML = '';
 
-                let qtdOnlineCount = 0;
-                let qtdOfflineCount = 0;
+                let qtdOnlineCount = 0, qtdOfflineCount = 0;
 
                 if (amizades && amizades.length > 0) {
                     for (let rel of amizades) {
@@ -2107,7 +1899,6 @@
                                 `;
                             }
                         } else if (rel.status === 'aceito') {
-                            let isOnline = true; 
                             let htmlCard = `
                                 <div style="background:#000; border:1px solid var(--steel-border); padding:8px; border-radius:6px; display:flex; flex-direction:column; gap:4px;">
                                     <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -2120,14 +1911,8 @@
                                     <span style="font-size:10px; color:#22c55e;">Jogando no Hub</span>
                                 </div>
                             `;
-
-                            if (isOnline) {
-                                onlineContainer.innerHTML += htmlCard;
-                                qtdOnlineCount++;
-                            } else {
-                                offlineContainer.innerHTML += htmlCard;
-                                qtdOfflineCount++;
-                            }
+                            onlineContainer.innerHTML += htmlCard;
+                            qtdOnlineCount++;
                         }
                     }
                 }
@@ -2139,21 +1924,19 @@
                 if (onlineContainer.innerHTML === '') onlineContainer.innerHTML = `<span style="color:#64748b; font-style:italic;">Nenhum amigo online.</span>`;
                 if (offlineContainer.innerHTML === '') offlineContainer.innerHTML = `<span style="color:#64748b; font-style:italic;">Nenhum amigo offline.</span>`;
                 if (pendenteContainer.innerHTML === '') pendenteContainer.innerHTML = `<span style="color:#64748b; font-style:italic;">Nenhum pedido pendente.</span>`;
-
             } catch(e) {}
         }
 
         function iniciarModoEspectador(nickAmigo) {
-            if (!usuarioLogado) {
-                abrirModalAuth(true);
-                return;
-            }
+            if (!usuarioLogado) { abrirModalAuth(true); return; }
             mostrarToast(`👁️ Conectando ao Modo Espectador de ${nickAmigo}...`);
             const jogos = listaJogosCache.filter(j => j.publicado);
             const destaque = obterJogoDestaque(jogos);
             if (destaque) {
+                // Auto-pausa inteligente na BGM ao entrar no modo espectador
+                toggleBGM(false);
                 let sep = destaque.arquivo.includes('?') ? '&' : '?';
-                document.getElementById('gameIframe').src = `${destaque.arquivo}${sep}spectator=1&target=${encodeURIComponent(nickAmigo)}&id=${usuarioLogado.id}&nick=${encodeURIComponent(usuarioLogado.nick)}`;
+                document.getElementById('gameIframe').src = `${destaque.arquivo}${sep}spectator=1&target=${encodeURIComponent(nickAmigo)}`;
                 document.getElementById('player').style.display = 'block';
                 document.getElementById('playerControlsBar').style.display = 'flex';
                 document.getElementById('player').scrollIntoView({ behavior: 'smooth' });
@@ -2163,7 +1946,6 @@
         async function responderAmizade(idRelacao, acao) {
             if (acao === 'recusar') {
                 await supabaseClient.from('wavecombat_amigos').delete().eq('id', idRelacao);
-                mostrarToast("❌ Pedido recusado.");
             } else {
                 await supabaseClient.from('wavecombat_amigos').update({ status: 'aceito' }).eq('id', idRelacao);
                 mostrarToast("✨ Amizade aceita!");
@@ -2174,31 +1956,22 @@
         async function removerAmizade(idRelacao) {
             if (confirm("Deseja remover este amigo?")) {
                 await supabaseClient.from('wavecombat_amigos').delete().eq('id', idRelacao);
-                mostrarToast("🗑️ Amigo removido.");
                 carregarListaAmigos();
             }
         }
 
         async function abrirPerfilPublico(idAlvo) {
             const userObj = await buscarUsuarioPorNickOuId(idAlvo);
-            if (!userObj) {
-                alert("Usuário não encontrado.");
-                return;
-            }
+            if (!userObj) { alert("Usuário não encontrado."); return; }
 
             let idFinal = userObj.id;
             let nickFinal = userObj.nick;
-
-            let nivelUser = 1;
-            let xpUser = 0;
-            let pontosUser = 0;
-            let bioUser = "Disponível no Hub";
-            let instaUser = "", ytUser = "", tiktokUser = "";
+            let nivelUser = 1, xpUser = 0, pontosUser = 0;
+            let bioUser = "Disponível no Hub", instaUser = "", ytUser = "", tiktokUser = "";
 
             try {
                 const { data: lb } = await supabaseClient.from('leaderboard').select('nivel, xp, pontos').eq('id_jogador', idFinal).maybeSingle();
                 if (lb) { nivelUser = lb.nivel || 1; xpUser = lb.xp || 0; pontosUser = lb.pontos || 0; }
-                
                 const { data: verifData } = await supabaseClient.from('wavecombat_verificados').select('*').eq('id_jogador', idFinal).maybeSingle();
                 if (verifData) {
                     bioUser = verifData.bio || bioUser;
@@ -2242,9 +2015,7 @@
             document.getElementById('modalPerfilPublico').style.display = 'flex';
         }
 
-        function fecharModalPerfilPublico() {
-            document.getElementById('modalPerfilPublico').style.display = 'none';
-        }
+        function fecharModalPerfilPublico() { document.getElementById('modalPerfilPublico').style.display = 'none'; }
 
         async function enviarPedidoAmizadeDireto(idAlvo) {
             document.getElementById('inputAdicionarAmigo').value = idAlvo;
@@ -2267,7 +2038,6 @@
                 
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
-                
                 osc.start();
                 osc.stop(audioCtx.currentTime + 0.16);
                 
@@ -2296,14 +2066,10 @@
                 try {
                     localVoiceStream = await navigator.mediaDevices.getUserMedia({ audio: true });
                     micAtivo = true;
-                    if (btn) {
-                        btn.textContent = "🎤 Mic Rápido: ON";
-                        btn.style.background = "#22c55e";
-                        btn.style.color = "#000";
-                    }
-                    mostrarToast("🎤 Microfone conectado ao canal de voz rápido!");
+                    if (btn) { btn.textContent = "🎤 Mic Rápido: ON"; btn.style.background = "#22c55e"; btn.style.color = "#000"; }
+                    mostrarToast("🎤 Microfone conectado!");
                 } catch(e) {
-                    mostrarToast("⚠️ Permita o uso do microfone no navegador para ativar a voz.");
+                    mostrarToast("⚠️ Permita o uso do microfone no navegador.");
                 }
             } else {
                 micAtivo = !micAtivo;
@@ -2313,7 +2079,6 @@
                     btn.style.background = micAtivo ? "#22c55e" : "#ef4444";
                     btn.style.color = micAtivo ? "#000" : "#fff";
                 }
-                mostrarToast(micAtivo ? "🎤 Microfone ativado" : "🔇 Microfone mutado");
             }
         }
 
@@ -2324,24 +2089,11 @@
                 btn.textContent = audioVoiceAtivo ? "🔊 Som Voz: ON" : "🔇 Som Voz: OFF";
                 btn.style.background = audioVoiceAtivo ? "#3b82f6" : "#ef4444";
             }
-            mostrarToast(audioVoiceAtivo ? "🔊 Áudio da sala ativado" : "🔇 Áudio da sala silenciado");
-        }
-
-        function alterarResolucaoInterna(valor) {
-            const iframe = document.getElementById('gameIframe');
-            if(iframe) {
-                const scale = valor / 100;
-                iframe.style.transform = `scale(${scale})`;
-                iframe.style.transformOrigin = 'top left';
-                iframe.style.width = `${100 / scale}%`;
-                iframe.style.height = `${100 / scale}%`;
-                mostrarToast(`⚡ Resolução interna ajustada para ${valor}%`);
-            }
         }
 
         function toggleModoInvisivel(ativo) {
             localStorage.setItem('modo_invisivel', ativo ? 'true' : 'false');
-            mostrarToast(ativo ? "🕶️ Modo invisível ativado (Você aparece offline)" : "🟢 Modo visível ativado");
+            mostrarToast(ativo ? "🕶️ Modo invisível ativado" : "🟢 Modo visível ativado");
         }
 
         async function salvarConfiguracoesNuvemAutomatico() {
@@ -2371,13 +2123,11 @@
             if (deferredPrompt) {
                 deferredPrompt.prompt();
                 deferredPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') {
-                        mostrarToast("📲 Aplicativo instalado com sucesso!");
-                    }
+                    if (choiceResult.outcome === 'accepted') { mostrarToast("📲 Aplicativo instalado!"); }
                     deferredPrompt = null;
                 });
             } else {
-                alert("Para instalar: Toque nos 3 pontos do navegador e selecione 'Adicionar ao ecrã principal'.");
+                alert("Para instalar: Toque nos 3 pontos do navegador e selecione 'Adicionar à tela inicial'.");
             }
         }
 
@@ -2386,9 +2136,7 @@
                 const btnPush = document.getElementById('btnPushNotif');
                 if (Notification.permission === "default") {
                     if (btnPush) btnPush.style.display = 'inline-block';
-                } else if (btnPush) {
-                    btnPush.style.display = 'none';
-                }
+                } else if (btnPush) { btnPush.style.display = 'none'; }
             }
         }
 
@@ -2396,11 +2144,8 @@
             if ("Notification" in window) {
                 Notification.requestPermission().then(permission => {
                     if (permission === "granted") {
-                        mostrarToast("🔔 Notificações Push ativadas com sucesso!");
+                        mostrarToast("🔔 Notificações Push ativadas!");
                         document.getElementById('btnPushNotif').style.display = 'none';
-                        new Notification("WaveCombat Hub", { body: "Notificações ativadas! Você será avisado sobre giros da roleta e eventos." });
-                    } else {
-                        mostrarToast("❌ Permissão de notificação negada.");
                     }
                 });
             }
@@ -2441,10 +2186,7 @@
             } catch(e) {}
         }
 
-        function toggleAudioSFX(ativo) {
-            audioSfxAtivo = ativo;
-            mostrarToast(ativo ? "🔊 Efeitos sonoros ativados" : "🔇 Efeitos sonoros desativados");
-        }
+        function toggleAudioSFX(ativo) { audioSfxAtivo = ativo; }
 
         function mostrarToast(texto) {
             const toast = document.getElementById('toastNotification');
@@ -2512,9 +2254,10 @@
             mostrarToast("📋 Código Pix copiado!");
         }
 
+        // REGRAS DE DESCONTO E COMISSÃO DO PAINEL DE INFLUENCIADORES
         async function gerarPixMercadoPago(valorBase, quantDiamantes) {
             if (!usuarioLogado || !usuarioLogado.id) {
-                alert("⚠️ Você precisa criar uma conta ou fazer login para comprar diamantes!");
+                alert("⚠️ Faça login para comprar diamantes!");
                 abrirModalAuth(true);
                 return;
             }
@@ -2523,13 +2266,24 @@
             const nick = usuarioLogado.nick;
             const cupomDigitado = (document.getElementById('inputCupomRecarga')?.value || '').trim().toUpperCase();
             const cupomInfo = cacheCuponsNuvem[cupomDigitado];
-            const descontoPct = cupomInfo ? cupomInfo.desconto : 0;
+            const descontoPct = cupomInfo ? cupomInfo.desconto : 10; // 10% de desconto automático para o cliente
             
             let valorCobrado = valorBase * (1 - descontoPct / 100);
+            let comissaoInfluenciador = valorCobrado * 0.30; // 30% em dinheiro para o saldo de comissão do influenciador
+
+            if (cupomInfo && cupomInfo.influenciador_id) {
+                try {
+                    const { data: infData } = await supabaseClient.from('influenciadores').select('saldo_comissao').eq('id_jogador', cupomInfo.influenciador_id).maybeSingle();
+                    let saldoAtualComissao = infData ? (infData.saldo_comissao || 0) : 0;
+                    await supabaseClient.from('influenciadores').update({
+                        saldo_comissao: saldoAtualComissao + comissaoInfluenciador
+                    }).eq('id_jogador', cupomInfo.influenciador_id);
+                } catch(e) {}
+            }
 
             const saldoEl = document.getElementById('userDiamondBalance');
             let saldoAnteriorPix = parseInt(saldoEl ? saldoEl.textContent.replace(/\./g, '').replace('k','000') : '0', 10);
-            mostrarToast(`⏳ Gerando cobrança Pix de R$ ${valorCobrado.toFixed(2).replace('.', ',')}...`);
+            mostrarToast(`⏳ Gerando Pix de R$ ${valorCobrado.toFixed(2).replace('.', ',')} (${descontoPct}% desc.)...`);
 
             try {
                 const res = await fetch(`${SUPABASE_URL}/functions/v1/gerar-pix`, {
@@ -2542,7 +2296,6 @@
                     document.getElementById('pixQrContainer').innerHTML = `<img src="data:image/png;base64,${data.qr_code_base64}" style="width:180px; height:180px; border-radius:8px; border:2px solid var(--accent-color);">`;
                     document.getElementById('pixCopiaColaInput').value = data.qr_code;
                     document.getElementById('pixModal').style.display = 'flex';
-                    mostrarToast("✅ Pix gerado com sucesso! Aguardando pagamento...");
 
                     if (pixIntervalCheck) clearInterval(pixIntervalCheck);
                     pixIntervalCheck = setInterval(async () => {
@@ -2556,7 +2309,7 @@
                         }
                     }, 3000);
                 } else {
-                    alert("Erro ao gerar o Pix. Verifique os dados.");
+                    alert("Erro ao gerar o Pix.");
                 }
             } catch (e) {
                 alert("Erro na conexão com o gateway de pagamento.");
@@ -2564,62 +2317,30 @@
         }
 
         async function esqueciMinhaSenha() {
-            let emailInput = prompt("Digite o e-mail cadastrado na sua conta para recuperar a senha:");
+            let emailInput = prompt("Digite o e-mail cadastrado na sua conta:");
             if (!emailInput) return;
             try {
                 const { data } = await supabaseClient.from('usuarios').select('*').eq('email', emailInput.trim()).maybeSingle();
-                if(data) {
-                    alert(`✅ Sua senha é: ${data.pass}
-(Dica: Anote em um lugar seguro!)`);
-                } else {
-                    alert("❌ Nenhum usuário encontrado com este e-mail.");
-                }
-            } catch(e) {
-                alert("Erro ao recuperar senha.");
-            }
+                if(data) { alert(`✅ Sua senha é: ${data.pass}`); }
+                else { alert("❌ Nenhum usuário encontrado com este e-mail."); }
+            } catch(e) { alert("Erro ao recuperar senha."); }
         }
 
         async function buscarUsuarioPorNickOuId(termo) {
             termo = termo.trim();
             if (!termo) return null;
-
             try {
-                let { data } = await supabaseClient
-                    .from('usuarios')
-                    .select('*')
-                    .or(`id_jogador.eq.${termo},nick.ilike.${termo}`)
-                    .maybeSingle();
-
+                let { data } = await supabaseClient.from('usuarios').select('*').or(`id_jogador.eq.${termo},nick.ilike.${termo}`).maybeSingle();
                 if (data) return { id: String(data.id_jogador || data.id), nick: data.nick, email: data.email || '' };
             } catch(e){}
-
             try {
-                let { data: carData } = await supabaseClient
-                    .from('carteira_diamantes')
-                    .select('*')
-                    .or(`id_jogador.eq.${termo},nick.ilike.${termo}`)
-                    .maybeSingle();
-
+                let { data: carData } = await supabaseClient.from('carteira_diamantes').select('*').or(`id_jogador.eq.${termo},nick.ilike.${termo}`).maybeSingle();
                 if (carData) return { id: String(carData.id_jogador), nick: carData.nick || carData.id_jogador, email: '' };
             } catch(e){}
-
-            try {
-                let { data: lbData } = await supabaseClient
-                    .from('leaderboard')
-                    .select('*')
-                    .or(`id_jogador.eq.${termo},nick.ilike.${termo}`)
-                    .maybeSingle();
-
-                if (lbData) return { id: String(lbData.id_jogador), nick: lbData.nick || lbData.id_jogador, email: '' };
-            } catch(e){}
-
             if (/^\d+$/.test(termo)) return { id: termo, nick: termo, email: '' };
             return null;
         }
 
-        // ==========================================
-        // UNIFICAÇÃO DE 100% DOS USUÁRIOS (SEM LIMITE DE 4)
-        // ==========================================
         async function obterUsuariosCadastrados() {
             const mapaUsuarios = new Map();
             try {
@@ -2627,59 +2348,18 @@
                 if (uData) {
                     uData.forEach(u => {
                         const id = String(u.id_jogador || u.id || '').trim();
-                        if (id) {
-                            mapaUsuarios.set(id, {
-                                id: id,
-                                nick: u.nick || `Jogador_${id}`,
-                                email: u.email || '',
-                                pass: u.pass || ''
-                            });
-                        }
+                        if (id) mapaUsuarios.set(id, { id: id, nick: u.nick || `Jogador_${id}`, email: u.email || '', pass: u.pass || '' });
                     });
                 }
             } catch(e) {}
-
-            try {
-                const { data: cData } = await supabaseClient.from('carteira_diamantes').select('*').range(0, 9999);
-                if (cData) {
-                    cData.forEach(c => {
-                        const id = String(c.id_jogador || '').trim();
-                        if (id && !mapaUsuarios.has(id)) {
-                            mapaUsuarios.set(id, {
-                                id: id,
-                                nick: c.nick || `Jogador_${id}`,
-                                email: '',
-                                pass: ''
-                            });
-                        }
-                    });
-                }
-            } catch(e) {}
-
-            try {
-                const { data: lData } = await supabaseClient.from('leaderboard').select('*').range(0, 9999);
-                if (lData) {
-                    lData.forEach(l => {
-                        const id = String(l.id_jogador || '').trim();
-                        if (id && !mapaUsuarios.has(id)) {
-                            mapaUsuarios.set(id, {
-                                id: id,
-                                nick: l.nick || `Jogador_${id}`,
-                                email: '',
-                                pass: ''
-                            });
-                        }
-                    });
-                }
-            } catch(e) {}
-
             return Array.from(mapaUsuarios.values());
         }
 
+        // LISTA DE CONTAS (Isolada: sem alterar o status de "verificado" diretamente na listagem geral)
         async function renderizarTabelaUsuariosAdmin() {
             let container = document.getElementById('adminListaUsuariosContainer');
             if (!container) return;
-            container.innerHTML = `<p style="color:#94a3b8; font-size:11px;">Carregando 100% dos usuários da nuvem...</p>`;
+            container.innerHTML = `<p style="color:#94a3b8; font-size:11px;">Carregando contas da nuvem...</p>`;
 
             await carregarVerificadosNuvem();
             await carregarBanidosNuvem();
@@ -2728,9 +2408,6 @@
                         <div style="display:flex; gap:5px; flex-wrap:wrap; align-items:center;">
                             <button class="btn-mini" onclick="abrirModalDiamantesAdm('${u.id}', '${u.nick.replace(/'/g, "")}', 'adicionar', ${diamantesUser})" style="background:#22c55e; color:#000;">+ 💎</button>
                             <button class="btn-mini" onclick="abrirModalDiamantesAdm('${u.id}', '${u.nick.replace(/'/g, "")}', 'remover', ${diamantesUser})" style="background:#f59e0b; color:#000;">- 💎</button>
-                            <button class="btn-mini" onclick="alternarVerificadoJogadorAdm('${u.id}', '${u.nick.replace(/'/g, "")}', ${isVerif})" style="background:${isVerif ? '#64748b' : '#FFD700'}; color:${isVerif ? '#fff' : '#000'};">
-                                ${isVerif ? '❌ Tirar V' : '⭐ Dar V'}
-                            </button>
                             <button class="btn-mini" onclick="alternarBanimentoJogadorAdm('${u.id}', '${u.nick.replace(/'/g, "")}', ${isBan})" style="background:${isBan ? '#3b82f6' : '#ef4444'}; color:#fff;">
                                 ${isBan ? '🔓 Desbanir' : '🔨 Banir'}
                             </button>
@@ -2741,9 +2418,6 @@
             }).join('');
         }
 
-        // ==========================================
-        // MODAIS E AÇÕES DE GESTÃO DE USUÁRIOS (ADM)
-        // ==========================================
         let transacaoDiamantesPendente = null;
 
         function abrirModalDiamantesAdm(id, nick, tipo, saldoAtual) {
@@ -2769,32 +2443,19 @@
         async function confirmarTransacaoDiamantesAdm() {
             if (!transacaoDiamantesPendente) return;
             const qtd = parseInt(document.getElementById('inputAdmQtdDiamantesModal').value) || 0;
-            if (qtd <= 0) {
-                alert("Informe uma quantidade válida maior que 0.");
-                return;
-            }
             const { id, nick, tipo, saldoAtual } = transacaoDiamantesPendente;
             const novoSaldo = tipo === 'adicionar' ? (saldoAtual + qtd) : Math.max(0, saldoAtual - qtd);
 
             try {
-                await supabaseClient.from('carteira_diamantes').upsert({
-                    id_jogador: String(id),
-                    nick: nick,
-                    diamantes: novoSaldo
-                }, { onConflict: 'id_jogador' });
-
+                await supabaseClient.from('carteira_diamantes').upsert({ id_jogador: String(id), nick: nick, diamantes: novoSaldo }, { onConflict: 'id_jogador' });
                 if (usuarioLogado && String(usuarioLogado.id) === String(id)) {
                     localStorage.setItem(`diamantes_${id}`, novoSaldo);
                     carregarSaldoDiamantesSite();
                 }
-
                 mostrarToast(`💎 Saldo de ${nick} atualizado para ${formatarNumero(novoSaldo)} 💎!`);
-                registrarLogAdmin(tipo === 'adicionar' ? 'ADD_DIAMANTES' : 'REM_DIAMANTES', `${tipo === 'adicionar' ? '+' : '-'}${qtd} 💎 para ${nick} (ID: ${id}) -> Novo saldo: ${novoSaldo}`);
                 fecharModalConfirmarDiamantes();
                 renderizarTabelaUsuariosAdmin();
-            } catch(e) {
-                alert("Erro ao atualizar diamantes na nuvem.");
-            }
+            } catch(e) { alert("Erro ao atualizar diamantes."); }
         }
 
         async function renderizarListaVerificadosAdm() {
@@ -2804,7 +2465,7 @@
             try {
                 const { data } = await supabaseClient.from('wavecombat_verificados').select('*');
                 if (!data || data.length === 0) {
-                    container.innerHTML = `<span style="color:#64748b; font-style:italic;">Nenhum jogador verificado cadastrado.</span>`;
+                    container.innerHTML = `<span style="color:#64748b; font-style:italic;">Nenhum verificado cadastrado.</span>`;
                     return;
                 }
                 container.innerHTML = data.map(v => `
@@ -2818,15 +2479,9 @@
 
         async function concederVerificadoRapidoAdm() {
             const termo = document.getElementById('admVerifInputNickId').value.trim();
-            if (!termo) {
-                alert("Digite o Nick ou ID do jogador para verificar!");
-                return;
-            }
+            if (!termo) { alert("Digite o Nick ou ID do jogador!"); return; }
             const alvo = await buscarUsuarioPorNickOuId(termo);
-            if (!alvo) {
-                alert("❌ Jogador não encontrado!");
-                return;
-            }
+            if (!alvo) { alert("❌ Jogador não encontrado!"); return; }
             await alternarVerificadoJogadorAdm(alvo.id, alvo.nick, false);
             document.getElementById('admVerifInputNickId').value = '';
         }
@@ -2834,89 +2489,55 @@
         async function alternarVerificadoJogadorAdm(id, nick, jaEhVerificado) {
             try {
                 if (jaEhVerificado) {
-                    if (!confirm(`Remover o selo V Dourado de ${nick} (ID: ${id})?`)) return;
+                    if (!confirm(`Remover selo V de ${nick}?`)) return;
                     await supabaseClient.from('wavecombat_verificados').delete().eq('id_jogador', String(id));
-                    mostrarToast(`❌ Selo Verificado removido de ${nick}.`);
-                    registrarLogAdmin('REMOVER_VERIFICADO', `Removeu selo V de ${nick} (ID: ${id})`);
+                    mostrarToast(`❌ Selo removido.`);
                 } else {
-                    await supabaseClient.from('wavecombat_verificados').upsert({
-                        id_jogador: String(id),
-                        nick: nick
-                    }, { onConflict: 'id_jogador' });
-
+                    await supabaseClient.from('wavecombat_verificados').upsert({ id_jogador: String(id), nick: nick }, { onConflict: 'id_jogador' });
                     await supabaseClient.from('correios').insert([{
                         id_jogador: String(id),
                         titulo: '⭐ Você recebeu o Selo Oficial de Verificado!',
-                        mensagem: 'Parabéns! A administração concedeu o Selo V Dourado oficial para a sua conta! Resgate seu prêmio agora!',
+                        mensagem: 'Parabéns! A administração concedeu o Selo V Dourado oficial para a sua conta!',
                         tipo: 'verificado',
                         resgatado: false,
                         data: new Date().toLocaleDateString('pt-BR')
                     }]);
-
                     mostrarToast(`⭐ Selo V Dourado concedido para ${nick}!`);
-                    registrarLogAdmin('DAR_VERIFICADO', `Concedeu selo V para ${nick} (ID: ${id})`);
                 }
                 await carregarVerificadosNuvem();
                 renderizarListaVerificadosAdm();
-                renderizarTabelaUsuariosAdmin();
                 carregarLeaderboardSite();
-            } catch(e) {
-                alert("Erro ao atualizar status de verificado.");
-            }
+            } catch(e) { alert("Erro ao atualizar verificado."); }
         }
 
         async function alternarBanimentoJogadorAdm(id, nick, jaEstaBanido) {
-            if (String(id) === MEU_ID_MESTRE) {
-                alert("❌ Não é possível banir o Administrador Mestre!");
-                return;
-            }
+            if (String(id) === MEU_ID_MESTRE) { alert("❌ Não é possível banir o Administrador Mestre!"); return; }
             try {
                 if (jaEstaBanido) {
-                    if (!confirm(`Desbanir a conta de ${nick} (ID: ${id})?`)) return;
+                    if (!confirm(`Desbanir ${nick}?`)) return;
                     await supabaseClient.from('wavecombat_banidos').delete().eq('id_jogador', String(id));
-                    mostrarToast(`🔓 Conta de ${nick} desbanida!`);
-                    registrarLogAdmin('DESBANIR_CONTA', `Desbaniu ${nick} (ID: ${id})`);
+                    mostrarToast(`🔓 Conta desbanida!`);
                 } else {
-                    const diasStr = prompt(`Banir ${nick} (ID: ${id}) por quantos dias? (Ex: 7 ou 3650 para permanente)`, "7");
-                    if (!diasStr) return;
-                    const dias = parseInt(diasStr) || 7;
-                    const motivo = prompt("Motivo do banimento:", "Violação das regras da comunidade") || "Violação das regras";
+                    const dias = parseInt(prompt("Banir por quantos dias?", "7")) || 7;
+                    const motivo = prompt("Motivo:", "Violação de regras") || "Violação";
                     const expira = new Date(Date.now() + dias * 24 * 60 * 60 * 1000).toISOString();
-
-                    await supabaseClient.from('wavecombat_banidos').upsert({
-                        id_jogador: String(id),
-                        nick: nick,
-                        motivo: motivo,
-                        expira_em: expira
-                    }, { onConflict: 'id_jogador' });
-
-                    mostrarToast(`🔨 ${nick} banido por ${dias} dia(s)!`);
-                    registrarLogAdmin('BANIR_CONTA', `Baniu ${nick} (ID: ${id}) por ${dias} dias. Motivo: ${motivo}`);
+                    await supabaseClient.from('wavecombat_banidos').upsert({ id_jogador: String(id), nick: nick, motivo: motivo, expira_em: expira }, { onConflict: 'id_jogador' });
+                    mostrarToast(`🔨 ${nick} banido!`);
                 }
                 renderizarTabelaUsuariosAdmin();
-            } catch(e) {
-                alert("Erro ao processar banimento.");
-            }
+            } catch(e) { alert("Erro ao banir."); }
         }
 
         let contaExclusaoPendente = null;
-
         function abrirModalExclusaoContaAdm(id, nick) {
-            if (String(id) === MEU_ID_MESTRE) {
-                alert("❌ A conta do Administrador Mestre não pode ser excluída!");
-                return;
-            }
+            if (String(id) === MEU_ID_MESTRE) { alert("❌ O Administrador Mestre não pode ser excluído!"); return; }
             contaExclusaoPendente = { id, nick };
             document.getElementById('confDelNick').textContent = nick;
             document.getElementById('confDelId').textContent = id;
             document.getElementById('btnConfirmarAcaoExclusao').onclick = confirmarExclusaoContaAdm;
             document.getElementById('modalConfirmarExclusao').style.display = 'flex';
         }
-
-        function fecharModalConfirmarExclusao() {
-            document.getElementById('modalConfirmarExclusao').style.display = 'none';
-            contaExclusaoPendente = null;
-        }
+        function fecharModalConfirmarExclusao() { document.getElementById('modalConfirmarExclusao').style.display = 'none'; contaExclusaoPendente = null; }
 
         async function confirmarExclusaoContaAdm() {
             if (!contaExclusaoPendente) return;
@@ -2925,66 +2546,79 @@
                 await supabaseClient.from('usuarios').delete().eq('id_jogador', String(id));
                 await supabaseClient.from('carteira_diamantes').delete().eq('id_jogador', String(id));
                 await supabaseClient.from('leaderboard').delete().eq('id_jogador', String(id));
-                await supabaseClient.from('wavecombat_verificados').delete().eq('id_jogador', String(id));
-                await supabaseClient.from('wavecombat_banidos').delete().eq('id_jogador', String(id));
-
-                mostrarToast(`🗑️ Conta de ${nick} (ID: ${id}) excluída permanentemente!`);
-                registrarLogAdmin('EXCLUIR_CONTA', `Excluiu permanentemente a conta ${nick} (ID: ${id})`);
+                mostrarToast(`🗑️ Conta de ${nick} excluída!`);
                 fecharModalConfirmarExclusao();
                 renderizarTabelaUsuariosAdmin();
-                renderizarListaVerificadosAdm();
-            } catch(e) {
-                alert("Erro ao excluir conta.");
-            }
+            } catch(e) { alert("Erro ao excluir."); }
         }
 
         // ==========================================
-        // CUPONS DE INFLUENCIADORES (ADM & LOJA)
+        // PAINEL DE INFLUENCIADORES E COMISSÕES
         // ==========================================
-        async function renderizarCuponsInfluenciadoresAdm() {
-            const container = document.getElementById('adminListaCuponsContainer');
+        async function renderizarInfluenciadoresAdm() {
+            const container = document.getElementById('adminListaInfluenciadoresContainer');
             if (!container) return;
-            await carregarCuponsNuvem();
-            const lista = Object.values(cacheCuponsNuvem);
-            container.innerHTML = lista.map(c => `
-                <div style="display:flex; justify-content:space-between; align-items:center; background:#080c14; border:1px solid #a855f7; padding:5px 8px; border-radius:5px;">
-                    <span>🎟️ <strong style="color:#a855f7;">${c.codigo}</strong> — <strong>${c.desconto}% OFF</strong> <small style="color:#94a3b8;">(${c.nick})</small></span>
-                    ${c.codigo !== 'WAVE10' ? `<button class="btn-mini btn-danger" onclick="removerCupomInfluenciadorAdm('${c.codigo}')">X</button>` : '<span style="font-size:9px; color:#22c55e;">Padrão</span>'}
-                </div>
-            `).join('');
+            try {
+                const { data } = await supabaseClient.from('influenciadores').select('*');
+                if (!data || data.length === 0) {
+                    container.innerHTML = `<span style="color:#64748b; font-style:italic;">Nenhum influenciador cadastrado.</span>`;
+                    return;
+                }
+                container.innerHTML = data.map(inf => `
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:#080c14; border:1px solid #a855f7; padding:5px 8px; border-radius:5px;">
+                        <div>
+                            <strong>${inf.nick || 'Influenciador'}</strong> (Cupom: <strong style="color:#a855f7;">${inf.codigo_cupom}</strong>)
+                            <div style="font-size:10px; color:#22c55e;">Comissão: R$ ${(inf.saldo_comissao || 0).toFixed(2).replace('.', ',')}</div>
+                        </div>
+                        <div style="display:flex; gap:4px;">
+                            <button class="btn-mini" onclick="resetarSaldoInfluenciador('${inf.codigo_cupom}')" style="background:var(--gold-warning); color:#000;" title="Zerar saldo após pagamento mensal">🔄 Reset Saldo</button>
+                            <button class="btn-mini btn-danger" onclick="removerInfluenciador('${inf.codigo_cupom}')">X</button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch(e) {}
         }
 
-        async function criarCupomInfluenciadorAdm() {
-            const codigo = document.getElementById('admCupomCodigo').value.trim().toUpperCase();
-            const desconto = parseInt(document.getElementById('admCupomDesconto').value) || 10;
-            if (!codigo) {
-                alert("Digite o código do cupom!");
-                return;
-            }
+        async function cadastrarInfluenciadorAdm() {
+            const termo = document.getElementById('admInflIdOuNick').value.trim();
+            const cupom = document.getElementById('admInflCupom').value.trim().toUpperCase();
+            if (!termo || !cupom) { alert("Preencha o ID/Nick e o Cupom!"); return; }
+
+            const alvo = await buscarUsuarioPorNickOuId(termo);
+            if (!alvo) { alert("❌ Jogador não encontrado!"); return; }
+
             try {
                 await supabaseClient.from('influenciadores').upsert({
-                    codigo_cupom: codigo,
-                    desconto_pct: desconto,
-                    nick: usuarioLogado ? usuarioLogado.nick : 'Influenciador'
+                    id_jogador: alvo.id,
+                    nick: alvo.nick,
+                    codigo_cupom: cupom,
+                    desconto_pct: 10,
+                    saldo_comissao: 0
                 }, { onConflict: 'codigo_cupom' });
-                document.getElementById('admCupomCodigo').value = '';
-                document.getElementById('admCupomDesconto').value = '';
-                mostrarToast(`🎟️ Cupom ${codigo} (${desconto}% OFF) criado na nuvem!`);
-                registrarLogAdmin('CRIAR_CUPOM', `Criou cupom ${codigo} com ${desconto}% de desconto`);
-                renderizarCuponsInfluenciadoresAdm();
-            } catch(e) {
-                cacheCuponsNuvem[codigo] = { codigo, desconto, nick: 'Parceiro' };
-                mostrarToast(`🎟️ Cupom ${codigo} ativado!`);
-                renderizarCuponsInfluenciadoresAdm();
-            }
+
+                document.getElementById('admInflIdOuNick').value = '';
+                document.getElementById('admInflCupom').value = '';
+                mostrarToast(`🤝 Influenciador ${alvo.nick} (${cupom}) cadastrado com sucesso!`);
+                renderizarInfluenciadoresAdm();
+                carregarCuponsNuvem();
+            } catch(e) { alert("Erro ao cadastrar influenciador."); }
         }
 
-        async function removerCupomInfluenciadorAdm(codigo) {
+        async function resetarSaldoInfluenciador(codigoCupom) {
+            if (!confirm(`Zerar (resetar) o saldo de comissão do cupom ${codigoCupom} após fechamento mensal?`)) return;
             try {
-                await supabaseClient.from('influenciadores').delete().eq('codigo_cupom', codigo);
-                delete cacheCuponsNuvem[codigo];
-                mostrarToast(`🗑️ Cupom ${codigo} removido.`);
-                renderizarCuponsInfluenciadoresAdm();
+                await supabaseClient.from('influenciadores').update({ saldo_comissao: 0 }).eq('codigo_cupom', codigoCupom);
+                mostrarToast(`🔄 Saldo do cupom ${codigoCupom} resetado com sucesso!`);
+                renderizarInfluenciadoresAdm();
+            } catch(e) { alert("Erro ao resetar saldo."); }
+        }
+
+        async function removerInfluenciador(codigoCupom) {
+            try {
+                await supabaseClient.from('influenciadores').delete().eq('codigo_cupom', codigoCupom);
+                mostrarToast(`🗑️ Influenciador removido.`);
+                renderizarInfluenciadoresAdm();
+                carregarCuponsNuvem();
             } catch(e) {}
         }
 
@@ -3008,21 +2642,19 @@
                             <span style="color:#64748b; font-size:9px;">${m.data || ''}</span>
                         </div>
                         <p style="color:#94a3b8; margin-bottom:8px;">${m.mensagem}</p>
-                        ${!m.resgatado ? `<button class="btn-gaming" onclick="resgatarPremioCorreio(${m.id}, '${m.codigo_cupom || ''}', '${m.tipo || ''}')" style="background:#FFD700; color:#000; width:100%; padding:6px; font-size:10px;">🎁 Resgatar Prêmios</button>` : `<span style="color:#22c55e; font-weight:bold;">✅ Resgatado / Lido</span>`}
+                        ${!m.resgatado ? `<button class="btn-gaming" onclick="resgatarPremioCorreio(${m.id}, '${m.tipo || ''}')" style="background:#FFD700; color:#000; width:100%; padding:6px; font-size:10px;">🎁 Resgatar Prêmios</button>` : `<span style="color:#22c55e; font-weight:bold;">✅ Resgatado</span>`}
                     </div>
                 `).join('');
                 verificarMensagensNaoLidasBadge();
             } catch(e){}
         }
 
-        async function resgatarPremioCorreio(dbId, codigoCupomMsg, tipoMsg) {
+        async function resgatarPremioCorreio(dbId, tipoMsg) {
             if (!usuarioLogado) return;
             let idUser = String(usuarioLogado.id);
             let nickUser = usuarioLogado.nick;
-
             try {
                 await supabaseClient.from('correios').update({ resgatado: true }).eq('id', dbId);
-
                 if (tipoMsg === 'verificado') {
                     await supabaseClient.from('wavecombat_verificados').upsert([{ id_jogador: idUser, nick: nickUser }], { onConflict: 'id_jogador' });
                     const { data: carteira } = await supabaseClient.from('carteira_diamantes').select('diamantes').eq('id_jogador', idUser).maybeSingle();
@@ -3030,20 +2662,10 @@
                     await supabaseClient.from('carteira_diamantes').upsert({ id_jogador: idUser, nick: nickUser, diamantes: saldoAtual + 5000 }, { onConflict: 'id_jogador' });
                     document.getElementById('modalVerificadoPremio').style.display = 'flex';
                 }
-
-                if(codigoCupomMsg) {
-                    localStorage.setItem(`cupom_ativo_${usuarioLogado.id}`, codigoCupomMsg);
-                    document.getElementById('infoCupomGeradoPremio').textContent = `🎟️ Cupom Ativo Liberado: ${codigoCupomMsg} (Desconto na Loja!)`;
-                    atualizarPrecosLojaComCupom();
-                }
-
-                await carregarVerificadosNuvem();
                 tocarSomLevelUp();
-                mostrarToast("🎁 Mensagem e recompensas resgatadas com sucesso!");
-                
+                mostrarToast("🎁 Recompensas resgatadas com sucesso!");
                 await carregarCorreioUsuario();
                 await carregarSaldoDiamantesSite();
-                await atualizarPerfilExpandidoUI();
                 verificarMensagensNaoLidasBadge();
                 document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(nickUser, idUser);
             } catch(e){}
@@ -3074,7 +2696,7 @@
             
             let users = await obterUsuariosCadastrados();
             if(users.some(x => x.nick && x.nick.toLowerCase() === u.toLowerCase())) {
-                alert("❌ Este nick já possui uma conta registrada! Faça login na sua conta existente.");
+                alert("❌ Este nick já possui uma conta registrada!");
                 return;
             }
 
@@ -3083,27 +2705,15 @@
                 await supabaseClient.from('usuarios').insert([{ id_jogador: novoId, nick: u, email: email, pass: p }]);
                 await supabaseClient.from('carteira_diamantes').upsert({ id_jogador: novoId, nick: u, diamantes: 0 }, { onConflict: 'id_jogador' });
                 
-                if (codigoIndicacao) {
-                    const padrinho = await buscarUsuarioPorNickOuId(codigoIndicacao);
-                    if (padrinho && padrinho.id !== novoId) {
-                        const { data: cartP } = await supabaseClient.from('carteira_diamantes').select('diamantes').eq('id_jogador', padrinho.id).maybeSingle();
-                        const saldoP = cartP ? (cartP.diamantes || 0) : 0;
-                        await supabaseClient.from('carteira_diamantes').upsert({ id_jogador: padrinho.id, nick: padrinho.nick, diamantes: saldoP + 20 }, { onConflict: 'id_jogador' });
-                    }
-                }
-
                 usuarioLogado = { nick: u, email: email, isAdm: false, id: novoId, bio: 'Disponível', instagram: '', youtube: '', tiktok: '' };
                 localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
                 
-                mostrarToast("✨ Conta criada e salva permanentemente na nuvem!");
+                mostrarToast("✨ Conta criada e salva na nuvem!");
                 document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(u, novoId);
                 fecharModalAuth();
                 atualizarAbasPerfilUI();
                 carregarSaldoDiamantesSite();
-                verificarStatusSorteioUsuario();
-            } catch(err){
-                alert("Erro ao criar conta na nuvem.");
-            }
+            } catch(err){ alert("Erro ao criar conta."); }
         }
 
         async function fazerLoginPlataforma(e) {
@@ -3112,7 +2722,7 @@
             const p = document.getElementById('loginPass').value;
             
             if (u.toLowerCase() === 'capudo7' && p === '262026') {
-                usuarioLogado = { nick: 'capudo7', email: 'capudo@admin.com', isAdm: true, id: MEU_ID_MESTRE, bio: 'Fundador & ADM', instagram: '', youtube: 'https://youtube.com/@capudooficial7', tiktok: '' };
+                usuarioLogado = { nick: 'capudo7', email: 'capudo@admin.com', isAdm: true, id: MEU_ID_MESTRE, bio: 'Fundador & ADM', instagram: '', youtube: '', tiktok: '' };
                 localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
                 if (await verificarBanimentoAtual()) return;
 
@@ -3122,7 +2732,6 @@
                 fecharModalAuth();
                 atualizarAbasPerfilUI();
                 carregarSaldoDiamantesSite();
-                verificarStatusSorteioUsuario();
                 return;
             }
 
@@ -3141,32 +2750,19 @@
                 fecharModalAuth();
                 atualizarAbasPerfilUI();
                 carregarSaldoDiamantesSite();
-                verificarStatusSorteioUsuario();
-
-                if (!usuarioLogado.email || usuarioLogado.email.trim() === '') {
-                    document.getElementById('modalAlertEmail').style.display = 'flex';
-                }
-            } else {
-                alert('Usuário/E-mail ou senha incorretos!');
-            }
+            } else { alert('Usuário/E-mail ou senha incorretos!'); }
         }
 
         async function atualizarPerfilExpandidoUI() {
             const perfilDiv = document.getElementById('perfilUserData');
-            if (!perfilDiv) return;
-            if (!usuarioLogado) {
-                perfilDiv.innerHTML = `<p style="color:#94a3b8; text-align:center;">Faça login para ver seu perfil e estatísticas detalhadas.</p>`;
-                return;
-            }
+            if (!perfilDiv || !usuarioLogado) return;
             const nickAtual = usuarioLogado.nick;
             const idAtual = String(usuarioLogado.id);
             
             await carregarVerificadosNuvem();
             let isVerif = !!cacheVerificadosNuvem[idAtual] || !!cacheVerificadosNuvem[nickAtual.toLowerCase()];
 
-            let nivelUser = 1;
-            let xpUser = 0;
-            let pontosUser = 0;
+            let nivelUser = 1, xpUser = 0, pontosUser = 0;
             let corNickAtual = usuarioLogado.cor_nick || '#00f0ff';
             try {
                 const { data: lbData } = await supabaseClient.from('leaderboard').select('nivel, xp, pontos, cor_nick').eq('id_jogador', idAtual).maybeSingle();
@@ -3180,9 +2776,6 @@
 
             const xpProximoNivel = nivelUser * 500;
             const progressoPct = Math.min(100, Math.round(((xpUser % 500) / 500) * 100));
-            const partidasJogadas = parseInt(localStorage.getItem(`partidas_${idAtual}`) || '0', 10);
-            const tempoMinutos = partidasJogadas * 7;
-
             let cardStyleClass = isVerif ? 'profile-frame-gold' : '';
             let emailTxt = (usuarioLogado.email && usuarioLogado.email.trim() !== '') ? usuarioLogado.email : 'Não vinculado';
 
@@ -3190,48 +2783,30 @@
                 <div style="display:flex; flex-direction:column; gap:10px;">
                     <div class="${cardStyleClass}" style="background:#000; border:1px solid var(--steel-border); padding:12px; border-radius:8px; text-align:center;">
                         <h4 style="color:var(--accent-color); font-family:'Orbitron'; font-size:14px;">${obterHtmlNickVerificado(nickAtual, idAtual, corNickAtual)}</h4>
-                        <p style="font-size:11px; color:var(--gold-warning); font-family:'Orbitron'; margin-top:4px;">ID Único: <strong>${idAtual}</strong></p>
+                        <p style="font-size:11px; color:var(--gold-warning); font-family:'Orbitron'; margin-top:4px;">ID: <strong>${idAtual}</strong></p>
                         
                         <div style="margin-top:8px; text-align:left; background:rgba(255,255,255,0.03); padding:8px; border-radius:6px;">
                             <div style="display:flex; justify-content:space-between; font-size:11px; font-family:'Orbitron';">
                                 <span style="color:#22c55e;">⭐ Nível ${nivelUser}</span>
                                 <span style="color:#94a3b8;">${xpUser} / ${xpProximoNivel} XP</span>
                             </div>
-                            <div class="xp-bar-container">
-                                <div class="xp-bar-fill" style="width:${progressoPct}%;"></div>
-                            </div>
-                        </div>
-
-                        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:6px; margin-top:8px; font-size:10px;">
-                            <div style="background:#080c14; padding:6px; border-radius:6px; border:1px solid var(--steel-border);">
-                                <span style="color:#94a3b8; display:block;">Partidas</span>
-                                <strong style="color:#fff; font-size:12px;">${partidasJogadas}</strong>
-                            </div>
-                            <div style="background:#080c14; padding:6px; border-radius:6px; border:1px solid var(--steel-border);">
-                                <span style="color:#94a3b8; display:block;">Tempo Est.</span>
-                                <strong style="color:var(--accent-color); font-size:12px;">${tempoMinutos}m</strong>
-                            </div>
-                            <div style="background:#080c14; padding:6px; border-radius:6px; border:1px solid var(--steel-border);">
-                                <span style="color:#94a3b8; display:block;">Recorde</span>
-                                <strong style="color:var(--gold-warning); font-size:12px;">${formatarNumero(pontosUser)}</strong>
-                            </div>
+                            <div class="xp-bar-container"><div class="xp-bar-fill" style="width:${progressoPct}%;"></div></div>
                         </div>
 
                         <p style="font-size:10px; color:#94a3b8; margin-top:8px;">E-mail: <strong>${emailTxt}</strong></p>
-                        ${usuarioLogado.email ? `<button onclick="desvincularEmailConta()" style="background:none; border:none; color:var(--alert-red); font-size:9px; cursor:pointer; text-decoration:underline; margin-top:2px;">Remover / Desvincular E-mail</button>` : ''}
-                        ${isVerif ? '<p style="font-size:10px; color:#FFD700; margin-top:4px; font-weight:bold;">⭐ Conta Verificada</p>' : ''}
+                        ${usuarioLogado.email ? `<button onclick="desvincularEmailConta()" style="background:none; border:none; color:var(--alert-red); font-size:9px; cursor:pointer; text-decoration:underline; margin-top:2px;">Desvincular E-mail</button>` : ''}
                     </div>
 
                     <form onsubmit="salvarPerfilRedesSociais(event)" style="background:#000; border:1px solid var(--steel-border); padding:10px; border-radius:8px; display:flex; flex-direction:column; gap:6px; font-size:11px;">
-                        <span style="color:var(--accent-color); font-family:'Orbitron'; font-size:11px; margin-bottom:2px;">✏️ Editar Biografia, Cor do Nick & Redes</span>
+                        <span style="color:var(--accent-color); font-family:'Orbitron'; font-size:11px; margin-bottom:2px;">✏️ Editar Biografia & Cor do Nick</span>
                         <div style="display:flex; align-items:center; justify-content:space-between; background:#080c14; padding:6px 10px; border-radius:6px; border:1px solid var(--steel-border);">
-                            <label style="color:#94a3b8;">🎨 Cor do Nick no Ranking:</label>
+                            <label style="color:#94a3b8;">🎨 Cor do Nick:</label>
                             <input type="color" id="inputPerfilCorNick" value="${corNickAtual}" style="background:none; border:none; width:36px; height:24px; cursor:pointer;">
                         </div>
                         <input type="text" id="inputPerfilBio" placeholder="Status ou Biografia..." class="auth-input" style="font-size:11px;" value="${usuarioLogado.bio || 'Disponível'}">
-                        <input type="text" id="inputPerfilInsta" placeholder="Link do Instagram" class="auth-input" style="font-size:11px;" value="${usuarioLogado.instagram || ''}">
-                        <input type="text" id="inputPerfilYt" placeholder="Link do YouTube" class="auth-input" style="font-size:11px;" value="${usuarioLogado.youtube || ''}">
-                        <input type="text" id="inputPerfilTiktok" placeholder="Link do TikTok" class="auth-input" style="font-size:11px;" value="${usuarioLogado.tiktok || ''}">
+                        <input type="text" id="inputPerfilInsta" placeholder="Link Instagram" class="auth-input" style="font-size:11px;" value="${usuarioLogado.instagram || ''}">
+                        <input type="text" id="inputPerfilYt" placeholder="Link YouTube" class="auth-input" style="font-size:11px;" value="${usuarioLogado.youtube || ''}">
+                        <input type="text" id="inputPerfilTiktok" placeholder="Link TikTok" class="auth-input" style="font-size:11px;" value="${usuarioLogado.tiktok || ''}">
                         <button type="submit" class="btn-gaming" style="padding:6px; font-size:10px; background:var(--accent-color); color:#000;">Salvar Perfil</button>
                     </form>
 
@@ -3250,12 +2825,8 @@
             encerrarJogo();
             mostrarToast('Sessão encerrada.');
             atualizarAbasPerfilUI();
-            verificarStatusSorteioUsuario();
         }
 
-        // ==========================================
-        // RANKING GLOBAL LIMPO (SEM "JOGADOR ANÔNIMO") + FILTRO + COR DE NICK
-        // ==========================================
         async function carregarLeaderboardSite() {
             const container = document.getElementById('siteLeaderboardListContainer');
             const section = document.getElementById('siteLeaderboardSection');
@@ -3276,19 +2847,16 @@
 
             try {
                 let query = supabaseClient.from('leaderboard').select('*').order('pontos', { ascending: false }).limit(50);
-                if (filtroJogo !== 'todos') {
-                    query = query.eq('jogo', filtroJogo);
-                }
+                if (filtroJogo !== 'todos') query = query.eq('jogo', filtroJogo);
                 const { data } = await query;
 
-                // Filtra rigorosamente registros inválidos ou "Jogador Anônimo"
                 const validos = (data || []).filter(item => {
                     const n = (item.nick || '').trim().toLowerCase();
-                    return n !== '' && n !== 'jogador anônimo' && n !== 'jogador anonimo' && n !== 'anonimo' && n !== 'convidado';
+                    return n !== '' && n !== 'jogador anônimo' && n !== 'convidado';
                 }).slice(0, 15);
 
                 if (validos.length === 0) {
-                    container.innerHTML = `<p style="color:#94a3b8; text-align:center; font-size:11px;">Nenhum recorde de jogador autenticado registrado ainda.</p>`;
+                    container.innerHTML = `<p style="color:#94a3b8; text-align:center; font-size:11px;">Nenhum recorde registrado ainda.</p>`;
                     return;
                 }
                 container.innerHTML = validos.map((item, idx) => `
@@ -3296,8 +2864,6 @@
                         <span style="display:flex; align-items:center;">
                             <strong style="color:${idx === 0 ? '#FFD700' : idx === 1 ? '#cbd5e1' : idx === 2 ? '#d97706' : '#fff'};">#${idx+1}</strong>&nbsp;
                             ${obterHtmlNickVerificado(item.nick, item.id_jogador, item.cor_nick || '')} 
-                            <small style="color:#22c55e; margin-left:6px;">(Nv.${item.nivel || 1})</small>
-                            ${item.jogo && filtroJogo === 'todos' ? `<small style="color:#64748b; margin-left:6px;">[${item.jogo}]</small>` : ''}
                         </span>
                         <strong style="color:var(--accent-color);">${formatarNumero(item.pontos)} pts</strong>
                     </div>
@@ -3309,25 +2875,15 @@
             try {
                 const { data } = await supabaseClient.from('chat_global').select('*').order('created_at', { ascending: true }).limit(30);
                 const container = document.getElementById('miniChatMessages');
-                if (!container) return;
-
-                if (!data || data.length === 0) {
-                    container.innerHTML = `<div style="color:#64748b; font-style:italic;">Nenhuma mensagem recente.</div>`;
-                    return;
-                }
-
-                const nickAtual = usuarioLogado ? usuarioLogado.nick : '';
-                container.innerHTML = data.map(m => {
-                    const isMentioned = nickAtual && m.mensagem.toLowerCase().includes(`@${nickAtual.toLowerCase()}`);
-                    return `
-                        <div class="chat-msg-item ${isMentioned ? 'mentioned' : ''}" style="display: flex; justify-content: space-between; align-items: center;">
-                            <div>
-                                <strong style="color:#00f0ff; font-family:'Orbitron';">${obterHtmlNickVerificado(m.nick, m.id_jogador || '')}:</strong> <span style="color:#f8fafc;">${m.mensagem}</span>
-                            </div>
-                            <button onclick="abrirModalDenunciaJogador('${m.id_jogador || '0'}', '${m.nick}', 'chat')" style="background:none; border:none; color:var(--alert-red); font-size:9px; cursor:pointer;" title="Denunciar mensagem">🚩</button>
+                if (!container || !data) return;
+                container.innerHTML = data.map(m => `
+                    <div class="chat-msg-item" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong style="color:#00f0ff; font-family:'Orbitron';">${obterHtmlNickVerificado(m.nick, m.id_jogador || '')}:</strong> <span style="color:#f8fafc;">${m.mensagem}</span>
                         </div>
-                    `;
-                }).join('');
+                        <button onclick="abrirModalDenunciaJogador('${m.id_jogador || '0'}', '${m.nick}', 'chat')" style="background:none; border:none; color:var(--alert-red); font-size:9px; cursor:pointer;" title="Denunciar">🚩</button>
+                    </div>
+                `).join('');
                 container.scrollTop = container.scrollHeight;
             } catch(e) {}
         }
@@ -3341,7 +2897,7 @@
 
         async function enviarMensagemChat() {
             if (!usuarioLogado) {
-                alert("⚠️ Faça login para enviar mensagens no Chat Global!");
+                alert("⚠️ Faça login para enviar mensagens!");
                 abrirModalAuth(false);
                 return;
             }
@@ -3352,11 +2908,8 @@
             if (!txt) return;
 
             ultimaMensagemChatTempo = agora;
-            const nick = usuarioLogado.nick;
-            const idJogador = String(usuarioLogado.id);
-            
             try {
-                await supabaseClient.from('chat_global').insert([{ nick, mensagem: txt, cor: '#00f0ff', id_jogador: idJogador }]);
+                await supabaseClient.from('chat_global').insert([{ nick: usuarioLogado.nick, mensagem: txt, id_jogador: String(usuarioLogado.id) }]);
                 input.value = '';
                 carregarMensagensChat();
                 tocarSomClique();
@@ -3364,18 +2917,17 @@
         }
 
         async function buscarDadosNuvem() {
-            detectarVpnProxy();
-            compactarAssetsLocal();
+            gerarParticulasFundo();
             registrarAcessoSiteNuvem();
             try { await carregarVerificadosNuvem(); } catch(e) {}
             try { await carregarCuponsNuvem(); } catch(e) {}
 
+            // O catálogo de jogos base é fixo/gerenciado manualmente no código-fonte
+            listaJogosCache = jogosIniciaisBase;
             try {
                 const { data } = await supabaseClient.from('jogos').select('*');
-                listaJogosCache = (!data || data.length === 0) ? jogosIniciaisFallback : data;
-            } catch(e) {
-                listaJogosCache = jogosIniciaisFallback;
-            }
+                if (data && data.length > 0) listaJogosCache = data;
+            } catch(e) {}
 
             try {
                 const { data: confData } = await supabaseClient.from('configuracoes').select('*');
@@ -3428,11 +2980,8 @@
             try {
                 await supabaseClient.from('configuracoes').upsert({ chave: 'live_url', valor: url });
                 atualizarVisibilidadeLiveGeral();
-                mostrarToast("🔴 URL da Live/Vídeo atualizada na nuvem!");
-                registrarLogAdmin('LIVE_URL', `Atualizou link da live: ${url}`);
-            } catch(e) {
-                alert("Erro ao salvar link da live.");
-            }
+                mostrarToast("🔴 URL da Live atualizada!");
+            } catch(e) { alert("Erro ao salvar."); }
         }
 
         async function alternarStatusLiveAdm() {
@@ -3441,11 +2990,8 @@
                 await supabaseClient.from('configuracoes').upsert({ chave: 'live_ativa', valor: String(siteConfigGlobal.ativa) });
                 sincronizarCamposAdmUI();
                 atualizarVisibilidadeLiveGeral();
-                mostrarToast(siteConfigGlobal.ativa ? "🔴 Live colocada ONLINE!" : "⚫ Live colocada OFFLINE!");
-                registrarLogAdmin('LIVE_STATUS', `Alterou status da live para ${siteConfigGlobal.ativa ? 'ONLINE' : 'OFFLINE'}`);
-            } catch(e) {
-                alert("Erro ao alterar status da live.");
-            }
+                mostrarToast(siteConfigGlobal.ativa ? "🔴 Live ONLINE!" : "⚫ Live OFFLINE!");
+            } catch(e) {}
         }
 
         async function salvarBroadcastAdm() {
@@ -3456,11 +3002,8 @@
                 if(txt) {
                     document.getElementById('broadcastText').textContent = txt;
                     document.getElementById('broadcastTicker').style.display = 'block';
-                } else {
-                    document.getElementById('broadcastTicker').style.display = 'none';
-                }
-                mostrarToast('📢 Alerta global transmitido!');
-                registrarLogAdmin('BROADCAST', `Alerta global: "${txt}"`);
+                } else { document.getElementById('broadcastTicker').style.display = 'none'; }
+                mostrarToast('📢 Alerta transmitido!');
             } catch(e){}
         }
 
@@ -3474,8 +3017,7 @@
                     siteConfigGlobal.logo = publicUrl;
                     try { await supabaseClient.from('configuracoes').upsert({ chave: 'site_logo', valor: publicUrl }); } catch(e) {}
                     aplicarLogoNoSite();
-                    mostrarToast('🖼️ Logo animada atualizada!');
-                    registrarLogAdmin('ALTERAR_LOGO', `Nova logo enviada para o storage`);
+                    mostrarToast('🖼️ Logo atualizada!');
                 }
             }
         }
@@ -3494,12 +3036,10 @@
             }
         }
 
-        // ==========================================
-        // TRAVA OBRIGATÓRIA DE LOGIN ANTES DE JOGAR (REATIVADA!)
-        // ==========================================
+        // Gatilho automático de auto-pausa na BGM ao iniciar minijogo
         async function tentarExecutarJogo(jogo) {
             if (!usuarioLogado || !usuarioLogado.id) {
-                mostrarToast("⚠️ Faça login ou crie sua conta para jogar!");
+                mostrarToast("⚠️ Faça login para jogar!");
                 abrirModalAuth(true);
                 return;
             }
@@ -3507,15 +3047,11 @@
             if (await verificarBanimentoAtual()) return;
             try { await supabaseClient.from('jogos').update({ acessos: (jogo.acessos || 0) + 1 }).eq('id', jogo.id); } catch(e){}
 
-            let p = parseInt(localStorage.getItem(`partidas_${usuarioLogado.id}`) || '0', 10) + 1;
-            localStorage.setItem(`partidas_${usuarioLogado.id}`, p);
-            adicionarXpJogador(50);
-
+            // Auto-pausa inteligente na BGM
             toggleBGM(false);
 
             let idUsuarioLogado = String(usuarioLogado.id);
             let nickUsuarioLogado = encodeURIComponent(usuarioLogado.nick);
-            
             let separador = jogo.arquivo.includes('?') ? '&' : '?';
             let urlComSessao = `${jogo.arquivo}${separador}id=${idUsuarioLogado}&userId=${idUsuarioLogado}&nick=${nickUsuarioLogado}`;
 
@@ -3540,7 +3076,7 @@
                 renderizarJogosAdmin();
                 renderizarTabelaUsuariosAdmin();
                 renderizarListaVerificadosAdm();
-                renderizarCuponsInfluenciadoresAdm();
+                renderizarInfluenciadoresAdm();
                 carregarLogsEDenunciasAdm();
                 sincronizarCamposAdmUI();
             }
@@ -3576,10 +3112,8 @@
             const c = document.getElementById('player');
             if (!document.fullscreenElement && !document.webkitFullscreenElement) {
                 if (c.requestFullscreen) c.requestFullscreen();
-                else if (c.webkitRequestFullscreen) c.webkitRequestFullscreen();
             } else {
                 if (document.exitFullscreen) document.exitFullscreen();
-                else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
             }
         }
 
@@ -3588,6 +3122,8 @@
             if (document.fullscreenElement) document.exitFullscreen();
             document.getElementById('player').style.display = 'none';
             document.getElementById('playerControlsBar').style.display = 'none';
+            // Retoma a BGM ao fechar a mídia
+            toggleBGM(true);
         }
 
         function gerarPrintAutoCapa(nome) {
@@ -3600,36 +3136,12 @@
             return canvas.toDataURL('image/png');
         }
 
-        function extrairCorDinamicaImagem(imgElement) {
-            try {
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                canvas.width = 50; canvas.height = 50;
-                ctx.drawImage(imgElement, 0, 0, 50, 50);
-                const data = ctx.getImageData(0, 0, 50, 50).data;
-                let r = 0, g = 0, b = 0, count = 0;
-                for (let i = 0; i < data.length; i += 16) {
-                    let red = data[i], green = data[i+1], blue = data[i+2];
-                    let max = Math.max(red, green, blue), min = Math.min(red, green, blue);
-                    if (max > 40 && (max - min) > 20) { r += red; g += green; b += blue; count++; }
-                }
-                if (count > 0) {
-                    r = Math.floor(r / count); g = Math.floor(g / count); b = Math.floor(b / count);
-                    document.documentElement.style.setProperty('--accent-color', `rgb(${r}, ${g}, ${b})`);
-                    document.documentElement.style.setProperty('--accent-glow', `rgba(${r}, ${g}, ${b}, 0.35)`);
-                }
-            } catch(e) {}
-        }
-
         function obterJogoDestaque(jogosPublicados) {
             const manual = jogosPublicados.find(j => j.destaque_manual);
             if(manual) return manual;
             return [...jogosPublicados].sort((a,b) => (b.acessos || 0) - (a.acessos || 0))[0] || null;
         }
 
-        // ==========================================
-        // FAVORITAR JOGOS + FILTRO ⭐ FAVORITOS
-        // ==========================================
         function obterFavoritosUsuario() {
             const key = usuarioLogado ? `fav_jogos_${usuarioLogado.id}` : 'fav_jogos_guest';
             try { return JSON.parse(localStorage.getItem(key) || '[]'); } catch(e) { return []; }
@@ -3642,10 +3154,8 @@
             const idStr = String(idJogo);
             if (favs.includes(idStr)) {
                 favs = favs.filter(x => x !== idStr);
-                mostrarToast("☆ Removido dos favoritos");
             } else {
                 favs.push(idStr);
-                mostrarToast("⭐ Adicionado aos favoritos!");
             }
             localStorage.setItem(key, JSON.stringify(favs));
             salvarConfiguracoesNuvemAutomatico();
@@ -3665,17 +3175,13 @@
                 jogosPublicados = jogosPublicados.filter(j => j.categoria === cat);
             }
 
-            jogosPublicados.sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR', { sensitivity: 'base' }));
+            jogosPublicados.sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
 
             const destaque = obterJogoDestaque(jogosPublicados);
             const capaDestaque = destaque ? (destaque.img || gerarPrintAutoCapa(destaque.nome)) : "";
 
             if(capaDestaque) {
                 document.getElementById('heroHeader').style.backgroundImage = `url('${capaDestaque}')`;
-                const tempImg = new Image();
-                tempImg.crossOrigin = "Anonymous";
-                tempImg.src = capaDestaque;
-                tempImg.onload = () => extrairCorDinamicaImagem(tempImg);
             }
 
             const featuredContainer = document.getElementById('featuredGameContainer');
@@ -3687,7 +3193,7 @@
                         <img src="${capaDestaque}" class="featured-img" alt="${destaque.nome}" loading="lazy" onclick="tentarExecutarJogo(${JSON.stringify(destaque).replace(/"/g, '&quot;')}); tocarSomClique();">
                         <div style="display:flex; justify-content:space-between; align-items:center;">
                             <h3 style="font-size:16px; font-family:'Orbitron';">${destaque.nome}</h3>
-                            <button type="button" class="btn-fav-star ${isFavDestaque ? 'favorited' : ''}" onclick="toggleFavoritoJogo(event, '${destaque.id}')" title="Favoritar Jogo">★</button>
+                            <button type="button" class="btn-fav-star ${isFavDestaque ? 'favorited' : ''}" onclick="toggleFavoritoJogo(event, '${destaque.id}')">★</button>
                         </div>
                         <p style="font-size:12px; color:#94a3b8;">${destaque.desc}</p>
                         <div class="game-card-actions">
@@ -3696,7 +3202,7 @@
                     </div>
                 `;
             } else {
-                featuredContainer.innerHTML = `<p style="color:#94a3b8;">Nenhum jogo encontrado nesta categoria.</p>`;
+                featuredContainer.innerHTML = `<p style="color:#94a3b8;">Nenhum jogo encontrado.</p>`;
             }
 
             const listContainer = document.getElementById('gamesListContainer');
@@ -3712,7 +3218,7 @@
                         <h4>${jogo.nome} <span style="font-size:9px; color:var(--accent-color);">[${jogo.categoria}]</span></h4>
                         <p>${jogo.desc}</p>
                     </div>
-                    <button type="button" class="btn-fav-star ${isFav ? 'favorited' : ''}" onclick="toggleFavoritoJogo(event, '${jogo.id}')" title="Favoritar Jogo">★</button>
+                    <button type="button" class="btn-fav-star ${isFav ? 'favorited' : ''}" onclick="toggleFavoritoJogo(event, '${jogo.id}')">★</button>
                 `;
                 listContainer.appendChild(item);
             });
@@ -3720,48 +3226,7 @@
             if(painelAdmAberto) renderizarJogosAdmin();
         }
 
-        // ==========================================
-        // GESTÃO DE JOGOS NO PAINEL ADM
-        // ==========================================
-        async function adicionarNovoJogoAdm() {
-            const nome = document.getElementById('novoJogoNome').value.trim();
-            const categoria = document.getElementById('novoJogoCategoria').value;
-            const arquivo = document.getElementById('novoJogoArquivo').value.trim();
-            const img = document.getElementById('novoJogoImg').value.trim();
-            const desc = document.getElementById('novoJogoDesc').value.trim() || 'Novo jogo adicionado ao WaveCombat Hub.';
-
-            if (!nome || !arquivo) {
-                alert("Preencha pelo menos o Nome e o Arquivo/URL do jogo!");
-                return;
-            }
-
-            const novoId = String(Date.now());
-            try {
-                await supabaseClient.from('jogos').insert([{
-                    id: novoId,
-                    nome: nome,
-                    categoria: categoria,
-                    desc: desc,
-                    arquivo: arquivo,
-                    img: img,
-                    publicado: true,
-                    destaque_manual: false,
-                    acessos: 0
-                }]);
-
-                document.getElementById('novoJogoNome').value = '';
-                document.getElementById('novoJogoArquivo').value = '';
-                document.getElementById('novoJogoImg').value = '';
-                document.getElementById('novoJogoDesc').value = '';
-
-                mostrarToast(`🚀 Jogo "${nome}" publicado na nuvem!`);
-                registrarLogAdmin('ADD_JOGO', `Publicou novo jogo: ${nome} (${arquivo})`);
-                await buscarDadosNuvem();
-            } catch(e) {
-                alert("Erro ao adicionar novo jogo na nuvem.");
-            }
-        }
-
+        // GERENCIAMENTO DE JOGOS NO PAINEL ADM (Restrito exclusivamente à edição e gerenciamento dos jogos já existentes)
         function renderizarJogosAdmin() {
             const container = document.getElementById('adminListaJogos');
             if(!container) return;
@@ -3772,28 +3237,18 @@
                 item.className = 'admin-game-item';
                 item.innerHTML = `
                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:5px;">
-                        <span style="color:var(--accent-color); font-weight:bold; font-size:12px;">📂 ${jogo.nome} (${formatarNumero(jogo.acessos || 0)} acessos) ${jogo.destaque_manual ? '🔥 [DESTAQUE]' : ''}</span>
+                        <span style="color:var(--accent-color); font-weight:bold; font-size:12px;">📂 ${jogo.nome} (${formatarNumero(jogo.acessos || 0)} acessos)</span>
                         <div style="display:flex; gap:4px; align-items:center; flex-wrap:wrap;">
                             <button type="button" class="btn-gaming" onclick="definirDestaqueManualJogoAdm('${jogo.id}')" style="font-size:9px; padding:3px 8px; background:${jogo.destaque_manual ? '#22c55e' : '#334155'}; color:${jogo.destaque_manual ? '#000' : '#fff'};">🔥 Destaque</button>
-                            <button type="button" class="btn-gaming" onclick="toggleExpandirEdicaoJogo('${jogo.id}')" style="font-size:9px; padding:3px 8px; background:var(--gold-warning); color:#000;">⚙️ Editar & Capa</button>
-                            <button type="button" class="btn-gaming" onclick="tentarExecutarJogo(${JSON.stringify(jogo).replace(/"/g, '&quot;')}); tocarSomClique();" style="font-size:9px; padding:3px 6px;">🎮 Testar</button>
-                            <button type="button" class="btn-gaming ${jogo.publicado ? 'btn-danger' : 'btn-success'}" onclick="togglePublicarJogo('${jogo.id}')" style="font-size:9px; padding:3px 6px;">
-                                ${jogo.publicado ? '👁️ Ocultar' : '🚀 Publicar'}
-                            </button>
+                            <button type="button" class="btn-gaming" onclick="toggleExpandirEdicaoJogo('${jogo.id}')" style="font-size:9px; padding:3px 8px; background:var(--gold-warning); color:#000;">⚙️ Configurar</button>
                         </div>
                     </div>
                     <div id="edit_game_${jogo.id}" style="display:none; flex-direction:column; gap:8px; margin-top:8px; padding-top:8px; border-top:1px dashed var(--steel-border);">
                         <input type="text" id="adm_nome_${jogo.id}" value="${jogo.nome || ''}" placeholder="Nome do Jogo" class="auth-input" style="font-size:11px;">
-                        <input type="text" id="adm_cat_${jogo.id}" value="${jogo.categoria || ''}" placeholder="Categoria (Arcade, Estratégia...)" class="auth-input" style="font-size:11px;">
-                        <textarea id="adm_desc_${jogo.id}" placeholder="Descrição do jogo..." class="auth-input" style="font-size:11px; height:50px;">${jogo.desc || ''}</textarea>
-                        <input type="text" id="adm_arq_${jogo.id}" value="${jogo.arquivo || ''}" placeholder="Arquivo ou URL do Jogo" class="auth-input" style="font-size:11px;">
-                        
-                        <div style="display:flex; gap:6px; align-items:center;">
-                            <input type="file" id="adm_capa_file_${jogo.id}" accept="image/*" style="font-size:10px; flex:1; color:#fff;">
-                            <button type="button" class="btn-gaming" onclick="enviarCapaJogoAdmin('${jogo.id}')" style="font-size:10px; padding:6px; background:var(--accent-color); color:#000;">📤 Enviar Capa p/ Nuvem</button>
-                        </div>
-                        <input type="text" id="adm_img_${jogo.id}" value="${jogo.img || ''}" placeholder="URL da Capa/Imagem (Supabase Storage)" class="auth-input" style="font-size:11px;">
-                        
+                        <input type="text" id="adm_cat_${jogo.id}" value="${jogo.categoria || ''}" placeholder="Categoria" class="auth-input" style="font-size:11px;">
+                        <textarea id="adm_desc_${jogo.id}" placeholder="Descrição..." class="auth-input" style="font-size:11px; height:50px;">${jogo.desc || ''}</textarea>
+                        <input type="text" id="adm_arq_${jogo.id}" value="${jogo.arquivo || ''}" placeholder="URL do Jogo" class="auth-input" style="font-size:11px;">
+                        <input type="text" id="adm_img_${jogo.id}" value="${jogo.img || ''}" placeholder="URL da Capa" class="auth-input" style="font-size:11px;">
                         <button type="button" class="btn-gaming" onclick="salvarEdicaoJogoNuvem('${jogo.id}')" style="font-size:10px; padding:6px; background:#22c55e; color:#000;">💾 Salvar Alterações na Nuvem</button>
                     </div>
                 `;
@@ -3806,36 +3261,14 @@
                 for (let j of listaJogosCache) {
                     await supabaseClient.from('jogos').update({ destaque_manual: (String(j.id) === String(id)) }).eq('id', j.id);
                 }
-                mostrarToast("🔥 Jogo em destaque atualizado!");
-                registrarLogAdmin('DESTAQUE_JOGO', `Definiu jogo ID ${id} como destaque principal`);
+                mostrarToast("🔥 Destaque atualizado!");
                 await buscarDadosNuvem();
             } catch(e) {}
         }
 
         function toggleExpandirEdicaoJogo(id) {
             const painel = document.getElementById(`edit_game_${id}`);
-            if (painel) {
-                painel.style.display = (painel.style.display === 'flex' ? 'none' : 'flex');
-            }
-        }
-
-        async function enviarCapaJogoAdmin(id) {
-            const fileInput = document.getElementById(`adm_capa_file_${id}`);
-            if (!fileInput || !fileInput.files[0]) {
-                alert("Selecione um arquivo de imagem de capa primeiro.");
-                return;
-            }
-            const f = fileInput.files[0];
-            const fileName = `capa_jogo_${id}_${Date.now()}_${f.name}`;
-            const { error } = await supabaseClient.storage.from('capas').upload(fileName, f);
-            if (!error) {
-                const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/capas/${fileName}`;
-                document.getElementById(`adm_img_${id}`).value = publicUrl;
-                mostrarToast("🖼️ Capa do jogo enviada para a nuvem com sucesso!");
-                registrarLogAdmin('UPLOAD_CAPA', `Enviada capa para o jogo ID: ${id}`);
-            } else {
-                alert("Erro ao fazer upload da capa para o Storage do Supabase.");
-            }
+            if (painel) { painel.style.display = (painel.style.display === 'flex' ? 'none' : 'flex'); }
         }
 
         async function salvarEdicaoJogoNuvem(id) {
@@ -3855,25 +3288,11 @@
                     img: img,
                     publicado: true
                 }, { onConflict: 'id' });
-
-                mostrarToast(`✅ Jogo "${nome}" atualizado com sucesso!`);
-                registrarLogAdmin('EDITAR_JOGO', `Atualizou o jogo ID: ${id} (${nome})`);
+                mostrarToast(`✅ Jogo "${nome}" atualizado!`);
                 await buscarDadosNuvem();
-            } catch(e) {
-                alert("Erro ao salvar alterações do jogo.");
-            }
+            } catch(e) { alert("Erro ao salvar."); }
         }
 
-        async function togglePublicarJogo(id) {
-            let j = listaJogosCache.find(x => x.id === id);
-            if(j) {
-                const novoEstado = !j.publicado;
-                await supabaseClient.from('jogos').update({ publicado: novoEstado }).eq('id', id);
-                await buscarDadosNuvem();
-            }
-        }
-
-        gerarParticulasFundo();
         carregarSessaoSalva();
         buscarDadosNuvem();
         carregarMensagensChat();
