@@ -11,7 +11,7 @@
 // Cliente -> servidor                 Servidor -> cliente
 // street:ident {nick, ver}            street:presenca {id, estado}   (estado '' = offline)
 // street:status {estado}              street:fila {n, max, seg}
-// street:amigos {ids} + ack           street:partida {mid, host, slot, jog, dur}
+// street:amigos {ids} + ack           street:partida {mid, host, slot, jog, dur, mapa}
 // street:fila:entrar / :sair          street:chat {id, nick, v, txt, ts}
 // street:chat {txt}                   street:sala {cod, host, cfg, mem}
 // street:sala:criar / :entrar + ack   street:sala:chat {id, nick, v, txt, ts}
@@ -66,7 +66,7 @@ module.exports = function (io) {
   };
 
   // cria uma partida compartilhada: o primeiro membro é o anfitrião (slot 0)
-  const criaPartida = (membros, dur) => {
+  const criaPartida = (membros, dur, mapa) => {
     const mid = 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
     const mem = membros.slice(0, MAX).map((m, i) => ({ id: m.id, nick: m.nick, ver: m.ver, sid: m.sid, slot: i }));
     if (!mem.length) return;
@@ -77,7 +77,7 @@ module.exports = function (io) {
       if (!sk) return;
       sk.join('street:m:' + mid);
       sk.data.mid = mid;
-      sk.emit('street:partida', { mid, host: mem[0].id, slot: m.slot, jog, dur: dur || 180 });
+      sk.emit('street:partida', { mid, host: mem[0].id, slot: m.slot, jog, dur: dur || 180, mapa: Number.isInteger(mapa) ? mapa : null });
     });
   };
   const saiPartida = (s) => {
@@ -108,7 +108,7 @@ module.exports = function (io) {
     if (fila.length >= MAX || Date.now() - t0 >= ESPERA) {
       const g = fila.splice(0, MAX);
       g.forEach((f) => { const sk = sock(f.sid); if (sk) sk.leave('street:fila'); });
-      criaPartida(g, 180);
+      criaPartida(g, 180, Math.floor(Math.random() * 3));
       t0 = fila.length ? Date.now() : 0;
     }
   }, 1000);
@@ -197,7 +197,7 @@ module.exports = function (io) {
       const r = salas[c];
       if (!r || r.host !== me.id) return;
       const ordem = [...r.mem].sort((x, y) => (x.sid === s.id ? -1 : y.sid === s.id ? 1 : 0));
-      criaPartida(ordem, Number(d.dur) || r.cfg.dur || 180);
+      criaPartida(ordem, Number(d.dur) || r.cfg.dur || 180, Number.isInteger(d.mapa) && d.mapa >= 0 && d.mapa < 3 ? d.mapa : null);
     });
     s.on('street:sala:chat', (d) => {
       const c = String((d && d.cod) || '').toUpperCase();
