@@ -3126,20 +3126,90 @@
             toggleBGM(true);
         }
 
+        function gerarCorFallbackPorNome(texto) {
+            const paletas = [
+                { r: 0, g: 240, b: 255 },   // Ciano Neon
+                { r: 255, g: 85, b: 0 },    // Laranja Combate
+                { r: 34, g: 197, b: 94 },   // Verde Tático
+                { r: 168, g: 85, b: 247 },  // Roxo Cyber
+                { r: 239, g: 68, b: 68 },   // Vermelho Arena
+                { r: 245, g: 158, b: 11 }   // Dourado Elite
+            ];
+            let hash = 0;
+            const str = String(texto || 'WaveCombat');
+            for (let i = 0; i < str.length; i++) {
+                hash = str.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            return paletas[Math.abs(hash) % paletas.length];
+        }
+
+        function aplicarTemaDestaqueRGB(r, g, b) {
+            const corRgb = `rgb(${r}, ${g}, ${b})`;
+            const corGlow = `rgba(${r}, ${g}, ${b}, 0.35)`;
+            document.documentElement.style.setProperty('--accent-color', corRgb);
+            document.documentElement.style.setProperty('--accent-glow', corGlow);
+            const metaTheme = document.querySelector('meta[name="theme-color"]');
+            if (metaTheme) metaTheme.setAttribute('content', corRgb);
+        }
+
+        function extrairCorDinamicaImagem(imgElement, nomeFallback = '') {
+            try {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = 50;
+                canvas.height = 50;
+                ctx.drawImage(imgElement, 0, 0, 50, 50);
+                const data = ctx.getImageData(0, 0, 50, 50).data;
+                let r = 0, g = 0, b = 0, count = 0;
+
+                for (let i = 0; i < data.length; i += 16) {
+                    const red = data[i], green = data[i + 1], blue = data[i + 2];
+                    const max = Math.max(red, green, blue);
+                    const min = Math.min(red, green, blue);
+                    if (max > 45 && (max - min) > 25) {
+                        r += red;
+                        g += green;
+                        b += blue;
+                        count++;
+                    }
+                }
+
+                if (count > 0) {
+                    r = Math.min(255, Math.floor((r / count) * 1.1));
+                    g = Math.min(255, Math.floor((g / count) * 1.1));
+                    b = Math.min(255, Math.floor((b / count) * 1.1));
+                    aplicarTemaDestaqueRGB(r, g, b);
+                    return;
+                }
+            } catch (e) {}
+
+            const fb = gerarCorFallbackPorNome(nomeFallback);
+            aplicarTemaDestaqueRGB(fb.r, fb.g, fb.b);
+        }
+
         function gerarPrintAutoCapa(nome) {
+            const fb = gerarCorFallbackPorNome(nome);
+            const corCapa = `rgb(${fb.r}, ${fb.g}, ${fb.b})`;
             const canvas = document.createElement('canvas');
-            canvas.width = 640; canvas.height = 360;
+            canvas.width = 640;
+            canvas.height = 360;
             const ctx = canvas.getContext('2d');
-            ctx.fillStyle = '#000'; ctx.fillRect(0,0,640,360);
-            ctx.fillStyle = '#00f0ff'; ctx.font = 'bold 28px Orbitron'; ctx.textAlign = 'center';
+            ctx.fillStyle = '#05070c';
+            ctx.fillRect(0, 0, 640, 360);
+            ctx.strokeStyle = corCapa;
+            ctx.lineWidth = 6;
+            ctx.strokeRect(12, 12, 616, 336);
+            ctx.fillStyle = corCapa;
+            ctx.font = 'bold 28px Orbitron';
+            ctx.textAlign = 'center';
             ctx.fillText(nome.toUpperCase(), 320, 180);
             return canvas.toDataURL('image/png');
         }
 
         function obterJogoDestaque(jogosPublicados) {
             const manual = jogosPublicados.find(j => j.destaque_manual);
-            if(manual) return manual;
-            return [...jogosPublicados].sort((a,b) => (b.acessos || 0) - (a.acessos || 0))[0] || null;
+            if (manual) return manual;
+            return [...jogosPublicados].sort((a, b) => (b.acessos || 0) - (a.acessos || 0))[0] || null;
         }
 
         function obterFavoritosUsuario() {
@@ -3177,11 +3247,20 @@
 
             jogosPublicados.sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
 
-            const destaque = obterJogoDestaque(jogosPublicados);
+            const todosPublicados = listaJogosCache.filter(j => j.publicado);
+            const destaque = obterJogoDestaque(todosPublicados.length ? todosPublicados : jogosPublicados);
             const capaDestaque = destaque ? (destaque.img || gerarPrintAutoCapa(destaque.nome)) : "";
 
-            if(capaDestaque) {
+            if (capaDestaque) {
                 document.getElementById('heroHeader').style.backgroundImage = `url('${capaDestaque}')`;
+                const tempImg = new Image();
+                tempImg.crossOrigin = "Anonymous";
+                tempImg.onload = () => extrairCorDinamicaImagem(tempImg, destaque ? destaque.nome : '');
+                tempImg.onerror = () => {
+                    const fb = gerarCorFallbackPorNome(destaque ? destaque.nome : '');
+                    aplicarTemaDestaqueRGB(fb.r, fb.g, fb.b);
+                };
+                tempImg.src = capaDestaque;
             }
 
             const featuredContainer = document.getElementById('featuredGameContainer');
