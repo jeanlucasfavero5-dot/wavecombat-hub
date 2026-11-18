@@ -288,7 +288,7 @@ const URL_ID = (params.get('id') || '').trim();
 const PLAYER_ID = URL_ID || '0'; // fallback para testes locais
 const $ = id => document.getElementById(id);
 const fmt = n => Number(n).toLocaleString('pt-BR');
-const VERSION = '0.014'; // suba a cada atualização enviada
+const VERSION = '0.015'; // suba a cada atualização enviada
 const DIA = {};
 const G = { mode: 'start' };
 let NICK = 'Visitante';
@@ -508,9 +508,10 @@ function biome(x, z) {
   const a = vn(x * .0016, z * .0016, 1), b = vn(x * .0016, z * .0016, 2);
   return BT[a < .42 ? 0 : a < .58 ? 1 : 2][b < .42 ? 0 : b < .58 ? 1 : 2];
 }
+const lakeW = (x, z) => sstep(.78, .86, vn(x * .0042, z * .0042, 8)) * sstep(120, 300, Math.hypot(x, z));
 function H(x, z) {
   const m = Math.max(0, vn(x * .003, z * .003, 3) - .5) * 160, r = (vn(x * .03, z * .03, 4) - .5) * 4;
-  return (m + r) * sstep(40, 140, Math.hypot(x, z));
+  const lk = lakeW(x, z); return (m + r) * sstep(40, 140, Math.hypot(x, z)) * (1 - lk) - lk * 2.6;
 }
 const roadD = (x, z) => Math.min(Math.abs(z - 130 * Math.sin(x * .0028)), Math.abs(x - 130 * Math.sin(z * .0031 + 1)));
 function structAt(cx, cz) {
@@ -521,7 +522,7 @@ function structAt(cx, cz) {
 function buildWorld(scene) {
   const mats = {}, M = c => mats[c] || (mats[c] = new THREE.MeshStandardMaterial({ color: c, roughness: 1, flatShading: true }));
   const EM = c => mats['e' + c] || (mats['e' + c] = new THREE.MeshStandardMaterial({ color: c, emissive: c, emissiveIntensity: .8, flatShading: true }));
-  const gm = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1, flatShading: true }), WHITE = new THREE.Color(0xffffff), ROADC = new THREE.Color(0x8a7350);
+  const gm = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1, flatShading: true }), WHITE = new THREE.Color(0xffffff), ROADC = new THREE.Color(0x8a7350), LAKEC = new THREE.Color(0x4f7f95);
   const Cy = (a, b, h, n = 8) => new THREE.CylinderGeometry(a, b, h, n), Co = (r, h, n = 8) => new THREE.ConeGeometry(r, h, n), B = (a, b, c) => new THREE.BoxGeometry(a, b, c);
   const TY = [
     [[Cy(.22, .3, 1.2, 6), M(0x5a3d26), .6], [Co(1.3, 3.4, 7), M(0x24512f), 2.9]],
@@ -545,6 +546,7 @@ function buildWorld(scene) {
       const x = pos.getX(i) + x0, z = pos.getZ(i) + z0, y = H(x, z); pos.setY(i, y);
       c.setHex(BCH[biome(x, z)]); if (y > 22) c.lerp(WHITE, Math.min(.7, (y - 22) / 25));
       const rd = roadD(x, z); if (rd < 6) c.lerp(ROADC, 1 - sstep(2, 6, rd));
+      const lkw = lakeW(x, z); if (lkw > .05) c.lerp(LAKEC, Math.min(1, lkw * 1.4));
       const j = (hash(Math.round(x), Math.round(z), 5) - .5) * .08; col.set([c.r + j, c.g + j, c.b + j], i * 3);
     }
     g.setAttribute('color', new THREE.BufferAttribute(col, 3)); g.computeVertexNormals();
@@ -554,14 +556,14 @@ function buildWorld(scene) {
     const out = [];
     for (let i = 0; i < 80; i++) {
       const x = (cx + hash(cx, cz, 10 + i * 2)) * CH, z = (cz + hash(cx, cz, 11 + i * 2)) * CH, r = hash(cx, cz, 300 + i);
-      if (Math.hypot(x, z) < 12 || roadD(x, z) < 8) continue;
+      if (Math.hypot(x, z) < 12 || roadD(x, z) < 8 || lakeW(x, z) > .02) continue;
       let acc = 0;
       for (const [t, pr] of PB[biome(x, z)]) { acc += pr; if (r < acc) { out.push({ t, x, y: H(x, z), z, s: .8 + hash(cx, cz, 500 + i) * .9, r: hash(cx, cz, 700 + i) * 6.28 }); break; } }
     }
     return out;
   }
   function struct(s) {
-    const g = new THREE.Group(); g.position.set(s.x, H(s.x, s.z), s.z); g.rotation.y = hash(s.x | 0, s.z | 0, 1) * 6.28;
+    const g = new THREE.Group(); g.position.set(s.x, Math.max(0, H(s.x, s.z)), s.z); g.rotation.y = hash(s.x | 0, s.z | 0, 1) * 6.28;
     const add = (geo, c, x, y, z, em, ry = 0, rz = 0) => { const m = new THREE.Mesh(geo, em ? EM(c) : M(c)); m.position.set(x, y, z); m.rotation.set(0, ry, rz); m.castShadow = m.receiveShadow = true; g.add(m); return m; };
     const sp = r => new THREE.SphereGeometry(r, 8, 6), ring = (n, r, f) => { for (let i = 0; i < n; i++) { const a = i / n * 6.283; f(Math.cos(a) * r, Math.sin(a) * r, a, i); } };
     switch (s.type) {
@@ -864,7 +866,7 @@ function initUI(E) {
     let iy = (keys.w || keys.arrowup ? 1 : 0) - (keys.s || keys.arrowdown ? 1 : 0) + joy.y;
     const len = Math.hypot(ix, iy); if (len > 1) { ix /= len; iy /= len; }
     if (len > .05) {
-      const sp = (3.5 + CLASSES[char.cls].st.Velocidade * .45) * (dash > 0 ? 3 : 1) * ADM.spd * (1 + P.at.dex * .01);
+      const sp = (3.5 + CLASSES[char.cls].st.Velocidade * .45) * (dash > 0 ? 3 : 1) * ADM.spd * (1 + P.at.dex * .01) * (swim ? .6 : 1);
       const dx = .7071 * (ix - iy), dz = -.7071 * (ix + iy);
       p.x = Math.max(-HS + 4, Math.min(HS - 4, p.x + dx * sp * dt)); p.z = Math.max(-HS + 4, Math.min(HS - 4, p.z + dz * sp * dt)); p.y = E.W.H(p.x, p.z);
       const r = Math.atan2(dx, dz), d = Math.atan2(Math.sin(r - E.player.rotation.y), Math.cos(r - E.player.rotation.y));
@@ -1002,7 +1004,7 @@ function initUI(E) {
     const R = xl ? HS / fz : 160 * (mini2 ? 2 : 1), cx = xl && fz === 1 ? 0 : p.x, cz = xl && fz === 1 ? 0 : p.z, N = xl ? 64 : 40, cs = S / N;
     for (let i = 0; i < N; i++) for (let j = 0; j < N; j++) {
       const wx = cx + ((i + .5) / N - .5) * 2 * R, wz = cz + ((j + .5) / N - .5) * 2 * R;
-      mc.fillStyle = xl && !explored(wx, wz) ? '#0b0f0d' : BC[E.W.biome(wx, wz)]; mc.fillRect(i * cs, j * cs, cs + 1, cs + 1);
+      mc.fillStyle = xl && !explored(wx, wz) ? '#0b0f0d' : lakeW(wx, wz) > .5 ? '#3f86c4' : BC[E.W.biome(wx, wz)]; mc.fillRect(i * cs, j * cs, cs + 1, cs + 1);
     }
     const X = x => half + (x - cx) / R * half, Z = z => half + (z - cz) / R * half, sz = xl ? 8 : 6;
     mc.strokeStyle = '#d9b36a'; mc.lineWidth = xl ? 2 : 1.5;
@@ -1401,7 +1403,7 @@ function initUI(E) {
   });
   /* ── v0.007: dungeons (Portal de Dungeon → 3 ondas + chefe) ── */
   const D = { on: false, y: 400, st: 0, near: null, g: null, exit: null, ret: { x: 0, z: 0 }, bi: 4, k: 1 };
-  const H0 = E.W.H; E.W.H = (x, z) => D.on ? D.y : H0(x, z);   // dentro da dungeon o chão é plano
+  const H0 = E.W.H; E.W.H = (x, z) => D.on ? D.y : Math.max(-.9, H0(x, z));   // dentro da dungeon o chão é plano
   QS.push({ id: 'q6', npc: 2, nome: 'Segredos do Portal', desc: 'Conclua uma dungeon: entre em um Portal de Dungeon (E).', t: 'dungeon', n: 1, xp: 600, sp: 2, req: 'q3' });
   function buildDungeon() {
     const g = new T.Group(), st = new T.MeshStandardMaterial({ color: 0x3a3d45, roughness: 1, flatShading: true }), wl = new T.MeshStandardMaterial({ color: 0x2a2c33, roughness: 1 });
@@ -1536,7 +1538,7 @@ function initUI(E) {
     tgtT -= .1; const show = tgt && tgtT > 0 && mons.includes(tgt); $('tgt').style.display = show ? 'block' : 'none';
     if (show) { $('tgtN').textContent = (tgt.elite ? '★ ' : '') + tgt.d.n + ' · Nv. ' + Math.max(1, Math.round(tgt.lv * 5)); $('tgtF').style.width = Math.max(0, tgt.hp / tgt.max * 100) + '%'; }
     const mv = Math.hypot(p.x - lx, p.z - lz); lx = p.x; lz = p.z; dust = !dust;
-    if (mv > .3 && dust) burst({ x: p.x, y: p.y - .9, z: p.z }, 0x9a8a6a, 2);
+    if (mv > .3 && dust) burst({ x: p.x, y: p.y - .9, z: p.z }, swim ? 0x9fd8ff : 0x9a8a6a, 2);
   });
   /* ── v0.010: mapa completo com névoa e zoom, esquiva, elites, mais monstros/chefes e vilas seguras ── */
   var fz = 1, mini2 = false, invT = 0, dgCd = 0, exI = -1, exJ = -1, inVil = false;
@@ -1794,6 +1796,19 @@ function initUI(E) {
     if (P.tut >= TUT.length) { el.style.display = 'none'; return; }
     el.style.display = ''; el.textContent = '📘 ' + TUT[P.tut];
     if ([Math.hypot(p.x, p.z) > 5, P.kills >= 1 || atk > 0, Object.keys(P.q).length > 0][P.tut]) { P.tut++; saveP(); toast(P.tut >= TUT.length ? 'Tutorial concluído!' : 'Ótimo!'); }
+  });
+  /* ── v0.015: lagos com água, nado (mais lento) e Enter para abrir o chat ── */
+  var swim = false;
+  const wat = new T.Mesh(new T.PlaneGeometry(500, 500), new T.MeshStandardMaterial({ color: 0x2f7fbf, transparent: true, opacity: .72, roughness: .15, metalness: .1, depthWrite: false }));
+  wat.rotation.x = -Math.PI / 2; wat.position.y = -.5; E.scene.add(wat);
+  E.updaters.push(dt => {
+    const p = E.player.position, t = Date.now() / 1000;
+    wat.visible = !D.on; wat.position.x = p.x; wat.position.z = p.z; wat.material.opacity = .68 + Math.sin(t * 1.5) * .05;
+    swim = G.mode === 'play' && !D.on && H0(p.x, p.z) < -.6;
+  });
+  addEventListener('keydown', e => {
+    if (G.mode !== 'play' || e.key !== 'Enter' || /INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return;
+    e.preventDefault(); $('cg').classList.add('x'); $('cgBd').style.display = 'none'; if ($('cgI').focus) $('cgI').focus();
   });
   document.body.dataset.mode = 'start';
 }
