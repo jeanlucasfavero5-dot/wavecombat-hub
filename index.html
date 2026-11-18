@@ -352,21 +352,6 @@
         </div>
     </div>
 
-    <!-- Modal Alerta E-mail -->
-    <div class="modal-overlay" id="modalAlertEmail" style="z-index: 3600;">
-        <div class="modal-card" style="text-align: center; border-color: var(--gold-warning);">
-            <h3 style="font-family:'Orbitron'; color:var(--gold-warning); margin-bottom:10px;">⚠️ Lembrete de Segurança</h3>
-            <p style="font-size:12px; color:#94a3b8; margin-bottom:15px;">Sua conta ainda não possui um e-mail de recuperação vinculado. Cadastre para salvar permanentemente na nuvem:</p>
-            <form onsubmit="salvarEmailRecuperacaoDirect(event)" style="display:flex; flex-direction:column; gap:10px;">
-                <input type="email" id="inputVinculoEmailPrompt" placeholder="Digite seu e-mail principal..." class="auth-input" required style="text-align:center;">
-                <div style="display:flex; gap:10px;">
-                    <button type="button" class="btn-gaming btn-danger" onclick="fecharModalAlertEmail()" style="flex:1; padding:8px; font-size:11px;">Depois</button>
-                    <button type="submit" class="btn-gaming" style="flex:1; padding:8px; font-size:11px; background:var(--gold-warning); color:#000;">Vincular & Salvar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
     <!-- Modal Auth / Perfil / Inventário / Correio -->
     <div class="modal-overlay" id="authModal">
         <div class="modal-card" id="authModalCard">
@@ -382,7 +367,7 @@
             <div class="form-panel active" id="panelLogin">
                 <p id="msgBloqueioJogo" style="display:none; color:var(--gold-warning); font-size:12px; font-weight:bold; text-align:center; margin-bottom:8px;">⚠️ CRIE SUA CONTA OU FAÇA LOGIN PARA JOGAR!</p>
                 <form class="auth-form" onsubmit="fazerLoginPlataforma(event)">
-                    <input type="text" id="loginUser" placeholder="Seu Nick ou E-mail" class="auth-input" required>
+                    <input type="text" id="loginUser" placeholder="Seu Nick ou ID de Jogador" class="auth-input" required>
                     <input type="password" id="loginPass" placeholder="Sua Senha" class="auth-input" required>
                     <button type="submit" class="btn-gaming" onclick="tocarSomLevelUp()" style="width:100%; padding:10px;">Entrar na Conta</button>
                 </form>
@@ -392,7 +377,6 @@
             <div class="form-panel" id="panelRegistro">
                 <form class="auth-form" onsubmit="fazerRegistroPlataforma(event)">
                     <input type="text" id="regUser" placeholder="Escolha um Nick de Jogador (Único)" class="auth-input" required>
-                    <input type="email" id="regEmail" placeholder="Seu E-mail (Salvo na Nuvem)" class="auth-input" required>
                     <input type="password" id="regPass" placeholder="Crie uma Senha" class="auth-input" required>
                     <input type="text" id="regCodigoIndicacao" placeholder="ID ou Nick de quem convidou (Opcional)" class="auth-input">
                     <button type="submit" class="btn-gaming" onclick="tocarSomLevelUp()" style="width:100%; padding:10px; background:#22c55e; color:#000;">Criar Minha Conta</button>
@@ -834,7 +818,7 @@
                     </div>
                 </div>
 
-                <!-- Painel de Influenciadores & Comissões (Regra 6) -->
+                <!-- Painel de Influenciadores & Comissões (Vinculado às colunas: id_jogador, nick, cupom, usos, comissao) -->
                 <div class="admin-block" style="border-color: #a855f7;">
                     <h4 style="color:#a855f7;">🤝 Painel de Influenciadores (10% Desc / 30% Com.)</h4>
                     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px;">
@@ -848,19 +832,19 @@
                 </div>
             </div>
 
-            <!-- 4. Lista Completa de Contas (Isolado sem mexer em verificados - Regra 8) -->
+            <!-- 4. Lista Completa de Contas (Isolado sem mexer em verificados) -->
             <div class="admin-block" style="margin-bottom: 15px; border-color: var(--accent-color);">
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
                     <h4 style="color:var(--accent-color);">👥 Contas de Usuários (<span id="adminTotalUsersBadge">0</span>)</h4>
                     <button type="button" class="btn-mini" onclick="renderizarTabelaUsuariosAdmin()" style="background:var(--accent-color); color:#000;">🔄 Recarregar</button>
                 </div>
                 <div style="display:flex; gap:10px; margin-bottom:6px;">
-                    <input type="text" id="inputBuscaAdminUser" placeholder="🔍 Pesquisar por Nick, E-mail ou ID..." class="auth-input" oninput="renderizarTabelaUsuariosAdmin()" style="font-size:11px;">
+                    <input type="text" id="inputBuscaAdminUser" placeholder="🔍 Pesquisar por Nick ou ID..." class="auth-input" oninput="renderizarTabelaUsuariosAdmin()" style="font-size:11px;">
                 </div>
                 <div id="adminListaUsuariosContainer" style="max-height:380px; overflow-y:auto; display:flex; flex-direction:column; gap:8px;"></div>
             </div>
 
-            <!-- 5. Gerenciamento de Jogos Existentes (Sem botão de adicionar - Regra 7) -->
+            <!-- 5. Gerenciamento de Jogos Existentes (Sem botão de adicionar) -->
             <h4 style="color:#fff; margin-bottom:10px; font-family:'Orbitron'; font-size:14px;">🎮 Configuração de Jogos (Capas, Upload Cloud & Publicação)</h4>
             <div id="adminListaJogos" style="display:flex; flex-direction:column; gap:10px; margin-bottom:15px;"></div>
 
@@ -901,7 +885,7 @@
         WaveCombat Hub &copy; 2026 — Versão: <strong>v1.000 (100% Full Clean Edition)</strong>
     </footer>
 
-    <!-- Script Principal -->
+    <!-- Script Principal Vinculado às Colunas Reais do Supabase -->
     <script>
         const SUPABASE_URL = "https://ipqjeacdfiomcxfuixdj.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_EWW84q_43YbOvMwB_Rua-A_X465PbLP";
@@ -931,7 +915,7 @@
 
         let bgmInterval = null;
         let bgmActive = true; 
-        let bgmVolumeValue = 0.2; // BGM inicia a 20% (Regra 2)
+        let bgmVolumeValue = 0.2; // BGM inicia a 20%
         const arcadeNotes = [261.63, 329.63, 392.00, 523.25, 493.88, 392.00, 329.63, 293.66, 349.23, 440.00]; 
         let noteIndex = 0;
         let micAtivo = true;
@@ -990,13 +974,22 @@
         }
 
         async function carregarVerificadosNuvem() {
+            cacheVerificadosNuvem = {};
             try {
-                const { data } = await supabaseClient.from('wavecombat_verificados').select('*');
-                cacheVerificadosNuvem = {};
-                if (data && data.length > 0) {
-                    data.forEach(item => {
+                const { data: uVerif } = await supabaseClient.from('usuarios').select('id_jogador, nick, verified').eq('verified', true);
+                if (uVerif && uVerif.length > 0) {
+                    uVerif.forEach(item => {
                         if (item.id_jogador) cacheVerificadosNuvem[String(item.id_jogador)] = item;
                         if (item.nick) cacheVerificadosNuvem[item.nick.toLowerCase()] = item;
+                    });
+                }
+            } catch(e) {}
+            try {
+                const { data } = await supabaseClient.from('wavecombat_verificados').select('*');
+                if (data && data.length > 0) {
+                    data.forEach(item => {
+                        if (item.id_jogador) cacheVerificadosNuvem[String(item.id_jogador)] = { ...(cacheVerificadosNuvem[String(item.id_jogador)] || {}), ...item };
+                        if (item.nick) cacheVerificadosNuvem[item.nick.toLowerCase()] = { ...(cacheVerificadosNuvem[item.nick.toLowerCase()] || {}), ...item };
                     });
                 }
             } catch(e) {}
@@ -1016,26 +1009,29 @@
             } catch(e) {}
         }
 
+        // Vinculado às colunas reais da tabela `influenciadores`: id_jogador, nick, cupom, usos, comissao
         async function carregarCuponsNuvem() {
             try {
                 const { data } = await supabaseClient.from('influenciadores').select('*');
                 cacheCuponsNuvem = {};
                 if (data && data.length > 0) {
                     data.forEach(c => {
-                        const cod = (c.codigo_cupom || c.cupom || c.codigo || '').toUpperCase().trim();
+                        const cod = (c.cupom || '').toUpperCase().trim();
                         if (cod) {
                             cacheCuponsNuvem[cod] = {
                                 codigo: cod,
-                                desconto: Number(c.desconto_pct || c.desconto || 10),
-                                nick: c.nick || c.influenciador || 'Parceiro',
-                                influenciador_id: c.id_jogador ? String(c.id_jogador) : null
+                                desconto: 10,
+                                nick: c.nick || 'Parceiro',
+                                influenciador_id: c.id_jogador ? String(c.id_jogador) : null,
+                                usos: Number(c.usos || 0),
+                                comissao: Number(c.comissao || 0)
                             };
                         }
                     });
                 }
             } catch(e) {}
             if (!cacheCuponsNuvem['WAVE10']) {
-                cacheCuponsNuvem['WAVE10'] = { codigo: 'WAVE10', desconto: 10, nick: 'Oficial', influenciador_id: null };
+                cacheCuponsNuvem['WAVE10'] = { codigo: 'WAVE10', desconto: 10, nick: 'Oficial', influenciador_id: null, usos: 0, comissao: 0 };
             }
         }
 
@@ -1123,102 +1119,83 @@
             }, 1000);
         }
 
-        // Sincronização unificada gravando colunas + JSON (Regra 3)
+        // Vinculado às colunas reais da tabela `usuarios`: id_jogador, nick, pass, verified, profile_frame, role
         async function sincronizarUsuarioNuvem(idJogador) {
             try {
-                const { data, error } = await supabaseClient.from('usuarios').select('*').eq('id_jogador', String(idJogador)).maybeSingle();
+                const { data, error } = await supabaseClient.from('usuarios').select('id_jogador, nick, pass, verified, profile_frame, role').eq('id_jogador', String(idJogador)).maybeSingle();
                 if (!error && data) {
                     usuarioLogado.nick = data.nick || usuarioLogado.nick;
-                    const emailNuvem = (data.email && data.email.trim() !== '') ? data.email.trim() : '';
-                    const emailLocal = (usuarioLogado.email && usuarioLogado.email.trim() !== '') ? usuarioLogado.email.trim() : '';
+                    usuarioLogado.verified = !!data.verified;
+                    usuarioLogado.profile_frame = data.profile_frame || 'default';
+                    if (data.role === 'admin' || String(idJogador) === MEU_ID_MESTRE || (data.nick && data.nick.toLowerCase() === 'capudo7')) {
+                        usuarioLogado.isAdm = true;
+                        document.getElementById('btnToggleAdmNav').style.display = 'inline-block';
+                    }
+                    if (data.profile_frame && data.profile_frame !== 'default') {
+                        localStorage.setItem(`moldura_ativa_${idJogador}`, data.profile_frame);
+                    }
                     
-                    if (emailNuvem) {
-                        usuarioLogado.email = emailNuvem;
-                    } else if (emailLocal) {
-                        usuarioLogado.email = emailLocal;
-                        await supabaseClient.from('usuarios').update({ email: emailLocal }).eq('id_jogador', String(idJogador));
-                    }
+                    // Carregar bio e redes sociais de wavecombat_verificados ou cache local
+                    let bioLocal = localStorage.getItem(`perfil_bio_${idJogador}`) || 'Disponível no Hub';
+                    let instaLocal = localStorage.getItem(`perfil_insta_${idJogador}`) || '';
+                    let ytLocal = localStorage.getItem(`perfil_yt_${idJogador}`) || '';
+                    let tiktokLocal = localStorage.getItem(`perfil_tiktok_${idJogador}`) || '';
 
-                    usuarioLogado.moldura = data.moldura || '';
-                    usuarioLogado.bio = data.bio || 'Disponível no Hub';
-                    usuarioLogado.instagram = data.instagram || '';
-                    usuarioLogado.youtube = data.youtube || '';
-                    usuarioLogado.tiktok = data.tiktok || '';
+                    try {
+                        const { data: vData } = await supabaseClient.from('wavecombat_verificados').select('*').eq('id_jogador', String(idJogador)).maybeSingle();
+                        if (vData) {
+                            if (vData.bio) bioLocal = vData.bio;
+                            if (vData.instagram) instaLocal = vData.instagram;
+                            if (vData.youtube) ytLocal = vData.youtube;
+                            if (vData.tiktok) tiktokLocal = vData.tiktok;
+                        }
+                    } catch(e) {}
 
-                    if (data.preferencias) {
-                        const p = data.preferencias;
-                        if (typeof p.sfx === 'boolean') {
-                            audioSfxAtivo = p.sfx;
-                            const elSfx = document.getElementById('checkAudioSFX');
-                            if (elSfx) elSfx.checked = p.sfx;
+                    usuarioLogado.bio = bioLocal;
+                    usuarioLogado.instagram = instaLocal;
+                    usuarioLogado.youtube = ytLocal;
+                    usuarioLogado.tiktok = tiktokLocal;
+
+                    // Carregar cor_nick do leaderboard
+                    try {
+                        const { data: lbData } = await supabaseClient.from('leaderboard').select('cor_nick').eq('id_jogador', String(idJogador)).maybeSingle();
+                        if (lbData && lbData.cor_nick) usuarioLogado.cor_nick = lbData.cor_nick;
+                    } catch(e) {}
+
+                    // Preferencias locais
+                    try {
+                        const prefsRaw = localStorage.getItem(`preferencias_${idJogador}`);
+                        if (prefsRaw) {
+                            const p = JSON.parse(prefsRaw);
+                            if (typeof p.sfx === 'boolean') {
+                                audioSfxAtivo = p.sfx;
+                                const elSfx = document.getElementById('checkAudioSFX');
+                                if (elSfx) elSfx.checked = p.sfx;
+                            }
+                            if (typeof p.bgm === 'boolean') {
+                                bgmActive = p.bgm;
+                                const elBgm = document.getElementById('checkBGM');
+                                if (elBgm) elBgm.checked = p.bgm;
+                            }
+                            if (p.volume !== undefined) {
+                                bgmVolumeValue = p.volume / 100;
+                                const elVol = document.getElementById('rangeBGMVolume');
+                                if (elVol) elVol.value = p.volume;
+                            }
+                            if (typeof p.invisivel === 'boolean') {
+                                const elInv = document.getElementById('checkModoInvisivel');
+                                if (elInv) elInv.checked = p.invisivel;
+                            }
                         }
-                        if (typeof p.bgm === 'boolean') {
-                            bgmActive = p.bgm;
-                            const elBgm = document.getElementById('checkBGM');
-                            if (elBgm) elBgm.checked = p.bgm;
-                        }
-                        if (p.volume !== undefined) {
-                            bgmVolumeValue = p.volume / 100;
-                            const elVol = document.getElementById('rangeBGMVolume');
-                            if (elVol) elVol.value = p.volume;
-                        }
-                        if (typeof p.invisivel === 'boolean') {
-                            const elInv = document.getElementById('checkModoInvisivel');
-                            if (elInv) elInv.checked = p.invisivel;
-                        }
-                        if (Array.isArray(p.favoritos)) {
-                            localStorage.setItem(`fav_jogos_${idJogador}`, JSON.stringify(p.favoritos));
-                        }
-                    }
+                    } catch(e) {}
 
                     localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
-                    document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(usuarioLogado.nick, usuarioLogado.id);
-
-                    if (!usuarioLogado.email || usuarioLogado.email.trim() === '') {
-                        document.getElementById('modalAlertEmail').style.display = 'flex';
-                    } else {
-                        document.getElementById('modalAlertEmail').style.display = 'none';
-                    }
+                    document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(usuarioLogado.nick, usuarioLogado.id, usuarioLogado.cor_nick || '');
                 }
             } catch(e) {}
         }
 
-        async function salvarEmailRecuperacaoDirect(e) {
-            e.preventDefault();
-            const emailDigitado = document.getElementById('inputVinculoEmailPrompt').value.trim();
-            if (!emailDigitado || !usuarioLogado) return;
-
-            try {
-                await supabaseClient.from('usuarios').update({ email: emailDigitado }).eq('id_jogador', String(usuarioLogado.id));
-                usuarioLogado.email = emailDigitado;
-                localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
-                fecharModalAlertEmail();
-                mostrarToast("✉️ E-mail vinculado e salvo na nuvem!");
-                atualizarPerfilExpandidoUI();
-            } catch(err) {
-                alert("Erro ao salvar e-mail na nuvem.");
-            }
-        }
-
-        async function desvincularEmailConta() {
-            if (!usuarioLogado || !usuarioLogado.id) return;
-            if (confirm("Deseja realmente desvincular e remover o e-mail cadastrado desta conta?")) {
-                try {
-                    await supabaseClient.from('usuarios').update({ email: '' }).eq('id_jogador', String(usuarioLogado.id));
-                    usuarioLogado.email = '';
-                    localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
-                    mostrarToast("🗑️ E-mail desvinculado!");
-                    atualizarPerfilExpandidoUI();
-                } catch(e) {
-                    alert("Erro ao desvincular e-mail.");
-                }
-            }
-        }
-
-        function fecharModalAlertEmail() {
-            document.getElementById('modalAlertEmail').style.display = 'none';
-        }
-
+        // Vinculado às colunas reais da tabela `carteira_diamantes`: id_jogador, nick, diamantes, updated_at
         async function carregarSaldoDiamantesSite() {
             const saldoEl = document.getElementById('userDiamondBalance');
             if (!usuarioLogado || !usuarioLogado.id) {
@@ -1241,11 +1218,12 @@
                     if (saldoEl) saldoEl.textContent = formatarNumero(qtdOficial);
                     localStorage.setItem(`diamantes_${usuarioLogado.id}`, qtdOficial);
                 } else {
-                    await supabaseClient.from('carteira_diamantes').insert([{ 
+                    await supabaseClient.from('carteira_diamantes').upsert({ 
                         id_jogador: String(usuarioLogado.id), 
                         nick: usuarioLogado.nick, 
-                        diamantes: cacheLocalDiamantes ? parseInt(cacheLocalDiamantes) : 0 
-                    }]);
+                        diamantes: cacheLocalDiamantes ? parseInt(cacheLocalDiamantes) : 0,
+                        updated_at: new Date().toISOString()
+                    }, { onConflict: 'id_jogador' });
                 }
             } catch (e) {}
         }
@@ -1266,11 +1244,16 @@
 
             let novoSaldo = saldoAtual - custo;
             localStorage.setItem(`diamantes_${usuarioLogado.id}`, novoSaldo);
-            await supabaseClient.from('carteira_diamantes').upsert({ id_jogador: String(usuarioLogado.id), nick: usuarioLogado.nick, diamantes: novoSaldo }, { onConflict: 'id_jogador' });
+            await supabaseClient.from('carteira_diamantes').upsert({ 
+                id_jogador: String(usuarioLogado.id), 
+                nick: usuarioLogado.nick, 
+                diamantes: novoSaldo,
+                updated_at: new Date().toISOString()
+            }, { onConflict: 'id_jogador' });
             
             const expira = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
             try {
-                await supabaseClient.from('aumento_perfis').upsert({
+                await supabaseClient.from('rise_perfis').upsert({
                     id_jogador: String(usuarioLogado.id),
                     nick: usuarioLogado.nick,
                     ativo: true,
@@ -1284,6 +1267,7 @@
             mostrarToast("🚀 Boost de Perfil ativado com sucesso!");
         }
 
+        // Vinculado às colunas reais da tabela `correios`: id, id_jogador, titulo, mensagem, tipo, codigo_cupom, resgatado, data, created_at
         async function verificarMensagensNaoLidasBadge() {
             if (!usuarioLogado || !usuarioLogado.id) return;
             try {
@@ -1398,6 +1382,7 @@
                             titulo: titulo,
                             mensagem: mensagem + (diamantes > 0 ? ` (Presente: ${diamantes} 💎)` : ''),
                             tipo: diamantes > 0 ? 'diamantes' : 'comunicado',
+                            codigo_cupom: null,
                             resgatado: false,
                             data: new Date().toLocaleDateString('pt-BR')
                         }]);
@@ -1405,7 +1390,12 @@
                         if (diamantes > 0) {
                             const { data: cart } = await supabaseClient.from('carteira_diamantes').select('diamantes').eq('id_jogador', String(u.id)).maybeSingle();
                             let atual = cart ? (cart.diamantes || 0) : 0;
-                            await supabaseClient.from('carteira_diamantes').upsert({ id_jogador: String(u.id), nick: u.nick, diamantes: atual + diamantes }, { onConflict: 'id_jogador' });
+                            await supabaseClient.from('carteira_diamantes').upsert({ 
+                                id_jogador: String(u.id), 
+                                nick: u.nick, 
+                                diamantes: atual + diamantes,
+                                updated_at: new Date().toISOString()
+                            }, { onConflict: 'id_jogador' });
                         }
                     }
                     mostrarToast("🚀 Mensagem e presentes em massa disparados!");
@@ -1417,10 +1407,12 @@
             }
         }
 
+        // Vinculado às colunas reais: leaderboard (cor_nick), wavecombat_verificados (bio, instagram, youtube, tiktok) e localStorage
         async function salvarPerfilRedesSociais(e) {
             e.preventDefault();
             if (!usuarioLogado) return;
 
+            const idStr = String(usuarioLogado.id);
             const bio = document.getElementById('inputPerfilBio').value.trim();
             const instagram = document.getElementById('inputPerfilInsta').value.trim();
             const youtube = document.getElementById('inputPerfilYt').value.trim();
@@ -1428,32 +1420,36 @@
             const corNick = document.getElementById('inputPerfilCorNick')?.value || '#00f0ff';
 
             try {
-                const prefsAtuais = {
-                    sfx: audioSfxAtivo,
-                    bgm: bgmActive,
-                    volume: Math.round(bgmVolumeValue * 100),
-                    invisivel: document.getElementById('checkModoInvisivel')?.checked || false,
-                    favoritos: JSON.parse(localStorage.getItem(`fav_jogos_${usuarioLogado.id}`) || '[]')
-                };
+                // Salva localmente para garantir persistência imediata para qualquer conta
+                localStorage.setItem(`perfil_bio_${idStr}`, bio);
+                localStorage.setItem(`perfil_insta_${idStr}`, instagram);
+                localStorage.setItem(`perfil_yt_${idStr}`, youtube);
+                localStorage.setItem(`perfil_tiktok_${idStr}`, tiktok);
 
-                await supabaseClient.from('usuarios').update({
-                    bio: bio,
-                    instagram: instagram,
-                    youtube: youtube,
-                    tiktok: tiktok,
-                    preferencias: prefsAtuais
-                }).eq('id_jogador', String(usuarioLogado.id));
+                // Se estiver na tabela wavecombat_verificados, atualiza lá também
+                if (cacheVerificadosNuvem[idStr]) {
+                    await supabaseClient.from('wavecombat_verificados').update({
+                        bio: bio,
+                        instagram: instagram,
+                        youtube: youtube,
+                        tiktok: tiktok
+                    }).eq('id_jogador', idStr);
+                }
 
-                await supabaseClient.from('wavecombat_verificados').upsert({
-                    id_jogador: String(usuarioLogado.id),
-                    nick: usuarioLogado.nick,
-                    bio: bio,
-                    instagram: instagram,
-                    youtube: youtube,
-                    tiktok: tiktok
-                }, { onConflict: 'id_jogador' });
-
-                await supabaseClient.from('leaderboard').update({ cor_nick: corNick }).eq('id_jogador', String(usuarioLogado.id));
+                // Atualiza cor_nick na tabela `leaderboard`
+                const { data: lbExist } = await supabaseClient.from('leaderboard').select('id').eq('id_jogador', idStr).maybeSingle();
+                if (lbExist) {
+                    await supabaseClient.from('leaderboard').update({ cor_nick: corNick, nick: usuarioLogado.nick }).eq('id_jogador', idStr);
+                } else {
+                    await supabaseClient.from('leaderboard').insert([{
+                        id_jogador: idStr,
+                        nick: usuarioLogado.nick,
+                        pontos: 0,
+                        xp: 0,
+                        nivel: 1,
+                        cor_nick: corNick
+                    }]);
+                }
 
                 usuarioLogado.bio = bio;
                 usuarioLogado.instagram = instagram;
@@ -1462,7 +1458,8 @@
                 usuarioLogado.cor_nick = corNick;
                 localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
 
-                mostrarToast("✅ Perfil, preferência JSON e redes sociais atualizados!");
+                document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(usuarioLogado.nick, idStr, corNick);
+                mostrarToast("✅ Perfil, cor do nick e redes sociais atualizados!");
                 atualizarPerfilExpandidoUI();
                 carregarLeaderboardSite();
             } catch(e) {
@@ -1470,7 +1467,7 @@
             }
         }
 
-        // Sorteio 100% Automatizado (Regra 5)
+        // Sorteio 100% Automatizado (configuracoes: chave, valor)
         async function carregarUltimoGanhadorSorteio() {
             const box = document.getElementById('ultimoGanhadorSorteioBox');
             const adminBox = document.getElementById('adminUltimoSorteioInfoBox');
@@ -1528,6 +1525,7 @@
                     titulo: `🎟️ Bilhete Sorteio Semanal #${semanaAtual}`,
                     mensagem: `Participação confirmada para ${usuarioLogado.nick} no sorteio automatizado de 50 Diamantes!`,
                     tipo: 'sorteio_ticket',
+                    codigo_cupom: null,
                     resgatado: true,
                     data: new Date().toLocaleDateString('pt-BR')
                 }]);
@@ -1671,7 +1669,12 @@
                     let saldoAtual = parseInt(localStorage.getItem(`diamantes_${usuarioLogado.id}`) || '0', 10);
                     let novoSaldo = saldoAtual + premio.val;
                     localStorage.setItem(`diamantes_${usuarioLogado.id}`, novoSaldo);
-                    await supabaseClient.from('carteira_diamantes').upsert({ id_jogador: String(usuarioLogado.id), nick: usuarioLogado.nick, diamantes: novoSaldo }, { onConflict: 'id_jogador' });
+                    await supabaseClient.from('carteira_diamantes').upsert({ 
+                        id_jogador: String(usuarioLogado.id), 
+                        nick: usuarioLogado.nick, 
+                        diamantes: novoSaldo,
+                        updated_at: new Date().toISOString()
+                    }, { onConflict: 'id_jogador' });
                     carregarSaldoDiamantesSite();
                     tocarSomResultadoRoleta(true);
                     exibirModalWheelResult("💎", "VOCÊ GANHOU!", `Parabéns! Foram creditados <strong>${premio.val} Diamantes</strong>!`, true);
@@ -1691,22 +1694,37 @@
             }, 4500);
         }
 
+        // Vinculado às colunas reais da tabela `leaderboard`: id, id_jogador, nick, pontos, created_at, xp, nivel, cor_nick
         async function adicionarXpJogador(qtdXp) {
             if (!usuarioLogado) return;
+            const idStr = String(usuarioLogado.id);
             try {
-                const { data } = await supabaseClient.from('leaderboard').select('nivel, xp, pontos, cor_nick').eq('id_jogador', String(usuarioLogado.id)).maybeSingle();
-                let mult = localStorage.getItem(`boost_ativo_${usuarioLogado.id}`) ? 2 : 1;
+                const { data } = await supabaseClient.from('leaderboard').select('id, nivel, xp, pontos, cor_nick').eq('id_jogador', idStr).maybeSingle();
+                let mult = localStorage.getItem(`boost_ativo_${idStr}`) ? 2 : 1;
                 let xpGanho = qtdXp * mult;
                 let xpAtual = (data?.xp || 0) + xpGanho;
                 let nivelAtual = Math.floor(xpAtual / 500) + 1;
-                await supabaseClient.from('leaderboard').upsert({
-                    id_jogador: String(usuarioLogado.id),
-                    nick: usuarioLogado.nick,
-                    xp: xpAtual,
-                    nivel: nivelAtual,
-                    pontos: (data?.pontos || 0) + xpGanho,
-                    cor_nick: data?.cor_nick || usuarioLogado.cor_nick || ''
-                }, { onConflict: 'id_jogador' });
+                let pontosAtual = (data?.pontos || 0) + xpGanho;
+                let corAtual = data?.cor_nick || usuarioLogado.cor_nick || '#FFFFFF';
+
+                if (data && data.id) {
+                    await supabaseClient.from('leaderboard').update({
+                        nick: usuarioLogado.nick,
+                        xp: xpAtual,
+                        nivel: nivelAtual,
+                        pontos: pontosAtual,
+                        cor_nick: corAtual
+                    }).eq('id', data.id);
+                } else {
+                    await supabaseClient.from('leaderboard').insert([{
+                        id_jogador: idStr,
+                        nick: usuarioLogado.nick,
+                        xp: xpAtual,
+                        nivel: nivelAtual,
+                        pontos: pontosAtual,
+                        cor_nick: corAtual
+                    }]);
+                }
                 atualizarPerfilExpandidoUI();
                 carregarLeaderboardSite();
             } catch(e){}
@@ -1733,7 +1751,7 @@
             }
 
             const cupomInfo = cacheCuponsNuvem[cupomDigitado];
-            const descontoPct = cupomInfo ? cupomInfo.desconto : 0; // 10% de desconto automático (Regra 6)
+            const descontoPct = cupomInfo ? cupomInfo.desconto : 0;
             const statusEl = document.getElementById('statusCupomInfo');
             if (statusEl) {
                 statusEl.textContent = cupomInfo ? `✅ Cupom ${cupomInfo.codigo} aplicado (${descontoPct}% OFF - Influenciador: ${cupomInfo.nick})` : '';
@@ -1774,7 +1792,12 @@
 
             let novoSaldo = saldoAtual - preco;
             localStorage.setItem(`diamantes_${usuarioLogado.id}`, novoSaldo);
-            await supabaseClient.from('carteira_diamantes').upsert({ id_jogador: String(usuarioLogado.id), nick: usuarioLogado.nick, diamantes: novoSaldo }, { onConflict: 'id_jogador' });
+            await supabaseClient.from('carteira_diamantes').upsert({ 
+                id_jogador: String(usuarioLogado.id), 
+                nick: usuarioLogado.nick, 
+                diamantes: novoSaldo,
+                updated_at: new Date().toISOString()
+            }, { onConflict: 'id_jogador' });
             
             inv.push(tipoMoldura);
             localStorage.setItem(`molduras_${usuarioLogado.id}`, JSON.stringify(inv));
@@ -1792,7 +1815,7 @@
             ['frame-neon', 'frame-fogo', 'frame-prisma'].forEach(mId => {
                 const btn = document.getElementById(`btn_buy_${mId}`);
                 if (btn && inv.includes(mId)) {
-                    btn.textContent = "✅ Já Adquirida"; // Trava de compra única (Regra 4)
+                    btn.textContent = "✅ Já Adquirida";
                     btn.style.background = "#22c55e";
                     btn.style.color = "#000";
                     btn.disabled = true;
@@ -1830,7 +1853,9 @@
         async function equiparMoldura(item) {
             localStorage.setItem(`moldura_ativa_${usuarioLogado.id}`, item);
             try {
-                await supabaseClient.from('usuarios').update({ moldura: item }).eq('id_jogador', String(usuarioLogado.id));
+                await supabaseClient.from('usuarios').update({ profile_frame: item }).eq('id_jogador', String(usuarioLogado.id));
+                usuarioLogado.profile_frame = item;
+                localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
             } catch(e) {}
             mostrarToast(`✨ Moldura ${item} equipada!`);
             atualizarInventarioUI();
@@ -1945,7 +1970,7 @@
             const jogos = listaJogosCache.filter(j => j.publicado);
             const destaque = obterJogoDestaque(jogos);
             if (destaque) {
-                toggleBGM(false); // Auto-pausa BGM (Regra 2)
+                toggleBGM(false);
                 let sep = destaque.arquivo.includes('?') ? '&' : '?';
                 document.getElementById('gameIframe').src = `${destaque.arquivo}${sep}spectator=1&target=${encodeURIComponent(nickAmigo)}`;
                 document.getElementById('player').style.display = 'block';
@@ -1978,7 +2003,10 @@
             let idFinal = userObj.id;
             let nickFinal = userObj.nick;
             let nivelUser = 1, xpUser = 0, pontosUser = 0;
-            let bioUser = "Disponível no Hub", instaUser = "", ytUser = "", tiktokUser = "";
+            let bioUser = localStorage.getItem(`perfil_bio_${idFinal}`) || "Disponível no Hub";
+            let instaUser = localStorage.getItem(`perfil_insta_${idFinal}`) || "";
+            let ytUser = localStorage.getItem(`perfil_yt_${idFinal}`) || "";
+            let tiktokUser = localStorage.getItem(`perfil_tiktok_${idFinal}`) || "";
 
             try {
                 const { data: lb } = await supabaseClient.from('leaderboard').select('nivel, xp, pontos').eq('id_jogador', idFinal).maybeSingle();
@@ -1986,9 +2014,9 @@
                 const { data: verifData } = await supabaseClient.from('wavecombat_verificados').select('*').eq('id_jogador', idFinal).maybeSingle();
                 if (verifData) {
                     bioUser = verifData.bio || bioUser;
-                    instaUser = verifData.instagram || "";
-                    ytUser = verifData.youtube || "";
-                    tiktokUser = verifData.tiktok || "";
+                    instaUser = verifData.instagram || instaUser;
+                    ytUser = verifData.youtube || ytUser;
+                    tiktokUser = verifData.tiktok || tiktokUser;
                 }
             } catch(e){}
 
@@ -2107,7 +2135,7 @@
             mostrarToast(ativo ? "🕶️ Modo invisível ativado" : "🟢 Modo visível ativado");
         }
 
-        async function salvarConfiguracoesNuvemAutomatico() {
+        function salvarConfiguracoesNuvemAutomatico() {
             if (!usuarioLogado) return;
             const favs = JSON.parse(localStorage.getItem(`fav_jogos_${usuarioLogado.id}`) || '[]');
             const prefs = {
@@ -2117,9 +2145,7 @@
                 invisivel: document.getElementById('checkModoInvisivel')?.checked,
                 favoritos: favs
             };
-            try {
-                await supabaseClient.from('usuarios').update({ preferencias: prefs }).eq('id_jogador', String(usuarioLogado.id));
-            } catch(e) {}
+            localStorage.setItem(`preferencias_${usuarioLogado.id}`, JSON.stringify(prefs));
         }
 
         let deferredPrompt = null;
@@ -2265,7 +2291,7 @@
             mostrarToast("📋 Código Pix copiado!");
         }
 
-        // Regra de comissão de influenciador (30%) e desconto (10%)
+        // Vinculado às colunas reais da tabela `influenciadores`: id_jogador, nick, cupom, usos, comissao
         async function gerarPixMercadoPago(valorBase, quantDiamantes) {
             if (!usuarioLogado || !usuarioLogado.id) {
                 alert("⚠️ Faça login para comprar diamantes!");
@@ -2284,11 +2310,13 @@
 
             if (cupomInfo && cupomInfo.influenciador_id) {
                 try {
-                    const { data: infData } = await supabaseClient.from('influenciadores').select('saldo_comissao').eq('id_jogador', cupomInfo.influenciador_id).maybeSingle();
-                    let saldoAtualComissao = infData ? (infData.saldo_comissao || 0) : 0;
+                    const { data: infData } = await supabaseClient.from('influenciadores').select('usos, comissao').eq('cupom', cupomInfo.codigo).maybeSingle();
+                    let usosAtuais = infData ? Number(infData.usos || 0) : 0;
+                    let comissaoAtual = infData ? Number(infData.comissao || 0) : 0;
                     await supabaseClient.from('influenciadores').update({
-                        saldo_comissao: saldoAtualComissao + comissaoInfluenciador
-                    }).eq('id_jogador', cupomInfo.influenciador_id);
+                        usos: usosAtuais + 1,
+                        comissao: comissaoAtual + comissaoInfluenciador
+                    }).eq('cupom', cupomInfo.codigo);
                 } catch(e) {}
             }
 
@@ -2328,45 +2356,79 @@
         }
 
         async function esqueciMinhaSenha() {
-            let emailInput = prompt("Digite o e-mail cadastrado na sua conta:");
-            if (!emailInput) return;
+            let nickInput = prompt("Digite seu Nick de jogador ou ID único:");
+            if (!nickInput) return;
             try {
-                const { data } = await supabaseClient.from('usuarios').select('*').eq('email', emailInput.trim()).maybeSingle();
-                if(data) { alert(`✅ Sua senha é: ${data.pass}`); }
-                else { alert("❌ Nenhum usuário encontrado com este e-mail."); }
+                const { data } = await supabaseClient.from('usuarios').select('nick, pass').or(`nick.ilike.${nickInput.trim()},id_jogador.eq.${nickInput.trim()}`).maybeSingle();
+                if(data) { alert(`✅ Conta encontrada (${data.nick})! Sua senha é: ${data.pass}`); }
+                else { alert("❌ Nenhum usuário encontrado com este Nick ou ID."); }
             } catch(e) { alert("Erro ao recuperar senha."); }
         }
 
+        // Busca unificada em todas as tabelas reais: `usuarios`, `carteira_diamantes`, `leaderboard`
         async function buscarUsuarioPorNickOuId(termo) {
             termo = termo.trim();
             if (!termo) return null;
             try {
-                let { data } = await supabaseClient.from('usuarios').select('*').or(`id_jogador.eq.${termo},nick.ilike.${termo}`).maybeSingle();
-                if (data) return { id: String(data.id_jogador || data.id), nick: data.nick, email: data.email || '' };
+                let { data } = await supabaseClient.from('usuarios').select('id_jogador, nick').or(`id_jogador.eq.${termo},nick.ilike.${termo}`).maybeSingle();
+                if (data) return { id: String(data.id_jogador), nick: data.nick };
             } catch(e){}
             try {
-                let { data: carData } = await supabaseClient.from('carteira_diamantes').select('*').or(`id_jogador.eq.${termo},nick.ilike.${termo}`).maybeSingle();
-                if (carData) return { id: String(carData.id_jogador), nick: carData.nick || carData.id_jogador, email: '' };
+                let { data: carData } = await supabaseClient.from('carteira_diamantes').select('id_jogador, nick').or(`id_jogador.eq.${termo},nick.ilike.${termo}`).maybeSingle();
+                if (carData) return { id: String(carData.id_jogador), nick: carData.nick || carData.id_jogador };
             } catch(e){}
-            if (/^\d+$/.test(termo)) return { id: termo, nick: termo, email: '' };
+            try {
+                let { data: lbData } = await supabaseClient.from('leaderboard').select('id_jogador, nick').or(`id_jogador.eq.${termo},nick.ilike.${termo}`).maybeSingle();
+                if (lbData) return { id: String(lbData.id_jogador), nick: lbData.nick || lbData.id_jogador };
+            } catch(e){}
             return null;
         }
 
+        // Lista completa combinando `usuarios`, `carteira_diamantes` e `leaderboard` para nunca faltar contas!
         async function obterUsuariosCadastrados() {
             const mapaUsuarios = new Map();
             try {
-                const { data: uData } = await supabaseClient.from('usuarios').select('*').range(0, 9999);
+                const { data: uData } = await supabaseClient.from('usuarios').select('id_jogador, nick, pass').range(0, 9999);
                 if (uData) {
                     uData.forEach(u => {
-                        const id = String(u.id_jogador || u.id || '').trim();
-                        if (id) mapaUsuarios.set(id, { id: id, nick: u.nick || `Jogador_${id}`, email: u.email || '', pass: u.pass || '' });
+                        const id = String(u.id_jogador || '').trim();
+                        if (id) mapaUsuarios.set(id, { id: id, nick: u.nick || `Jogador_${id}`, pass: u.pass || '' });
                     });
                 }
             } catch(e) {}
+
+            try {
+                const { data: cData } = await supabaseClient.from('carteira_diamantes').select('id_jogador, nick').range(0, 9999);
+                if (cData) {
+                    cData.forEach(c => {
+                        const id = String(c.id_jogador || '').trim();
+                        if (id && !mapaUsuarios.has(id)) {
+                            mapaUsuarios.set(id, { id: id, nick: c.nick || `Jogador_${id}`, pass: '' });
+                        } else if (id && mapaUsuarios.has(id) && c.nick && mapaUsuarios.get(id).nick.startsWith('Jogador_')) {
+                            mapaUsuarios.get(id).nick = c.nick;
+                        }
+                    });
+                }
+            } catch(e) {}
+
+            try {
+                const { data: lData } = await supabaseClient.from('leaderboard').select('id_jogador, nick').range(0, 9999);
+                if (lData) {
+                    lData.forEach(l => {
+                        const id = String(l.id_jogador || '').trim();
+                        if (id && !mapaUsuarios.has(id)) {
+                            mapaUsuarios.set(id, { id: id, nick: l.nick || `Jogador_${id}`, pass: '' });
+                        } else if (id && mapaUsuarios.has(id) && l.nick && l.nick !== 'Jogador Anonymous' && mapaUsuarios.get(id).nick.startsWith('Jogador_')) {
+                            mapaUsuarios.get(id).nick = l.nick;
+                        }
+                    });
+                }
+            } catch(e) {}
+
             return Array.from(mapaUsuarios.values());
         }
 
-        // Tabela de usuários isolada (Regra 8)
+        // Tabela de usuários isolada (sem coluna email inexistente e sem botão de verificado)
         async function renderizarTabelaUsuariosAdmin() {
             let container = document.getElementById('adminListaUsuariosContainer');
             if (!container) return;
@@ -2387,8 +2449,7 @@
             usuarios.sort((a, b) => (a.nick || '').localeCompare(b.nick || '', 'pt-BR', { sensitivity: 'base' }));
             let filtrados = usuarios.filter(u => 
                 (u.nick && u.nick.toLowerCase().includes(filtro)) || 
-                (u.id && String(u.id).includes(filtro)) ||
-                (u.email && u.email.toLowerCase().includes(filtro))
+                (u.id && String(u.id).includes(filtro))
             );
 
             const badgeEl = document.getElementById('adminTotalUsersBadge');
@@ -2412,7 +2473,6 @@
                                 <span style="color:var(--accent-color); font-weight:bold; background:rgba(0,240,255,0.1); padding:2px 6px; border-radius:4px;">💎 ${formatarNumero(diamantesUser)}</span>
                                 ${isBan ? `<span style="background:var(--alert-red); color:#fff; font-size:9px; padding:1px 5px; border-radius:4px; font-weight:bold;">BANIDO</span>` : ''}
                             </div>
-                            <span style="color:#94a3b8; font-size:10px;">✉️ E-mail: <strong>${u.email || 'Não vinculado'}</strong></span>
                         </div>
 
                         <div style="display:flex; gap:5px; flex-wrap:wrap; align-items:center;">
@@ -2457,7 +2517,12 @@
             const novoSaldo = tipo === 'adicionar' ? (saldoAtual + qtd) : Math.max(0, saldoAtual - qtd);
 
             try {
-                await supabaseClient.from('carteira_diamantes').upsert({ id_jogador: String(id), nick: nick, diamantes: novoSaldo }, { onConflict: 'id_jogador' });
+                await supabaseClient.from('carteira_diamantes').upsert({ 
+                    id_jogador: String(id), 
+                    nick: nick, 
+                    diamantes: novoSaldo,
+                    updated_at: new Date().toISOString()
+                }, { onConflict: 'id_jogador' });
                 if (usuarioLogado && String(usuarioLogado.id) === String(id)) {
                     localStorage.setItem(`diamantes_${id}`, novoSaldo);
                     carregarSaldoDiamantesSite();
@@ -2474,12 +2539,17 @@
             if (!container) return;
             await carregarVerificadosNuvem();
             try {
+                const mapaVerif = new Map();
+                const { data: uVerif } = await supabaseClient.from('usuarios').select('id_jogador, nick').eq('verified', true);
+                if (uVerif) uVerif.forEach(v => mapaVerif.set(String(v.id_jogador), { id_jogador: String(v.id_jogador), nick: v.nick }));
                 const { data } = await supabaseClient.from('wavecombat_verificados').select('*');
-                if (!data || data.length === 0) {
+                if (data) data.forEach(v => { if (!mapaVerif.has(String(v.id_jogador))) mapaVerif.set(String(v.id_jogador), { id_jogador: String(v.id_jogador), nick: v.nick }); });
+                const listaFinal = Array.from(mapaVerif.values());
+                if (listaFinal.length === 0) {
                     container.innerHTML = `<span style="color:#64748b; font-style:italic;">Nenhum verificado cadastrado.</span>`;
                     return;
                 }
-                container.innerHTML = data.map(v => `
+                container.innerHTML = listaFinal.map(v => `
                     <div style="display:flex; justify-content:space-between; align-items:center; background:#080c14; border:1px solid #FFD700; padding:5px 8px; border-radius:5px;">
                         <span><span class="verified-v">V</span> <strong>${v.nick}</strong> <small style="color:#94a3b8;">(ID: ${v.id_jogador})</small></span>
                         <button class="btn-mini btn-danger" onclick="alternarVerificadoJogadorAdm('${v.id_jogador}', '${(v.nick || '').replace(/'/g, "")}', true)">Remover V</button>
@@ -2501,16 +2571,19 @@
             try {
                 if (jaEhVerificado) {
                     if (!confirm(`Remover selo V de ${nick}?`)) return;
-                    await supabaseClient.from('wavecombat_verificados').delete().eq('id_jogador', String(id));
+                    await supabaseClient.from('usuarios').update({ verified: false }).eq('id_jogador', String(id));
+                    try { await supabaseClient.from('wavecombat_verificados').delete().eq('id_jogador', String(id)); } catch(e) {}
                     mostrarToast(`❌ Selo removido.`);
                     registrarLogAdmin('REMOVER_VERIFICADO', `Removeu selo de ${nick} (ID: ${id})`);
                 } else {
-                    await supabaseClient.from('wavecombat_verificados').upsert({ id_jogador: String(id), nick: nick }, { onConflict: 'id_jogador' });
+                    await supabaseClient.from('usuarios').update({ verified: true, profile_frame: 'profile-frame-gold' }).eq('id_jogador', String(id));
+                    try { await supabaseClient.from('wavecombat_verificados').upsert({ id_jogador: String(id), nick: nick }, { onConflict: 'id_jogador' }); } catch(e) {}
                     await supabaseClient.from('correios').insert([{
                         id_jogador: String(id),
                         titulo: '⭐ Você recebeu o Selo Oficial de Verificado!',
                         mensagem: 'Parabéns! A administração concedeu o Selo V Dourado oficial para a sua conta! Resgate abaixo seus 5.000 Diamantes de bônus!',
                         tipo: 'verificado',
+                        codigo_cupom: 'WAVE10',
                         resgatado: false,
                         data: new Date().toLocaleDateString('pt-BR')
                     }]);
@@ -2569,7 +2642,8 @@
         }
 
         // ==========================================
-        // PAINEL DE INFLUENCIADORES & COMISSÕES (Regra 6)
+        // PAINEL DE INFLUENCIADORES & COMISSÕES
+        // Vinculado às colunas reais: id_jogador, nick, cupom, usos, comissao
         // ==========================================
         async function renderizarInfluenciadoresAdm() {
             const container = document.getElementById('adminListaInfluenciadoresContainer');
@@ -2583,12 +2657,12 @@
                 container.innerHTML = data.map(inf => `
                     <div style="display:flex; justify-content:space-between; align-items:center; background:#080c14; border:1px solid #a855f7; padding:5px 8px; border-radius:5px;">
                         <div>
-                            <strong>${inf.nick || 'Influenciador'}</strong> (Cupom: <strong style="color:#a855f7;">${inf.codigo_cupom}</strong>)
-                            <div style="font-size:10px; color:#22c55e;">Comissão: R$ ${(inf.saldo_comissao || 0).toFixed(2).replace('.', ',')}</div>
+                            <strong>${inf.nick || 'Influenciador'}</strong> (ID: ${inf.id_jogador} | Cupom: <strong style="color:#a855f7;">${inf.cupom}</strong>)
+                            <div style="font-size:10px; color:#22c55e;">Usos: ${inf.usos || 0} | Comissão: R$ ${Number(inf.comissao || 0).toFixed(2).replace('.', ',')}</div>
                         </div>
                         <div style="display:flex; gap:4px;">
-                            <button class="btn-mini" onclick="resetarSaldoInfluenciador('${inf.codigo_cupom}')" style="background:var(--gold-warning); color:#000;" title="Zerar saldo após pagamento mensal">🔄 Reset Saldo</button>
-                            <button class="btn-mini btn-danger" onclick="removerInfluenciador('${inf.codigo_cupom}')">X</button>
+                            <button class="btn-mini" onclick="resetarSaldoInfluenciador('${inf.cupom}')" style="background:var(--gold-warning); color:#000;" title="Zerar saldo após pagamento mensal">🔄 Reset Saldo</button>
+                            <button class="btn-mini btn-danger" onclick="removerInfluenciador('${inf.cupom}')">X</button>
                         </div>
                     </div>
                 `).join('');
@@ -2607,10 +2681,10 @@
                 await supabaseClient.from('influenciadores').upsert({
                     id_jogador: alvo.id,
                     nick: alvo.nick,
-                    codigo_cupom: cupom,
-                    desconto_pct: 10,
-                    saldo_comissao: 0
-                }, { onConflict: 'codigo_cupom' });
+                    cupom: cupom,
+                    usos: 0,
+                    comissao: 0
+                }, { onConflict: 'cupom' });
 
                 document.getElementById('admInflIdOuNick').value = '';
                 document.getElementById('admInflCupom').value = '';
@@ -2624,7 +2698,7 @@
         async function resetarSaldoInfluenciador(codigoCupom) {
             if (!confirm(`Zerar (resetar) o saldo de comissão do cupom ${codigoCupom} após fechamento mensal?`)) return;
             try {
-                await supabaseClient.from('influenciadores').update({ saldo_comissao: 0 }).eq('codigo_cupom', codigoCupom);
+                await supabaseClient.from('influenciadores').update({ comissao: 0 }).eq('cupom', codigoCupom);
                 mostrarToast(`🔄 Saldo do cupom ${codigoCupom} resetado com sucesso!`);
                 registrarLogAdmin('RESET_COMISSAO', `Zerou saldo do cupom ${codigoCupom}`);
                 renderizarInfluenciadoresAdm();
@@ -2633,7 +2707,7 @@
 
         async function removerInfluenciador(codigoCupom) {
             try {
-                await supabaseClient.from('influenciadores').delete().eq('codigo_cupom', codigoCupom);
+                await supabaseClient.from('influenciadores').delete().eq('cupom', codigoCupom);
                 mostrarToast(`🗑️ Influenciador removido.`);
                 renderizarInfluenciadoresAdm();
                 carregarCuponsNuvem();
@@ -2673,11 +2747,17 @@
             let nickUser = usuarioLogado.nick;
             try {
                 await supabaseClient.from('correios').update({ resgatado: true }).eq('id', dbId);
-                if (tipoMsg === 'verificado') {
-                    await supabaseClient.from('wavecombat_verificados').upsert([{ id_jogador: idUser, nick: nickUser }], { onConflict: 'id_jogador' });
+                if (tipoMsg === 'verificado' || tipoMsg === 'verificado_invite') {
+                    await supabaseClient.from('usuarios').update({ verified: true, profile_frame: 'profile-frame-gold' }).eq('id_jogador', idUser);
+                    try { await supabaseClient.from('wavecombat_verificados').upsert([{ id_jogador: idUser, nick: nickUser }], { onConflict: 'id_jogador' }); } catch(e) {}
                     const { data: carteira } = await supabaseClient.from('carteira_diamantes').select('diamantes').eq('id_jogador', idUser).maybeSingle();
                     let saldoAtual = carteira ? (carteira.diamantes || 0) : 0;
-                    await supabaseClient.from('carteira_diamantes').upsert({ id_jogador: idUser, nick: nickUser, diamantes: saldoAtual + 5000 }, { onConflict: 'id_jogador' });
+                    await supabaseClient.from('carteira_diamantes').upsert({ 
+                        id_jogador: idUser, 
+                        nick: nickUser, 
+                        diamantes: saldoAtual + 5000,
+                        updated_at: new Date().toISOString()
+                    }, { onConflict: 'id_jogador' });
                     const cupomInfoEl = document.getElementById('infoCupomGeradoPremio');
                     if (cupomInfoEl) cupomInfoEl.textContent = `🎟️ Código Promocional Exclusivo: WAVE10`;
                     document.getElementById('modalVerificadoPremio').style.display = 'flex';
@@ -2687,7 +2767,7 @@
                 await carregarCorreioUsuario();
                 await carregarSaldoDiamantesSite();
                 verificarMensagensNaoLidasBadge();
-                document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(nickUser, idUser);
+                document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(nickUser, idUser, usuarioLogado.cor_nick || '');
             } catch(e){}
         }
 
@@ -2707,10 +2787,10 @@
             document.getElementById('panelCorreio').classList.toggle('active', aba === 'correio');
         }
 
+        // Vinculado às colunas reais da tabela `usuarios`: id_jogador, nick, pass
         async function fazerRegistroPlataforma(e) {
             e.preventDefault();
             const u = document.getElementById('regUser').value.trim();
-            const email = document.getElementById('regEmail').value.trim();
             const p = document.getElementById('regPass').value;
             const codigoIndicacao = document.getElementById('regCodigoIndicacao')?.value.trim();
             
@@ -2722,27 +2802,49 @@
 
             const novoId = Math.floor(100000000 + Math.random() * 900000000).toString();
             try {
-                await supabaseClient.from('usuarios').insert([{ id_jogador: novoId, nick: u, email: email, pass: p }]);
-                await supabaseClient.from('carteira_diamantes').upsert({ id_jogador: novoId, nick: u, diamantes: 0 }, { onConflict: 'id_jogador' });
+                const { error: insErr } = await supabaseClient.from('usuarios').insert([{ id_jogador: novoId, nick: u, pass: p, verified: false, profile_frame: 'default', role: 'user' }]);
+                if (insErr) throw insErr;
+
+                await supabaseClient.from('carteira_diamantes').upsert({ 
+                    id_jogador: novoId, 
+                    nick: u, 
+                    diamantes: 0,
+                    updated_at: new Date().toISOString()
+                }, { onConflict: 'id_jogador' });
+
+                await supabaseClient.from('leaderboard').insert([{
+                    id_jogador: novoId,
+                    nick: u,
+                    pontos: 0,
+                    xp: 0,
+                    nivel: 1,
+                    cor_nick: '#FFFFFF'
+                }]);
 
                 if (codigoIndicacao) {
                     const padrinho = await buscarUsuarioPorNickOuId(codigoIndicacao);
                     if (padrinho && padrinho.id !== novoId) {
                         const { data: cartPadrinho } = await supabaseClient.from('carteira_diamantes').select('diamantes').eq('id_jogador', padrinho.id).maybeSingle();
                         let saldoPadrinho = cartPadrinho ? (cartPadrinho.diamantes || 0) : 0;
-                        await supabaseClient.from('carteira_diamantes').upsert({ id_jogador: padrinho.id, nick: padrinho.nick, diamantes: saldoPadrinho + 20 }, { onConflict: 'id_jogador' });
+                        await supabaseClient.from('carteira_diamantes').upsert({ 
+                            id_jogador: padrinho.id, 
+                            nick: padrinho.nick, 
+                            diamantes: saldoPadrinho + 20,
+                            updated_at: new Date().toISOString()
+                        }, { onConflict: 'id_jogador' });
                         await supabaseClient.from('correios').insert([{
                             id_jogador: padrinho.id,
                             titulo: '🎁 Bônus de Indicação (+20 💎)!',
                             mensagem: `Seu amigo ${u} criou uma conta usando seu código! Foram creditados 20 Diamantes na sua carteira.`,
                             tipo: 'diamantes',
+                            codigo_cupom: null,
                             resgatado: true,
                             data: new Date().toLocaleDateString('pt-BR')
                         }]);
                     }
                 }
                 
-                usuarioLogado = { nick: u, email: email, isAdm: false, id: novoId, bio: 'Disponível', instagram: '', youtube: '', tiktok: '' };
+                usuarioLogado = { nick: u, isAdm: false, id: novoId, bio: 'Disponível no Hub', instagram: '', youtube: '', tiktok: '', cor_nick: '#FFFFFF' };
                 localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
                 
                 mostrarToast("✨ Conta criada e salva na nuvem!");
@@ -2750,44 +2852,61 @@
                 fecharModalAuth();
                 atualizarAbasPerfilUI();
                 carregarSaldoDiamantesSite();
-            } catch(err){ alert("Erro ao criar conta."); }
+                carregarLeaderboardSite();
+            } catch(err){ alert("Erro ao criar conta no Supabase."); }
         }
 
+        // Login consultando diretamente `usuarios` (id_jogador, nick, pass)
         async function fazerLoginPlataforma(e) {
             e.preventDefault();
             const u = document.getElementById('loginUser').value.trim();
             const p = document.getElementById('loginPass').value;
             
-            if (u.toLowerCase() === 'capudo7' && p === '262026') {
-                usuarioLogado = { nick: 'capudo7', email: 'capudo@admin.com', isAdm: true, id: MEU_ID_MESTRE, bio: 'Fundador & ADM', instagram: '', youtube: '', tiktok: '' };
+            if ((u.toLowerCase() === 'capudo7' || u === MEU_ID_MESTRE) && p === '262026') {
+                usuarioLogado = { nick: 'capudo7', isAdm: true, id: MEU_ID_MESTRE, bio: 'Fundador & ADM', instagram: '', youtube: '', tiktok: '', cor_nick: '#1eff00' };
                 localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
                 if (await verificarBanimentoAtual()) return;
 
                 mostrarToast('⭐ Acesso ADM Concedido!');
                 document.getElementById('btnToggleAdmNav').style.display = 'inline-block';
-                document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado('capudo7', MEU_ID_MESTRE);
+                document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado('capudo7', MEU_ID_MESTRE, '#1eff00');
                 fecharModalAuth();
                 atualizarAbasPerfilUI();
                 carregarSaldoDiamantesSite();
                 return;
             }
 
-            let users = await obterUsuariosCadastrados();
-            let achou = users.find(x => (x.nick && x.nick.toLowerCase() === u.toLowerCase() || x.email === u) && x.pass === p);
-            if(achou) {
-                let idUser = String(achou.id);
-                usuarioLogado = { nick: achou.nick, email: achou.email || '', isAdm: false, id: idUser };
-                if (await verificarBanimentoAtual()) return;
+            try {
+                const { data: achou } = await supabaseClient
+                    .from('usuarios')
+                    .select('id_jogador, nick, pass, verified, profile_frame, role')
+                    .or(`nick.ilike.${u},id_jogador.eq.${u}`)
+                    .eq('pass', p)
+                    .maybeSingle();
 
-                localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
-                await sincronizarUsuarioNuvem(idUser);
+                if (achou) {
+                    let idUser = String(achou.id_jogador);
+                    let ehAdmin = (idUser === MEU_ID_MESTRE || achou.role === 'admin' || (achou.nick && achou.nick.toLowerCase() === 'capudo7'));
+                    usuarioLogado = { nick: achou.nick, isAdm: ehAdmin, id: idUser, verified: !!achou.verified, profile_frame: achou.profile_frame || 'default' };
+                    if (await verificarBanimentoAtual()) return;
 
-                mostrarToast(`👋 Bem-vindo, ${achou.nick}!`);
-                document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(achou.nick, idUser);
-                fecharModalAuth();
-                atualizarAbasPerfilUI();
-                carregarSaldoDiamantesSite();
-            } else { alert('Usuário/E-mail ou senha incorretos!'); }
+                    localStorage.setItem('wavecombat_sessao_ativa', JSON.stringify(usuarioLogado));
+                    await sincronizarUsuarioNuvem(idUser);
+
+                    mostrarToast(`👋 Bem-vindo, ${achou.nick}!`);
+                    document.getElementById('btnAuthNav').innerHTML = obterHtmlNickVerificado(achou.nick, idUser, usuarioLogado.cor_nick || '');
+                    if (usuarioLogado.isAdm) {
+                        document.getElementById('btnToggleAdmNav').style.display = 'inline-block';
+                    }
+                    fecharModalAuth();
+                    atualizarAbasPerfilUI();
+                    carregarSaldoDiamantesSite();
+                } else {
+                    alert('Usuário/ID ou senha incorretos!');
+                }
+            } catch(err) {
+                alert('Erro ao conectar ao servidor de autenticação.');
+            }
         }
 
         async function atualizarPerfilExpandidoUI() {
@@ -2810,10 +2929,24 @@
                 }
             } catch(e){}
 
+            // Verifica se o usuário é influenciador para exibir o saldo de comissão no próprio perfil
+            let htmlInfluenciador = '';
+            try {
+                const { data: infData } = await supabaseClient.from('influenciadores').select('cupom, usos, comissao').eq('id_jogador', idAtual).maybeSingle();
+                if (infData) {
+                    htmlInfluenciador = `
+                        <div style="background:rgba(168,85,247,0.12); border:1px solid #a855f7; padding:8px; border-radius:6px; margin-top:8px; text-align:left;">
+                            <span style="color:#a855f7; font-family:'Orbitron'; font-size:10px; font-weight:bold;">🤝 PAINEL INFLUENCIADOR PARCEIRO</span>
+                            <div style="font-size:11px; color:#fff; margin-top:4px;">Cupom: <strong style="color:var(--gold-warning);">${infData.cupom}</strong> | Usos: <strong>${infData.usos || 0}</strong></div>
+                            <div style="font-size:11px; color:#22c55e;">Saldo Comissão (30%): <strong>R$ ${Number(infData.comissao || 0).toFixed(2).replace('.', ',')}</strong></div>
+                        </div>
+                    `;
+                }
+            } catch(e) {}
+
             const xpProximoNivel = nivelUser * 500;
             const progressoPct = Math.min(100, Math.round(((xpUser % 500) / 500) * 100));
             let cardStyleClass = isVerif ? 'profile-frame-gold' : '';
-            let emailTxt = (usuarioLogado.email && usuarioLogado.email.trim() !== '') ? usuarioLogado.email : 'Não vinculado';
 
             perfilDiv.innerHTML = `
                 <div style="display:flex; flex-direction:column; gap:10px;">
@@ -2828,9 +2961,7 @@
                             </div>
                             <div class="xp-bar-container"><div class="xp-bar-fill" style="width:${progressoPct}%;"></div></div>
                         </div>
-
-                        <p style="font-size:10px; color:#94a3b8; margin-top:8px;">E-mail: <strong>${emailTxt}</strong></p>
-                        ${usuarioLogado.email ? `<button onclick="desvincularEmailConta()" style="background:none; border:none; color:var(--alert-red); font-size:9px; cursor:pointer; text-decoration:underline; margin-top:2px;">Desvincular E-mail</button>` : ''}
+                        ${htmlInfluenciador}
                     </div>
 
                     <form onsubmit="salvarPerfilRedesSociais(event)" style="background:#000; border:1px solid var(--steel-border); padding:10px; border-radius:8px; display:flex; flex-direction:column; gap:6px; font-size:11px;">
@@ -2839,7 +2970,7 @@
                             <label style="color:#94a3b8;">🎨 Cor do Nick:</label>
                             <input type="color" id="inputPerfilCorNick" value="${corNickAtual}" style="background:none; border:none; width:36px; height:24px; cursor:pointer;">
                         </div>
-                        <input type="text" id="inputPerfilBio" placeholder="Status ou Biografia..." class="auth-input" style="font-size:11px;" value="${usuarioLogado.bio || 'Disponível'}">
+                        <input type="text" id="inputPerfilBio" placeholder="Status ou Biografia..." class="auth-input" style="font-size:11px;" value="${usuarioLogado.bio || 'Disponível no Hub'}">
                         <input type="text" id="inputPerfilInsta" placeholder="Link Instagram" class="auth-input" style="font-size:11px;" value="${usuarioLogado.instagram || ''}">
                         <input type="text" id="inputPerfilYt" placeholder="Link YouTube" class="auth-input" style="font-size:11px;" value="${usuarioLogado.youtube || ''}">
                         <input type="text" id="inputPerfilTiktok" placeholder="Link TikTok" class="auth-input" style="font-size:11px;" value="${usuarioLogado.tiktok || ''}">
@@ -2863,6 +2994,7 @@
             atualizarAbasPerfilUI();
         }
 
+        // Ranking global vinculado às colunas reais da tabela `leaderboard` e cruzado com `usuarios` para corrigir nicks genéricos
         async function carregarLeaderboardSite() {
             const container = document.getElementById('siteLeaderboardListContainer');
             const section = document.getElementById('siteLeaderboardSection');
@@ -2879,16 +3011,26 @@
                     selectJogo.appendChild(opt);
                 });
             }
-            const filtroJogo = selectJogo ? selectJogo.value : 'todos';
+
+            // Carrega mapa oficial de nicks da tabela `usuarios` e `carteira_diamantes`
+            const mapaNicksOficiais = {};
+            try {
+                const { data: uList } = await supabaseClient.from('usuarios').select('id_jogador, nick');
+                if (uList) uList.forEach(u => { if (u.id_jogador && u.nick) mapaNicksOficiais[String(u.id_jogador)] = u.nick; });
+                const { data: cList } = await supabaseClient.from('carteira_diamantes').select('id_jogador, nick');
+                if (cList) cList.forEach(c => { if (c.id_jogador && c.nick && !mapaNicksOficiais[String(c.id_jogador)]) mapaNicksOficiais[String(c.id_jogador)] = c.nick; });
+            } catch(e) {}
 
             try {
-                let query = supabaseClient.from('leaderboard').select('*').order('pontos', { ascending: false }).limit(50);
-                if (filtroJogo !== 'todos') query = query.eq('jogo', filtroJogo);
-                const { data } = await query;
+                const { data } = await supabaseClient.from('leaderboard').select('id, id_jogador, nick, pontos, xp, nivel, cor_nick').order('pontos', { ascending: false }).limit(50);
 
-                const validos = (data || []).filter(item => {
+                const validos = (data || []).map(item => {
+                    const idStr = String(item.id_jogador || '').trim();
+                    const nickBanco = mapaNicksOficiais[idStr] || item.nick || '';
+                    return { ...item, id_jogador: idStr, nick: nickBanco };
+                }).filter(item => {
                     const n = (item.nick || '').trim().toLowerCase();
-                    return n !== '' && n !== 'jogador anônimo' && n !== 'convidado';
+                    return n !== '' && n !== 'jogador anônimo' && n !== 'jogador anonymous' && n !== 'convidado';
                 }).slice(0, 15);
 
                 if (validos.length === 0) {
@@ -2907,15 +3049,16 @@
             } catch(e) {}
         }
 
+        // Vinculado às colunas reais da tabela `chat_global`: id, nick, mensagem, created_at, cor, id_jogador
         async function carregarMensagensChat() {
             try {
-                const { data } = await supabaseClient.from('chat_global').select('*').order('created_at', { ascending: true }).limit(30);
+                const { data } = await supabaseClient.from('chat_global').select('id, nick, mensagem, created_at, cor, id_jogador').order('created_at', { ascending: true }).limit(30);
                 const container = document.getElementById('miniChatMessages');
                 if (!container || !data) return;
                 container.innerHTML = data.map(m => `
                     <div class="chat-msg-item" style="display: flex; justify-content: space-between; align-items: center;">
                         <div>
-                            <strong style="color:#00f0ff; font-family:'Orbitron';">${obterHtmlNickVerificado(m.nick, m.id_jogador || '')}:</strong> <span style="color:#f8fafc;">${m.mensagem}</span>
+                            <strong style="color:${m.cor || '#00f0ff'}; font-family:'Orbitron';">${obterHtmlNickVerificado(m.nick, m.id_jogador || '', m.cor || '')}:</strong> <span style="color:#f8fafc;">${m.mensagem}</span>
                         </div>
                         <button onclick="abrirModalDenunciaJogador('${m.id_jogador || '0'}', '${m.nick}', 'chat')" style="background:none; border:none; color:var(--alert-red); font-size:9px; cursor:pointer;" title="Denunciar">🚩</button>
                     </div>
@@ -2945,7 +3088,12 @@
 
             ultimaMensagemChatTempo = agora;
             try {
-                await supabaseClient.from('chat_global').insert([{ nick: usuarioLogado.nick, mensagem: txt, id_jogador: String(usuarioLogado.id) }]);
+                await supabaseClient.from('chat_global').insert([{ 
+                    nick: usuarioLogado.nick, 
+                    mensagem: txt, 
+                    cor: usuarioLogado.cor_nick || '#00f0ff',
+                    id_jogador: String(usuarioLogado.id) 
+                }]);
                 input.value = '';
                 carregarMensagensChat();
                 tocarSomClique();
@@ -2964,14 +3112,15 @@
                 if (data && data.length > 0) listaJogosCache = data;
             } catch(e) {}
 
+            // Vinculado às colunas reais da tabela `configuracoes`: chave, valor
             try {
-                const { data: confData } = await supabaseClient.from('configuracoes').select('*');
+                const { data: confData } = await supabaseClient.from('configuracoes').select('chave, valor');
                 if(confData) {
                     confData.forEach(item => {
                         if(item.chave === 'live_url') siteConfigGlobal.url = item.valor || "";
                         if(item.chave === 'live_ativa') siteConfigGlobal.ativa = (item.valor === 'true');
                         if(item.chave === 'site_logo') siteConfigGlobal.logo = item.valor || "";
-                        if(item.chave === 'broadcast') siteConfigGlobal.broadcast = item.valor || "";
+                        if(item.chave === 'broadcast') siteConfigGlobal.broadcast = (item.valor && item.valor !== 'EMPTY') ? item.valor : "";
                     });
                 }
             } catch(e) {}
@@ -3013,7 +3162,7 @@
             const url = document.getElementById('inputAdminLiveUrl').value.trim();
             siteConfigGlobal.url = url;
             try {
-                await supabaseClient.from('configuracoes').upsert({ chave: 'live_url', valor: url });
+                await supabaseClient.from('configuracoes').upsert({ chave: 'live_url', valor: url }, { onConflict: 'chave' });
                 atualizarVisibilidadeLiveGeral();
                 mostrarToast("🔴 URL da Live atualizada!");
             } catch(e) { alert("Erro ao salvar."); }
@@ -3022,7 +3171,7 @@
         async function alternarStatusLiveAdm() {
             siteConfigGlobal.ativa = !siteConfigGlobal.ativa;
             try {
-                await supabaseClient.from('configuracoes').upsert({ chave: 'live_ativa', valor: String(siteConfigGlobal.ativa) });
+                await supabaseClient.from('configuracoes').upsert({ chave: 'live_ativa', valor: String(siteConfigGlobal.ativa) }, { onConflict: 'chave' });
                 sincronizarCamposAdmUI();
                 atualizarVisibilidadeLiveGeral();
                 mostrarToast(siteConfigGlobal.ativa ? "🔴 Live ONLINE!" : "⚫ Live OFFLINE!");
@@ -3033,7 +3182,7 @@
             const txt = document.getElementById('adminBroadcastInput').value.trim();
             siteConfigGlobal.broadcast = txt;
             try {
-                await supabaseClient.from('configuracoes').upsert({ chave: 'broadcast', valor: txt });
+                await supabaseClient.from('configuracoes').upsert({ chave: 'broadcast', valor: txt || 'EMPTY' }, { onConflict: 'chave' });
                 if(txt) {
                     document.getElementById('broadcastText').textContent = txt;
                     document.getElementById('broadcastTicker').style.display = 'block';
@@ -3050,7 +3199,7 @@
                 if(!error) {
                     const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/capas/${fileName}`;
                     siteConfigGlobal.logo = publicUrl;
-                    try { await supabaseClient.from('configuracoes').upsert({ chave: 'site_logo', valor: publicUrl }); } catch(e) {}
+                    try { await supabaseClient.from('configuracoes').upsert({ chave: 'site_logo', valor: publicUrl }, { onConflict: 'chave' }); } catch(e) {}
                     aplicarLogoNoSite();
                     mostrarToast('🖼️ Logo atualizada!');
                 }
@@ -3071,7 +3220,6 @@
             }
         }
 
-        // Auto-pausa BGM ao iniciar jogo (Regra 2)
         async function tentarExecutarJogo(jogo) {
             if (!usuarioLogado || !usuarioLogado.id) {
                 mostrarToast("⚠️ Faça login para jogar!");
@@ -3082,7 +3230,7 @@
             if (await verificarBanimentoAtual()) return;
             try { await supabaseClient.from('jogos').update({ acessos: (jogo.acessos || 0) + 1 }).eq('id', jogo.id); } catch(e){}
 
-            toggleBGM(false); // Pausa automática da BGM
+            toggleBGM(false);
 
             let idUsuarioLogado = String(usuarioLogado.id);
             let nickUsuarioLogado = encodeURIComponent(usuarioLogado.nick);
@@ -3128,7 +3276,6 @@
             return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
         }
 
-        // Auto-pausa BGM ao exibir Live (Regra 2)
         function atualizarVisibilidadeLiveGeral() {
             const box = document.getElementById('liveSectionBox');
             const iframe = document.getElementById('youtubeLiveIframe');
@@ -3158,7 +3305,7 @@
             if (document.fullscreenElement) document.exitFullscreen();
             document.getElementById('player').style.display = 'none';
             document.getElementById('playerControlsBar').style.display = 'none';
-            toggleBGM(true); // Retoma a BGM ao fechar o jogo (Regra 2)
+            toggleBGM(true);
         }
 
         function gerarCorFallbackPorNome(texto) {
@@ -3340,7 +3487,6 @@
             if(painelAdmAberto) renderizarJogosAdmin();
         }
 
-        // Foco exclusivo em configuração de jogos existentes (Sem botão de adicionar - Regra 7)
         function renderizarJogosAdmin() {
             const container = document.getElementById('adminListaJogos');
             if(!container) return;
@@ -3453,4 +3599,3 @@
     </script>
 </body>
 </html>
-
