@@ -209,6 +209,10 @@ body[data-mode=play] #mpb{display:block}#mpF{display:block;height:100%;backgroun
 body[data-mode=play] #tut{display:block}
 #lobMd{position:absolute;right:calc(20px + var(--safe-r));bottom:calc(100px + var(--safe-b));display:flex;flex-direction:column;gap:6px;align-items:flex-end}
 .mrow{display:flex;gap:6px}.btn.sm{padding:6px 12px;font-size:12px;border-radius:8px}
+#party{display:none;position:fixed;z-index:6;right:calc(10px + var(--safe-r));top:calc(196px + var(--safe-t));width:130px;pointer-events:none}
+body[data-mode=play] #party{display:block}
+.pm{font-size:11px;margin-bottom:4px;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:3px 6px}
+.pm i{display:block;height:4px;margin-top:2px;background:#2a1a1a;border-radius:2px;overflow:hidden}.pm b{display:block;height:100%;background:#4ade80}
 </style>
 </head>
 <body>
@@ -263,6 +267,7 @@ body[data-mode=play] #tut{display:block}
 <div id="pClan" class="pan big"><div class="rowh"><button class="btn px">← Lobby</button><h3>Clã</h3></div><div id="clanB"></div></div>
 <div id="pPass" class="pan big"><div class="rowh"><button class="btn px">← Lobby</button><h3>Passe</h3></div><div id="passB"></div></div>
 <div id="pRank" class="pan big"><div class="rowh"><button class="btn px">← Lobby</button><h3>Ranking</h3></div><div id="rankB"></div></div>
+<div id="pParty" class="pan big"><div class="rowh"><button class="btn px">← Lobby</button><h3>Grupo</h3></div><div id="partyB"></div></div><div id="party"></div>
 <div id="hp"><i id="hpF"></i><span id="hpT"></span></div><div id="hurt"></div><div id="qt"></div><button class="btn" id="talk">💬 Falar (E)</button>
 <div id="pNpc" class="pan"><h3 id="npcN"></h3><div id="npcB"></div><div class="row2" id="npcA"></div></div>
 <div id="vig"></div><div id="sk"></div><div id="mpb"><i id="mpF"></i></div><div id="xpb"><i id="xpF"></i></div><div id="tgt"><span id="tgtN"></span><i><b id="tgtF"></b></i></div><div id="bossb"><span id="bossN"></span><i><b id="bossF"></b></i></div><div id="tut"></div><div id="ban"></div>
@@ -291,7 +296,7 @@ const URL_ID = (params.get('id') || '').trim();
 const PLAYER_ID = URL_ID || '0'; // fallback para testes locais
 const $ = id => document.getElementById(id);
 const fmt = n => Number(n).toLocaleString('pt-BR');
-const VERSION = '0.016'; // suba a cada atualização enviada
+const VERSION = '0.017'; // suba a cada atualização enviada
 const DIA = {};
 const G = { mode: 'start' };
 let NICK = 'Visitante';
@@ -749,7 +754,7 @@ function initUI(E) {
 
   /* telas e painéis */
   function panel(id) {
-    ['pSet', 'pMail', 'pPro', 'pClan', 'pPass', 'pNpc', 'pRank'].forEach(p => $(p).classList.toggle('on', p === id && !$(p).classList.contains('on')));
+    ['pSet', 'pMail', 'pPro', 'pClan', 'pPass', 'pNpc', 'pRank', 'pParty'].forEach(p => $(p).classList.toggle('on', p === id && !$(p).classList.contains('on')));
     if (id === 'pMail' && $('pMail').classList.contains('on')) { $('mbadge').style.display = 'none'; mailRender(); }
     if ($(id) && $(id).classList.contains('on') && RND[id]) RND[id]();
   }
@@ -1026,7 +1031,7 @@ function initUI(E) {
     }
     if (!xl) {
       const dot = (x, z, c, r) => { const px = X(x), py = Z(z); if (px > 4 && px < S - 4 && py > 4 && py < S - 4) { mc.fillStyle = c; mc.fillRect(px - r, py - r, r * 2, r * 2); } };
-      mons.forEach(m => dot(m.g.position.x, m.g.position.z, m.d.boss ? '#c27bff' : m.elite ? '#ffd24a' : '#ff4a4a', m.d.boss ? 3.5 : 2)); NPC.forEach(n => dot(n.x, n.z, '#5ad1ff', 3));
+      mons.forEach(m => dot(m.g.position.x, m.g.position.z, m.d.boss ? '#c27bff' : m.elite ? '#ffd24a' : '#ff4a4a', m.d.boss ? 3.5 : 2)); NPC.forEach(n => dot(n.x, n.z, '#5ad1ff', 3)); party.forEach(m => { if (m.id !== PLAYER_ID && m.on) dot(m.x, m.z, '#6ef2a0', 3); });
     }
     mc.fillStyle = '#fff'; mc.font = 'bold ' + (xl ? 30 : 22) + 'px sans-serif'; mc.fillText('N', half - 8, xl ? 32 : 24);
     const q = xl ? 1.3 : 1; mc.save(); mc.translate(X(p.x), Z(p.z)); mc.rotate(Math.PI - E.player.rotation.y); mc.fillStyle = '#ff3b3b';
@@ -1132,7 +1137,7 @@ function initUI(E) {
   }
   function kill(m) {
     const d = m.d, q = m.g.position;
-    burst(q, d.col, 16); sfx('kill'); addXP(Math.round(d.xp * m.lv * (m.elite ? 3 : 1))); giveGold(Math.round(d.xp * .6 * m.lv * (m.elite ? 3 : 1)), q); rollGear(m, q); P.kills = (P.kills || 0) + 1; if (d.boss) P.bk = (P.bk || 0) + 1;
+    burst(q, d.col, 16); sfx('kill'); addXP(Math.round(d.xp * m.lv * (m.elite ? 3 : 1) * (1 + .15 * nearParty()))); giveGold(Math.round(d.xp * .6 * m.lv * (m.elite ? 3 : 1)), q); rollGear(m, q); P.kills = (P.kills || 0) + 1; if (d.boss) P.bk = (P.bk || 0) + 1;
     if (Math.random() < .7 || d.boss || m.elite) dropItem(d.drop, q.x + 1, q.z, d.col);
     if (d.boss) { dropItem(d.drop, q.x - 1, q.z, d.col); dropItem(d.drop, q.x, q.z + 1.5, d.col); bossDead[m.key] = Date.now(); }
     if (Math.random() < .2) dropItem('Poção de Vida', q.x, q.z - 1, 0xff4a6a);
@@ -1305,10 +1310,10 @@ function initUI(E) {
     if (net.s || typeof io === 'undefined') return;
     const q = new URLSearchParams(location.search).get('hub'), base = q || (location.protocol.indexOf('http') === 0 ? location.origin : 'https://wavecombat-hub.onrender.com');
     try { net.s = io(base + '/rise', { transports: ['websocket', 'polling'], reconnectionDelay: 2000 }); } catch (e) { console.warn('Multijogador indisponível:', e); return; }
-    net.hello = () => { const p = E.player.position; net.s.emit('rise:hello', { id: PLAYER_ID, nick: NICK, cls: char.cls, traje: char.traje, det: char.det, pele: char.pele, lv: P.lv, eq: eqArr(), x: p.x, z: p.z }, r => { if (r && r.ok) { net.n = r.n; r.players.forEach(mkRemote); } }); };
-    net.s.on('connect', () => { if (G.mode === 'play') net.hello(); });
+    net.hello = () => { const p = E.player.position; net.s.emit('rise:hello', { id: PLAYER_ID, nick: NICK, cls: char.cls, traje: char.traje, det: char.det, pele: char.pele, lv: P.lv, eq: eqArr(), x: p.x, z: p.z, lobby: G.mode === 'play' ? 0 : 1 }, r => { if (r && r.ok) { net.n = r.n; r.players.forEach(mkRemote); } }); };
+    net.s.on('connect', () => { net.hello(); });
     net.s.on('disconnect', () => { net.n = 0; [...others.keys()].forEach(rmRemote); });
-    net.s.on('rise:n', n => { net.n = n; });
+    net.s.on('rise:n', n => { net.n = n; }); partyHooks(net.s);
     net.s.on('rise:join', mkRemote);
     net.s.on('rise:leave', rmRemote);
     net.s.on('rise:state', list => list.forEach(o => { const r = others.get(o.id); if (!r) return; r.tx = o.x; r.tz = o.z; r.tr = o.r; r.seen = performance.now(); if (o.a && !r.a) burst(r.g.position, 0xd9a441, 4); r.a = o.a; }));
@@ -1843,6 +1848,46 @@ function initUI(E) {
   }
   RND.pRank = renderRank;
   const rk = h('button', 'btn', '🏆 Ranking'); rk.onclick = () => panel('pRank'); $('lobM').append(rk);
+  /* ── v0.017: grupos (convite por ID, vida dos aliados, bônus de XP perto de aliados) ── */
+  var party = [], invites = [], phT = 0;
+  function nearParty() {
+    const p = E.player.position; let n = 0;
+    party.forEach(m => { const o = others.get(m.id); if (m.id !== PLAYER_ID && o && Math.hypot(o.g.position.x - p.x, o.g.position.z - p.z) < 90) n++; });
+    return n;
+  }
+  function renderPartyHud() {
+    const el = $('party'); el.textContent = '';
+    party.filter(m => m.id !== PLAYER_ID).forEach(m => { const row = h('div', 'pm'), b = h('b'), bar = h('i'); b.style.width = Math.min(100, m.hp / m.max * 100) + '%'; bar.append(b); row.append(h('span', '', m.nick + ' Nv.' + m.lv), bar); el.append(row); });
+  }
+  function partyHooks(sock) {
+    sock.on('rise:party', d => { party = (d && d.members) || []; renderPartyHud(); if ($('pParty').classList.contains('on')) renderParty(); });
+    sock.on('rise:party:invite', d => { invites.push({ from: d.from, nick: d.nick, t: Date.now() }); banner('CONVITE DE GRUPO', d.nick + ' · Lobby → Grupo'); if ($('pParty').classList.contains('on')) renderParty(); });
+  }
+  function renderParty() {
+    const B = $('partyB'); B.textContent = '';
+    const on = net.s && net.s.connected;
+    if (!on) B.append(h('p', '', 'Sem conexão com o servidor online.'));
+    const ip = h('input'), bi = h('button', 'btn', 'Convidar'); ip.placeholder = 'ID do jogador';
+    bi.onclick = () => { const id = ip.value.trim(); if (!id) return; if (!on) return toast('Servidor offline.'); net.s.emit('rise:party:invite', { to: id }, r => toast(r && r.ok ? 'Convite enviado.' : (r && r.err) || 'Falha ao convidar.')); };
+    B.append(h('h3', '', 'Convidar jogador'), ip, bi);
+    invites = invites.filter(v => Date.now() - v.t < 60000);
+    if (invites.length) B.append(h('h3', '', 'Convites'));
+    invites.forEach(v => {
+      const r = h('div', 'row2'), t = h('span', '', v.nick + ' (' + v.from + ')'), a = h('button', 'btn', 'Aceitar'); t.style.flex = '1'; a.style.flex = 'none';
+      a.onclick = () => { if (on) net.s.emit('rise:party:accept', { from: v.from }, r2 => toast(r2 && r2.ok ? 'Você entrou no grupo!' : (r2 && r2.err) || 'Falha.')); invites = invites.filter(x => x !== v); renderParty(); };
+      r.append(t, a); B.append(r);
+    });
+    B.append(h('h3', '', 'Seu grupo (' + party.length + '/4) · +15% de XP por aliado perto'));
+    party.forEach(m => B.append(h('p', '', (m.id === PLAYER_ID ? '⭐ ' : '') + m.nick + ' · Nv. ' + m.lv + ' · ' + Math.round(m.hp) + '/' + Math.round(m.max) + (m.on ? '' : ' (no lobby)'))));
+    if (party.length) { const lv = h('button', 'btn', 'Sair do grupo'); lv.onclick = () => { if (on) net.s.emit('rise:party:leave'); party = []; renderPartyHud(); renderParty(); }; B.append(lv); }
+  }
+  RND.pParty = renderParty;
+  const pb = h('button', 'btn', '👥 Grupo'); pb.onclick = () => panel('pParty'); $('lobM').append(pb);
+  E.updaters.push(dt => {
+    phT -= dt; if (phT > 0) return; phT = 1;
+    if (net.s && net.s.connected) net.s.emit('rise:hp', { hp: Math.max(0, Math.round(hp)), max: maxHp() });
+  });
+  netStart();   // conecta já no lobby para poder receber convites
   document.body.dataset.mode = 'start';
 }
 
