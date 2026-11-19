@@ -559,7 +559,7 @@ html,body{overscroll-behavior:none;-webkit-tap-highlight-color:transparent}
   <div class="tip">TOQUE PARA COMEÇAR</div>
   <button class="gear" onclick="openSettings()">⚙️</button>
   <a class="yt" id="yt-title" href="https://youtube.com/@capudooficial7?si=NSvfxpSzswVEStdu" target="_blank" rel="noopener noreferrer">siga o criador do jogo aqui</a>
-  <div class="ver">v0.013</div>
+  <div class="ver">v0.015</div>
 </div>
 
 <!-- LOBBY -->
@@ -627,7 +627,7 @@ html,body{overscroll-behavior:none;-webkit-tap-highlight-color:transparent}
     <div class="ch-i"><input id="ch-in" maxlength="120" placeholder="Mensagem para todos..." autocomplete="off"><button id="ch-send">➤</button></div>
   </div>
   <a class="yt" id="yt-lobby" href="https://youtube.com/@capudooficial7?si=NSvfxpSzswVEStdu" target="_blank" rel="noopener noreferrer">siga o criador do jogo aqui</a>
-  <div class="ver" style="left:auto;right:270px">v0.013</div>
+  <div class="ver" style="left:auto;right:270px">v0.015</div>
 </div>
 
 <!-- CONFIGURAÇÕES -->
@@ -717,7 +717,7 @@ html,body{overscroll-behavior:none;-webkit-tap-highlight-color:transparent}
 </div>
 
 <script>
-const VERSION='0.013';
+const VERSION='0.015';
 document.querySelectorAll('.ver').forEach(e=>{ e.textContent='v'+VERSION; });
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -817,10 +817,12 @@ function readSession(){
 }
 function initIdentity(){
   const ses=readSession();
-  const playerId=String(localStorage.getItem('wavecombat_id')||ses.id||GUEST_ID);
+  let UQ={}; try{ const q=new URLSearchParams(location.search); UQ={id:(q.get('id')||'').trim(),nick:(q.get('nick')||'').trim().slice(0,14)}; }catch(e){}   // v0.015: ?id=...&nick=... (embutido em iframe/hub)
+  if(!/^\d{6,12}$/.test(UQ.id)) UQ.id='';
+  const playerId=String(UQ.id||localStorage.getItem('wavecombat_id')||ses.id||GUEST_ID);
   const isAdmin=(playerId===ADMIN_ID||playerId===MASTER_ID);
   // nick e ID reais do Hub (localStorage → sessão ativa → Supabase), sem sufixo/prefixo automático
-  let playerNick=String(localStorage.getItem('wavecombat_nick')||ses.nick||'').trim(),real=!!playerNick;
+  let playerNick=String((UQ.id&&UQ.nick)||localStorage.getItem('wavecombat_nick')||ses.nick||'').trim(),real=!!playerNick;
   if(!real&&playerId===GUEST_ID){ playerNick='Convidado'; real=true; }
   if(!real&&isAdmin){ playerNick=ADMIN_NICK; real=true; }
   if(!real) playerNick=(window.player&&window.player.id===playerId&&window.player.name)||'Jogador';   // provisório até o Supabase devolver o nick real
@@ -2124,6 +2126,8 @@ ROSTER.forEach((d,i)=>{ d.i=i; d.stage=i; d.rv=(i+15)%30; });
 const fighterDef=(i,skin)=>skinDefOf(ROSTER[((i|0)%30+30)%30],skin);
 const DEFS=ROSTER;
 let AR=null,arOn=false,ARS=null;
+const DBG={open:false,hb:false,dummy:false,slow:false,el:null,btn:null,tick:0};   // v0.014: painel de teste (só offline)
+
 const held={},edge={},tapT={};
 const touchDev=matchMedia('(pointer:coarse)').matches||('ontouchstart' in window);
 const KEYMAP={a:'l',arrowleft:'l',d:'r',arrowright:'r',w:'u',arrowup:'u',s:'d',arrowdown:'d',j:'punch',k:'kick',l:'dash',shift:'dash',' ':'roll',g:'guard',h:'sp',u:'sup'};
@@ -2133,11 +2137,35 @@ function inDown(k){
   if(k==='l'||k==='r'){ const n=performance.now(); if(n-(tapT[k]||0)<260){ edge.dash=true; edge.dashAbs=k==='l'?-1:1; } tapT[k]=n; }
 }
 function inUp(k){ held[k]=false; }
+function inClear(){ for(const k in held) held[k]=false; for(const k in edge) edge[k]=false; }
+addEventListener('blur',()=>{ inClear(); if(AR&&!AR.net&&!AR.over&&AR.phase==='fight') arenaPause(true); });   // perdeu o foco: solta teclas e pausa (offline)
+document.addEventListener('visibilitychange',()=>{ if(document.hidden){ inClear(); if(AR&&!AR.net&&!AR.over&&AR.phase==='fight') arenaPause(true); } });
+addEventListener('pointerdown',()=>{ try{ window.focus(); }catch(e){} },{passive:true});   // iframe: garante foco do teclado
+function dbgInit(){
+  if(DBG.el) return;
+  const st='position:absolute;z-index:8;font:700 11px/1.3 "Segoe UI",sans-serif;color:#fff;';
+  const b=document.createElement('button'); b.textContent='🛠'; b.setAttribute('aria-label','Painel de teste'); b.style.cssText=st+'right:12px;top:64px;width:40px;height:34px;border-radius:10px;background:rgba(20,8,48,.8);border:1px solid var(--cy);display:none;font-size:16px';
+  const el=document.createElement('div'); el.style.cssText=st+'right:12px;top:104px;width:190px;padding:8px;border-radius:12px;background:rgba(10,4,28,.9);border:1px solid var(--cy);display:none;max-height:calc(100% - 120px);overflow:auto';
+  el.innerHTML='<b style="color:var(--cy)">PAINEL DE TESTE</b> <small style="opacity:.6">(F1)</small><pre id="dbg-i" style="margin:4px 0;font:10px/1.3 monospace;white-space:pre-wrap"></pre><div id="dbg-b" style="display:grid;grid-template-columns:1fr 1fr;gap:4px"></div>';
+  const acts=[['Hitboxes',()=>DBG.hb=!DBG.hb],['Resetar round',()=>{ AR.rn=Math.max(0,AR.rn-1); AR.over=false; $('endm').classList.remove('on'); newRound(false); }],['Especial 100',()=>{ AR.f[0].sp=100; hud(); }],['Curar todos',()=>{ for(const f of AR.f) f.hp=f.mhp; hud(); }],['Boneco (P2 parado)',()=>DBG.dummy=!DBG.dummy],['Câmera lenta',()=>{ DBG.slow=!DBG.slow; AR.slow=DBG.slow?.3:1; AR.slowT=DBG.slow?1e9:0; }],['Inimigo com 1 HP',()=>{ for(const f of AR.f) if(f.team===1) f.hp=1; hud(); }],['Desligar testes',()=>{ DBG.hb=DBG.dummy=DBG.slow=false; AR.slow=1; AR.slowT=0; }]];
+  const g=el.querySelector('#dbg-b'); for(const [n,fn] of acts){ const x=document.createElement('button'); x.textContent=n; x.style.cssText='padding:6px 4px;border-radius:8px;background:rgba(255,255,255,.08);border:1px solid rgba(25,227,255,.5);color:#fff;font:700 10px sans-serif'; x.onclick=()=>{ if(AR&&!AR.net){ fn(); sfx('click'); } }; g.appendChild(x); }
+  b.onclick=()=>dbgToggle(); const root=$('stage')||document.body; root.appendChild(b); root.appendChild(el); DBG.el=el; DBG.btn=b;
+}
+function dbgToggle(){ if(!AR||AR.net) return; DBG.open=!DBG.open; if(DBG.el) DBG.el.style.display=DBG.open?'block':'none'; }
+function dbgUpdate(){   // chamado a cada quadro da arena: visibilidade do botão e leitura de dados do P1
+  if(!DBG.btn) return; const on=!!AR&&!AR.net&&sceneMode==='stage';
+  DBG.btn.style.display=on?'block':'none'; if(!on){ DBG.el.style.display='none'; DBG.open=false; DBG.hb=DBG.dummy=DBG.slow=false; return; }
+  if(!DBG.open||(DBG.tick++&7)) return; const f=AR.f[0],a=f.atk,i=$('dbg-i'); if(!i) return;
+  i.textContent='estado: '+f.st+'\nHP '+Math.round(f.hp)+'/'+f.mhp+'  ESP '+Math.round(f.sp)+'\ncombo: '+(AR.cb[0]?AR.cb[0].n:0)+'  rodada '+AR.rn+'\n'+(a?'golpe '+a.k+' su '+a.su.toFixed(2)+' ac '+a.ac.toFixed(2)+' rc '+(a.rc||0).toFixed(2)+'\ndano '+Math.round(a.dmg||0)+' alc '+a.reach:'sem golpe')+'\nhitbox '+(DBG.hb?'ON':'off')+' · boneco '+(DBG.dummy?'ON':'off');
+}
 function initArena(){
+  dbgInit();
   addEventListener('keydown',e=>{
     const k=e.key.toLowerCase();
     if(e.target&&/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;   // digitando no chat da sala
     if(k==='n'&&!e.repeat){ toggleSnd(); return; }
+    if(k==='f2'&&sceneMode==='stage'&&AR&&!AR.net){ e.preventDefault(); arenaRestart(); return; }
+    if((k==='f1'||k==='`')&&sceneMode==='stage'&&AR&&!AR.net){ e.preventDefault(); dbgToggle(); return; }
     if(sceneMode!=='stage'||!AR) return;
     if(k==='p'||k==='escape'){ if(!AR.over) arenaPause(!AR.paused); return; }
     const m=KEYMAP[k]; if(m){ if(!e.repeat) inDown(m); e.preventDefault(); }
@@ -2204,7 +2232,7 @@ function banner(t,stay){ const b=$('banner'); b.textContent=t; b.className='bann
 function arenaPause(on){ if(!AR) return; AR.paused=AR.net?false:on; $('pause').classList.toggle('on',on); sfx('click'); }
 function arenaRestart(){ if(!AR) return; if(AR.net){ arenaExit(); return; } sfx('confirm'); startBattle(AR.opt); }
 function arenaExit(){
-  const net=AR&&AR.net; AR=null; window.BTL=false; window.BPM=120;
+  const net=AR&&AR.net; AR=null; dbgUpdate(); window.BTL=false; window.BPM=120;
   $('touch').classList.remove('on'); $('banner').className='banner'; $('pause').classList.remove('on'); $('endm').classList.remove('on'); rcShow(false);
   if(net&&window.netLeave) netLeave();
   sfx('click'); go('lobby'); if(NX.sala) roomOpen(NX.sala);
@@ -2911,7 +2939,7 @@ function applyHit(f,o,a){
   const dmg=a.dmg*(f.pow||1)/(o.df||1)*Math.max(a.sm||.45,1-(A.n===4?.12:.09)*cb.n)*(cnt?1.3:1)*(A.n===4?.8:1),big=!!a.kd||dmg>=55;
   cb.n++; cb.dmg+=dmg; cb.t=0;
   if(f.i===0){ A.stat.dmg+=dmg; A.stat.cmb=Math.max(A.stat.cmb,cb.n); }
-  o.hz=(a.y0+a.y1)/2; o.hp-=dmg; o.blk=false; o.hitT=.08; o.atk=null; o.st='hit'; o.t=0; o.hs=a.kd?Math.max(a.hs,.6):a.hs; o.vx=dir*a.kb; o.chain=0; o.buf=null; o.kdn=!!a.kd;
+  o.hz=(a.y0+a.y1)/2; o.hp=Math.max(0,o.hp-dmg); o.blk=false; o.hitT=.08; o.atk=null; o.st='hit'; o.t=0; o.hs=a.kd?Math.max(a.hs,.6):a.hs; o.vx=dir*a.kb; o.chain=0; o.buf=null; o.kdn=!!a.kd;
   if(a.lau) o.vy=-620; else if(o.y<0||a.kd) o.vy=a.kd?-520:-300;
   if(!(f.atk&&f.atk.k==='super')) f.sp=Math.min(100,f.sp+dmg*.16); o.sp=Math.min(100,o.sp+dmg*.1);
   A.freeze=GQ?Math.max(A.freeze,v3Freeze(a,big,cnt)):v3Freeze(a,big,cnt); A.shake=Math.max(A.shake,big?11:5); A.flash=big?.15:.1; sfx('hit');
@@ -3029,7 +3057,7 @@ function stepF(f,o,dt){
 function aiStep(f,o,dt){
   const A=f.ai,d=f.aiD||({'Fácil':.3,'Normal':.5,'Difícil':.72,'Mestre':.92}[sel.diff]||.5);
   f.ed={};
-  if(AR.phase!=='fight'){ f.inp={}; return; }
+  if(AR.phase!=='fight'||(DBG.dummy&&f.team===1)){ f.inp={}; return; }
   // personalidade: cada bot tem um jeito (agressivo/paciente, distância preferida) que muda com o tempo
   const P=A.p||(A.p={ag:.7+Math.random()*.6,pd:150+Math.random()*90,mt:0,rt:0,th:0,pj:0,aa:0,spc:1,wk:0,tk:null});
   A.t-=dt; P.mt-=dt; P.rt-=dt; P.pj-=dt; P.aa-=dt; P.spc-=dt; P.wk-=dt;
@@ -3089,7 +3117,7 @@ function comboUI(){
   el.innerHTML=`<b>${A.cb[b].n}</b> HITS<small>${Math.round(A.cb[b].dmg)} DANO</small>`; el.className='combo '+(b*2>=A.n?'r':'l')+' on';
 }
 function arUpdate(dt){
-  const A=AR; A.at+=dt;
+  const A=AR; A.at+=dt; dbgUpdate();
   A.shake=Math.max(0,A.shake-dt*30); A.flash=Math.max(0,A.flash-dt);
   if(A.slowT>0){ A.slowT-=dt; if(A.slowT<=0) A.slow=1; }
   const rdt=dt; v3Update(rdt); dt*=A.slow;
@@ -4501,6 +4529,8 @@ function arDraw(t){
     else{ c.fillStyle='rgba(0,0,0,.5)'; c.beginPath(); c.ellipse(x,y,46*sc*k,9*sc*k,0,0,7); c.fill(); } }
   for(const g of A.gh){ c.save(); c.globalAlpha=Math.max(0,g.l/.3)*.42; c.globalCompositeOperation='lighter'; drawF(c,g.f,X(g.f.x),gy+g.f.y*sc,sc,A.at,false); c.restore(); }
   const order=A.f.filter(f=>f.st!=='atk').concat(A.f.filter(f=>f.st==='atk'));
+  if(DBG.hb&&!A.net){ c.save(); c.lineWidth=2; for(const f of A.f){ const hx=X(f.x),h=((f.crouch&&f.y>=0)?105:195)*sc; c.strokeStyle='#3aff7a'; c.strokeRect(hx-30*sc,gy+f.y*sc-h,60*sc,h);
+      const a=f.atk; if(f.st==='atk'&&a&&a.reach>0){ const x0=X(f.x+f.face*14),x1=X(f.x+f.face*(14+a.reach)); c.strokeStyle=a.t>=a.su?'#ff3a5a':'#ffcf3a'; c.strokeRect(Math.min(x0,x1),gy+(f.y+a.y0)*sc,Math.abs(x1-x0),(a.y1-a.y0)*sc); } } c.restore(); }
   for(const f of order){ const r0=RIM; if(GQ===2) RIM=v3Rim(f,r0); V3.cur=f; drawF(c,f,X(f.x),gy+f.y*sc,sc,A.at,false); V3.cur=null; RIM=r0; }
   if(A.n===4) for(const f of A.f){   // marcador sobre a cabeça: você (dourado), aliado (ciano), inimigo (rosa)
     if(f.st==='ko') continue; const x=X(f.x),y=gy+f.y*sc-218*sc;
