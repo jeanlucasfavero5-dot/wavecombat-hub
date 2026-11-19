@@ -89,7 +89,7 @@ input,select{background:#0008;padding:2px 6px;border:1px solid #22d3ee44;color:#
 <div id="hud" class="hidden fixed inset-0 pointer-events-none">
  <canvas id="mm" width="140" height="140" class="absolute top-3 right-3 rounded-full border-2 border-cyan-400 bg-black/50"></canvas>
  <div class="absolute top-3 left-1/2 -translate-x-1/2 card flex gap-5 text-xl font-bold"><span>👥 <b id="al">32</b></span><span>☠ <b id="kl">0</b></span><span id="ar"></span><span id="zt" class="text-orange-400"></span></div>
- <div id="feed" class="absolute top-3 left-3 text-sm"></div><div id="dmg" class="absolute inset-0" style="box-shadow:inset 0 0 200px 40px #f03;opacity:0"></div><div id="scope" class="absolute inset-0" style="opacity:0;pointer-events:none;background:radial-gradient(circle at 50% 50%,transparent 26%,#000 27%)"><div class="absolute left-0 right-0 top-1/2 h-px bg-black/70"></div><div class="absolute top-0 bottom-0 left-1/2 w-px bg-black/70"></div></div><div id="xh" class="absolute left-1/2 top-1/2 rounded-full border-2 border-white/80\" style="width:16px;height:16px;transform:translate(-50%,-50%)"></div><div id="hm" class="absolute left-1/2 top-1/2 text-2xl font-black text-red-500" style="transform:translate(-50%,-50%);opacity:0">✕</div><div id="fd" class="absolute inset-0 overflow-hidden"></div><div id="msg" class="absolute top-20 left-1/2 -translate-x-1/2 text-lg font-bold text-cyan-300 text-center"></div><div id="sq" class="absolute left-3 top-32 text-sm space-y-1"></div><div id="spb" class="hidden pointer-events-auto absolute left-1/2 bottom-6 -translate-x-1/2 flex gap-3 items-center card"><button class="tab" onclick="specNext(-1)">◀</button><b id="spn">—</b><button class="tab" onclick="specNext(1)">▶</button><button class="tab" onclick="sum()">SAIR</button></div><div id="pbw" class="hidden absolute left-1/2 bottom-44 -translate-x-1/2 w-56 h-3 bg-black/60 rounded"><div id="pb" class="h-3 rounded"></div></div><button id="fpb" class="tab pointer-events-auto absolute right-3 top-40" style="background:#0b1830cc" onclick="fpT()">👁 1ª PESSOA</button><button id="jump" class="hidden pointer-events-auto absolute left-1/2 bottom-24 -translate-x-1/2 btn px-10 py-3 text-2xl font-bold" onclick="jump(P)">SALTAR [F]</button><div id="lt" class="absolute left-1/2 bottom-32 -translate-x-1/2 text-xl font-bold text-yellow-300"></div>
+ <div id="feed" class="absolute top-3 left-3 text-sm"></div><div id="dmg" class="absolute inset-0" style="box-shadow:inset 0 0 200px 40px #f03;opacity:0"></div><div id="scope" class="absolute inset-0" style="opacity:0;pointer-events:none;background:radial-gradient(circle at 50% 50%,transparent 26%,#000 27%)"><div class="absolute left-0 right-0 top-1/2 h-px bg-black/70"></div><div class="absolute top-0 bottom-0 left-1/2 w-px bg-black/70"></div></div><div id="xh" class="absolute left-1/2 top-1/2 rounded-full border-2 border-white/80" style="width:16px;height:16px;transform:translate(-50%,-50%)"></div><div id="hm" class="absolute left-1/2 top-1/2 text-2xl font-black text-red-500" style="transform:translate(-50%,-50%);opacity:0">✕</div><div id="fd" class="absolute inset-0 overflow-hidden"></div><div id="msg" class="absolute top-20 left-1/2 -translate-x-1/2 text-lg font-bold text-cyan-300 text-center"></div><div id="sq" class="absolute left-3 top-32 text-sm space-y-1"></div><div id="spb" class="hidden pointer-events-auto absolute left-1/2 bottom-6 -translate-x-1/2 flex gap-3 items-center card"><button class="tab" onclick="specNext(-1)">◀</button><b id="spn">—</b><button class="tab" onclick="specNext(1)">▶</button><button class="tab" onclick="sum()">SAIR</button></div><div id="pbw" class="hidden absolute left-1/2 bottom-44 -translate-x-1/2 w-56 h-3 bg-black/60 rounded"><div id="pb" class="h-3 rounded"></div></div><button id="fpb" class="tab pointer-events-auto absolute right-3 top-40" style="background:#0b1830cc" onclick="fpT()">👁 1ª PESSOA</button><button id="exb" class="tab pointer-events-auto absolute right-3 top-[204px]" style="background:#0b1830cc" onclick="leave()">⏏ SAIR</button><button id="jump" class="hidden pointer-events-auto absolute left-1/2 bottom-24 -translate-x-1/2 btn px-10 py-3 text-2xl font-bold" onclick="jump(P)">SALTAR [F]</button><div id="lt" class="absolute left-1/2 bottom-32 -translate-x-1/2 text-xl font-bold text-yellow-300"></div>
  <div class="absolute bottom-4 left-4 w-64 space-y-1"><div class="h-3 bg-white/10"><div id="bh" class="h-3 bg-green-400"></div></div><div class="h-3 bg-white/10"><div id="bs" class="h-3 bg-cyan-400"></div></div><div class="h-3 bg-white/10"><div id="bj" class="h-3 bg-orange-400" style="transition:background .2s"></div></div></div>
  <div class="absolute bottom-4 right-4 text-right"><div id="wn" class="text-xl font-bold"></div><div id="am" class="text-4xl font-bold"></div><div id="qa" class="text-sm"></div><div id="acc" class="text-sm"></div></div>
 </div>
@@ -102,7 +102,7 @@ input,select{background:#0008;padding:2px 6px;border:1px solid #22d3ee44;color:#
 
 <script>
 /* ===== CONFIG / SUPABASE ===== */
-const VER='0.010';
+const VER='0.011';
 const SB_URL='https://ipqjeacdfiomcxfuixdj.supabase.co',SB_KEY='sb_publishable_EWW84q_43YbOvMwB_Rua-A_X465PbLP';
 // Nomes de coluna aceitos (ajuste se seu banco usar outros)
 const COLS={nick:['nick','nickname','nome','username'],ver:['verificado','verified','is_verified'],dia:['diamantes','quantidade','saldo','diamonds']};
@@ -533,7 +533,7 @@ function scene3D(dt){
  const cT=g.spec&&SPT&&!SPT.dead?SPT:P,z=g.z,t=T,ph0=cT.veh?cT.veh:cT,sh=keys.shift&&P.en>0&&!g.spec,fp=FPS1&&!g.spec&&!P.in&&!P.veh;
  if(g.spec){if(!SC.on){SC.on=1;SC.x=P.x;SC.y=P.y;SC.z=hAt(P.x,P.y)+(P.z||0)}const kk=Math.min(1,dt*3);SC.x+=(ph0.x-SC.x)*kk;SC.y+=(ph0.y-SC.y)*kk;SC.z+=(hAt(ph0.x,ph0.y)+(cT.z||0)-SC.z)*kk}
  const ph=g.spec?{x:SC.x,y:SC.y}:ph0,zS=P.wp&&!P.veh?SIGHT[P.wp.w]:1,ads=ms.r&&!P.dead&&!P.in&&!P.drop&&!P.veh&&P.wp&&!P.use;ADSv+=((ads?1:0)-ADSv)*Math.min(1,dt*10);SSN=1-.5*ADSv;
- for(const e of g.ents){const m=e.m;m.visible=!e.dead&&!e.veh&&!e.in&&!(e===P&&fp);if(e.bar)e.bar.visible=m.visible&&dist(e,ph0)<450;if(!m.visible)continue;
+ for(const e of g.ents){const m=e.m;m.visible=!e.dead&&!e.veh&&!e.in&&!(e===P&&fp)&&(e===P||dist(e,ph0)<1800);if(e.bar)e.bar.visible=m.visible&&dist(e,ph0)<450;if(!m.visible)continue;
   const gy=hAt(e.x,e.y);
   e.jy=e.z||0;
   const mv=Math.min(1,Math.hypot(e.x-(e.px==null?e.x:e.px),e.y-(e.py==null?e.y:e.py))/dt/200);e.px=e.x;e.py=e.y;
@@ -545,9 +545,11 @@ function scene3D(dt){
   m.position.set(v.x,gy+hv+(v.hop>0?Math.sin(Math.PI*(1-v.hop/.6))*50:0),v.y);m.rotation.y=-v.a;m.rotation.z=Math.atan2(hAt(v.x+Math.cos(v.a)*30,v.y+Math.sin(v.a)*30)-hAt(v.x-Math.cos(v.a)*30,v.y-Math.sin(v.a)*30),60);m.tu.rotation.y=v.dr?-(yaw-v.a):0;m.wh.forEach(w=>w.rotation.z-=v.v*dt/8);
   if(v.dr&&sh&&Math.abs(v.v)>100)spark(v.x-Math.cos(v.a)*30,gy+hv+10,v.y-Math.sin(v.a)*30,-Math.cos(v.a)*90,15,-Math.sin(v.a)*90,.4,0x00e5ff)}
  bm.forEach((m,i)=>{const b=g.bul[i];m.visible=!!b;if(b){m.position.set(b.x,b.wz,b.y);m.rotation.y=-Math.atan2(b.vy,b.vx);m.rotation.z=Math.atan2(b.vz,Math.hypot(b.vx,b.vy));m.material.color.set(b.c)}});
- for(const l of g.loot){if(!l.m){const c=l.k==='w'?RC[l.r]:LC[l.k];l.m=new THREE.Group();l.m.add(new THREE.Mesh(l.k==='w'?LG.b:LG.o,lm(c)));
-   if(l.k==='w'&&l.r>1){const b2=new THREE.Mesh(LG.beam,new THREE.MeshBasicMaterial({color:c,transparent:true,opacity:.3}));b2.position.y=30;l.m.add(b2)}GS.add(l.m)}
-  l.m.visible=(l.x-ph0.x)**2+(l.y-ph0.y)**2<9e5;if(l.m.visible){l.m.position.set(l.x,hAt(l.x,l.y)+13+Math.sin(t*2+l.x)*2,l.y);l.m.children[0].rotation.y=t*1.5}}
+ for(const l of g.loot){const d2=(l.x-ph0.x)**2+(l.y-ph0.y)**2;
+  if(!l.m){if(d2>1.44e6)continue;const c=l.k==='w'?RC[l.r]:LC[l.k];l.m=new THREE.Group();l.m.add(new THREE.Mesh(l.k==='w'?LG.b:LG.o,lm(c)));
+   if(l.k==='w'&&l.r>1){const b2=new THREE.Mesh(LG.beam,BM[c]||(BM[c]=new THREE.MeshBasicMaterial({color:c,transparent:true,opacity:.3})));b2.position.y=30;l.m.add(b2)}GS.add(l.m)}
+  else if(d2>2.56e6){GS.remove(l.m);l.m=null;continue}
+  l.m.visible=d2<9e5;if(l.m.visible){l.m.position.set(l.x,hAt(l.x,l.y)+13+Math.sin(t*2+l.x)*2,l.y);l.m.children[0].rotation.y=t*1.5}}
  rm.forEach((m,i)=>{const f=g.fx[i];m.visible=!!f;if(f){const k=1-f.t/f.d;m.position.set(f.x,hAt(f.x,f.y)+3,f.y);m.scale.setScalar(Math.max(1,f.r*k));m.material.color.set(f.c);m.material.opacity=1-k}});
  dome.scale.set(Math.max(z.r,2),1,Math.max(z.r,2));dome.position.set(z.x,60,z.y);tex.offset.set(T*.01,-T*.05);dome.material.color.set(z.st?0xff3b5c:0x38bdf8);
  sun.position.set(ph.x+240,380,ph.y+140);sun.target.position.set(ph.x,0,ph.y);
@@ -701,6 +703,9 @@ $('ewc').innerHTML=EW.map((e,i)=>{const a=-Math.PI/2+i*2*Math.PI/EW.length;retur
 async function buyAll(){const L=lvl();if(L>=15){toast('Todos os níveis já liberados');return}if(!(await spend((15-L)*50)))return;S.xp=Math.max(S.xp,14*200);save();draw();pass();toast('Todos os níveis liberados!')}
 function claimAll(){const L=lvl();let n=0;for(let i=1;i<=PF.length&&i<=L;i++)for(const[t,r,ok]of[['f',PF[i-1],1],['p',PP[i-1],S.prem]]){const id=t+i;if(ok&&!S.claim.includes(id)){S.claim.push(id);if(r[0]==='x')S.xp+=+r.slice(1);else if(!own(r))S.own.push(r);n++}}
  save();draw();pass();hub();toast(n?'Coletado: '+n+' recompensas':'Nada para coletar')}
+const BM={};let lvT=-9;
+function leave(){if(!g)return;if(g.sumd){exitG();return}if(T-lvT>3){lvT=T;toast('Toque de novo para sair da partida');return}
+ if(!P.dead){P.dead=1;g.alive--;g.pd=1}g.ts=g.ts!=null?g.ts:g.tp;sum()}
 function hud(){const z=g.z,wp=P.veh?null:P.wp;
  $('bh').style.width=P.hp+'%';$('bs').style.width=P.sh+'%';$('bj').style.width=P.en+'%';
  $('wn').textContent=P.veh?'Veículo · Metralhadora':wp?W[wp.w][0]+' · '+RAR[wp.r][0]:'Desarmado';$('wn').style.color=wp?RAR[wp.r][1]:'#fb923c';

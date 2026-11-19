@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#080d13">
+<title>OPERATION: FRONTLINE — Alpha 0.3</title>
+<style>
+:root{--bg:#080d13;--panel:#101923;--panel2:#152230;--line:#263747;--txt:#edf4f8;--muted:#8da1b1;--cyan:#38c8d8;--gold:#e8b84b;--red:#ef5b58}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--txt);font-family:Arial,Helvetica,sans-serif}
+button{font:700 12px Arial;letter-spacing:.08em;color:var(--txt);background:#1c2b39;border:1px solid #385064;border-radius:4px;padding:11px 14px;cursor:pointer}
+button:hover{border-color:var(--cyan);background:#23394a}button.primary{background:var(--cyan);color:#061116;border-color:var(--cyan)}button.danger{border-color:#8e4545;color:#ffaaa6}
+#orientation,#intro{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at center,#172a38,#060a0f 70%);padding:20px;text-align:center}
+#orientation{display:none}#orientation .panel,#intro .panel{width:min(440px,100%);padding:28px;background:#101923;border:1px solid #31485a;box-shadow:0 20px 80px #000a}
+.logo{font-size:clamp(24px,5vw,42px);font-weight:900;letter-spacing:.08em;line-height:1.05}.logo span{color:var(--cyan)}.sub{font-size:10px;letter-spacing:.32em;color:var(--muted);margin:10px 0 26px}.intro-actions{display:grid;gap:10px}.hint{font-size:11px;color:var(--muted);line-height:1.6;margin-top:18px}
+#app{height:100dvh;min-height:0;display:grid;grid-template-rows:48px minmax(0,1fr) 25px}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid var(--line);background:#0c131b;min-width:0}.brand{font-weight:900;letter-spacing:.13em;font-size:14px}.brand span{color:var(--cyan)}.top-right{display:flex;gap:14px;align-items:center;color:var(--muted);font-size:11px}
+.layout{display:grid;grid-template-columns:190px minmax(0,1fr) 285px;min-height:0;overflow:hidden}.sidebar{background:#0c141d;border-right:1px solid var(--line);padding:14px 10px;display:flex;flex-direction:column;gap:7px}.nav{padding:12px;color:#9fb0be;border:1px solid transparent;font-size:11px;letter-spacing:.1em}.nav.active{background:#142532;color:var(--cyan);border-color:#294653}.side-note{margin-top:auto;font-size:10px;color:#6e8292;line-height:1.5;padding:8px}
+.main{min-width:0;min-height:0;overflow:auto;padding:18px;background:linear-gradient(145deg,#0d1721,#091018)}.eyebrow{font-size:10px;color:var(--cyan);letter-spacing:.22em}.heading{font-size:clamp(19px,2vw,27px);font-weight:900;margin:7px 0 16px}.map-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.map-card{position:relative;min-height:190px;border:1px solid #304354;background:linear-gradient(135deg,#233b4c,#111c27 70%);overflow:hidden;cursor:pointer}.map-card.selected{outline:2px solid var(--cyan)}.map-art{height:130px;display:flex;align-items:center;justify-content:center;font-size:54px;background:linear-gradient(140deg,#718b9a22,#0b151d)}.map-card.favela{background:linear-gradient(135deg,#493a2d,#17232b 75%)}.map-info{padding:10px 12px}.map-name{font-weight:900;font-size:14px;letter-spacing:.12em}.map-desc{font-size:10px;color:var(--muted);margin-top:5px}.section{margin-top:20px}.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.section-head b{font-size:11px;letter-spacing:.14em}.mode-row{display:flex;gap:8px;flex-wrap:wrap}.mode{padding:10px 12px;border:1px solid var(--line);font-size:10px;color:var(--muted)}.mode.active{border-color:var(--cyan);color:var(--cyan)}
+.right{background:#0c141d;border-left:1px solid var(--line);padding:14px;min-height:0;overflow-y:auto}.profile{display:flex;gap:12px;align-items:center;padding-bottom:14px;border-bottom:1px solid var(--line)}.avatar{width:48px;height:48px;background:linear-gradient(135deg,#294a5b,#14222d);display:grid;place-items:center;font-size:24px;border:1px solid #466071}.nick{font-weight:800;font-size:13px}.verified{color:#4aaeff;font-size:10px;margin-left:5px}.small{font-size:10px;color:var(--muted);margin-top:5px}.wallet{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:13px 0}.wallet-item{background:#121f2b;padding:10px;border:1px solid #263847}.wallet-item strong{display:block;font-size:15px;margin-top:5px}.wallet-item span{font-size:9px;color:var(--muted);letter-spacing:.12em}.quick{display:grid;gap:8px;margin-top:14px}.quick button{width:100%}.status{margin-top:14px;padding:10px;background:#111d28;border:1px solid var(--line);font-size:10px;color:var(--muted);line-height:1.5}.footer{display:flex;justify-content:space-between;align-items:center;padding:0 12px;border-top:1px solid var(--line);font-size:9px;color:#718493;letter-spacing:.08em}
+#game{display:none;position:fixed;inset:0;background:#000;z-index:10}#gameCanvas{position:absolute;inset:0;width:100%;height:100%;display:block}.hud{position:absolute;inset:0;pointer-events:none}.hud-top{position:absolute;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;gap:10px;text-shadow:0 2px 5px #000;font-size:12px;font-weight:bold}.hud-box{background:#07111dcc;border:1px solid #476070;padding:9px 12px}.crosshair{position:absolute;left:50%;top:50%;width:18px;height:18px;transform:translate(-50%,-50%)}.crosshair:before,.crosshair:after{content:"";position:absolute;background:#eaffff;box-shadow:0 0 4px #000}.crosshair:before{width:2px;height:18px;left:8px}.crosshair:after{height:2px;width:18px;top:8px}.hud-bottom{position:absolute;bottom:14px;left:14px;right:14px;display:flex;justify-content:space-between;align-items:end}.weapon{font-size:12px;background:#07111dcc;border:1px solid #476070;padding:10px 14px}.controls{pointer-events:auto;display:flex;gap:8px}.controls button{background:#101c28dd;min-width:48px;min-height:46px}.game-exit{pointer-events:auto}.touchpad{position:absolute;left:18px;bottom:82px;display:none;pointer-events:auto;grid-template-columns:repeat(3,42px);grid-template-rows:repeat(2,42px);gap:4px}.touchpad button{padding:0;opacity:.8}.fire-touch{position:absolute;right:22px;bottom:100px;display:none;pointer-events:auto;width:66px;height:66px;border-radius:50%;background:#8c3333dd}.mobile-look{position:absolute;inset:25% 25% 25% 25%;pointer-events:auto;display:none}
+#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#142432;border:1px solid #3b596c;padding:10px 14px;font-size:11px;z-index:30;display:none}
+@media(max-width:900px){.layout{grid-template-columns:145px minmax(0,1fr) 230px}.main{padding:13px}.map-card{min-height:160px}.map-art{height:105px}}
+@media(max-width:700px) and (orientation:portrait){.layout{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr)}.sidebar,.right{display:none}.main{padding:14px}.map-grid{grid-template-columns:1fr 1fr}.map-card{min-height:130px}.map-art{height:80px}.top-right{font-size:9px}}
+@media(max-width:950px) and (orientation:landscape){#app{height:100dvh;min-height:0;grid-template-rows:38px minmax(0,1fr) 20px}.topbar{padding:0 10px}.brand{font-size:11px}.layout{grid-template-columns:112px minmax(0,1fr) 190px;min-height:0}.sidebar{padding:6px;gap:3px}.nav{padding:8px 6px;font-size:9px}.side-note{display:none}.main{padding:9px 12px;overflow:auto}.heading{font-size:17px;margin:4px 0 8px}.map-grid{gap:8px}.map-card{min-height:0}.map-art{height:76px;font-size:34px}.map-info{padding:6px 8px}.map-name{font-size:11px}.map-desc{font-size:9px}.section{margin-top:9px}.section-head{margin-bottom:6px}.right{padding:8px;overflow-y:auto;max-height:none}.profile{gap:7px;padding-bottom:7px}.avatar{width:34px;height:34px;font-size:17px}.nick{font-size:10px}.small{font-size:9px;margin-top:2px}.wallet{gap:5px;margin:7px 0}.wallet-item{padding:6px}.wallet-item strong{font-size:11px;margin-top:3px}.wallet-item span{font-size:8px}.quick{gap:5px;margin-top:7px}.quick button{padding:7px;font-size:9px}.status{margin-top:7px;padding:6px;font-size:9px}.footer{font-size:8px}}
+@media(max-width:560px) and (orientation:landscape){.layout{grid-template-columns:90px minmax(0,1fr) 158px}.nav{font-size:8px;padding:7px 4px}.right{padding:6px}.wallet{grid-template-columns:1fr 1fr}.wallet-item{padding:5px}.quick button{padding:6px 4px;font-size:8px}.status{display:none}.map-art{height:62px}.map-card{min-height:0}.map-desc{display:none}}
+</style>
+</head>
+<body>
+<div id="intro"><div class="panel"><div class="logo">OPERATION<span>:</span><br>FRONTLINE</div><div class="sub">TACTICAL COMBAT • ALPHA 0.3</div><div class="intro-actions"><button class="primary" id="startBtn">INÍCIO</button><button id="fullscreenBtn">EXPANDIR TELA TODA</button></div><div class="hint">Prepare-se para entrar em operação.<br>Este jogo deve ser jogado com o celular na horizontal.</div></div></div>
+<div id="orientation"><div class="panel"><div style="font-size:42px">↻</div><h2>VIRE O CELULAR</h2><p class="hint">A orientação horizontal é obrigatória para jogar.</p><button class="primary" id="retryOrientation">CONTINUAR</button></div></div>
+<div id="app" style="display:none">
+<header class="topbar"><div class="brand">OPERATION<span>:</span> FRONTLINE</div><div class="top-right"><span>ALPHA 0.3</span><span id="connection">CONECTANDO...</span></div></header>
+<div class="layout">
+<aside class="sidebar"><div class="nav active">▣ &nbsp; JOGAR</div><div class="nav">◈ &nbsp; OPERADORES</div><div class="nav">▤ &nbsp; ARSENAL</div><div class="nav">♜ &nbsp; RANKING</div><div class="nav">⚙ &nbsp; CONFIGURAÇÕES</div><div class="side-note">OPERAÇÃO EM ANDAMENTO<br>SEJA TÁTICO. SEJA PRECISO.</div></aside>
+<main class="main"><div class="eyebrow">CENTRAL DE OPERAÇÕES</div><div class="heading">SELECIONE SUA ZONA DE COMBATE</div>
+<div class="map-grid"><div class="map-card selected" data-map="neve"><div class="map-art">❄️</div><div class="map-info"><div class="map-name">OPERAÇÃO NEVE</div><div class="map-desc">Instalação congelada • Combate de média distância</div></div></div><div class="map-card favela" data-map="favela"><div class="map-art">🏚️</div><div class="map-info"><div class="map-name">OPERAÇÃO FAVELA</div><div class="map-desc">Área urbana • Corredores e vielas</div></div></div></div>
+<div class="section"><div class="section-head"><b>MODO DE JOGO</b><span class="small">TREINAMENTO LOCAL</span></div><div class="mode-row"><div class="mode active">MATA-MATA</div><div class="mode">CAPTURA DE BANDEIRA <small>(EM BREVE)</small></div></div></div>
+<div class="section"><div class="section-head"><b>PRONTO PARA A MISSÃO?</b><span class="small">ARENA DE TESTE</span></div><button class="primary" id="playBtn">▶ &nbsp; ENTRAR NA OPERAÇÃO</button></div>
+</main>
+<aside class="right"><div class="profile"><div class="avatar">◉</div><div><div class="nick"><span id="nick">OPERADOR</span><span id="verified" class="verified"></span></div><div class="small">NÍVEL 01 • RECRUTA</div></div></div>
+<div class="wallet"><div class="wallet-item"><span>DIAMANTES</span><strong id="diamonds">—</strong></div><div class="wallet-item"><span>OURO</span><strong id="gold">0</strong></div></div>
+<div class="quick"><button>PERSONALIZAR OPERADOR</button><button>ARSENAL</button><button>RANKING GLOBAL</button></div>
+<div class="status" id="profileStatus">Perfil conectado pelo identificador do Hub, quando disponível.</div></aside>
+</div><footer class="footer"><span>© OPERATION: FRONTLINE</span><span>BUILD 0.3 • FPS PROTOTYPE</span></footer>
+</div>
+<div id="game"><canvas id="gameCanvas"></canvas><div class="hud"><div class="hud-top"><div class="hud-box" id="mapLabel">OPERAÇÃO NEVE</div><div class="hud-box">ELIMINAÇÕES: <span id="kills">0</span></div><div class="hud-box">VIDA: <span id="health">100</span></div></div><div class="crosshair"></div><div class="hud-bottom"><div class="weapon">RIFLE TÁTICO<br><b><span id="ammo">30</span> / 90</b></div><div class="controls"><button id="reloadBtn">RECARREGAR [R]</button><button class="game-exit" id="exitBtn">SAIR</button></div></div><div class="touchpad" id="touchpad"><button data-move="forward">▲</button><span></span><button data-move="left">◀</button><button data-move="back">▼</button><button data-move="right">▶</button></div><button class="fire-touch" id="fireTouch">FIRE</button><div class="mobile-look" id="mobileLook"></div></div></div>
+<div id="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script>
+const SUPABASE_URL='https://ipqjeacdfiomcxfuixdj.supabase.co';
+const SUPABASE_KEY='sb_publishable_EWW84q_43YbOvMwB_Rua-A_X465PbLP';
+const params=new URLSearchParams(location.search), playerId=params.get('id');
+let supabase=null, selectedMap='neve';
+const $=id=>document.getElementById(id);
+function toast(msg){$('toast').textContent=msg;$('toast').style.display='block';setTimeout(()=>$('toast').style.display='none',2600)}
+async function loadProfile(){
+ if(!window.supabase){$('connection').textContent='MODO LOCAL';return}
+ try{
+  supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+  if(!playerId){$('connection').textContent='SEM ID DO HUB';$('profileStatus').textContent='Abra pelo Hub com ?id=ID_DO_JOGADOR para carregar o perfil.';return}
+  const [u,w,v]=await Promise.all([
+   supabase.from('usuarios').select('id_jogador,nick').eq('id_jogador',playerId).maybeSingle(),
+   supabase.from('carteira_diamantes').select('diamantes,nick').eq('id_jogador',playerId).maybeSingle(),
+   supabase.from('influenciadores').select('id_jogador').eq('id_jogador',playerId).maybeSingle()
+  ]);
+  if(u.data?.nick)$('nick').textContent=u.data.nick;
+  else if(w.data?.nick)$('nick').textContent=w.data.nick;
+  if(w.data?.diamantes!==undefined)$('diamonds').textContent=Number(w.data.diamantes).toLocaleString('pt-BR');
+  if(v.data)$('verified').textContent=' ✓ VERIFICADO';
+  $('connection').textContent='PERFIL ONLINE';
+  $('profileStatus').textContent='Dados consultados no Supabase. Ouro e recursos de conta serão conectados nas próximas etapas.';
+  supabase.channel('frontline-profile-'+playerId).on('postgres_changes',{event:'*',schema:'public',table:'carteira_diamantes',filter:'id_jogador=eq.'+playerId},p=>{if(p.new?.diamantes!==undefined)$('diamonds').textContent=Number(p.new.diamantes).toLocaleString('pt-BR')}).subscribe();
+ }catch(e){$('connection').textContent='MODO LOCAL';$('profileStatus').textContent='Não foi possível consultar o perfil: '+e.message}
+}
+function landscape(){return matchMedia('(orientation: landscape)').matches}
+function showGate(){if(!landscape()){$('orientation').style.display='flex';$('app').style.display='none'}else{$('orientation').style.display='none';$('app').style.display='grid'}}
+$('startBtn').onclick=async()=>{if(!landscape()){ $('intro').style.display='none';$('orientation').style.display='flex';try{await screen.orientation?.lock?.('landscape')}catch(e){};return}$('intro').style.display='none';$('app').style.display='grid';loadProfile()};
+$('fullscreenBtn').onclick=async()=>{try{await document.documentElement.requestFullscreen();await screen.orientation?.lock?.('landscape')}catch(e){toast('Use a opção de tela cheia do navegador.')}};
+$('retryOrientation').onclick=()=>{if(landscape()){showGate();loadProfile()}else toast('Gire o celular para a horizontal.')};
+addEventListener('orientationchange',()=>{if($('orientation').style.display==='flex')showGate()});
+document.querySelectorAll('.map-card').forEach(c=>c.onclick=()=>{document.querySelectorAll('.map-card').forEach(x=>x.classList.remove('selected'));c.classList.add('selected');selectedMap=c.dataset.map});
+$('playBtn').onclick=()=>startGame();
+let renderer,scene,camera,clock,keys={},player={x:0,z:0,yaw:0,pitch:0},ammo=30,kills=0,health=100,targets=[],running=false,reloadTimer=null;
+function startGame(){
+ $('app').style.display='none';$('game').style.display='block';$('mapLabel').textContent=selectedMap==='neve'?'OPERAÇÃO NEVE':'OPERAÇÃO FAVELA';
+ $('touchpad').style.display='grid';$('fireTouch').style.display='block';$('mobileLook').style.display='block';
+ if(!renderer)initThree();buildArena();running=true;clock.start();animate();
+ if(!matchMedia('(pointer:coarse)').matches)$('game').requestPointerLock?.();
+}
+function initThree(){
+ renderer=new THREE.WebGLRenderer({canvas:$('gameCanvas'),antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;
+ scene=new THREE.Scene();camera=new THREE.PerspectiveCamera(76,innerWidth/innerHeight,.1,300);camera.position.set(0,1.7,5);clock=new THREE.Clock();
+ scene.add(new THREE.HemisphereLight(0xbad8e8,0x25313a,2));
+ const sun=new THREE.DirectionalLight(0xffffff,2.2);sun.position.set(8,15,5);sun.castShadow=true;scene.add(sun);
+ addEventListener('resize',()=>{if(!renderer)return;camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+ addEventListener('keydown',e=>{keys[e.code]=true;if(e.code==='KeyR')reload()});
+ addEventListener('keyup',e=>keys[e.code]=false);
+ addEventListener('mousemove',e=>{if(document.pointerLockElement===$('game')){player.yaw-=e.movementX*.0022;player.pitch-=e.movementY*.0022;player.pitch=Math.max(-1.2,Math.min(1.2,player.pitch));}});
+ $('gameCanvas').addEventListener('click',()=>{if(!matchMedia('(pointer:coarse)').matches&&document.pointerLockElement!==$('game'))$('game').requestPointerLock?.();else shoot()});
+ $('fireTouch').addEventListener('touchstart',e=>{e.preventDefault();shoot()},{passive:false});$('fireTouch').onclick=shoot;
+ let look=$('mobileLook'),lastTouch=null;look.addEventListener('touchstart',e=>{lastTouch=[e.touches[0].clientX,e.touches[0].clientY]},{passive:true});look.addEventListener('touchmove',e=>{if(!lastTouch)return;let t=e.touches[0];player.yaw-=(t.clientX-lastTouch[0])*.006;player.pitch-=(t.clientY-lastTouch[1])*.006;player.pitch=Math.max(-1.1,Math.min(1.1,player.pitch));lastTouch=[t.clientX,t.clientY]},{passive:true});
+ document.querySelectorAll('[data-move]').forEach(b=>{let k=b.dataset.move;b.addEventListener('touchstart',e=>{e.preventDefault();keys['Touch'+k]=true},{passive:false});['touchend','touchcancel'].forEach(ev=>b.addEventListener(ev,()=>keys['Touch'+k]=false))});
+}
+function mat(color){return new THREE.MeshStandardMaterial({color,roughness:.88})}
+function box(x,y,z,sx,sy,sz,color){let m=new THREE.Mesh(new THREE.BoxGeometry(sx,sy,sz),mat(color));m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;scene.add(m);return m}
+function buildArena(){
+ while(scene.children.length>2)scene.remove(scene.children[2]);targets=[];
+ let snow=selectedMap==='neve',ground=snow?0x9eafba:0x62513e,wall=snow?0x657b88:0x94704e,accent=snow?0xc7dce5:0x6e4732;
+ scene.background=new THREE.Color(snow?0x9eb6c5:0x9b7654);scene.fog=new THREE.Fog(snow?0x9eb6c5:0x9b7654,22,90);
+ let floor=new THREE.Mesh(new THREE.PlaneGeometry(100,100),mat(ground));floor.rotation.x=-Math.PI/2;floor.receiveShadow=true;scene.add(floor);
+ for(let i=0;i<18;i++){let x=(Math.random()-.5)*34,z=(Math.random()-.5)*34;if(Math.abs(x)<4&&Math.abs(z)<5)continue;let h=1.5+Math.random()*2.8;box(x,h/2,z,2+Math.random()*2,h,2+Math.random()*2,i%3?wall:accent)}
+ for(let i=0;i<7;i++){let x=(Math.random()-.5)*28,z=-12-Math.random()*13;let g=new THREE.Group();let body=new THREE.Mesh(new THREE.BoxGeometry(.75,1.4,.5),mat(0x263e35));body.position.y=1;g.add(body);let head=new THREE.Mesh(new THREE.SphereGeometry(.28,12,10),mat(0xc69b78));head.position.y=1.9;g.add(head);g.position.set(x,0,z);scene.add(g);targets.push({mesh:g,alive:true})}
+ player.x=0;player.z=5;player.yaw=0;player.pitch=0;camera.position.set(0,1.7,5);ammo=30;kills=0;health=100;updateHud();
+}
+function updateHud(){$('ammo').textContent=ammo;$('kills').textContent=kills;$('health').textContent=health}
+function shoot(){if(!running)return;if(ammo<=0){toast('Sem munição. Pressione R para recarregar.');return}ammo--;let best=null,bestDist=Infinity;for(let t of targets){if(!t.alive)continue;let p=t.mesh.position.clone().sub(camera.position);let dist=p.length();let dir=p.normalize();let facing=new THREE.Vector3(0,0,-1).applyEuler(camera.rotation);let dot=dir.dot(facing);if(dot>.985&&dist<bestDist){best=t;bestDist=dist}}if(best){best.alive=false;best.mesh.visible=false;kills++;toast('ALVO ELIMINADO')}updateHud()}
+function reload(){if(!running||ammo===30)return;toast('Recarregando...');clearTimeout(reloadTimer);reloadTimer=setTimeout(()=>{ammo=30;updateHud()},1100)}
+$('reloadBtn').onclick=reload;
+function animate(){if(!running)return;requestAnimationFrame(animate);let dt=Math.min(clock.getDelta(),.04);let speed=7*dt,forward=0,side=0;if(keys.KeyW||keys.ArrowUp||keys.Touchforward)forward-=1;if(keys.KeyS||keys.ArrowDown||keys.Touchback)forward+=1;if(keys.KeyA||keys.ArrowLeft||keys.Touchleft)side-=1;if(keys.KeyD||keys.ArrowRight||keys.Touchright)side+=1;let sin=Math.sin(player.yaw),cos=Math.cos(player.yaw);player.x+=(side*cos+forward*sin)*speed;player.z+=(side*sin-forward*cos)*speed;player.x=Math.max(-23,Math.min(23,player.x));player.z=Math.max(-23,Math.min(23,player.z));camera.position.set(player.x,1.7,player.z);camera.rotation.order='YXZ';camera.rotation.y=player.yaw;camera.rotation.x=player.pitch;renderer.render(scene,camera)}
+$('exitBtn').onclick=()=>{running=false;$('game').style.display='none';$('app').style.display='grid';document.exitPointerLock?.()};
+</script>
+</body></html>
