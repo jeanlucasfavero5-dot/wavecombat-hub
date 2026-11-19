@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>Pulse Fighter</title>
 <style>
 :root{--pk:#ff2d7a;--cy:#19e3ff;--gd:#ffcf3a;--bg:#07030f}
@@ -530,6 +530,18 @@ body.gq0 .spbar.full{filter:none}
 .banner{background:linear-gradient(180deg,#fff 16%,#ffe3ee 46%,#ff86b0 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;-webkit-text-stroke:2px #5b0a2e;paint-order:stroke fill;text-shadow:none;filter:drop-shadow(0 0 22px var(--pk)) drop-shadow(0 6px 0 rgba(91,10,46,.9))}
 .combo b{display:inline-block;text-shadow:none;background:linear-gradient(180deg,#fff,var(--gd));-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;filter:drop-shadow(0 3px 0 #5b0a2e) drop-shadow(0 0 10px var(--gd));animation:cpop .28s cubic-bezier(.2,1.6,.4,1)}
 @keyframes cpop{0%{transform:scale(1.9) rotate(-4deg)}100%{transform:scale(1) rotate(0)}}
+/* ===== v0.012: toque, áreas seguras, telas baixas ===== */
+html,body{overscroll-behavior:none;-webkit-tap-highlight-color:transparent}
+.touch,.tb,.keys,.hud{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.dpad{left:max(14px,env(safe-area-inset-left));bottom:max(14px,env(safe-area-inset-bottom))}
+.acts{right:max(14px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom))}
+.acts2{right:max(14px,env(safe-area-inset-right))}
+.hud{padding-left:max(14px,env(safe-area-inset-left));padding-right:max(70px,calc(env(safe-area-inset-right) + 60px))}
+.pbtn{right:max(12px,env(safe-area-inset-right));top:max(12px,env(safe-area-inset-top))}
+#chat{max-height:calc(100dvh - 110px)}
+@media (max-height:400px){.dpad,.acts{transform:scale(.62)}.acts2{transform:scale(.62);bottom:140px}.keys{display:none}.ov h2{font-size:24px}.ov .btn{min-width:180px;padding-top:8px;padding-bottom:8px}.ov{gap:6px}}
+@media (max-width:380px){.dpad,.acts,.acts2{transform:scale(.7)}}
+@media (pointer:coarse){.btn,.chip{min-height:40px}}
 </style>
 </head>
 <body data-sc="title">
@@ -547,7 +559,7 @@ body.gq0 .spbar.full{filter:none}
   <div class="tip">TOQUE PARA COMEÇAR</div>
   <button class="gear" onclick="openSettings()">⚙️</button>
   <a class="yt" id="yt-title" href="https://youtube.com/@capudooficial7?si=NSvfxpSzswVEStdu" target="_blank" rel="noopener noreferrer">siga o criador do jogo aqui</a>
-  <div class="ver">v0.011</div>
+  <div class="ver">v0.012</div>
 </div>
 
 <!-- LOBBY -->
@@ -615,7 +627,7 @@ body.gq0 .spbar.full{filter:none}
     <div class="ch-i"><input id="ch-in" maxlength="120" placeholder="Mensagem para todos..." autocomplete="off"><button id="ch-send">➤</button></div>
   </div>
   <a class="yt" id="yt-lobby" href="https://youtube.com/@capudooficial7?si=NSvfxpSzswVEStdu" target="_blank" rel="noopener noreferrer">siga o criador do jogo aqui</a>
-  <div class="ver" style="left:auto;right:270px">v0.011</div>
+  <div class="ver" style="left:auto;right:270px">v0.012</div>
 </div>
 
 <!-- CONFIGURAÇÕES -->
@@ -705,7 +717,7 @@ body.gq0 .spbar.full{filter:none}
 </div>
 
 <script>
-const VERSION='0.011';
+const VERSION='0.012';
 document.querySelectorAll('.ver').forEach(e=>{ e.textContent='v'+VERSION; });
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -2881,7 +2893,7 @@ function applyHit(f,o,a){
   const inC=(o.st==='hit'&&!o.blk)||o.st==='stun';
   if(!inC||cb.t>.6){ cb.n=0; cb.dmg=0; }
   const cnt=!inC&&o.st==='atk'&&o.atk&&o.atk.t<o.atk.su+o.atk.ac;
-  const dmg=a.dmg*(f.pow||1)/(o.df||1)*Math.max(a.sm||.45,1-.09*cb.n)*(cnt?1.3:1),big=!!a.kd||dmg>=55;
+  const dmg=a.dmg*(f.pow||1)/(o.df||1)*Math.max(a.sm||.45,1-(A.n===4?.12:.09)*cb.n)*(cnt?1.3:1)*(A.n===4?.8:1),big=!!a.kd||dmg>=55;
   cb.n++; cb.dmg+=dmg; cb.t=0;
   if(f.i===0){ A.stat.dmg+=dmg; A.stat.cmb=Math.max(A.stat.cmb,cb.n); }
   o.hz=(a.y0+a.y1)/2; o.hp-=dmg; o.blk=false; o.hitT=.08; o.atk=null; o.st='hit'; o.t=0; o.hs=a.kd?Math.max(a.hs,.6):a.hs; o.vx=dir*a.kb; o.chain=0; o.buf=null; o.kdn=!!a.kd;
@@ -2919,6 +2931,10 @@ function stepF(f,o,dt){
   f.t+=dt; f.hitT=Math.max(0,f.hitT-dt); f.dcd=Math.max(0,f.dcd-dt); f.pT=Math.max(0,f.pT-dt); if(f.inv>0) f.inv-=dt;
   if(f.gdT>0) f.gdT-=dt; else if(f.gd>0&&!f.block) f.gd=Math.max(0,f.gd-22*dt);
   const away=o.x>f.x?-1:1,tw=-away,dir=(i.r?1:0)-(i.l?1:0);
+  // buffer de comandos (jogador): entradas feitas até .16s antes de ficar livre são executadas ao liberar
+  const PB=f.pre||(f.pre={});
+  for(const k in PB){ PB[k]-=dt; if(PB[k]<=0) delete PB[k]; }
+  if(!f.cpu&&fight&&f.st!=='ko'&&f.st!=='win'&&f.st!=='idle'&&f.st!=='walk'&&f.st!=='crouch'&&f.st!=='block'&&f.st!=='jump'){ for(const k of ['punch','kick','u','sp','sup','dash','roll']) if(e[k]) PB[k]=.16; }
   const free=f.st==='idle'||f.st==='walk'||f.st==='crouch'||f.st==='block';
   if(gnd&&free) f.face=tw;
   if(f.st==='ko'||f.st==='win'){
@@ -2931,7 +2947,7 @@ function stepF(f,o,dt){
     f.vx*=Math.pow(.02,dt); if(f.t>=f.hs&&!(f.kdn&&!gnd)){ f.st=gnd?'idle':'jump'; f.t=0; f.blk=false; f.kdn=false; }
   }else if(f.st==='atk'){
     let a=f.atk; a.t+=dt;
-    if(e.punch) f.buf={k:'punch',l:.25}; else if(e.kick) f.buf={k:'kick',l:.25};
+    if(e.punch) f.buf={k:'punch',l:.32}; else if(e.kick) f.buf={k:'kick',l:.32};
     if(f.buf){ f.buf.l-=dt; if(f.buf.l<=0) f.buf=null; }
     if(a.cn===0&&a.t<.05&&gnd&&((e.punch&&a.k==='kick')||(e.kick&&a.k==='punch'))){ startSp(f,'crush'); a=f.atk; }   // soco+chute = quebra-guarda
     if(a.t>=a.su&&a.t<a.su+a.ac){
@@ -2948,7 +2964,7 @@ function stepF(f,o,dt){
     }
     if(gnd) f.vx*=Math.pow(.0005,dt);
     if(a.mv&&a.t<(a.k==='super'?a.su+.35:a.su+a.ac)) f.vx=Math.abs(o.x-f.x)>78?f.face*a.mv:0;
-    if(a.done&&!a.sp&&gnd&&a.t>=a.su+a.ac*.5){   // cancelamentos após acerto/bloqueio
+    if(a.done&&!a.sp&&gnd&&a.t>=a.su+a.ac*.3){   // cancelamentos após acerto/bloqueio
       if(e.sup&&f.sp>=100) doSuper(f);
       else if(e.sp&&trySp(f,i,dir,tw)){}
       else if(f.buf&&a.cn<2){ const k=f.buf.k; f.buf=null; startAtk(f,k,a.cn+1); }
@@ -2959,9 +2975,10 @@ function stepF(f,o,dt){
   }else if(f.st==='dash'){
     if(f.t>=.24){ f.st='idle'; f.t=0; f.vx=0; } else f.vx=f.dd*DASHV*(f.spd||1)*(1-f.t/.24*.6);
   }else{
+    let e=f.ed; if(!f.cpu&&fight){ const m={}; for(const k in PB) m[k]=true; for(const k in f.ed) m[k]=f.ed[k]; e=m; }
     f.crouch=gnd&&!!i.d&&fight;
     f.block=fight&&gnd&&!!(i.guard||(dir!==0&&dir===away));
-    if(fight&&gnd&&e.guard) f.pT=.14;
+    if(fight&&gnd&&e.guard) f.pT=.17;
     if(gnd){
       if(!fight||f.crouch||(i.guard&&dir===0)) f.vx=0; else f.vx=dir*WALK*(f.spd||1)*(dir===away?.78:1);
       f.st=f.crouch?'crouch':f.block?'block':dir!==0?'walk':'idle';
@@ -2979,6 +2996,7 @@ function stepF(f,o,dt){
       else if(gnd&&e.roll){ f.st='roll'; f.t=0; f.rd=dir!==0?dir:tw; f.inv=.34; f.vx=f.rd*ROLLV; sfx('dash'); fxDust(f.x,0,5); }
       else if(e.punch) startAtk(f,'punch',0);
       else if(e.kick) startAtk(f,'kick',0);
+      if(f.st!=='idle'&&f.st!=='walk'&&f.st!=='crouch'&&f.st!=='block'&&f.st!=='jump') f.pre={};
     }
   }
   if(f.st==='roll') f.vx=f.rd*ROLLV*(1-f.t/.46*.5);
@@ -2997,20 +3015,53 @@ function aiStep(f,o,dt){
   const A=f.ai,d=f.aiD||({'Fácil':.3,'Normal':.5,'Difícil':.72,'Mestre':.92}[sel.diff]||.5);
   f.ed={};
   if(AR.phase!=='fight'){ f.inp={}; return; }
-  A.t-=dt;
-  const dx=o.x-f.x,dist=Math.abs(dx),tw=dx>=0?1:-1,fw=tw>0?'r':'l',bk=tw>0?'l':'r';
-  if(f.st==='atk'&&f.atk.done&&!f.atk.sp&&f.atk.cn<2&&Math.random()<d*dt*9) f.ed[Math.random()<.6?'punch':'kick']=true;
-  if(o.st==='atk'&&dist<150&&o.atk&&o.atk.t<o.atk.su+.05&&Math.random()<d*dt*14){ A.inp={guard:true,d:Math.random()<.35}; A.t=.3; if(Math.random()<d*d*.4) f.ed.guard=true; }
-  for(const p of AR.proj) if(AR.f[p.o].team!==f.team&&Math.abs(p.x-f.x)<300&&Math.random()<d*dt*8){ A.inp={guard:true}; A.t=.35; }
-  if(o.y<-70&&dist<150&&f.sp>=25&&Math.random()<d*dt*10){ A.inp={d:true}; f.ed.sp=true; A.t=.4; }
+  // personalidade: cada bot tem um jeito (agressivo/paciente, distância preferida) que muda com o tempo
+  const P=A.p||(A.p={ag:.7+Math.random()*.6,pd:150+Math.random()*90,mt:0,rt:0,th:0,pj:0,aa:0,spc:1,wk:0,tk:null});
+  A.t-=dt; P.mt-=dt; P.rt-=dt; P.pj-=dt; P.aa-=dt; P.spc-=dt; P.wk-=dt;
+  if(P.mt<=0){ P.mt=1.5+Math.random()*3; P.pd=Math.max(115,Math.min(300,P.pd+(Math.random()-.5)*120)); P.ag=Math.max(.5,Math.min(1.5,P.ag+(Math.random()-.5)*.5)); }
+  const dx=o.x-f.x,dist=Math.abs(dx),tw=dx>=0?1:-1,fw=tw>0?'r':'l',bk=tw>0?'l':'r',gnd=f.y>=0;
+  const react=Math.max(.1,.46-d*.36)*(.75+Math.random()*.5);   // tempo de reação humano: Fácil ~.35s, Mestre ~.13s
+  // continuação de combo (varia, não é sempre o mesmo)
+  if(f.st==='atk'&&f.atk.done&&!f.atk.sp&&f.atk.cn<2&&Math.random()<d*dt*8) f.ed[Math.random()<.6?'punch':'kick']=true;
+  if(f.st==='atk'&&f.atk.done&&!f.atk.sp&&f.sp>=25&&Math.random()<d*dt*2.5&&P.spc<=0){ f.ed.sp=true; P.spc=1.5+Math.random()*2; }
+  // ameaça corpo a corpo: reage com atraso (e às vezes erra / aceita a troca)
+  const thr=o.st==='atk'&&o.atk&&!o.atk.prj&&dist<(o.atk.rng||170)+20&&o.atk.t<o.atk.su+.1;
+  if(thr&&!P.th&&gnd&&f.st!=='atk'){ P.th=1; P.rt=react; P.tk=o.atk; }
+  if(!thr&&o.st!=='atk') P.th=0;
+  if(P.th===1&&P.rt<=0){
+    P.th=2; const r=Math.random();
+    if(r<.12+(1-d)*.3){}   // não reagiu: toma o golpe (mais comum nas dificuldades baixas)
+    else if(r<.55+d*.2){ A.inp={guard:true,d:o.atk.low||Math.random()<.3}; A.t=.28+Math.random()*.2; if(Math.random()<d*d*.55) f.ed.guard=true; }   // defesa / parry
+    else if(r<.78&&dist<140&&f.sp>=25&&d>.5){ f.ed.sp=true; A.t=.3; }                                                                                    // reversão
+    else if(r<.9){ f.ed.dash=true; f.ed.dashAbs=-tw; A.inp={}; A.t=.3; }                                                                                 // recua no dash
+    else if(dist<110&&o.atk.su>.18){ f.ed.punch=true; A.t=.25; }                                                                                         // contra-ataque rápido
+    else { A.inp={[bk]:true,guard:true}; A.t=.35; }
+  }
+  // projéteis: pular, defender ou tomar, com atraso e sem tremedeira por frame
+  for(const p of AR.proj) if(AR.f[p.o].team!==f.team&&Math.abs(p.x-f.x)<340&&P.pj<=0&&gnd&&f.st!=='atk'&&Math.sign(f.x-p.x)===Math.sign(p.vx||tw*-1)){
+    P.pj=.7+Math.random()*.6; const r=Math.random();
+    if(r<.1+(1-d)*.3) break;
+    if(r<.55){ A.inp={guard:true}; A.t=.4; }
+    else if(d>.45&&Math.abs(p.x-f.x)>140){ A.inp={[fw]:true}; f.ed.u=true; A.t=.35; }
+    else { f.ed.dash=true; f.ed.dashAbs=tw; A.inp={}; A.t=.3; }
+    break;
+  }
+  // anti-aéreo com recarga
+  if(o.y<-70&&dist<150&&f.sp>=25&&P.aa<=0&&Math.random()<d*dt*9){ A.inp={d:true}; f.ed.sp=true; A.t=.4; P.aa=1.5; }
+  // oponente bloqueando: quebra-guarda (soco+chute)
+  if(o.st==='block'&&dist<125&&Math.random()<d*dt*1.6&&f.st!=='atk'){ f.ed.punch=true; f.ed.kick=true; }
   if(A.t<=0){
-    A.t=(.12+Math.random()*.3)/(.6+d); const I={},r=Math.random();
+    // padrão: pausas/fintas ocasionais para não ficar previsível
+    if(P.wk<=0&&Math.random()<.1/Math.max(.5,P.ag)){ P.wk=.6+Math.random()*.8; A.inp={}; A.t=.35+Math.random()*.4; f.inp=A.inp; return; }
+    A.t=(.12+Math.random()*.3)/((.6+d)*P.ag); const I={},r=Math.random();
+    const near=P.pd*.8,far=P.pd*1.35;
     if(f.sp>=100&&dist<260&&Math.random()<.5*d) f.ed.sup=true;
-    else if(f.sp>=20&&dist>220&&dist<560&&Math.random()<.3*d) f.ed.sp=true;
-    else if(f.sp>=30&&dist>110&&dist<230&&Math.random()<.25*d){ I[fw]=true; f.ed.sp=true; }
-    else if(dist>230){ I[fw]=true; if(r<.12*d) f.ed.dash=true; else if(r<.2*d) f.ed.u=true; }
-    else if(dist>125){ if(r<.55) I[fw]=true; else if(r<.55+.3*d) f.ed.kick=true; else I.guard=true; }
-    else{ if(r<.5*d) f.ed.punch=true; else if(r<.72*d+.1) f.ed.kick=true; else if(r<.85) I[bk]=true; else I.guard=true; if(Math.random()<.12*d) I.d=true; }
+    else if(f.sp>=20&&dist>220&&dist<560&&P.spc<=0&&Math.random()<.3*d){ f.ed.sp=true; P.spc=1.6+Math.random()*2.2; }
+    else if(f.sp>=30&&dist>110&&dist<230&&P.spc<=0&&Math.random()<.22*d){ I[fw]=true; f.ed.sp=true; P.spc=1.4+Math.random()*2; }
+    else if(dist>far+90){ I[fw]=true; if(r<.14*d) f.ed.dash=true; else if(r<.2*d) f.ed.u=true; }
+    else if(dist>far){ if(r<.6) I[fw]=true; else if(r<.6+.25*d) f.ed.kick=true; else I.guard=true; }
+    else if(dist>near){ if(r<.35*P.ag) I[fw]=true; else if(r<.55) I[bk]=true; else if(r<.55+.25*d) f.ed.kick=true; else if(r<.85) f.ed.punch=true; else I.guard=true; }   // zona de tensão: ensaio de distância
+    else{ if(r<.45*d*P.ag) f.ed.punch=true; else if(r<.7*d*P.ag+.08) f.ed.kick=true; else if(r<.84) I[bk]=true; else I.guard=true; if(Math.random()<.14*d) I.d=true; }
     A.inp=I;
   }
   f.inp=A.inp;
@@ -4957,7 +5008,14 @@ function netSend(o){
   if(NX.m){ if(hub&&hub.connected) hub.emit(HEV('rel'),{a:o}); return; }
   if(sock&&sock.connected) sock.emit('game_action',o);
 }
-function netTick(dt){ if(NX.m) return netTickX(dt); return netTickL(dt); }
+let NETRX=0,NETLT=0;   // v0.012: vigia de oponente mudo (sem pacotes por 12s = sai da partida)
+function netTick(dt){
+  const n=performance.now();
+  if(!NETRX||n-NETLT>3000) NETRX=n;   // aba oculta/pausada não conta
+  NETLT=n;
+  if(n-NETRX>12000){ NETRX=0; toast('Sem sinal do oponente'); arenaExit(); return; }
+  if(NX.m) return netTickX(dt); return netTickL(dt);
+}
 function netTickX(dt){
   const A=AR,m=NX.m; if(!m) return;
   m.acc+=dt; m.q+=dt;
@@ -4979,6 +5037,7 @@ function netTickX(dt){
   }
 }
 function netRecvX(d){
+  NETRX=performance.now();
   const m=NX.m,a=d&&d.a,A=AR; if(!m||!a||typeof a!=='object') return;
   if(a.e==='chat'){ roomChatIn(a); return; }
   if(!A||!A.net) return;
@@ -5029,6 +5088,7 @@ function hubDropped(){
   if(NX.sala){ roomClose(true); toast('Conexão com o Hub perdida — você saiu da sala'); }
 }
 function netRecv(d){
+  NETRX=performance.now();
   const a0=d&&d.action; if(a0&&a0.e==='chat'){ roomChatIn(a0); return; }   // chat privado da sala
   if(!AR||!AR.net||d.playerId!==netSt.opp) return;
   const a=d.action||{},o=AR.f[1],me=AR.f[0];
