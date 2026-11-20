@@ -270,6 +270,21 @@ body.touch #talk{display:none!important}
 .rdy{animation:rdy .6s ease-out}
 @keyframes rdy{0%{box-shadow:0 0 0 0 rgba(255,226,138,.95);transform:scale(1.12)}100%{box-shadow:0 0 0 14px rgba(255,226,138,0);transform:scale(1)}}
 @media (prefers-reduced-motion:reduce){.rdy{animation:none}}
+
+/* ── v0.022 ── */
+.mt{margin:4px 0;font-size:13px}.mt i{display:block;height:5px;margin-top:2px;border-radius:3px;background:rgba(0,0,0,.5);overflow:hidden}.mt b{display:block;height:100%;background:linear-gradient(90deg,#4f7a3c,#ffd24a)}
+@media (max-height:480px){
+body.touch #mmW:not(.xl){width:100px;height:100px}
+body.touch #party{top:calc(64px + var(--safe-t));right:calc(116px + var(--safe-r));width:104px;font-size:11px}
+body.touch #bossb{width:min(38vw,300px)}
+body.touch #cg{bottom:calc(170px + var(--safe-b))}
+body.touch #cgL{max-height:24vh}
+body.touch #cgP{width:min(44vw,300px)}
+body:has(#cg.x) #qt{display:none!important}
+body.touch #buffs{top:calc(112px + var(--safe-t))}
+body.touch #chal{top:calc(150px + var(--safe-t))}
+body.touch #toast{bottom:calc(120px + var(--safe-b))}
+}
 </style>
 </head>
 <body>
@@ -354,7 +369,7 @@ const URL_ID = (params.get('id') || '').trim();
 const PLAYER_ID = URL_ID || '0'; // fallback para testes locais
 const $ = id => document.getElementById(id);
 const fmt = n => Number(n).toLocaleString('pt-BR');
-const VERSION = '0.021'; // suba a cada atualização enviada
+const VERSION = '0.022'; // suba a cada atualização enviada
 const DIA = {};
 const G = { mode: 'start' };
 let NICK = 'Visitante';
@@ -1181,10 +1196,12 @@ function initUI(E) {
   function rmMon(m) { E.scene.remove(m.g); m.mat.dispose(); const i = mons.indexOf(m); if (i >= 0) mons.splice(i, 1); }
   function clearAll() { mons.slice().forEach(rmMon); drops.splice(0).forEach(q => E.scene.remove(q.m)); }
 
+  let dmgLive = 0;
   function dmgText(pos, txt, crit, col) {
+    if (dmgLive > 28) return;
     const v = new T.Vector3(pos.x, pos.y + 2.2, pos.z).project(E.camera), e = h('div', 'dmg', txt);
     e.style.left = (v.x * .5 + .5) * innerWidth + 'px'; e.style.top = (-v.y * .5 + .5) * innerHeight + 'px'; e.style.color = col || (crit ? '#ffd24a' : '#fff'); if (crit) { e.textContent = '💥 ' + txt + '!'; e.className = 'dmg crit'; }
-    document.body.append(e); setTimeout(() => e.remove(), 1100);
+    dmgLive++; document.body.append(e); setTimeout(() => { e.remove(); dmgLive--; }, 1100);
   }
   function burst(pos, col, n = 8) {
     for (let i = 0; i < n; i++) {
@@ -1218,7 +1235,7 @@ function initUI(E) {
   }
   function kill(m) {
     const d = m.d, q = m.g.position;
-    burst(q, d.col, 16); sfx('kill'); addXP(Math.round(d.xp * m.lv * (m.elite ? 3 : 1) * (1 + .15 * nearParty()))); giveGold(Math.round(d.xp * .6 * m.lv * (m.elite ? 3 : 1)), q); rollGear(m, q); P.kills = (P.kills || 0) + 1; if (d.boss) P.bk = (P.bk || 0) + 1;
+    metaAdd('kil', 1); if (m.elite) metaAdd('eli', 1); burst(q, d.col, 16); sfx('kill'); addXP(Math.round(d.xp * m.lv * (m.elite ? 3 : 1) * (1 + .15 * nearParty()))); giveGold(Math.round(d.xp * .6 * m.lv * (m.elite ? 3 : 1)), q); rollGear(m, q); P.kills = (P.kills || 0) + 1; if (d.boss) P.bk = (P.bk || 0) + 1;
     if (Math.random() < .7 || d.boss || m.elite) dropItem(d.drop, q.x + 1, q.z, d.col);
     if (d.boss) { dropItem(d.drop, q.x - 1, q.z, d.col); dropItem(d.drop, q.x, q.z + 1.5, d.col); bossDead[m.key] = Date.now(); }
     if (Math.random() < .2) dropItem('Poção de Vida', q.x, q.z - 1, 0xff4a6a);
@@ -1826,6 +1843,7 @@ function initUI(E) {
     ['a8', 'Colecionador', 'Tenha um item Lendário', () => P.bag.some(i => i.r === 3) || SLOTS.some(sl => P.gear[sl] && P.gear[sl].r === 3), 1000, 500]
   ];
   function renderAch(B) {
+    renderMetas(B);
     B.append(h('h3', '', 'Conquistas ' + ACH.filter(a => P.ach[a[0]]).length + '/' + ACH.length));
     ACH.forEach(a => B.append(h('p', '', (P.ach[a[0]] ? '🏆 ' : '🔒 ') + a[1] + ' — ' + a[2] + ' (+' + a[4] + ' XP, +' + a[5] + ' 🪙)')));
   }
@@ -2104,7 +2122,7 @@ function initUI(E) {
   });
   function lootAct() {
     if (G.mode !== 'play' || D.on || near >= 0 || D.near || !lootN) return;
-    const s = lootN, nd = s.nd; if (!nd) return; if (nd.t === 's' && nd.v && CHL) return toast('Desafio em andamento.'); lootN = null; P.col[nd.k] = Date.now(); s.nd = null; s.g.visible = false;
+    const s = lootN, nd = s.nd; if (!nd) return; if (nd.t === 's' && nd.v && CHL) return toast('Desafio em andamento.'); lootN = null; P.col[nd.k] = Date.now(); metaAdd(nd.t === 'c' ? 'bau' : nd.t === 'k' ? 'cri' : 'san', 1); s.nd = null; s.g.visible = false;
     const p = E.player.position, d = 1 + Math.hypot(nd.x, nd.z) / 1200;
     if (nd.t === 'c') {
       const g = Math.round((40 + Math.random() * 80) * d), ms = ['Presa', 'Gosma', 'Brasa', 'Cristal', 'Ferrão', 'Seda', 'Osso'], m = ms[Math.floor(Math.random() * ms.length)], n = 1 + Math.floor(Math.random() * 3);
@@ -2159,7 +2177,7 @@ function initUI(E) {
     if (P.kills - CHL.k0 >= CHL.n && left === 0) {
       const g = Math.round(90 * d), xp = Math.round(120 * d + P.lv * 10); giveGold(g, p); addXP(xp); buf.dmg = Math.max(buf.dmg, 30);
       if (Math.random() < .5 && P.pot < 9) P.pot++; if (Math.random() < .25) addGear(genGear(Math.round(P.lv + d * 2), 1));
-      ringFx(p, 0xffd24a, 8); burst(p, 0xffd24a, 20); sfx('lvl'); fxFlash('#ffd24a'); banner('DESAFIO CONCLUÍDO', '+' + xp + ' XP · +' + g + '🪙 · +30% dano'); saveP(); clearCh(); return;
+      ringFx(p, 0xffd24a, 8); burst(p, 0xffd24a, 20); sfx('lvl'); metaAdd('des', 1); fxFlash('#ffd24a'); banner('DESAFIO CONCLUÍDO', '+' + xp + ' XP · +' + g + '🪙 · +30% dano'); saveP(); clearCh(); return;
     }
     if (CHL.t <= 0 || left === 0 || Math.hypot(p.x - CHL.x, p.z - CHL.z) > 80) { fxFlash('#ff3030', .4); banner('DESAFIO FALHOU', ''); clearCh(); return; }
     chalEl.style.display = 'block'; chalEl.textContent = '⚔️ Desafio: restam ' + left + ' · ' + Math.ceil(CHL.t) + 's';
@@ -2172,7 +2190,7 @@ function initUI(E) {
     stT -= dt; if (stT > 0) return; stT = .4;
     const p = E.player.position, cx = Math.floor(p.x / CH), cz = Math.floor(p.z / CH); let f = null, fd = 45;
     for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) { const st = E.W.structAt(cx + i, cz + j); if (st) { const d = Math.hypot(st.x - p.x, st.z - p.z); if (d < fd) { fd = d; f = st; } } }
-    if (f) { const k = (f.x | 0) + ',' + (f.z | 0); if (k !== stK) { stK = k; const nw = !P.dis[k]; if (P.dis[k] === 1 && f.type !== 0) P.dis[k] = f.type + 1; if (nw) { P.dis[k] = f.type + 1; addXP(25); ringFx(p, 0xffd24a, 7); burst(p, 0xffd24a, 14); sfx('pick'); fxFlash('#ffd24a', .3); saveP(); toast('Estrutura descoberta: ' + SN[f.type] + ' (+25 XP)'); } if (f.type !== 4) banner(SN[f.type].toUpperCase(), (nw ? 'Descoberta! +25 XP · ' : '') + SW[f.type]); } } else stK = '';
+    if (f) { const k = (f.x | 0) + ',' + (f.z | 0); if (k !== stK) { stK = k; const nw = !P.dis[k]; if (P.dis[k] === 1 && f.type !== 0) P.dis[k] = f.type + 1; if (nw) { P.dis[k] = f.type + 1; metaAdd('dis', 1); addXP(25); ringFx(p, 0xffd24a, 7); burst(p, 0xffd24a, 14); sfx('pick'); fxFlash('#ffd24a', .3); saveP(); toast('Estrutura descoberta: ' + SN[f.type] + ' (+25 XP)'); } if (f.type !== 4) banner(SN[f.type].toUpperCase(), (nw ? 'Descoberta! +25 XP · ' : '') + SW[f.type]); } } else stK = '';
   });
 
   const lowEl = h('div'); lowEl.id = 'lowhp'; document.body.append(lowEl);
@@ -2256,6 +2274,25 @@ function initUI(E) {
     if (bm && !zOn) { zOn = true; fxFlash('#ff3030', .45); banner('ZONA PERIGOSA', 'Chefe: ' + bm.d.n); sfx('skill'); }
     else if (!bm && zOn) { zOn = false; toast('Você saiu da zona perigosa.'); }
   });
+
+  /* ── v0.022: metas de exploração/combate, ajustes de tela ── */
+  const MET = [['bau', '📦 Abrir baús', 3], ['cri', '💎 Coletar cristais', 3], ['san', '⛩️ Usar santuários', 2], ['eli', '👑 Derrotar elites', 2], ['des', '⚔️ Concluir desafios', 1], ['dis', '🗺️ Descobrir estruturas', 2], ['kil', '🗡️ Derrotar monstros', 25]];
+  P.meta = P.meta || {};
+  const mTgt = (m, st) => m[2] * (1 + (st.t | 0));
+  function metaAdd(id, n) {
+    const m = MET.find(x => x[0] === id); if (!m) return;
+    const st = P.meta[id] = P.meta[id] || { n: 0, t: 0 }; st.n += n;
+    let done = 0; while (st.n >= mTgt(m, st) && done < 5) {
+      st.n -= mTgt(m, st); const k = 1 + st.t * .5, xp = Math.round((60 + P.lv * 6) * k * (m[2] > 10 ? .6 : 1)), g = Math.round((40 + P.lv * 4) * k * (m[2] > 10 ? .6 : 1)); st.t++; done++;
+      P.gold += g; addXP(xp); const p = E.player.position; ringFx(p, 0xffd24a, 6); sfx('lvl'); banner('META CONCLUÍDA', m[1].slice(3) + ' · +' + xp + ' XP · +' + g + '🪙');
+    }
+    if (done) saveP();
+  }
+  function renderMetas(B) {
+    B.append(h('h3', '', 'Metas (renovam ao completar)'));
+    MET.forEach(m => { const st = P.meta[m[0]] || { n: 0, t: 0 }, tg = mTgt(m, st), d = h('div', 'mt'), i = h('i'), b = h('b'); b.style.width = Math.min(100, st.n / tg * 100) + '%'; i.append(b); d.append(document.createTextNode(m[1] + ' — ' + st.n + '/' + tg + (st.t ? ' · Nv.' + st.t : '')), i); B.append(d); });
+  }
+  if (coarse && innerHeight <= 480 && !LS.get('rise_t22', 0) && cfg.t === 100) { cfg.t = 80; $('cT').value = 80; applyCfg(); LS.set('rise_t22', 1); }
 
   document.body.dataset.mode = 'start';
 }
