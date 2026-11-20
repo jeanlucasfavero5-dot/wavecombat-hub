@@ -430,7 +430,7 @@ const URL_ID = (params.get('id') || '').trim();
 const PLAYER_ID = URL_ID || '0'; // fallback para testes locais
 const $ = id => document.getElementById(id);
 const fmt = n => Number(n).toLocaleString('pt-BR');
-const VERSION = '0.076'; // suba a cada atualização enviada
+const VERSION = '0.088'; // suba a cada atualização enviada
 const DIA = {};
 const G = { mode: 'start' };
 let NICK = 'Visitante';
@@ -1816,7 +1816,7 @@ function initUI(E) {
   function projectile(a, b, col, done) { const mm = fmat(col), m = new T.Mesh(OG, mm), sx = a.x, sy = a.y + 1.4, sz = a.z; m.position.set(sx, sy, sz); addFx(m, .2, (o, k) => { o.position.set(sx + (b.x - sx) * k, sy + (b.y + 1 - sy) * k, sz + (b.z - sz) * k); if (k >= 1) done(); }, mm); }
 
   /* ouro, equipamentos, poções */
-  function giveGold(n, pos) { P.gold += n; P.goldT = (P.goldT | 0) + n; dmgText(pos, '+' + n + '🪙', false, '#ffd24a'); saveP(); }
+  function giveGold(n, pos) { if (evUntil > Date.now()) n = Math.round(n * 1.25); P.gold += n; P.goldT = (P.goldT | 0) + n; dmgText(pos, '+' + n + '🪙', false, '#ffd24a'); saveP(); }
   function genGear(lv, minR) {
     const x = Math.random(), r = Math.max(minR || 0, x < .6 ? 0 : x < .88 ? 1 : x < .97 ? 2 : 3), sl = SLOTS[Math.floor(Math.random() * 3)], sc = RAR[r][2], b = 2 + lv * 1.2;
     const it = { slot: sl, r, nome: GN[sl][Math.floor(Math.random() * GN[sl].length)] + ' ' + GA[r], dmg: 0, hp: 0, def: 0, crit: 0 };
@@ -2467,7 +2467,7 @@ function initUI(E) {
   E.updaters.push(dt => {
     mlT -= dt; if (mlT > 0 || G.mode !== 'play') return; mlT = 3;
     for (const m of MIL) if (!P.mile[m[0]] && m[2]()) { P.mile[m[0]] = 1; P.gold += m[4]; addXP(m[3]); saveP(); sfx('lvl'); banner('MARCO ALCANÇADO', m[1].slice(3) + ' · +' + m[3] + ' XP · +' + m[4] + '🪙'); break; }
-    if (!evUntil || evUntil < Date.now()) { if (evUntil) { evUntil = 0; toast('Evento encerrado.'); } if (Date.now() - (P.evT || 0) > 6e5 && !D.on) { P.evT = Date.now(); evUntil = P.evT + 6e4; P.evK = (P.evK | 0) + 1; saveP(); fxFlash('#ffd24a', .35); banner('EVENTO: HORA DA CAÇA', '+25% XP por 60s'); } }
+    if (!evUntil || evUntil < Date.now()) { if (evUntil) { evUntil = 0; toast('Evento encerrado.'); } if (Date.now() - (P.evT || 0) > 6e5 && !D.on) { P.evT = Date.now(); evUntil = P.evT + 6e4; P.evK = (P.evK | 0) + 1; saveP(); fxFlash('#ffd24a', .35); banner('EVENTO: HORA DA CAÇA', '+25% XP e ouro por 60s'); } }
   });
 
   const BRG = new T.TorusGeometry(1.2, .07, 6, 20), BCOL = [0xffa040, 0xff5a4a, 0xb070ff, 0xffd24a, 0x4ade80, 0x5ae6ff], BCG = new T.CylinderGeometry(.3, .7, 16, 8, 1, true), BS = [];
@@ -2591,6 +2591,9 @@ function initUI(E) {
   /* ── v0.070: meta de sequências, marcos de elite/chefe ── */
   MET.push(['str', '🔥 Fazer sequências de abates', 2]);
   MIL.push(['b30', '☠️ 30 chefes', () => (P.bk | 0) >= 30, 2500, 2000], ['e100', '👑 100 elites', () => (P.eliK | 0) >= 100, 2500, 2000]);
+
+  /* ── v0.082: marcos de longo prazo ── */
+  MIL.push(['l50', '⭐ Nível 50', () => P.lv >= 50, 3000, 2500], ['s25', '🔁 25 sessões', () => (P.ses | 0) >= 25, 600, 500], ['v25', '🏅 25 vitórias', () => (P.vit | 0) >= 25, 800, 600], ['d100', '🗺️ 100 descobertas', () => Object.keys(P.dis).length >= 100, 3000, 2000]);
 
   document.body.dataset.mode = 'start';
 }
