@@ -285,6 +285,16 @@ body.touch #buffs{top:calc(112px + var(--safe-t))}
 body.touch #chal{top:calc(150px + var(--safe-t))}
 body.touch #toast{bottom:calc(120px + var(--safe-b))}
 }
+
+/* ── v0.023 ── */
+.dmg.big{font-size:20px;font-weight:700;text-shadow:0 0 6px rgba(255,255,255,.6),0 2px 3px #000}
+@media (pointer:coarse){.dmg.big{font-size:17px}}
+#mmPin{top:68px;font-size:11px;display:none;width:32px;height:28px}
+.skc::after{content:attr(data-n);position:absolute;inset:0;display:grid;place-items:center;font:700 17px system-ui,sans-serif;color:#fff;text-shadow:0 1px 3px #000;pointer-events:none}
+.nope{animation:nope .25s}
+@keyframes nope{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+@media (prefers-reduced-motion:reduce){.nope{animation:none}}
+@media (max-height:480px){body.touch #party{right:calc(146px + var(--safe-r));width:96px}body.touch #bossb{width:min(28vw,220px)}}
 </style>
 </head>
 <body>
@@ -369,7 +379,7 @@ const URL_ID = (params.get('id') || '').trim();
 const PLAYER_ID = URL_ID || '0'; // fallback para testes locais
 const $ = id => document.getElementById(id);
 const fmt = n => Number(n).toLocaleString('pt-BR');
-const VERSION = '0.022'; // suba a cada atualização enviada
+const VERSION = '0.023'; // suba a cada atualização enviada
 const DIA = {};
 const G = { mode: 'start' };
 let NICK = 'Visitante';
@@ -1197,10 +1207,10 @@ function initUI(E) {
   function clearAll() { mons.slice().forEach(rmMon); drops.splice(0).forEach(q => E.scene.remove(q.m)); }
 
   let dmgLive = 0;
-  function dmgText(pos, txt, crit, col) {
+  function dmgText(pos, txt, crit, col, big) {
     if (dmgLive > 28) return;
     const v = new T.Vector3(pos.x, pos.y + 2.2, pos.z).project(E.camera), e = h('div', 'dmg', txt);
-    e.style.left = (v.x * .5 + .5) * innerWidth + 'px'; e.style.top = (-v.y * .5 + .5) * innerHeight + 'px'; e.style.color = col || (crit ? '#ffd24a' : '#fff'); if (crit) { e.textContent = '💥 ' + txt + '!'; e.className = 'dmg crit'; }
+    e.style.left = (v.x * .5 + .5) * innerWidth + 'px'; e.style.top = (-v.y * .5 + .5) * innerHeight + 'px'; e.style.color = col || (crit ? '#ffd24a' : '#fff'); if (crit) { e.textContent = '💥 ' + txt + '!'; e.className = 'dmg crit'; } else if (big) e.className = 'dmg big';
     dmgLive++; document.body.append(e); setTimeout(() => { e.remove(); dmgLive--; }, 1100);
   }
   function burst(pos, col, n = 8) {
@@ -1221,12 +1231,12 @@ function initUI(E) {
     n = Math.max(1, Math.round(n * (1 - Math.min(.8, CLASSES[char.cls].st.Defesa * .04 + gs('def') / 100))));
     if (buf.shield > 0) { const a = Math.min(buf.shield, n); buf.shield -= a; n -= a; if (n <= 0) { dmgText(E.player.position, 'bloqueado', false, '#7fb0ff'); return; } }
     hp -= n;
-    const e = $('hurt'); e.classList.remove('on'); void e.offsetWidth; e.classList.add('on'); dmgText(E.player.position, '-' + n, n >= maxHp() * .15, '#ff6b5a'); if (n >= maxHp() * .15) shk = Math.max(shk, .25);
+    const e = $('hurt'); e.classList.remove('on'); void e.offsetWidth; e.classList.add('on'); dmgText(E.player.position, '-' + n, n >= maxHp() * .15, '#ff6b5a'); if (n >= maxHp() * .15) { shk = Math.max(shk, .25); fxFlash('#ff2020', .45); }
     if (hp <= 0) { hp = maxHp(); if (D.on) exitDungeon(); E.player.position.set(0, 0, 0); clearAll(); toast('Você caiu! Voltou ao ponto inicial.'); }
     hurtT = 5; shk = Math.max(shk, .15); sfx('hurt'); updHp();
   }
   function hit(m, dmg, crit) {
-    m.hp -= dmg; m.flash = .12; m.agro = true; if (buf.pois > 0) m.pois = 6; tgt = m; tgtT = 4; if (crit || m.d.boss) shk = Math.max(shk, crit ? .12 : .06); sfx(crit ? 'crit' : 'hit'); dmgText(m.g.position, String(dmg), crit); burst(m.g.position, crit ? 0xffd24a : 0xffffff, crit ? 10 : 6);
+    m.hp -= dmg; m.flash = .12; m.agro = true; if (buf.pois > 0) m.pois = 6; tgt = m; tgtT = 4; if (crit || m.d.boss) shk = Math.max(shk, crit ? .12 : .06); sfx(crit ? 'crit' : 'hit'); dmgText(m.g.position, String(dmg), crit, null, !crit && dmg >= m.max * .25); if (crit) critFx(); burst(m.g.position, crit ? 0xffd24a : 0xffffff, crit ? 10 : 6);
     m.fill.scale.x = Math.max(.001, m.hp / m.max) * 1.1;
     if (m.hp <= 0) kill(m);
   }
@@ -1816,19 +1826,20 @@ function initUI(E) {
   P.ach = P.ach || {}; P.kills = P.kills || 0; P.bk = P.bk || 0;
   let tv = null, aT = 0;
   function travelClick(e) {
-    if (!e || D.on) return;
+    if (!e) return; if (D.on) return blk('Mapa indisponível dentro da dungeon.');
     const p = E.player.position, r = $('mm').getBoundingClientRect(), R = HS / fz, cx = fz === 1 ? 0 : p.x, cz = fz === 1 ? 0 : p.z;
     const wx = cx + ((e.clientX - r.left) / r.width - .5) * 2 * R, wz = cz + ((e.clientY - r.top) / r.height - .5) * 2 * R, tol = 16 / r.width * 2 * R, k = Math.ceil(tol / CH) + 1;
-    let best = null, bd = tol;
+    let best = null, bd = tol, unk = 0;
     for (let a = Math.floor(wx / CH) - k; a <= Math.floor(wx / CH) + k; a++) for (let b = Math.floor(wz / CH) - k; b <= Math.floor(wz / CH) + k; b++) {
-      const st = E.W.structAt(a, b); if (!st || (st.type !== 4 && st.type !== 5) || !explored(st.x, st.z)) continue;
+      const st = E.W.structAt(a, b); if (!st || (st.type !== 4 && st.type !== 5)) continue;
+      if (!explored(st.x, st.z)) { if (Math.hypot(st.x - wx, st.z - wz) < tol) unk = 1; continue; }
       const d = Math.hypot(st.x - wx, st.z - wz); if (d < bd) { bd = d; best = st; }
     }
-    if (!best) return setPin(wx, wz);
+    if (!best) { if (unk) return blk('Área não descoberta: explore perto dela antes de viajar.'); return setPin(wx, wz); }
     const cost = 20 + Math.round(Math.hypot(best.x - p.x, best.z - p.z) / 25);
-    if (hurtT > 0) return toast('Não dá para viajar em combate.');
+    if (hurtT > 0) return blk('Não dá para viajar em combate.');
     if (!tv || tv.x !== best.x || tv.z !== best.z || Date.now() - tv.t > 4000) { tv = { x: best.x, z: best.z, t: Date.now() }; return toast('Viajar para ' + SN[best.type] + ' por ' + cost + ' 🪙? Toque de novo.'); }
-    if (P.gold < cost) return toast('Ouro insuficiente (' + cost + ' 🪙).');
+    if (P.gold < cost) return blk('Ouro insuficiente: faltam ' + (cost - P.gold) + ' 🪙 (custo ' + cost + ').');
     P.gold -= cost; tv = null; clearAll(); p.set(best.x + 9, E.W.H(best.x + 9, best.z), best.z); E.camTarget.set(p.x, p.y + 1, p.z);
     $('mmW').classList.remove('xl'); mt = 0; saveP(); banner('VIAGEM', SN[best.type]);
   }
@@ -2260,7 +2271,7 @@ function initUI(E) {
       if (id === 'bSkl' || id === 'bDod') { const n = c > 0 ? c.toFixed(1) : ''; if (el.dataset.n !== n) el.dataset.n = n; }
       el.classList.toggle('nomp', c <= 0 && noMp[id] > m);
     }
-    [[cd, 15], [cds[0], 25], [cds[1], 45]].forEach(([c, cost], i) => { if (ch[i]) { rdyCheck(ch[i], 'k' + i, c); ch[i].classList.toggle('nomp', c <= 0 && m < cost); } });
+    [[cd, 15], [cds[0], 25], [cds[1], 45]].forEach(([c, cost], i) => { if (ch[i]) { rdyCheck(ch[i], 'k' + i, c); ch[i].classList.toggle('nomp', c <= 0 && m < cost); const n = c > 0 ? String(Math.ceil(c)) : ''; if (ch[i].dataset.n !== n) ch[i].dataset.n = n; } });
     const pr = !!P.pot && hp < maxHp(); if (prevR.pot === false && pr) { $('bPot').classList.remove('rdy'); void $('bPot').offsetWidth; $('bPot').classList.add('rdy'); } prevR.pot = pr;
   });
   let zDg = false, zOn = false, zT = 0;
@@ -2293,6 +2304,21 @@ function initUI(E) {
     MET.forEach(m => { const st = P.meta[m[0]] || { n: 0, t: 0 }, tg = mTgt(m, st), d = h('div', 'mt'), i = h('i'), b = h('b'); b.style.width = Math.min(100, st.n / tg * 100) + '%'; i.append(b); d.append(document.createTextNode(m[1] + ' — ' + st.n + '/' + tg + (st.t ? ' · Nv.' + st.t : '')), i); B.append(d); });
   }
   if (coarse && innerHeight <= 480 && !LS.get('rise_t22', 0) && cfg.t === 100) { cfg.t = 80; $('cT').value = 80; applyCfg(); LS.set('rise_t22', 1); }
+
+  /* ── v0.023: pin no minimapa, avisos, feedback de combate ── */
+  function blk(t) { toast('⛔ ' + t); fxFlash('#ff3030', .25); }
+  let cfT = 0;
+  function critFx() { const t = Date.now(); if (t - cfT < 500) return; cfT = t; fxFlash('#ffd24a', .18); }
+  const pinX = h('button', 'ib mz', '📍✕'); pinX.id = 'mmPin'; pinX.setAttribute('aria-label', 'Remover destino'); $('mmW').append(pinX);
+  pinX.addEventListener('click', e => { e.stopPropagation(); P.pin = null; saveP(); pinX.style.display = 'none'; toast('Destino removido.'); });
+  let pxT = 0, pxS = '';
+  E.updaters.push(dt => {
+    pxT -= dt; if (pxT > 0) return; pxT = .25;
+    const v = G.mode === 'play' && P.pin ? 'grid' : 'none'; if (v !== pxS) { pxS = v; pinX.style.display = v; }
+  });
+  [['bSkl', () => cd], ['bSk2', () => cds[0]], ['bSk3', () => cds[1]], ['bDod', () => dgCd]].forEach(([id, f]) => $(id).addEventListener('pointerdown', () => {
+    if (G.mode !== 'play' || f() <= 0) return; const el = $(id); el.classList.remove('nope'); void el.offsetWidth; el.classList.add('nope');
+  }));
 
   document.body.dataset.mode = 'start';
 }
