@@ -405,7 +405,7 @@ const URL_ID = (params.get('id') || '').trim();
 const PLAYER_ID = URL_ID || '0'; // fallback para testes locais
 const $ = id => document.getElementById(id);
 const fmt = n => Number(n).toLocaleString('pt-BR');
-const VERSION = '0.031'; // suba a cada atualização enviada
+const VERSION = '0.034'; // suba a cada atualização enviada
 const DIA = {};
 const G = { mode: 'start' };
 let NICK = 'Visitante';
@@ -1275,7 +1275,7 @@ function initUI(E) {
   }
   function kill(m) {
     const d = m.d, q = m.g.position;
-    streakAdd(); metaAdd('kil', 1); if (m.elite) metaAdd('eli', 1); burst(q, d.col, 16); sfx('kill'); addXP(Math.round(d.xp * m.lv * (m.elite ? 3 : 1) * (1 + .15 * nearParty()))); giveGold(Math.round(d.xp * .6 * m.lv * (m.elite ? 3 : 1)), q); rollGear(m, q); P.kills = (P.kills || 0) + 1; if (d.boss) { P.bk = (P.bk || 0) + 1; P.vit = (P.vit | 0) + 1; }
+    streakAdd(); metaAdd('kil', 1); if (m.elite) { metaAdd('eli', 1); P.eliK = (P.eliK | 0) + 1; } burst(q, d.col, 16); sfx('kill'); addXP(Math.round(d.xp * m.lv * (m.elite ? 3 : 1) * (1 + .15 * nearParty()))); giveGold(Math.round(d.xp * .6 * m.lv * (m.elite ? 3 : 1)), q); rollGear(m, q); P.kills = (P.kills || 0) + 1; if (d.boss) { P.bk = (P.bk || 0) + 1; P.vit = (P.vit | 0) + 1; }
     if (Math.random() < .7 || d.boss || m.elite) dropItem(d.drop, q.x + 1, q.z, d.col);
     if (d.boss) { dropItem(d.drop, q.x - 1, q.z, d.col); dropItem(d.drop, q.x, q.z + 1.5, d.col); bossDead[m.key] = Date.now(); }
     if (Math.random() < .2) dropItem('Poção de Vida', q.x, q.z - 1, 0xff4a6a);
@@ -1478,7 +1478,7 @@ function initUI(E) {
   P.eq = P.eq || {}; P.wl = P.wl || 0;
   const buf = { dmg: 0, crit: 0, shield: 0, shT: 0, pois: 0, regen: 0 }, cds = [0, 0];
   const sl = i => (P.sk[char.cls] || [])[i] || 0;
-  const heal = f => { const n = Math.round(Math.min(maxHp() - hp, maxHp() * f)); hp = Math.min(maxHp(), hp + maxHp() * f); updHp(); if (n >= 8) dmgText(E.player.position, '+' + n, false, '#4ade80'); };
+  const heal = f => { const n = Math.round(Math.min(maxHp() - hp, maxHp() * f)); hp = Math.min(maxHp(), hp + maxHp() * f); updHp(); if (n >= 8) dmgText(E.player.position, '+' + n, false, '#4ade80'); if (n >= maxHp() * .2) fxFlash('#4ade80', .22); };
   const fwd = d => { const p = E.player.position, r = E.player.rotation.y; p.x = Math.max(-HS + 4, Math.min(HS - 4, p.x + Math.sin(r) * d)); p.z = Math.max(-HS + 4, Math.min(HS - 4, p.z + Math.cos(r) * d)); p.y = E.W.H(p.x, p.z); };
   const aoe = (x, z, r, k, f) => mons.slice().filter(m => Math.hypot(m.g.position.x - x, m.g.position.z - z) < r + m.r).forEach(m => { const [d, c] = pdmg(); hit(m, Math.round(d * k), c); if (f) f(m); });
   function useSkill(slot) {
@@ -1820,6 +1820,8 @@ function initUI(E) {
     const buy = h('button', 'btn', 'Comprar poção · 60 🪙'); buy.disabled = P.gold < 60 || P.pot >= 9; buy.onclick = () => { P.gold -= 60; P.pot++; saveP(); renderPro(); }; B.append(buy);
     const sc = h('button', 'btn', 'Vender comuns'), cmn = P.bag.filter(i => i.r === 0); sc.disabled = !cmn.length; sc.textContent = 'Vender comuns (' + cmn.length + ' · ' + cmn.reduce((a, i) => a + price(i), 0) + '🪙)';
     sc.onclick = sure(sc, () => { let g = 0; cmn.forEach(i => { g += price(i); }); P.bag = P.bag.filter(i => i.r > 0); P.gold += g; saveP(); toast('+' + g + ' 🪙'); renderPro(); }); B.append(sc);
+    const inf = P.bag.filter(i => i.r < 2 && pwr(i) <= pwr(P.gear[i.slot])), sb = h('button', 'btn', 'Vender inferiores (' + inf.length + ' · ' + inf.reduce((a, i) => a + price(i), 0) + '🪙)'); sb.disabled = !inf.length;
+    sb.onclick = sure(sb, () => { let g = 0; inf.forEach(i => { g += price(i); }); P.bag = P.bag.filter(i => !inf.includes(i)); P.gold += g; saveP(); toast('+' + g + ' 🪙'); renderPro(); }); B.append(sb);
     const sr = h('div', 'ptabs'); [['Recentes', 0], ['Raridade', 1], ['Slot', 2], ['Poder', 3], ['Upgrade', 4]].forEach(([n, k]) => { const x = h('button', 'btn sm' + ((P.sortB | 0) === k ? ' on' : ''), n); x.onclick = () => { P.sortB = k; saveP(); renderPro(); }; sr.append(x); });
     const be = h('button', 'btn', '⚡ Equipar melhores'); be.disabled = !bestUp().length; be.onclick = equipBest; B.append(be, sr);
     const fr = h('div', 'ptabs'); ['', 'Arma', 'Armadura', 'Amuleto'].forEach(sl => { const x = h('button', 'btn sm' + ((P.fltS || '') === sl ? ' on' : ''), sl || 'Todos'); x.onclick = () => { P.fltS = sl; saveP(); renderPro(); }; fr.append(x); });
@@ -2105,19 +2107,19 @@ function initUI(E) {
   E.updaters.push(dt => {
     bfT -= dt; if (bfT > 0) return; bfT = .2;
     const L = []; if (buf.dmg > 0) L.push(['💢', Math.ceil(buf.dmg) + 's']); if (buf.crit > 0) L.push(['🎯', '×' + buf.crit]); if (buf.shield > 0) L.push(['🛡️', Math.ceil(buf.shT) + 's']);
-    if (buf.regen > 0) L.push(['💚', Math.ceil(buf.regen) + 's']); if (buf.pois > 0) L.push(['☠️', Math.ceil(buf.pois) + 's']); if (swim) L.push(['🌊', '']);
+    if (buf.regen > 0) L.push(['💚', Math.ceil(buf.regen) + 's']); if (buf.pois > 0) L.push(['☠️', Math.ceil(buf.pois) + 's']); if (swim) L.push(['🌊', '']); if (evUntil > Date.now()) L.push(['🏹', Math.ceil((evUntil - Date.now()) / 1000) + 's']);
     const k = JSON.stringify(L); if (k === bfK) return; bfK = k; bfEl.textContent = '';
     L.forEach(([i, t]) => { const d = h('div', 'bf', i); if (t) d.append(h('small', '', t)); bfEl.append(d); });
   });
   function setPin(x, z) {
     x = Math.max(-HS + 4, Math.min(HS - 4, x)); z = Math.max(-HS + 4, Math.min(HS - 4, z));
-    if (P.pin && Math.hypot(P.pin.x - x, P.pin.z - z) < 60) { P.pin = null; toast('Destino removido.'); } else { P.pin = { x: Math.round(x), z: Math.round(z) }; toast('📍 Destino fixado.'); }
+    if (P.pin && Math.hypot(P.pin.x - x, P.pin.z - z) < 60) { P.pin = null; toast('Destino removido.'); } else { P.pin = { x: Math.round(x), z: Math.round(z), d0: Math.round(Math.hypot(x - E.player.position.x, z - E.player.position.z)) }; toast('📍 Destino fixado.'); }
     saveP();
   }
   function pinStr(p) {
     if (!P.pin) return '';
     const dx = P.pin.x - p.x, dz = P.pin.z - p.z, d = Math.hypot(dx, dz);
-    if (d < 8) { P.pin = null; saveP(); banner('DESTINO ALCANÇADO', ''); return ''; }
+    if (d < 8) { const o = P.pin.d0 | 0; P.pin = null; if (o >= 150) { const xp = 15 + P.lv * 2; P.gold += 10 + P.lv; addXP(xp); toast('📍 Destino alcançado: +' + xp + ' XP'); } saveP(); banner('DESTINO ALCANÇADO', ''); return ''; }
     const i = ((Math.round(Math.atan2(-(dx + dz), dx - dz) / (Math.PI / 4)) % 8) + 8) % 8;
     return ' · 📍 ' + ['➡️', '↗️', '⬆️', '↖️', '⬅️', '↙️', '⬇️', '↘️'][i] + ' ' + Math.round(d) + 'm';
   }
@@ -2168,7 +2170,7 @@ function initUI(E) {
   });
   function lootAct() {
     if (G.mode !== 'play' || D.on || near >= 0 || D.near || !lootN) return;
-    const s = lootN, nd = s.nd; if (!nd) return; if (nd.t === 's' && nd.v && CHL) return toast('Desafio em andamento.'); lootN = null; P.col[nd.k] = Date.now(); metaAdd(nd.t === 'c' ? 'bau' : nd.t === 'k' ? 'cri' : 'san', 1); s.nd = null; s.g.visible = false;
+    const s = lootN, nd = s.nd; if (!nd) return; if (nd.t === 's' && nd.v && CHL) return toast('Desafio em andamento.'); lootN = null; P.col[nd.k] = Date.now(); metaAdd(nd.t === 'c' ? 'bau' : nd.t === 'k' ? 'cri' : 'san', 1); P.lootK = (P.lootK | 0) + 1; s.nd = null; s.g.visible = false;
     const p = E.player.position, d = 1 + Math.hypot(nd.x, nd.z) / 1200;
     if (nd.t === 'c') {
       const g = Math.round((40 + Math.random() * 80) * d), ms = ['Presa', 'Gosma', 'Brasa', 'Cristal', 'Ferrão', 'Seda', 'Osso'], m = ms[Math.floor(Math.random() * ms.length)], n = 1 + Math.floor(Math.random() * 3);
@@ -2441,8 +2443,8 @@ function initUI(E) {
     if (!evUntil || evUntil < Date.now()) { if (evUntil) { evUntil = 0; toast('Evento encerrado.'); } if (Date.now() - (P.evT || 0) > 6e5 && !D.on) { P.evT = Date.now(); evUntil = P.evT + 6e4; saveP(); fxFlash('#ffd24a', .35); banner('EVENTO: HORA DA CAÇA', '+25% XP por 60s'); } }
   });
 
-  const BCOL = [0xffa040, 0xff5a4a, 0xb070ff, 0xffd24a, 0x4ade80, 0x5ae6ff], BCG = new T.CylinderGeometry(.3, .7, 16, 8, 1, true), BS = [];
-  for (let i = 0; i < 10; i++) { const m = new T.Mesh(BCG, new T.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: .2, depthWrite: false, blending: T.AdditiveBlending, side: T.DoubleSide })); m.visible = false; E.scene.add(m); BS.push(m); }
+  const BRG = new T.TorusGeometry(1.2, .07, 6, 20), BCOL = [0xffa040, 0xff5a4a, 0xb070ff, 0xffd24a, 0x4ade80, 0x5ae6ff], BCG = new T.CylinderGeometry(.3, .7, 16, 8, 1, true), BS = [];
+  for (let i = 0; i < 10; i++) { const m = new T.Mesh(BCG, new T.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: .2, depthWrite: false, blending: T.AdditiveBlending, side: T.DoubleSide })); const rg = new T.Mesh(BRG, new T.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: .5, depthWrite: false, blending: T.AdditiveBlending })); rg.rotation.x = Math.PI / 2; m.add(rg); m.visible = false; E.scene.add(m); BS.push(m); }
   let bcT = 0;
   E.updaters.push(dt => {
     const play = G.mode === 'play' && !D.on;
@@ -2452,9 +2454,9 @@ function initUI(E) {
       bcT = .5; const p = E.player.position, cx = Math.floor(p.x / CH), cz = Math.floor(p.z / CH), L = [];
       for (let i = -2; i <= 2; i++) for (let j = -2; j <= 2; j++) { const st = E.W.structAt(cx + i, cz + j); if (st) L.push([Math.hypot(st.x - p.x, st.z - p.z), st]); }
       L.sort((a, b) => a[0] - b[0]);
-      for (let i = 0; i < 10; i++) { const m = BS[i], e = L[i]; if (!e) { m.visible = false; continue; } const st = e[1]; m.position.set(st.x, E.W.H(st.x, st.z) + 8, st.z); m.material.color.setHex(BCOL[st.type] || 0xffffff); m.visible = true; }
+      for (let i = 0; i < 10; i++) { const m = BS[i], e = L[i]; if (!e) { m.visible = false; continue; } const st = e[1]; m.position.set(st.x, E.W.H(st.x, st.z) + 8, st.z); m.material.color.setHex(BCOL[st.type] || 0xffffff); m.children[0].material.color.setHex(BCOL[st.type] || 0xffffff); m.visible = true; }
     }
-    const t = Date.now() / 1000; for (let i = 0; i < 10; i++) { const m = BS[i]; if (m.visible) m.material.opacity = .16 + .1 * Math.sin(t * 2 + i); }
+    const t = Date.now() / 1000; for (let i = 0; i < 10; i++) { const m = BS[i]; if (m.visible) { m.material.opacity = .16 + .1 * Math.sin(t * 2 + i); m.children[0].position.y = -7 + ((t * 3 + i * 2) % 14); } }
   });
 
   const AMN = 60, ambA = new Float32Array(AMN * 3), ambR = new Float32Array(AMN), ambG = new T.BufferGeometry(), AMV = [.15, .1, -1.3, .2, .1, .1, .9, .3], AMC = [0xdfffa0, 0xe8c88a, 0xffffff, 0xa8d09a, 0xfff0a0, 0xf0d090, 0xff7040, 0xc0a8ff];
@@ -2481,6 +2483,21 @@ function initUI(E) {
     const play = G.mode === 'play' && !D.on, c = !play ? '' : zOn ? 'dng' : inVil ? 'safe' : '';
     if (c !== zvS) { zvS = c; zV.className = c; }
     
+  });
+
+  /* ── v0.034: marcos extras, revisita de pontos ── */
+  MIL.push(['e10', '👑 10 elites', () => (P.eliK | 0) >= 10, 300, 250], ['e50', '👑 50 elites', () => (P.eliK | 0) >= 50, 1200, 900], ['b1', '☠️ Primeiro chefe', () => (P.bk | 0) >= 1, 100, 80], ['b15', '☠️ 15 chefes', () => (P.bk | 0) >= 15, 1500, 1200], ['d60', '🗺️ 60 descobertas', () => Object.keys(P.dis).length >= 60, 1500, 1000], ['o25', '📦 25 tesouros', () => (P.lootK | 0) >= 25, 400, 300]);
+  P.vis = P.vis || {};
+  let rvT = 0;
+  E.updaters.push(dt => {
+    rvT -= dt; if (rvT > 0 || G.mode !== 'play' || D.on) return; rvT = .5;
+    const p = E.player.position, cx = Math.floor(p.x / CH), cz = Math.floor(p.z / CH);
+    for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) {
+      const st = E.W.structAt(cx + i, cz + j); if (!st || Math.hypot(st.x - p.x, st.z - p.z) > 22) continue;
+      const k = (st.x | 0) + ',' + (st.z | 0), n = Date.now(); if (!P.dis[k] || n - (P.vis[k] || 0) < 9e5) continue;
+      if (!P.vis[k]) { P.vis[k] = n; continue; }
+      P.vis[k] = n; const xp = 10 + P.lv, g = 15 + P.lv * 2; P.gold += g; addXP(xp); ringFx(p, 0xffd24a, 5); toast('📍 ' + SN[st.type] + ' revisitado: +' + xp + ' XP · +' + g + '🪙'); saveP(); return;
+    }
   });
 
   document.body.dataset.mode = 'start';
