@@ -260,6 +260,16 @@ body.touch #talk{display:none!important}
 #flash.on{animation:fl2 .7s ease-out}
 @keyframes fl2{0%{opacity:var(--o,.5)}100%{opacity:0}}
 @media (prefers-reduced-motion:reduce){#bAct,#flash.on{animation:none}}
+
+/* ── v0.021 ── */
+#toast{bottom:calc(158px + var(--safe-b))}
+#chal{top:calc(170px + var(--safe-t))}
+#bSkl::before,#bDod::before{content:attr(data-n);position:absolute;inset:0;display:grid;place-items:center;font:700 20px system-ui,sans-serif;color:#fff;text-shadow:0 1px 3px #000;z-index:1;pointer-events:none}
+#tc button.nomp{border-color:#4a8aff!important;box-shadow:0 0 8px rgba(74,138,255,.7)}
+.skc.nomp{border-color:#4a8aff}
+.rdy{animation:rdy .6s ease-out}
+@keyframes rdy{0%{box-shadow:0 0 0 0 rgba(255,226,138,.95);transform:scale(1.12)}100%{box-shadow:0 0 0 14px rgba(255,226,138,0);transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){.rdy{animation:none}}
 </style>
 </head>
 <body>
@@ -344,7 +354,7 @@ const URL_ID = (params.get('id') || '').trim();
 const PLAYER_ID = URL_ID || '0'; // fallback para testes locais
 const $ = id => document.getElementById(id);
 const fmt = n => Number(n).toLocaleString('pt-BR');
-const VERSION = '0.020'; // suba a cada atualização enviada
+const VERSION = '0.021'; // suba a cada atualização enviada
 const DIA = {};
 const G = { mode: 'start' };
 let NICK = 'Visitante';
@@ -1089,7 +1099,7 @@ function initUI(E) {
     });
     for (let a = Math.floor((cx - R) / CH); a <= Math.floor((cx + R) / CH); a++) for (let b = Math.floor((cz - R) / CH); b <= Math.floor((cz + R) / CH); b++) {
       const st = E.W.structAt(a, b); if (!st || (xl && !explored(st.x, st.z))) continue;
-      if (xl) { mc.font = '16px sans-serif'; mc.textAlign = 'center'; mc.fillStyle = 'rgba(0,0,0,.5)'; mc.beginPath(); mc.arc(X(st.x), Z(st.z), 11, 0, 6.283); mc.fill(); mc.fillStyle = '#fff'; mc.fillText(['⛺', '🗼', '🏚️', '🏛️', '🏘️', '🌀'][st.type], X(st.x), Z(st.z) + 5); if (fz >= 2) { mc.font = '10px sans-serif'; mc.fillText(SN[st.type], X(st.x), Z(st.z) + 22); } mc.textAlign = 'left'; } else { mc.fillStyle = ['#ffb86b', '#ffd24a', '#bbbbbb', '#9fe0ff', '#ff9a9a', '#c27bff'][st.type]; mc.fillRect(X(st.x) - sz / 2, Z(st.z) - sz / 2, sz, sz); }
+      if (xl) { mc.font = '16px sans-serif'; mc.textAlign = 'center'; mc.fillStyle = 'rgba(0,0,0,.5)'; mc.beginPath(); mc.arc(X(st.x), Z(st.z), 11, 0, 6.283); mc.fill(); if (P.dis[(st.x | 0) + ',' + (st.z | 0)]) { mc.strokeStyle = '#ffd24a'; mc.lineWidth = 2; mc.stroke(); } mc.fillStyle = '#fff'; mc.fillText(['⛺', '🗼', '🏚️', '🏛️', '🏘️', '🌀'][st.type], X(st.x), Z(st.z) + 5); if (fz >= 2) { mc.font = '10px sans-serif'; mc.fillText(SN[st.type], X(st.x), Z(st.z) + 22); } mc.textAlign = 'left'; } else { mc.fillStyle = ['#ffb86b', '#ffd24a', '#bbbbbb', '#9fe0ff', '#ff9a9a', '#c27bff'][st.type]; mc.fillRect(X(st.x) - sz / 2, Z(st.z) - sz / 2, sz, sz); }
     }
     if (!xl) {
       const dot = (x, z, c, r) => { const px = X(x), py = Z(z); if (px > 4 && px < S - 4 && py > 4 && py < S - 4) { mc.fillStyle = c; mc.fillRect(px - r, py - r, r * 2, r * 2); } };
@@ -1100,8 +1110,8 @@ function initUI(E) {
       for (let a = Math.floor((cx - R) / CH); a <= Math.floor((cx + R) / CH); a++) for (let b = Math.floor((cz - R) / CH); b <= Math.floor((cz + R) / CH); b++) for (let k = 0; k < 3; k++) {
         const nd = lootNode(a, b, k === 2 ? 's' : k ? 'k' : 'c'); if (!nd || !explored(nd.x, nd.z) || now - (P.col[nd.k] || 0) <= CDS[k]) continue; mc.fillText(k === 2 ? (nd.v ? '⚔️' : '⛩️') : k ? '💎' : '📦', X(nd.x), Z(nd.z) + 5);
       }
-      mc.textAlign = 'left'; mc.fillStyle = 'rgba(0,0,0,.55)'; mc.fillRect(4, S - 76, 156, 72); mc.font = '12px sans-serif'; mc.fillStyle = '#fff';
-      ['⛺ Acampamento', '🗼 Torre', '🏚️ Ruínas', '🏛️ Templo', '🏘️ Vila (viagem)', '🌀 Portal (viagem)', '📦 Baú', '💎 Cristal', '⛩️ Santuário', '⚔️ Desafio'].forEach((t, i) => mc.fillText(t, 8 + (i % 2) * 80, S - 62 + Math.floor(i / 2) * 14));
+      mc.textAlign = 'left'; mc.fillStyle = 'rgba(0,0,0,.55)'; mc.fillRect(4, S - 92, 156, 88); mc.font = '12px sans-serif'; mc.fillStyle = '#ffd24a'; mc.fillText('Descobertas: ' + Object.keys(P.dis).length, 8, S - 78); mc.fillStyle = '#fff'; mc.font = '12px sans-serif'; mc.fillStyle = '#fff';
+      ['⛺ Acampamento', '🗼 Torre', '🏚️ Ruínas', '🏛️ Templo', '🏘️ Vila (viagem)', '🌀 Portal (viagem)', '📦 Baú', '💎 Cristal', '⛩️ Santuário', '⚔️ Desafio'].forEach((t, i) => mc.fillText(t, 8 + (i % 2) * 80, S - 62 + Math.floor(i / 2) * 14)); mc.strokeStyle = '#ffd24a';
     }
     if (P.pin) { const px = X(P.pin.x), py = Z(P.pin.z); if (px > 6 && px < S - 6 && py > 6 && py < S - 6) { mc.fillStyle = '#ff3b8a'; mc.beginPath(); mc.arc(px, py, xl ? 6 : 4, 0, 6.283); mc.fill(); mc.strokeStyle = '#fff'; mc.lineWidth = 2; mc.stroke(); } }
     mc.fillStyle = '#fff'; mc.font = 'bold ' + (xl ? 30 : 22) + 'px sans-serif'; mc.fillText('N', half - 8, xl ? 32 : 24);
@@ -1546,8 +1556,12 @@ function initUI(E) {
   function eqObj(a) { const o = {}; (a || []).forEach((v, i) => { if (v) o[REW[i]] = v === 2 ? 'Elite' : 'x'; }); return o; }
   const score = o => ((o && o.lv) || 1) * 1e7 + ((o && o.xp) || 0);
   let lastSnap = '', cloudOk = true, cloudLoaded = false;
+  let cBusy = false;
   async function cloudSave() {
-    if (!sb || !URL_ID || !cloudOk || !cloudLoaded) return;
+    if (!sb || !URL_ID || !cloudOk || !cloudLoaded || cBusy) return; cBusy = true;
+    try { await cloudSave2(); } catch (e) { console.warn('Nuvem:', e && e.message); } finally { cBusy = false; }
+  }
+  async function cloudSave2() {
     const snap = JSON.stringify({ P, char }); if (snap === lastSnap) return;
     const base = { id_jogador: PLAYER_ID, dados: { P, char }, atualizado_em: new Date().toISOString() };
     let { error } = await sb.from('rise_perfis').upsert(rankOk ? Object.assign({ nick: NICK, nivel: P.lv }, base) : base);
@@ -1555,6 +1569,9 @@ function initUI(E) {
     if (error) { cloudOk = false; console.warn('Nuvem:', error.message); toast('Salvamento na nuvem indisponível. Execute rise-perfis.sql no Supabase.'); } else lastSnap = snap;
   }
   async function cloudLoad() {
+    try { await cloudLoad2(); } catch (e) { console.warn('Nuvem:', e && e.message); if (!cloudLoaded) setTimeout(cloudLoad, 20000); }
+  }
+  async function cloudLoad2() {
     if (!sb || !URL_ID) return;
     const { data, error } = await sb.from('rise_perfis').select('dados').eq('id_jogador', PLAYER_ID).maybeSingle();
     if (error) { cloudOk = false; console.warn('Nuvem:', error.message); return; }
@@ -1566,7 +1583,8 @@ function initUI(E) {
     cloudLoaded = true; lastSnap = ''; cloudSave();
   }
   setInterval(cloudSave, 15000);
-  document.addEventListener('visibilitychange', () => { if (document.hidden) cloudSave(); });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) { saveP(); cloudSave(); } });
+  addEventListener('pagehide', () => { saveP(); cloudSave(); });
   cloudLoad();
   /* ── v0.009: palco do lobby, ambiente (nuvens, vaga-lumes), HUD de habilidades e extras ── */
   var clk = 0, tgt = null, tgtT = 0;
@@ -2154,7 +2172,7 @@ function initUI(E) {
     stT -= dt; if (stT > 0) return; stT = .4;
     const p = E.player.position, cx = Math.floor(p.x / CH), cz = Math.floor(p.z / CH); let f = null, fd = 45;
     for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) { const st = E.W.structAt(cx + i, cz + j); if (st) { const d = Math.hypot(st.x - p.x, st.z - p.z); if (d < fd) { fd = d; f = st; } } }
-    if (f) { const k = (f.x | 0) + ',' + (f.z | 0); if (k !== stK) { stK = k; const nw = !P.dis[k]; if (nw) { P.dis[k] = 1; addXP(25); ringFx(p, 0xffd24a, 7); burst(p, 0xffd24a, 14); sfx('pick'); fxFlash('#ffd24a', .3); saveP(); toast('Estrutura descoberta: ' + SN[f.type] + ' (+25 XP)'); } if (f.type !== 4) banner(SN[f.type].toUpperCase(), (nw ? 'Descoberta! +25 XP · ' : '') + SW[f.type]); } } else stK = '';
+    if (f) { const k = (f.x | 0) + ',' + (f.z | 0); if (k !== stK) { stK = k; const nw = !P.dis[k]; if (P.dis[k] === 1 && f.type !== 0) P.dis[k] = f.type + 1; if (nw) { P.dis[k] = f.type + 1; addXP(25); ringFx(p, 0xffd24a, 7); burst(p, 0xffd24a, 14); sfx('pick'); fxFlash('#ffd24a', .3); saveP(); toast('Estrutura descoberta: ' + SN[f.type] + ' (+25 XP)'); } if (f.type !== 4) banner(SN[f.type].toUpperCase(), (nw ? 'Descoberta! +25 XP · ' : '') + SW[f.type]); } } else stK = '';
   });
 
   const lowEl = h('div'); lowEl.id = 'lowhp'; document.body.append(lowEl);
@@ -2209,6 +2227,34 @@ function initUI(E) {
     B('bSkl', cd, 1.5, 15); B('bSk2', cds[0], 12, 25); B('bSk3', cds[1], 25, 45); B('bDod', dgCd, 1.2, 0);
     const noPot = !P.pot || hp >= maxHp(), pb = $('bPot'); pb.dataset.n = P.pot; pb.classList.toggle('off', noPot);
     const ch = $('sk').children; [[cd, 15], [cds[0], 25], [cds[1], 45]].forEach(([c, cost], i) => { if (ch[i]) ch[i].classList.toggle('off', c > 0 || m < cost); }); if (ch[3]) ch[3].classList.toggle('off', noPot);
+  });
+
+  /* ── v0.021: recarga clara, zonas perigosas, dungeons ── */
+  const prevR = {}, noMp = { bSkl: 15, bSk2: 25, bSk3: 45 };
+  function rdyCheck(el, id, c) { const was = prevR[id]; prevR[id] = c > 0; if (was && c <= 0) { el.classList.remove('rdy'); void el.offsetWidth; el.classList.add('rdy'); } }
+  let rT = 0;
+  E.updaters.push(dt => {
+    rT -= dt; if (rT > 0) return; rT = .1;
+    const play = G.mode === 'play'; if (!play) { for (const k in prevR) prevR[k] = false; return; }
+    const m = mp < 0 ? maxMp() : mp, ch = $('sk').children, cs = { bSkl: cd, bSk2: cds[0], bSk3: cds[1], bDod: dgCd };
+    for (const id in cs) {
+      const el = $(id), c = cs[id]; rdyCheck(el, id, c);
+      if (id === 'bSkl' || id === 'bDod') { const n = c > 0 ? c.toFixed(1) : ''; if (el.dataset.n !== n) el.dataset.n = n; }
+      el.classList.toggle('nomp', c <= 0 && noMp[id] > m);
+    }
+    [[cd, 15], [cds[0], 25], [cds[1], 45]].forEach(([c, cost], i) => { if (ch[i]) { rdyCheck(ch[i], 'k' + i, c); ch[i].classList.toggle('nomp', c <= 0 && m < cost); } });
+    const pr = !!P.pot && hp < maxHp(); if (prevR.pot === false && pr) { $('bPot').classList.remove('rdy'); void $('bPot').offsetWidth; $('bPot').classList.add('rdy'); } prevR.pot = pr;
+  });
+  let zDg = false, zOn = false, zT = 0;
+  E.updaters.push(dt => {
+    const play = G.mode === 'play';
+    if (D.on !== zDg) { zDg = D.on; if (play) { if (D.on) { fxFlash('#7a3ea8', .5); banner('DUNGEON', 'Derrote as ondas e o chefe!'); sfx('skill'); } else { fxFlash('#9fe0ff', .3); banner('FORA DA DUNGEON', 'Você voltou ao mundo'); } } }
+    zT -= dt; if (zT > 0) return; zT = .4;
+    if (!play || D.on) { zOn = false; return; }
+    const p = E.player.position; let bm = null;
+    for (let i = 0; i < mons.length; i++) { const m = mons[i]; if (m.d && m.d.boss && Math.hypot(m.g.position.x - p.x, m.g.position.z - p.z) < 55) { bm = m; break; } }
+    if (bm && !zOn) { zOn = true; fxFlash('#ff3030', .45); banner('ZONA PERIGOSA', 'Chefe: ' + bm.d.n); sfx('skill'); }
+    else if (!bm && zOn) { zOn = false; toast('Você saiu da zona perigosa.'); }
   });
 
   document.body.dataset.mode = 'start';
