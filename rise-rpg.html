@@ -405,7 +405,7 @@ const URL_ID = (params.get('id') || '').trim();
 const PLAYER_ID = URL_ID || '0'; // fallback para testes locais
 const $ = id => document.getElementById(id);
 const fmt = n => Number(n).toLocaleString('pt-BR');
-const VERSION = '0.034'; // suba a cada atualização enviada
+const VERSION = '0.037'; // suba a cada atualização enviada
 const DIA = {};
 const G = { mode: 'start' };
 let NICK = 'Visitante';
@@ -660,9 +660,11 @@ function buildWorld(scene) {
     [[Cy(.04, .04, 1.6, 4), M(0x6a7a3a), .8]],
     [[new THREE.DodecahedronGeometry(.5), M(0x3a1a1a), .25]],
     [[new THREE.DodecahedronGeometry(.6), M(0xe6eef4), .25]],
-    [[new THREE.DodecahedronGeometry(.25), M(0x9a9aa0), .1]]
+    [[new THREE.DodecahedronGeometry(.25), M(0x9a9aa0), .1]],
+    [[Cy(.05, .07, .35, 5), M(0xe8e0c8), .17], [new THREE.SphereGeometry(.22, 6, 4), EM(0xff6a7a), .4]],
+    [[Co(.12, .5, 4), M(0x5a9a4a), .25]]
   ];
-  const PB = [[[0, .7], [4, .07], [9, .07], [10, .05], [11, .03], [17, .03]], [[1, .2], [4, .1], [13, .12], [17, .1]], [[2, .5], [4, .15], [16, .1], [17, .05]], [[3, .35], [5, .15], [14, .2], [9, .05]], [[0, .06], [4, .06], [9, .08], [10, .12], [11, .08], [17, .05]], [[6, .18], [4, .06], [13, .1], [11, .06], [17, .05]], [[7, .3], [4, .1], [15, .15], [17, .08]], [[8, .3], [5, .08], [12, .2], [10, .03]]];
+  const PB = [[[0, .7], [4, .07], [9, .07], [10, .05], [11, .03], [17, .03]], [[1, .2], [4, .1], [13, .12], [17, .1]], [[2, .5], [4, .15], [16, .1], [17, .05]], [[3, .35], [5, .15], [14, .2], [9, .05], [18, .12]], [[0, .06], [4, .06], [9, .08], [10, .12], [11, .08], [17, .05], [19, .14]], [[6, .18], [4, .06], [13, .1], [11, .06], [17, .05], [19, .15]], [[7, .3], [4, .1], [15, .15], [17, .08]], [[8, .3], [5, .08], [12, .2], [10, .03], [18, .08]]];
   const pool = TY.map(parts => parts.map(([g, m]) => { const im = new THREE.InstancedMesh(g, m, 2400); im.castShadow = im.receiveShadow = true; im.frustumCulled = false; im.count = 0; scene.add(im); return im; }));
   const d = new THREE.Object3D(), chunks = new Map();
 
@@ -2278,7 +2280,7 @@ function initUI(E) {
     const st = CLASSES[char.cls].st, wl = P.wl || 0, base = (8 + st.Ataque * 2 + P.lv * 1.5 + gs('dmg')) * (1 + .04 * wl), cc = Math.min(1, .12 + (char.cls === 3 ? .15 : 0) + gs('crit') / 100);
     const df = Math.min(.8, st.Defesa * .04 + gs('def') / 100), vel = ((3.5 + st.Velocidade * .45) * (1 + P.at.dex * .01)).toFixed(1);
     const gb = ['dmg', 'hp', 'def', 'crit'].map(k => [k, Math.round((gs(k) - attr(k)) * 10) / 10]).filter(x => x[1]).map(([k, v]) => '+' + v + ({ dmg: ' dano', hp: ' vida', def: '% def', crit: '% crít' })[k]).join(' ');
-    const rows = [['⚔️ Dano', Math.round(base) + ' (méd. ' + Math.round(base * (1 + cc)) + ')'], ['💥 Crítico', Math.round(cc * 100) + '% (×2)'], ['🛡️ Defesa', Math.round(df * 100) + '%'], ['🏃 Velocidade', vel + ' m/s'], ['❤️ Vida', maxHp()], ['🔷 Mana', maxMp()], ['🗡️ Arma', 'Nv.' + wl + ' · +' + 4 * wl + '% dano'], ['🧥 Equip.', gb || '—'], ['🔁 Sessões', P.ses | 0], ['🏅 Vitórias', P.vit | 0]];
+    const rows = [['⚔️ Dano', Math.round(base) + ' (méd. ' + Math.round(base * (1 + cc)) + ')'], ['💥 Crítico', Math.round(cc * 100) + '% (×2)'], ['🛡️ Defesa', Math.round(df * 100) + '%'], ['🏃 Velocidade', vel + ' m/s'], ['❤️ Vida', maxHp()], ['🔷 Mana', maxMp()], ['🗡️ Arma', 'Nv.' + wl + ' · +' + 4 * wl + '% dano'], ['🧥 Equip.', gb || '—'], ['🔁 Sessões', P.ses | 0], ['🏅 Vitórias', P.vit | 0], ['⚡ Poder', SLOTS.reduce((a, sl) => a + pwr(P.gear[sl]), 0) | 0]];
     B.append(h('h3', '', 'Resumo do personagem'));
     const g = h('div', 'sg'); rows.forEach(([k, v]) => { const d = h('div'); d.append(document.createTextNode(k + ' '), h('b', '', String(v))); g.append(d); }); B.append(g);
     SLOTS.forEach(sl => { const it = P.gear[sl], q = h('p', '', sl + ': ' + (it ? it.nome + (it.up ? ' +' + it.up : '') + ' · ' + stat(it) + ' · ⚡' + Math.round(pwr(it)) : '—')); if (it) q.style.color = RAR[it.r][1]; B.append(q); });
@@ -2388,7 +2390,7 @@ function initUI(E) {
   function bossTxt(b) { $('bossb').classList.toggle('rg', !!b.rage); return '☠️ ' + b.d.n + (b.rage ? ' 🔥' : '') + ' · ' + Math.max(0, Math.ceil(b.hp / b.max * 100)) + '%' + stIc(b); }
   let stk = 0, stkT = 0;
   function streakAdd() {
-    const n = Date.now(); stk = n - stkT < 6000 ? stk + 1 : 1; stkT = n;
+    const n = Date.now(); stk = n - stkT < 6000 ? stk + 1 : 1; stkT = n; if (stk > (P.stkM | 0)) P.stkM = stk;
     if (stk >= 5 && stk % 5 === 0) { const k = stk / 5, xp = Math.round((20 + P.lv * 3) * k), g = Math.round((15 + P.lv * 2) * k); P.gold += g; addXP(xp); toast('🔥 Sequência x' + stk + ' · +' + xp + ' XP · +' + g + '🪙'); }
   }
   const pinA = ['➡️', '↗️', '⬆️', '↖️', '⬅️', '↙️', '⬇️', '↘️']; let pinTx = '';
@@ -2498,6 +2500,23 @@ function initUI(E) {
       if (!P.vis[k]) { P.vis[k] = n; continue; }
       P.vis[k] = n; const xp = 10 + P.lv, g = 15 + P.lv * 2; P.gold += g; addXP(xp); ringFx(p, 0xffd24a, 5); toast('📍 ' + SN[st.type] + ' revisitado: +' + xp + ' XP · +' + g + '🪙'); saveP(); return;
     }
+  });
+
+  /* ── v0.037: marcos, bônus diário, qualidade adaptativa ── */
+  MIL.push(['s15', '🔥 Sequência de 15 abates', () => (P.stkM | 0) >= 15, 300, 250], ['s40', '🔥 Sequência de 40 abates', () => (P.stkM | 0) >= 40, 900, 700], ['l5', '⭐ Nível 5', () => P.lv >= 5, 100, 80], ['l15', '⭐ Nível 15', () => P.lv >= 15, 400, 300], ['l40', '⭐ Nível 40', () => P.lv >= 40, 1500, 1200]);
+  let dyDone = false;
+  E.updaters.push(dt => {
+    if (dyDone || G.mode !== 'play') return; dyDone = true;
+    const day = new Date().toLocaleDateString('sv'); if (P.day === day) return;
+    const y = new Date(Date.now() - 864e5).toLocaleDateString('sv'); P.dayS = P.day === y ? (P.dayS | 0) + 1 : 1; P.day = day;
+    const k = Math.min(P.dayS, 7), xp = (30 + P.lv * 5) * k, g = 50 * k; P.gold += g; addXP(xp); saveP();
+    banner('BÔNUS DIÁRIO', 'Dia ' + P.dayS + ' seguido · +' + xp + ' XP · +' + g + '🪙');
+  });
+  let fpA = 0, fpN = 0, fpD = 0;
+  E.updaters.push(dt => {
+    if (G.mode !== 'play' || document.hidden || dt > .5) { fpA = fpN = 0; return; }
+    fpA += dt; fpN++;
+    if (fpA >= 4) { const avg = fpA / fpN; fpA = fpN = 0; if (avg > .042 && cfg.q > 0 && fpD < 2) { fpD++; cfg.q--; $('cQ').value = cfg.q; applyCfg(); toast('Qualidade reduzida para manter o FPS.'); } }
   });
 
   document.body.dataset.mode = 'start';
