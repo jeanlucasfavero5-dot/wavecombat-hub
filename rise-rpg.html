@@ -398,6 +398,23 @@ body.photo #rsPt,body.photo #pMur{display:none!important}
 #rsWx{position:fixed;inset:0;z-index:3;pointer-events:none;opacity:0;transition:opacity 1.5s}
 body.focus #rsCv,body.focus #rsMc{display:none!important}
 body.photo #rsFish,body.photo .rsH,body.photo #rsWx{display:none!important}
+
+#pHub6,#pCard,#pWp{left:50%;top:50%;transform:translate(-50%,-50%);width:min(94vw,540px);max-height:calc(100% - 40px);overflow:auto;z-index:10}
+#pCard,#pWp{width:min(92vw,360px)}
+#pHub6 .it,#pCard .it,#pWp .it{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(217,164,65,.2);font-size:13px}
+#pHub6 .it .btn,#pWp .it .btn{padding:5px 10px;font-size:12px}#pHub6 small{opacity:.75}
+#rsClm{top:calc(378px + var(--safe-t))}#rsMas{top:calc(404px + var(--safe-t))}#rsWb{top:calc(430px + var(--safe-t))}#rsCs{top:calc(456px + var(--safe-t))}#rsTr{top:calc(482px + var(--safe-t))}#rsWp{top:calc(508px + var(--safe-t))}#rsDm{top:calc(534px + var(--safe-t))}
+body.focus #rsClm,body.focus #rsMas,body.focus #rsWp{display:none!important}
+#rsCl{position:fixed;inset:0;z-index:3;pointer-events:none;opacity:0;transition:opacity 2s}
+#rsCl.rain{opacity:1;background:repeating-linear-gradient(105deg,rgba(150,180,220,.0) 0 14px,rgba(170,200,240,.16) 15px 16px);background-size:40px 60px;animation:rsRn .5s linear infinite}
+@keyframes rsRn{to{background-position:-20px 60px}}
+#rsCl.sun{opacity:1;background:radial-gradient(ellipse at 80% 0,rgba(255,220,120,.28),transparent 60%)}
+#rsCl.fog{opacity:1;background:rgba(220,225,230,.22)}
+#cgF{display:flex;gap:4px;margin-bottom:3px}#cgF button{flex:1;font-size:11px;padding:3px 2px;border:1px solid var(--line);background:rgba(10,15,12,.7);color:var(--bone);border-radius:6px;cursor:pointer}#cgF button.on{border-color:var(--gold);color:var(--gold)}
+#cgL[data-f=g] p:not([data-c~=g]),#cgL[data-f=p] p:not([data-c~=p]),#cgL[data-f=c] p:not([data-c~=c]),#cgL[data-f=s] p:not([data-c~=s]){display:none}
+#cgL p[data-c=s]{opacity:.7;font-size:11px}
+#tgt{pointer-events:auto;cursor:pointer}
+body.photo #rsCl,body.photo #pCard,body.photo #pWp{display:none!important}
 </style>
 </head>
 <body>
@@ -487,7 +504,7 @@ const URL_ID = (params.get('id') || '').trim();
 const PLAYER_ID = URL_ID || '0'; // fallback para testes locais
 const $ = id => document.getElementById(id);
 const fmt = n => Number(n).toLocaleString('pt-BR');
-const VERSION = '0.0156'; // suba a cada atualização enviada
+const VERSION = '0.0157'; // suba a cada atualização enviada
 const DIA = {};
 const G = { mode: 'start' };
 let NICK = 'Visitante';
@@ -875,7 +892,7 @@ function initUI(E) {
   const T = E.THREE, coarse = matchMedia('(pointer:coarse)').matches;
   if (coarse) document.body.classList.add('touch');
   $('ver').textContent = 'v' + VERSION;
-  let tt; const toast = m => { const e = $('toast'); e.textContent = m; e.classList.add('on'); clearTimeout(tt); tt = setTimeout(() => e.classList.remove('on'), 3200); };
+  let tt; const toast = m => { if (typeof m === 'string' && R6 && rs6Grp(m)) return; const e = $('toast'); e.textContent = m; e.classList.add('on'); clearTimeout(tt); tt = setTimeout(() => e.classList.remove('on'), 3200); };
 
   /* personagem */
   const saved = LS.get('rise_char_' + PLAYER_ID, null);
@@ -1104,7 +1121,7 @@ function initUI(E) {
     B.append(h('p', '', NICK + ' ✔️ · ID ' + PLAYER_ID), h('h3', '', 'Nível ' + P.lv));
     const r = h('div', 'st'), i = h('i'), b = h('b'); b.style.width = P.xp / need(P.lv) * 100 + '%'; i.append(b); r.append(h('span', '', P.xp + '/' + need(P.lv)), i); B.append(r);
     B.append(h('p', '', CLASSES[char.cls].nome + ' · Pontos de habilidade: ' + P.sp));
-    const tb = h('div', 'ptabs'); ['Atributos', 'Equipamentos', 'Habilidades', 'Conquistas'].forEach((n, k) => { const x = h('button', 'btn sm' + (proTab === k ? ' on' : ''), n + (k === 1 && bestUp().length ? ' ⬆' + bestUp().length : '') + (k === 2 && P.sp > 0 ? ' •' + P.sp : '')); x.onclick = () => { proTab = k; renderPro(); }; tb.append(x); }); B.append(tb); try { rs5ProBtn(B); } catch (e) {}
+    const tb = h('div', 'ptabs'); ['Atributos', 'Equipamentos', 'Habilidades', 'Conquistas'].forEach((n, k) => { const x = h('button', 'btn sm' + (proTab === k ? ' on' : ''), n + (k === 1 && bestUp().length ? ' ⬆' + bestUp().length : '') + (k === 2 && P.sp > 0 ? ' •' + P.sp : '')); x.onclick = () => { proTab = k; renderPro(); }; tb.append(x); }); B.append(tb); try { rs5ProBtn(B); } catch (e) {} try { rs6ProIns(B); } catch (e) {}
     if (proTab === 0) { renderStats(B); renderAttr(B); }
     else if (proTab === 1) { renderMini(B); renderBag(B); }
     else if (proTab === 2) {
@@ -1197,7 +1214,7 @@ function initUI(E) {
 
   /* chat geral (esquerda, expansível) */
   function chatAdd(p) {
-    const L = $('cgL'); const m = h('p'); m.append(h('b', '', p.nick + ': '), document.createTextNode(p.txt)); L.append(m);
+    const L = $('cgL'); const m = h('p'); try { m.dataset.c = rs6Cat(p); } catch (e) { m.dataset.c = 'g'; } m.append(h('b', '', p.nick + ': '), document.createTextNode(p.txt)); L.append(m);
     while (L.children.length > 40) L.firstChild.remove(); L.scrollTop = L.scrollHeight;
     if (!$('cg').classList.contains('x') && p.from !== PLAYER_ID) $('cgBd').style.display = 'grid';
   }
@@ -1343,7 +1360,7 @@ function initUI(E) {
 
   /* dano e morte */
   function hurt(n) {
-    n = n * (HMUL || 1);
+    n = n * (HMUL || 1); if (DODG && Math.random() < DODG) { dmgText(E.player.position, 'esquivou', false, '#9fe0ff'); return; }
     if (invT > 0) { dmgText(E.player.position, 'esquivou', false, '#9fe0ff'); return; }
     n = Math.max(1, Math.round(n * (1 - Math.min(.8, CLASSES[char.cls].st.Defesa * .04 + gs('def') / 100))));
     if (buf.shield > 0) { const a = Math.min(buf.shield, n); buf.shield -= a; n -= a; if (n <= 0) { dmgText(E.player.position, 'bloqueado', false, '#7fb0ff'); return; } }
@@ -1353,7 +1370,7 @@ function initUI(E) {
     hurtT = 5; const cgE = $('cg'); if (cgE && cgE.classList.contains('x')) cgE.classList.remove('x'); shk = Math.max(shk, .15); sfx('hurt'); updHp();
   }
   function hit(m, dmg, crit) {
-    if (!rxDot) { dmg = rsReact(m, dmg); try { rs5Stat(dmg, crit); } catch (e) {} }
+    if (!rxDot) { dmg = rsReact(m, dmg); try { rs5Stat(dmg, crit); } catch (e) {} try { rs6Hit(m, dmg, crit); } catch (e) {} }
     m.hp -= dmg; m.flash = .12; m.agro = true; if (buf.pois > 0) m.pois = 6; tgt = m; tgtT = 4; if (crit || m.d.boss) shk = Math.max(shk, crit ? .12 : .06); sfx(crit ? 'crit' : 'hit'); dmgText(m.g.position, String(dmg), crit, null, !crit && dmg >= m.max * .25); if (crit) critFx(); burst(m.g.position, crit ? 0xffd24a : 0xffffff, crit ? 10 : 6);
     m.fill.scale.x = Math.max(.001, m.hp / m.max) * 1.1;
     if (m.hp <= 0) kill(m);
@@ -1363,7 +1380,7 @@ function initUI(E) {
   }
   function kill(m) {
     const d = m.d, q = m.g.position;
-    try { rsKill(m); rsKill2(m); rsKill3(m); rsKill4(m); rsKill5(m); } catch (e) {}
+    try { rsKill(m); rsKill2(m); rsKill3(m); rsKill4(m); rsKill5(m); rsKill6(m); } catch (e) {}
     streakAdd(); metaAdd('kil', 1); if (m.elite) { metaAdd('eli', 1); P.eliK = (P.eliK | 0) + 1; ringFx(q, 0xffd24a, 4); } burst(q, d.col, 16); sfx('kill'); addXP(Math.round(d.xp * m.lv * (m.elite ? 3 : 1) * (1 + .15 * nearParty()))); giveGold(Math.round(d.xp * .6 * m.lv * (m.elite ? 3 : 1)), q); rollGear(m, q); P.kills = (P.kills || 0) + 1; if (d.boss) { P.bk = (P.bk || 0) + 1; P.vit = (P.vit | 0) + 1; metaAdd('bos', 1); fxFlash('#ffd24a', .35); banner('CHEFE DERROTADO', d.n); }
     if (Math.random() < .7 || d.boss || m.elite) dropItem(d.drop, q.x + 1, q.z, d.col);
     if (d.boss) { dropItem(d.drop, q.x - 1, q.z, d.col); dropItem(d.drop, q.x, q.z + 1.5, d.col); bossDead[m.key] = Date.now(); }
@@ -1392,6 +1409,7 @@ function initUI(E) {
       });
   }
   function doSkill() {
+    try { rs6Mas(4); } catch (e) {}
     const p = E.player.position, mul = 1.4 + .15 * ((P.sk[char.cls] || [])[0] || 0); burst(p, CC[char.cls], 14); ringFx(p, CC[char.cls], 5.5); sfx('skill');
     mons.filter(m => Math.hypot(m.g.position.x - p.x, m.g.position.z - p.z) < 5.5 + m.r).forEach(m => { const [d, c] = pdmg(); hit(m, Math.round(d * mul), c); if (char.cls === 2) m.brn = 5; if (char.cls === 0) m.stn = .8; });
   }
@@ -1484,7 +1502,7 @@ function initUI(E) {
     });
     drops.slice().forEach(o => {
       o.t -= dt; o.m.rotation.y += dt * 2; o.m.position.y = o.y + Math.sin(o.t * 4) * .15;
-      if (Math.hypot(o.m.position.x - p.x, o.m.position.z - p.z) < 2.2) {
+      if (Math.hypot(o.m.position.x - p.x, o.m.position.z - p.z) < (2.2 + (MASR || 0))) {
         sfx('pick'); if (o.gear) { addGear(o.gear); } else if (o.name === 'Poção de Vida') { P.pot = Math.min(9, P.pot + 1); saveP(); toast('+1 Poção (Q para usar)'); } else { P.mat[o.name] = (P.mat[o.name] || 0) + 1; toast('+1 ' + o.name); saveP(); updQt(); npcMarks(); }
         o.t = 0;
       }
@@ -1573,7 +1591,7 @@ function initUI(E) {
   function useSkill(slot) {
     if (G.mode !== 'play' || cds[slot - 1] > 0) return;
     if (!useMp(slot === 1 ? 25 : 45)) return;
-    cds[slot - 1] = slot === 1 ? 12 : 25;
+    cds[slot - 1] = slot === 1 ? 12 : 25; try { rs6Mas(slot === 1 ? 6 : 10); } catch (e) {}
     const c = char.cls, m = 1 + .15 * sl(slot), p = E.player.position; burst(p, CC[c], 12); ringFx(p, CC[c], slot === 1 ? 3 : 9); sfx('skill'); if (slot === 2) pillarFx(p, CC[c]);
     if (slot === 1) {
       if (c === 0) { buf.dmg = 8; heal(.1); } if (c === 1) buf.crit = 3; if (c === 2) { buf.shield = (40 + P.lv * 8) * m; buf.shT = 8; }
@@ -1737,7 +1755,7 @@ function initUI(E) {
   /* ── v0.009: palco do lobby, ambiente (nuvens, vaga-lumes), HUD de habilidades e extras ── */
   var clk = 0, tgt = null, tgtT = 0;
   function clockStr() { const m = Math.floor(clk * 1440); return String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); }
-  function banner(t, sub) { try { rsLog(t, sub); } catch (e) {} const e = $('ban'); e.textContent = ''; e.append(h('b', '', t), h('span', '', sub || '')); e.classList.remove('on'); void e.offsetWidth; e.classList.add('on'); }
+  function banner(t, sub) { try { rsLog(t, sub); } catch (e) {} try { rs6Sys(t + (sub ? ' — ' + sub : '')); } catch (e) {} const e = $('ban'); e.textContent = ''; e.append(h('b', '', t), h('span', '', sub || '')); e.classList.remove('on'); void e.offsetWidth; e.classList.add('on'); }
   function lvlFx() { sfx('lvl'); burst(E.player.position, 0xffd24a, 24); banner('NÍVEL ' + P.lv, '+1 ponto de habilidade'); }
 
   const stage = new T.Group();
@@ -1878,7 +1896,7 @@ function initUI(E) {
   function projectile(a, b, col, done) { const mm = fmat(col), m = new T.Mesh(OG, mm), sx = a.x, sy = a.y + 1.4, sz = a.z; m.position.set(sx, sy, sz); addFx(m, .2, (o, k) => { o.position.set(sx + (b.x - sx) * k, sy + (b.y + 1 - sy) * k, sz + (b.z - sz) * k); if (k >= 1) done(); }, mm); }
 
   /* ouro, equipamentos, poções */
-  function giveGold(n, pos) { if (evUntil > Date.now()) n = Math.round(n * 1.25); n = Math.round(n * (GPB || 1)); P.gold += n; P.goldT = (P.goldT | 0) + n; dmgText(pos, '+' + n + '🪙', false, '#ffd24a'); saveP(); }
+  function giveGold(n, pos) { if (evUntil > Date.now()) n = Math.round(n * 1.25); n = Math.round(n * (GPB || 1)); P.gold += n; P.goldT = (P.goldT | 0) + n; rs6Gold(pos, n); saveP(); }
   function genGear(lv, minR) {
     const x = Math.random(), r = Math.max(minR || 0, x < .6 ? 0 : x < .88 ? 1 : x < .97 ? 2 : 3), sl = SLOTS[Math.floor(Math.random() * 3)], sc = RAR[r][2], b = 2 + lv * 1.2;
     const it = { slot: sl, r, nome: GN[sl][Math.floor(Math.random() * GN[sl].length)] + ' ' + GA[r], dmg: 0, hp: 0, def: 0, crit: 0 };
@@ -2093,7 +2111,7 @@ function initUI(E) {
     B.textContent = '';
     if (error) { B.textContent = 'Ranking indisponível. Atualize o rise-perfis.sql no Supabase.'; return; }
     if (!data || !data.length) { B.textContent = 'Ninguém no ranking ainda.'; return; } try { await rs5ClanMap(data); } catch (e) {}
-    data.forEach((r, i) => { const q = h('p', '', (['🥇', '🥈', '🥉'][i] || (i + 1) + '.') + ' ' + ((CLM && CLM[r.id_jogador]) ? '[' + CLM[r.id_jogador] + '] ' : '') + (r.nick || 'Jogador') + ' · Nv. ' + r.nivel); if (String(r.id_jogador) === PLAYER_ID) q.style.color = '#ffd24a'; B.append(q); });
+    data.forEach((r, i) => { const q = h('p', '', (['🥇', '🥈', '🥉'][i] || (i + 1) + '.') + ' ' + ((CLM && CLM[r.id_jogador]) ? '[' + CLM[r.id_jogador] + '] ' : '') + (r.nick || 'Jogador') + ' · Nv. ' + r.nivel); if (String(r.id_jogador) === PLAYER_ID) q.style.color = '#ffd24a'; q.style.cursor = 'pointer'; q.onclick = () => rs6Card(r.id_jogador, r.nick, r.nivel); B.append(q); });
   }
   RND.pRank = renderRank;
   const rk = h('button', 'btn', '🏆 Ranking'); rk.onclick = () => panel('pRank'); $('lobM').append(rk);
@@ -2277,6 +2295,7 @@ function initUI(E) {
   addEventListener('keydown', e => { if (!/INPUT|TEXTAREA|SELECT/.test(e.target.tagName) && e.key.toLowerCase() === 'e') lootAct(); });
 
   function aimAssist() {
+    try { if (rs6Lk()) return; } catch (e) {}
     if (!cfg.aim) return;
     const p = E.player.position, r = E.player.rotation.y, R = (char.cls === 1 || char.cls === 2 ? 9 : 3.2) + 1.5; let ba = null, bs = 1e9;
     for (let i = 0; i < mons.length; i++) {
@@ -2821,7 +2840,7 @@ function initUI(E) {
   function rsHub(toggle) {
     if (toggle === false) { hub.classList.remove('on'); return; }
     if (G.mode !== 'play' && G.mode !== 'lobby') return;
-    const on = !hub.classList.contains('on'); if (on) { panel(null); const h2 = $('pHub2'); if (h2) h2.classList.remove('on'); const h4 = $('pHub4'); if (h4) h4.classList.remove('on'); const h5 = $('pHub5'); if (h5) h5.classList.remove('on'); } hub.classList.toggle('on', on); if (on) rsHubR();
+    const on = !hub.classList.contains('on'); if (on) { panel(null); const h2 = $('pHub2'); if (h2) h2.classList.remove('on'); const h4 = $('pHub4'); if (h4) h4.classList.remove('on'); const h5 = $('pHub5'); if (h5) h5.classList.remove('on'); const h6 = $('pHub6'); if (h6) h6.classList.remove('on'); } hub.classList.toggle('on', on); if (on) rsHubR();
   }
   const hrow = (txt, btn) => { const r = h('div', 'it'); r.append(h('span', '', txt)); if (btn) r.append(btn); return r; };
   const hbt = (t, f) => { const b = h('button', 'btn', t); b.onclick = f; return b; };
@@ -2899,7 +2918,7 @@ function initUI(E) {
 
   /* 6. Reações elementais */
   function rsReact(m, dmg) {
-    if (!m || !m.d) return dmg; if (RELE && RELE.boss && (m.d.boss || m.elite)) dmg = Math.round(dmg * (1 + RELE.boss)); if (VAM > 0 && hp > 0 && hp < maxHp()) { hp = Math.min(maxHp(), hp + dmg * VAM); updHp(); } { const wk = rsWk(m.d.n); if (m[wk.w] > 0) dmg = Math.round(dmg * 1.25); else if (m[wk.r] > 0) dmg = Math.round(dmg * .85); }
+    if (!m || !m.d) return dmg; dmg = rs6Hook(m, dmg); if (RELE && RELE.boss && (m.d.boss || m.elite)) dmg = Math.round(dmg * (1 + RELE.boss)); if (VAM > 0 && hp > 0 && hp < maxHp()) { hp = Math.min(maxHp(), hp + dmg * VAM); updHp(); } { const wk = rsWk(m.d.n); if (m[wk.w] > 0) dmg = Math.round(dmg * 1.25); else if (m[wk.r] > 0) dmg = Math.round(dmg * .85); }
     const t = rsNow(); if ((m.rxT || 0) > t) return dmg; const p = m.g.position;
     if (m.brn > 0) {
       m.brn = 0; m.rxT = t + 1500; const ex = Math.round(dmg * .5); mons.slice().forEach(o => { if (o !== m && mons.includes(o) && Math.hypot(o.g.position.x - p.x, o.g.position.z - p.z) < 4) hitDot(o, Math.max(2, Math.round(ex * .6)), false); });
@@ -2944,7 +2963,7 @@ function initUI(E) {
     if (P.ttlA && P.ttl[P.ttlA]) { const tt = TTL.find(x => x[0] === P.ttlA); if (tt) add(tt[4]); }
     if (P.pet && PETS[P.pet] && !(P.xpd && P.xpd.u > n)) add(PETS[P.pet][3]);
     if (n < P.exA) A.dp += .15; if (n < P.exS) A.sp += .2; if (n < R2.pact) { A.dp += .4; A.gp += .5; }
-    try { rsCalc3(A); } catch (e) {} try { rsCalc4(A); } catch (e) {} try { rsCalc5(A); } catch (e) {} t.dmg += A.dmg; t.hp += A.hp; t.def += A.def; t.crit += A.crit;
+    try { rsCalc3(A); } catch (e) {} try { rsCalc4(A); } catch (e) {} try { rsCalc5(A); } catch (e) {} try { rsCalc6(A); } catch (e) {} t.dmg += A.dmg; t.hp += A.hp; t.def += A.def; t.crit += A.crit;
     DMX = (n < RS.trv ? 1.12 : 1) * (1 + A.dp) * (MODD || 1); SPB = 1 + A.sp; GPB = 1 + A.gp; RGB = A.rg; MGB = A.mg;
   }
 
@@ -3009,7 +3028,7 @@ function initUI(E) {
   }
   let curA = null;
   function rsInteract() {
-    if (!curA || G.mode !== 'play') return; if (curA.k === 'c') rsOpenChest(curA.F); else if (curA.k === 'a') rsAltar(curA.F); else if (curA.k === 'n') rs3Gather(curA.F); else if (curA.k === 'm') rs4Mural(); else if (curA.k === 'f') rs5Fish(curA.F); else if (curA.k === 'v') rs5Shop(); else rsDig();
+    if (!curA || G.mode !== 'play') return; if (curA.k === 'c') rsOpenChest(curA.F); else if (curA.k === 'a') rsAltar(curA.F); else if (curA.k === 'n') rs3Gather(curA.F); else if (curA.k === 'm') rs4Mural(); else if (curA.k === 'f') rs5Fish(curA.F); else if (curA.k === 'v') rs5Shop(); else if (curA.k === 'w') rs6WpUse(curA.b); else if (curA.k === 's') rsHub6(true, 2); else rsDig();
   }
   act2.onclick = rsInteract;
 
@@ -3032,7 +3051,7 @@ function initUI(E) {
   }
   const sane = g => { if (!g || typeof g !== 'object' || !SLOTS.includes(g.slot)) return null; const n = (v, M) => Math.round(clamp(v, 0, M)), o = { nome: String(g.nome || 'Item').slice(0, 32), slot: g.slot, r: n(g.r, 3), dmg: n(g.dmg, 3000), hp: n(g.hp, 20000), def: n(g.def, 3000), crit: n(g.crit, 100), up: n(g.up, 20) }; if (g.af && AFX.some(a => a[0] === g.af.k)) o.af = { k: g.af.k, v: n(g.af.v, 200) }; if (g.lv) o.lv = n(g.lv, 999); return o; };
   function rsMsg(d) {
-    if (d && d.t === 'cb') return rs5CbIn(d); if (d && d.t === 'em') return rs3EmoIn(d); if (!d || d.to !== PLAYER_ID || !d.from || d.from === PLAYER_ID || G.mode === 'start') return; const nk = String(d.nick || '?').slice(0, 20);
+    if (d && d.t === 'tt') return rs6TotIn(d); if (d && d.t === 'cb') return rs5CbIn(d); if (d && d.t === 'em') return rs3EmoIn(d); if (!d || d.to !== PLAYER_ID || !d.from || d.from === PLAYER_ID || G.mode === 'start') return; const nk = String(d.nick || '?').slice(0, 20);
     if (d.t === 'di' || d.t === 'ti') { if (R2.dInv.length < 3 && !R2.dInv.some(v => v.from === d.from && v.k === d.t[0])) { R2.dInv.push({ from: d.from, nick: nk, k: d.t[0], t: rsNow() }); banner(d.t === 'di' ? '⚔️ DESAFIO DE DUELO' : '🤝 PEDIDO DE TROCA', nk); rsQR(); } }
     else if (d.t === 'da') { if (!R2.duel) duelStart(d.from, nk); }
     else if (d.t === 'ta') { if (!R2.tr) trStart(d.from, nk); }
@@ -3074,7 +3093,7 @@ function initUI(E) {
   const H2T = ['Talentos', 'Alquimia', 'Mascotes', 'Títulos', 'Mapas', 'Social'];
   function rsHub2(t) {
     if (t === false) { hub2.classList.remove('on'); return; } if (G.mode !== 'play' && G.mode !== 'lobby') return;
-    const on = !hub2.classList.contains('on'); if (on) { panel(null); hub.classList.remove('on'); rsNet(); const h4 = $('pHub4'); if (h4) h4.classList.remove('on'); const h5 = $('pHub5'); if (h5) h5.classList.remove('on'); } hub2.classList.toggle('on', on); if (on) rsHub2R();
+    const on = !hub2.classList.contains('on'); if (on) { panel(null); hub.classList.remove('on'); rsNet(); const h4 = $('pHub4'); if (h4) h4.classList.remove('on'); const h5 = $('pHub5'); if (h5) h5.classList.remove('on'); const h6 = $('pHub6'); if (h6) h6.classList.remove('on'); } hub2.classList.toggle('on', on); if (on) rsHub2R();
   }
   function rsHub2R() {
     if (!hub2.classList.contains('on')) return; hub2.textContent = ''; const top = h('div', 'rowh'); top.append(hbt('← Fechar', () => rsHub2(false)), h('h3', '', '🎒 Aventura · 🪙 ' + P.gold)); hub2.append(top);
@@ -3141,7 +3160,7 @@ function initUI(E) {
     curA = null; let best = 4;
     KCH.forEach(F => { if (F.on) { const d = Math.hypot(F.x - p.x, F.z - p.z); if (d < best) { best = d; curA = { k: 'c', F, t: P.key > 0 ? '🗝️ Abrir arca (R)' : '🔒 Arca trancada (R)' }; } } });
     ALT.forEach(F => { if (F.on) { F.o.rotation.y += .5; const d = Math.hypot(F.x - p.x, F.z - p.z); if (d < best) { best = d; curA = { k: 'a', F, t: '🩸 Altar de Sacrifício (R)' }; } } });
-    { const nn = rsNodeNear(p, best); if (nn) { curA = nn; best = nn.d; } } { const mm = rs4MurNear(p, best); if (mm) { curA = mm; best = mm.d; } } { const ff = rs5Near(p, best); if (ff) { curA = ff; best = ff.d; } }
+    { const nn = rsNodeNear(p, best); if (nn) { curA = nn; best = nn.d; } } { const mm = rs4MurNear(p, best); if (mm) { curA = mm; best = mm.d; } } { const ff = rs5Near(p, best); if (ff) { curA = ff; best = ff.d; } } { const w6 = rs6Near(p, best); if (w6) { curA = w6; best = w6.d; } }
     if (P.tm) { const d = Math.hypot(P.tm.x - p.x, P.tm.z - p.z); mound.position.set(P.tm.x, E.W.H(P.tm.x, P.tm.z), P.tm.z); mound.visible = d < 22; tmEl.style.display = 'block'; tmEl.textContent = '🗺️ ' + (d < 10 ? '🔥 Aqui! Escave' : d < 30 ? 'Quente' : d < 70 ? 'Morno' : 'Frio') + (d < 70 ? '' : ' · ~' + Math.round(d / 20) * 20 + 'm'); if (d < 4 && best > 0) { curA = { k: 'd', t: '⛏️ Escavar (R)' }; } } else if (tmEl.style.display) { tmEl.style.display = ''; mound.visible = false; }
     act2.style.display = curA && !RS.ph && !alt.classList.contains('on') ? 'block' : 'none'; if (curA) act2.textContent = curA.t; if (!curA) alt.classList.remove('on');
     const D2 = R2.duel; if (D2) { D2.t += .25; const o = others.get(D2.id); if (!o || D2.t > 180 || Math.hypot(o.g.position.x - p.x, o.g.position.z - p.z) > 80) { snd(D2.id, 'de'); duelEnd(null); } else { duEl.style.display = 'block'; duEl.textContent = '⚔️ ' + D2.nick + ' · você ' + Math.max(0, Math.round(D2.hp / D2.mx * 100)) + '% · ele ' + Math.round(D2.oh * 100) + '%'; } }
@@ -3282,7 +3301,7 @@ function initUI(E) {
   const hub3 = h('div', 'pan'); hub3.id = 'pHub3'; document.body.append(hub3); const H3T = ['Runas', 'Cozinha', 'Coleta', 'Torre', 'Bestiário', 'Builds', 'Prestígio']; let prSure = 0;
   function rsHub3(t) {
     if (t === false) { hub3.classList.remove('on'); return; } if (G.mode !== 'play' && G.mode !== 'lobby') return;
-    const on = !hub3.classList.contains('on'); if (on) { panel(null); hub.classList.remove('on'); hub2.classList.remove('on'); const h4 = $('pHub4'); if (h4) h4.classList.remove('on'); const h5 = $('pHub5'); if (h5) h5.classList.remove('on'); } hub3.classList.toggle('on', on); if (on) rsHub3R();
+    const on = !hub3.classList.contains('on'); if (on) { panel(null); hub.classList.remove('on'); hub2.classList.remove('on'); const h4 = $('pHub4'); if (h4) h4.classList.remove('on'); const h5 = $('pHub5'); if (h5) h5.classList.remove('on'); const h6 = $('pHub6'); if (h6) h6.classList.remove('on'); } hub3.classList.toggle('on', on); if (on) rsHub3R();
   }
   function rsHub3R() {
     if (!hub3.classList.contains('on')) return; hub3.textContent = ''; const top = h('div', 'rowh'); top.append(hbt('← Fechar', () => rsHub3(false)), h('h3', '', '🛠️ Oficina · 🪙 ' + P.gold)); hub3.append(top);
@@ -3446,7 +3465,7 @@ function initUI(E) {
   const hub4 = h('div', 'pan'); hub4.id = 'pHub4'; document.body.append(hub4); const H4T = ['Refino', 'Relíquias', 'Fusão', 'Expedição', 'Caça', 'Estilo', 'Histórico'];
   function rsHub4(t) {
     if (t === false) { hub4.classList.remove('on'); return; } if (G.mode !== 'play' && G.mode !== 'lobby') return;
-    const on = !hub4.classList.contains('on'); if (on) { panel(null); hub.classList.remove('on'); hub2.classList.remove('on'); hub3.classList.remove('on'); mur.classList.remove('on'); const h5 = $('pHub5'); if (h5) h5.classList.remove('on'); } hub4.classList.toggle('on', on); if (on) rsHub4R();
+    const on = !hub4.classList.contains('on'); if (on) { panel(null); hub.classList.remove('on'); hub2.classList.remove('on'); hub3.classList.remove('on'); mur.classList.remove('on'); const h5 = $('pHub5'); if (h5) h5.classList.remove('on'); const h6 = $('pHub6'); if (h6) h6.classList.remove('on'); } hub4.classList.toggle('on', on); if (on) rsHub4R();
   }
   const ago = t => { const m = Math.round((Date.now() - t) / 60000); return m < 1 ? 'agora' : m < 60 ? m + ' min' : Math.round(m / 60) + ' h'; };
   function rsHub4R() {
@@ -3592,7 +3611,7 @@ function initUI(E) {
     M.stock.forEach((it, i) => mch.append(hrow('🛡️ ' + it.nome + ' [' + RAR[it.r][0] + '] ' + (it.dmg ? '⚔️' + it.dmg + ' ' : '') + (it.hp ? '❤️' + it.hp + ' ' : '') + (it.def ? '🛡️' + it.def + ' ' : '') + (it.crit ? '🎯' + it.crit : ''), buy('g' + i, price(it) * 2, () => addGear(Object.assign({}, it))))));
     [['guisado', '🥘 Receita: Guisado do Viajante', 900], ['torta', '🍰 Receita: Torta Cristalina', 1100]].forEach(([k, n, c]) => mch.append(hrow(n, P.rec[k] ? h('small', '', 'Já aprendida') : buy('r' + k, c, () => { P.rec[k] = 1; banner('📖 RECEITA', n); }))));
     mch.append(hrow('🩹 Frasco de Emergência', buy('fe', 350, () => { P.fl.emg = (P.fl.emg | 0) + 1; })), hrow('✨ 5 Essência', buy('es', 400, () => { P.mat['Essência'] = (P.mat['Essência'] | 0) + 5; })));
-    mch.classList.add('on'); panel(null); [hub, hub2, hub3, hub4].forEach(x => x.classList.remove('on')); { const h5 = $('pHub5'); if (h5) h5.classList.remove('on'); }
+    mch.classList.add('on'); panel(null); [hub, hub2, hub3, hub4].forEach(x => x.classList.remove('on')); { const h5 = $('pHub5'); if (h5) h5.classList.remove('on'); const h6 = $('pHub6'); if (h6) h6.classList.remove('on'); }
   }
 
   /* 6. Clima extremo */
@@ -3709,6 +3728,301 @@ function initUI(E) {
     R5.clT -= .25; if (R5.clT <= 0) { R5.clT = 300; rs5LoadClan(); }
     R5.cbT -= .25; if (R5.cbT <= 0) { R5.cbT = 15; if (R5.clan && R2.ch && R2.chOk) { try { R2.ch.send({ type: 'broadcast', event: 'm', payload: { t: 'cb', from: PLAYER_ID, e: R5.clan.e, g: R5.clan.g } } ); } catch (e) {} } others.forEach((r, id) => rs5Lbl(id)); }
   });
+  try { rsCalc(); } catch (e) {}
+
+
+  /* ═══ v0.0157: 20 novidades (mundo, maestria, forja, clima, ordens, mercenário, treino, som, chat, alvo, memória) ═══ */
+  var R6 = null, MASR = 0, MCDR = 0, DODG = 0;
+  P.mas = P.mas || {}; P.wp = P.wp || {}; P.ins = P.ins || []; P.dur = P.dur === undefined ? 100 : P.dur; P.tot = P.tot | 0; P.facR = P.facR | 0; P.wbN = P.wbN | 0; P.csN = P.csN | 0; P.ttN = P.ttN | 0; P.fkD = P.fkD | 0; P.fkN = P.fkN | 0;
+  R6 = { tab: 0, gp: {}, gT: 0, flush: false, gg: 0, ggT: 0, gpos: null, fil: 'all', clanIds: new Set(), clT: 0, mm: 0, wb: null, wbD: 0, cs: null, csT: 0, wpp: {}, wpI: 0, tr: null, mc: null, tots: [], totCd: 0, cl: null, climT: 0, lock: null, lkI: -1, dmy: null, dm: [], dmN: 0, spdU: 0, sh: 0, cap: null, aura: null, lastB: -1, lastD: false, cleans: 0, lastClean: 0, fb: null, am: null, amT: 0, sT: 0, hint: {} };
+  const now6 = () => Date.now(), night6 = () => (clk < .2 || clk > .85);
+  const slotPos = (() => { const cache = {}; return (slot, salt, bio) => { const k = slot + '|' + salt + '|' + bio; if (k in cache) return cache[k]; let r = null; for (let i = 0; i < 300 && !r; i++) { const x = (hash(slot, i, 1200 + salt) * 2 - 1) * (HS - 150), z = (hash(slot, i, 1250 + salt) * 2 - 1) * (HS - 150); if (Math.hypot(x, z) < 150 || (bio >= 0 && E.W.biome(x, z) !== bio) || E.W.H(x, z) < .5 || lakeW(x, z) > .05 || nearVillage(x, z)) continue; r = { x, z }; } cache[k] = r; return r; }; })();
+  const hint6 = (id, top) => { let e = R6.hint[id]; if (!e) { e = h('div', 'rsH'); e.id = id; document.body.append(e); R6.hint[id] = e; } return e; };
+  const setH = (id, txt) => { const e = hint6(id); if (txt) { e.style.display = 'block'; if (e.textContent !== txt) e.textContent = txt; } else if (e.style.display) e.style.display = ''; };
+  const arrow6 = (dx, dz) => ['→', '↘', '↓', '↙', '←', '↖', '↑', '↗'][Math.round(((Math.atan2(dz, dx) + 6.283) % 6.283) / .7854) % 8];
+  const beam6 = c => { const m = new T.Mesh(new T.CylinderGeometry(.7, .7, 40, 8, 1, true), new T.MeshBasicMaterial({ color: c, transparent: true, opacity: .35, side: T.DoubleSide })); m.visible = false; E.scene.add(m); return m; };
+  const busy6 = () => busy5() || R6.tr || R6.wbA;
+
+  /* 17/18. Chat: filtros + notificações agrupadas */
+  const fil = h('div'); fil.id = 'cgF';
+  [['all', 'Todos'], ['g', 'Geral'], ['p', 'Grupo'], ['c', 'Clã'], ['s', 'Sistema']].forEach(([k, n]) => { const b = h('button', k === 'all' ? 'on' : '', n); b.onclick = () => { R6.fil = k; $('cgL').dataset.f = k; [...fil.children].forEach(x => x.classList.toggle('on', x === b)); $('cgL').scrollTop = 1e6; }; fil.append(b); });
+  { const L = $('cgL'); L.parentNode.insertBefore(fil, L); L.dataset.f = 'all'; }
+  function rs6Cat(p) { let c = 'g'; if (p && p.from) { if ((party || []).some(m => m.id === p.from)) c += ' p'; if (R6.clanIds.has(p.from)) c += ' c'; } return c; }
+  function rs6Sys(txt) { const L = $('cgL'); if (!L) return; const m = h('p', '', '📌 ' + String(txt).slice(0, 90)); m.dataset.c = 's'; L.append(m); while (L.children.length > 60) L.firstChild.remove(); if (R6.fil === 'all' || R6.fil === 's') L.scrollTop = L.scrollHeight; }
+  function rs6Grp(m) {
+    if (R6.flush) return false; const x = /^\+(\d+) ([^\d(·]+?)\s*$/.exec(m); if (!x) return false; R6.gp[x[2]] = (R6.gp[x[2]] || 0) + (+x[1]);
+    if (!R6.gT) R6.gT = setTimeout(() => { const t = Object.keys(R6.gp).map(k => '+' + R6.gp[k] + ' ' + k).join(' · '); R6.gp = {}; R6.gT = 0; R6.flush = true; try { toast(t); } finally { R6.flush = false; } rs6Sys(t); }, 1100); return true;
+  }
+  function rs6Gold(pos, n) { R6.gg += n; R6.gpos = { x: pos.x, y: pos.y, z: pos.z }; if (!R6.ggT) R6.ggT = setTimeout(() => { R6.ggT = 0; const g = R6.gg; R6.gg = 0; if (g > 0 && R6.gpos) dmgText(R6.gpos, '+' + g + '🪙', false, '#ffd24a'); }, 900); }
+  async function rs6Clan() { if (!sb) return; try { const r = await sb.from('rise_clas_membros').select('clan_id').eq('id_jogador', PLAYER_ID).maybeSingle(); if (!r.data) { R6.clanIds = new Set(); return; } const m = await sb.from('rise_clas_membros').select('id_jogador').eq('clan_id', r.data.clan_id); R6.clanIds = new Set((m.data || []).map(x => x.id_jogador)); } catch (e) {} }
+
+  /* 2. Maestria */
+  const masNeed = l => Math.round(60 * Math.pow(1.25, l)), MAXM = 30;
+  function rs6Mas(n) { const c = char.cls | 0, M = P.mas[c] = P.mas[c] || { l: 0, x: 0 }; if (M.l >= MAXM) return; M.x += n; while (M.l < MAXM && M.x >= masNeed(M.l)) { M.x -= masNeed(M.l); M.l++; banner('⭐ MAESTRIA ' + M.l, CLASSES[c].nome + ' — novo bônus permanente'); rsCalc(); } }
+  const masL = () => (P.mas[char.cls | 0] || { l: 0 }).l;
+
+  /* 3/4. Forja Arcana */
+  const FR = 'Fragmento Arcano', FRV = [1, 3, 8, 20], PROMO = [null, [15, 3, 1], [40, 6, 3]];
+  const pbase = it => String(it.nome).replace(GA[it.r | 0], '').trim();
+  function rs6Disasm(it) { const i = P.bag.indexOf(it); if (i < 0) return 0; const f = FRV[it.r | 0] || 1; P.bag.splice(i, 1); P.mat[FR] = (P.mat[FR] | 0) + f; return f; }
+  function rs6Promote(it) {
+    const r = it.r | 0, c = PROMO[r]; if (!c) return toast('Sem evolução disponível'); if ((P.mat[FR] | 0) < c[0] || (P.mat['Essência'] | 0) < c[1] || (P.mat.Cristal | 0) < c[2]) return toast('Faltam materiais'); const sc = RAR[r + 1][2] / RAR[r][2], base = pbase(it);
+    P.mat[FR] -= c[0]; P.mat['Essência'] -= c[1]; P.mat.Cristal -= c[2]; ['dmg', 'hp', 'def', 'crit'].forEach(k => { if (it[k]) it[k] = Math.round(it[k] * sc); }); it.r = r + 1; it.nome = base + ' ' + GA[it.r]; if (it.rn) it.rn = it.rn.slice(0, 1 + (it.r >= 2 ? 1 : 0) + (it.r >= 3 ? 1 : 0));
+    banner('⚒️ EVOLUÇÃO', it.nome); rsCalc(); saveP(); rsLogT('⚒️', 'Evoluiu ' + it.nome);
+  }
+
+  /* 5. Taverna */
+  const TAV = [['💰', 'Ouro', 22], ['📦', 'Materiais', 22], ['🧪', 'Poções', 14], ['🔮', 'Runa', 12], ['💠', 'Fragmentos', 14], ['🗿', 'Totem', 8], ['🎨', 'Cosmético (1h)', 8]];
+  function rs6Spin() {
+    const day = Math.floor(now6() / 864e5), free = P.spd !== day; if (!free && P.gold < 150) return toast('Giro extra custa 150🪙'); if (!free) P.gold -= 150; else P.spd = day;
+    let r = Math.random() * 100, k = 0; for (; k < TAV.length - 1; k++) { if (r < TAV[k][2]) break; r -= TAV[k][2]; } let tx = '';
+    if (k === 0) { const g = Math.round((120 + Math.random() * 300) * (1 + P.lv * .06)); P.gold += g; tx = '+' + g + '🪙'; } else if (k === 1) { for (let i = 0; i < 3; i++) { const m = COM[Math.floor(Math.random() * COM.length)]; P.mat[m] = (P.mat[m] | 0) + 2; } tx = '3 tipos de material ×2'; }
+    else if (k === 2) { P.pot = Math.min(9, P.pot + 2); P.pm = Math.min(9, (P.pm | 0) + 1); tx = '+2🧪 +1🔷'; } else if (k === 3) { const ids = Object.keys(RUN), id = ids[Math.floor(Math.random() * ids.length)]; P.rn[id] = (P.rn[id] | 0) + 1; tx = 'Runa ' + RUN[id][1]; }
+    else if (k === 4) { P.mat[FR] = (P.mat[FR] | 0) + 5; tx = '+5 Fragmentos'; } else if (k === 5) { P.tot++; tx = '+1 Totem'; } else { P.cosT = { c: 1 + Math.floor(Math.random() * 5), u: now6() + 36e5 }; tx = 'Rastro colorido por 1h'; }
+    banner('🎰 TAVERNA', TAV[k][0] + ' ' + tx); saveP(); rsHub6R();
+  }
+
+  /* 6. Totens */
+  const totM = [0, 1].map(() => { const g = new T.Group(), a = new T.Mesh(new T.CylinderGeometry(.15, .2, 1.6, 6), new T.MeshStandardMaterial({ color: 0x6a4a28 })), b = new T.Mesh(new T.SphereGeometry(.35, 8, 6), new T.MeshBasicMaterial({ color: 0x5aff9a })), r = new T.Mesh(new T.RingGeometry(7.6, 8, 32), new T.MeshBasicMaterial({ color: 0x5aff9a, transparent: true, opacity: .35, side: T.DoubleSide })); a.position.y = .8; b.position.y = 1.9; r.rotation.x = -Math.PI / 2; r.position.y = .1; g.add(a, b, r); g.visible = false; E.scene.add(g); return g; });
+  function rs6Totem() {
+    if (G.mode !== 'play') return; if (!(P.tot > 0)) return toast('Sem Totem (Forja ou Taverna)'); if (now6() < R6.totCd) return; P.tot--; R6.totCd = now6() + 3e3; const p = rsPos(); R6.tots.push({ x: p.x, z: p.z, u: now6() + 12e3 }); if (R6.tots.length > 4) R6.tots.shift();
+    if (R2.ch && R2.chOk) try { R2.ch.send({ type: 'broadcast', event: 'm', payload: { t: 'tt', from: PLAYER_ID, x: Math.round(p.x), z: Math.round(p.z) } }); } catch (e) {} banner('🗿 TOTEM', 'Cura e +15% dano na área por 12s'); saveP();
+  }
+  function rs6TotIn(d) { if (!d || d.from === PLAYER_ID || G.mode !== 'play') return; const x = +d.x, z = +d.z; if (!isFinite(x) || !isFinite(z)) return; const p = rsPos(); if (Math.hypot(x - p.x, z - p.z) > 40) return; if (R6.tots.length < 6) R6.tots.push({ x, z, u: now6() + 12e3 }); }
+
+  /* 7. Clima */
+  const CLK = [['clear', '', ''], ['clear', '', ''], ['rain', '🌧️ Chuva', '+20% dano vs. congelado/atordoado'], ['sun', '☀️ Sol forte', '+20% dano vs. queimando, −10% vs. congelado'], ['fog', '🌫️ Neblina', '+8 crítico e 10% de esquiva']];
+  const clEl = h('div'); clEl.id = 'rsCl'; document.body.append(clEl);
+  function rs6Clim() {
+    const slot = Math.floor(now6() / 42e4), k = Math.floor(hash(slot, 3, 1300) * 5), c = CLK[Math.min(4, k)]; if (!R6.cl || R6.cl.slot !== slot) { R6.cl = { slot, k: c[0], n: c[1], d: c[2] }; if (c[1] && G.mode === 'play') toast(c[1] + ' — ' + c[2]); }
+    clEl.className = R5.wx ? '' : R6.cl.k === 'clear' ? '' : R6.cl.k; setH('rsClm', R6.cl.n && G.mode === 'play' ? R6.cl.n + ' · ' + R6.cl.d : '');
+    const f = E.scene.fog; if (f) { if (!R6.fb) R6.fb = [f.near, f.far]; if (!R5.wx) { const tn = R6.cl.k === 'fog' ? [30, 110] : R6.fb; f.near += (tn[0] - f.near) * .2; f.far += (tn[1] - f.far) * .2; } }
+  }
+  function rs6Hook(m, dmg) { const c = R6 && R6.cl && R6.cl.k; if (!c) return dmg; if (c === 'rain' && (m.frz > 0 || m.stn > 0)) return Math.round(dmg * 1.2); if (c === 'sun') { if (m.brn > 0) return Math.round(dmg * 1.2); if (m.frz > 0) return Math.round(dmg * .9); } return dmg; }
+
+  /* 10. Ordens */
+  const FAC = { aur: ['🌅', 'Guardiões da Aurora', 0xffd24a, '+4 def, regeneração leve (e +2 def/rank)'], abi: ['🌑', 'Sombras do Abismo', 0x8a3aff, '+4% dano, +2 crít (e +1% dano/rank)'] };
+  const FQ = { aur: [['Abater 20 monstros de dia', 'fkD', 20], ['Coletar 5 nódulos', 'nodeN', 5], ['Abrir 3 baús/cristais', 'lootK', 3], ['Pescar 5 vezes', 'fishN', 5], ['Escoltar 1 caravana', 'carN', 1]], abi: [['Abater 20 monstros à noite', 'fkN', 20], ['Derrotar 2 elites', 'eliK', 2], ['Abrir 1 arca trancada', 'keyU', 1], ['Abater 1 patrulha', 'patK', 1], ['Vencer 1 duelo', 'duW', 1]] };
+  const capeM = new T.Mesh(new T.PlaneGeometry(.9, 1.3), new T.MeshBasicMaterial({ color: 0xffd24a, side: T.DoubleSide })), auraM = new T.Mesh(new T.RingGeometry(.9, 1.15, 24), new T.MeshBasicMaterial({ color: 0xffd24a, transparent: true, opacity: .55, side: T.DoubleSide, depthWrite: false }));
+  capeM.position.set(0, 1.35, -.5); capeM.rotation.x = .12; capeM.visible = false; auraM.rotation.x = -Math.PI / 2; auraM.position.y = .08; auraM.visible = false; E.player.add(capeM, auraM);
+  function rs6Fac(f) { P.fac = f; if (f) { capeM.material.color.setHex(FAC[f][2]); auraM.material.color.setHex(FAC[f][2]); } rsCalc(); saveP(); }
+  function rs6FqDay() {
+    const f = P.fac; if (!f) return null; const day = Math.floor(now6() / 864e5); if (P.fq && P.fq.day === day && P.fq.f === f) return P.fq; let x = day * 7919 + 1237, pick = []; while (pick.length < 3) { x = (x * 9301 + 49297) % 233280; const k = Math.floor(x / 233280 * 5); if (!pick.includes(k)) pick.push(k); }
+    const base = {}; FQ[f].forEach(o => base[o[1]] = P[o[1]] | 0); P.fq = { day, f, pick, base, cl: [0, 0, 0] }; saveP(); return P.fq;
+  }
+  const facRank = () => Math.min(5, Math.floor((P.facR | 0) / 5));
+
+  /* 13. Insígnias */
+  const MED = [['a1', '🩸', 'Primeiro Sangue', P => P.ach && P.ach.a1], ['a3', '⚔️', 'Lenda Viva', P => P.ach && P.ach.a3], ['a4', '💀', 'Mata-Chefes', P => P.ach && P.ach.a4], ['a5', '🧭', 'Explorador', P => P.ach && P.ach.a5], ['a8', '👑', 'Colecionador', P => P.ach && P.ach.a8], ['wb', '🌋', 'Caçador de Titãs', P => (P.wbN | 0) >= 1], ['cs', '💰', 'Saqueador Cooperativo', P => (P.csN | 0) >= 1], ['tw', '🗼', 'Escalador (andar 10)', P => (P.tw | 0) >= 10], ['pr', '✦', 'Renascido', P => (P.pr | 0) >= 1], ['ar', '🔥', 'Sobrevivente (2 min)', P => (P.arT | 0) >= 120], ['fq', '🏅', 'Fiel da Ordem (10)', P => (P.facR | 0) >= 10]];
+  const medOf = (id) => MED.find(x => x[0] === id);
+  const card = h('div', 'pan'); card.id = 'pCard'; document.body.append(card);
+  async function rs6Card(id, nick, nv) {
+    card.textContent = ''; const top = h('div', 'rowh'); top.append(hbt('← Fechar', () => card.classList.remove('on')), h('h3', '', (CLM && CLM[id] ? '[' + CLM[id] + '] ' : '') + (nick || 'Jogador'))); card.append(top, h('p', '', 'Nível ' + nv)); card.classList.add('on');
+    let D2 = null; if (String(id) === PLAYER_ID) D2 = P; else if (sb) { try { const r = await sb.from('rise_perfis').select('dados').eq('id_jogador', id).maybeSingle(); D2 = r.data && r.data.dados && r.data.dados.P; } catch (e) {} }
+    if (!D2) { card.append(h('small', '', 'Sem dados detalhados.')); return; } const ms = (D2.ins || []).map(medOf).filter(Boolean).slice(0, 3);
+    card.append(h('p', '', ms.length ? ms.map(m => m[1] + ' ' + m[2]).join(' · ') : 'Nenhuma insígnia em destaque'), h('small', '', (D2.pr ? '✦ Prestígio ' + D2.pr + ' · ' : '') + (D2.fac && FAC[D2.fac] ? FAC[D2.fac][0] + ' ' + FAC[D2.fac][1] : 'Sem ordem') + ' · Abates ' + ((D2.st && D2.st.k) | 0)));
+  }
+  function rs6ProIns(B) { const ms = (P.ins || []).map(medOf).filter(Boolean); if (ms.length) B.append(h('p', '', ms.map(m => m[1] + ' ' + m[2]).join(' · '))); }
+
+  /* 12. Mercenário */
+  const mcB = new T.Group(); { const b = new T.Mesh(new T.CylinderGeometry(.4, .5, 1.3, 8), new T.MeshStandardMaterial({ color: 0x8a8a96, metalness: .4 })), hd = new T.Mesh(new T.SphereGeometry(.34, 10, 8), new T.MeshStandardMaterial({ color: 0xd2a98a })); b.position.y = .75; hd.position.y = 1.7; mcB.add(b, hd); } mcB.visible = false; E.scene.add(mcB);
+  const MCT = { g: ['🛡️ Guarda', 300, 3.4, .3], a: ['🏹 Arqueiro', 450, 9, .38] };
+  function rs6Hire(k) { if (!inVil) return toast('Contrate nas vilas'); if (R6.mc) return toast('Você já tem um mercenário'); if (P.gold < MCT[k][1]) return toast('Ouro insuficiente'); P.gold -= MCT[k][1]; const p = rsPos(); R6.mc = { k, u: 300, x: p.x, z: p.z, cd: 0 }; mcB.children[0].material.color.setHex(k === 'g' ? 0x8a8a96 : 0x4a8a4a); banner('🗡️ MERCENÁRIO', MCT[k][0] + ' por 5 min'); saveP(); rsHub6R(); }
+  function rs6McTick(dt) {
+    const M = R6.mc; if (!M) { mcB.visible = false; return; } M.u -= dt; if (M.u <= 0) { R6.mc = null; mcB.visible = false; toast('O mercenário partiu.'); return; }
+    const p = rsPos(), C = MCT[M.k]; let tg = null, bd = 1e9; for (let i = 0; i < mons.length; i++) { const m = mons[i]; if (m.dummy || m.key === 'dummy') continue; const d = Math.hypot(m.g.position.x - M.x, m.g.position.z - M.z); if (d < 14 && Math.hypot(m.g.position.x - p.x, m.g.position.z - p.z) < 22 && d < bd) { bd = d; tg = m; } }
+    let gx = p.x - 1.6, gz = p.z + 1.4; if (tg) { const q = tg.g.position, k = Math.hypot(q.x - M.x, q.z - M.z) || 1, rg = C[2]; if (k > rg) { gx = q.x - (q.x - M.x) / k * (rg - .5); gz = q.z - (q.z - M.z) / k * (rg - .5); } else { gx = M.x; gz = M.z; M.cd -= dt; if (M.cd <= 0) { M.cd = 1.3; hitDot(tg, Math.max(3, Math.round(pdmg()[0] * C[3])), false); burst(tg.g.position, 0xffffff, 3); } } }
+    const dx = gx - M.x, dz = gz - M.z, k = Math.hypot(dx, dz), st = Math.min(k, 6 * dt); if (k > .1) { M.x += dx / k * st; M.z += dz / k * st; } if (Math.hypot(M.x - p.x, M.z - p.z) > 30) { M.x = p.x - 1.6; M.z = p.z + 1.4; }
+    mcB.visible = true; mcB.position.set(M.x, E.W.H(M.x, M.z), M.z); mcB.rotation.y = Math.atan2(dx, dz);
+  }
+
+  /* 14. Boneco de treino */
+  const DUM = { n: 'Boneco de Treino', hp: 1e7, dmg: 0, spd: 0, xp: 0, col: 0xc8a050, sz: 1.1, drop: 'Sucata' };
+  function rs6DumTick() {
+    const p = rsPos(); let D2 = R6.dmy; if (D2 && !mons.includes(D2.m)) { R6.dmy = D2 = null; }
+    if (!D2) { if (!inVil && !nearVillage(p.x, p.z)) return; const cx = Math.floor(p.x / CH), cz = Math.floor(p.z / CH); for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) { const st = E.W.structAt(cx + i, cz + j); if (st && st.type === 4 && Math.hypot(st.x - p.x, st.z - p.z) < 60 && !R6.dmy) { spawnMon(DUM, st.x - 5, st.z - 4, 'dummy'); const m = mons[mons.length - 1]; m.dummy = true; m.agro = false; R6.dmy = { m, x: st.x - 5, z: st.z - 4 }; } } return; }
+    const m = D2.m; m.hp = m.max; m.g.position.x = D2.x; m.g.position.z = D2.z; m.fill.scale.x = 1.1; m.brn = m.frz = m.stn = m.bld = m.pois = 0; const d = Math.hypot(D2.x - p.x, D2.z - p.z);
+    if (d > 130) { rmMon(m); R6.dmy = null; setH('rsDm', ''); return; }
+    if (d < 14) { if (mp >= 0) mp = maxMp(); cds[0] = cds[1] = 0; cd = 0; const t = now6(); R6.dm = R6.dm.filter(e => t - e.t < 5000); const sum = R6.dm.reduce((a, e) => a + e.d, 0), cr = R6.dm.filter(e => e.c).length, mx = R6.dm.reduce((a, e) => Math.max(a, e.d), 0); setH('rsDm', '🎯 Treino · DPS ' + fmt(R6.dm.length ? sum / 5 : 0) + ' · crít ' + (R6.dm.length ? Math.round(cr / R6.dm.length * 100) : 0) + '% · maior ' + fmt(mx)); } else setH('rsDm', '');
+  }
+  function rs6Hit(m, dmg, crit) { if (m && m.dummy) { R6.dm.push({ t: now6(), d: dmg, c: !!crit }); if (R6.dm.length > 60) R6.dm.shift(); } if (m && m.key === 'wb') R6.wbD += dmg; }
+
+  /* 16. Reparo / afiação */
+  const durOk = () => (P.dur | 0) > 20, shOn = () => P.sh && P.sh.u > now6() && P.sh.k > 0;
+
+  /* 19. Alvo */
+  function rs6Cycle() {
+    if (G.mode !== 'play') return; const p = rsPos(), L = mons.filter(m => !m.dummy && Math.hypot(m.g.position.x - p.x, m.g.position.z - p.z) < 26).sort((a, b) => (b.d.boss ? 1 : 0) - (a.d.boss ? 1 : 0) || Math.hypot(a.g.position.x - p.x, a.g.position.z - p.z) - Math.hypot(b.g.position.x - p.x, b.g.position.z - p.z));
+    if (!L.length) { R6.lock = null; return toast('Sem alvos próximos'); } R6.lkI = (R6.lkI + 1) % (L.length + 1); if (R6.lkI >= L.length) { R6.lock = null; R6.lkI = -1; return toast('🎯 Alvo destravado'); } R6.lock = L[R6.lkI]; tgt = R6.lock; tgtT = 4; toast('🎯 Alvo: ' + R6.lock.d.n);
+  }
+  function rs6Lk() { const m = R6 && R6.lock; if (!m) return false; if (!mons.includes(m)) { R6.lock = null; return false; } const p = rsPos(), dx = m.g.position.x - p.x, dz = m.g.position.z - p.z; if (dx * dx + dz * dz > 28 * 28) { R6.lock = null; return false; } E.player.rotation.y = Math.atan2(dx, dz); return true; }
+  $('tgt').addEventListener('click', e => { e.stopPropagation(); rs6Cycle(); });
+
+  /* 15. Som ambiente */
+  function rs6AmbInit() {
+    if (R6.am || !AC) return; try {
+      const buf = AC.createBuffer(1, AC.sampleRate * 2, AC.sampleRate), d = buf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; const src = AC.createBufferSource(); src.buffer = buf; src.loop = true;
+      const mk = (type, f, q) => { const fl = AC.createBiquadFilter(); fl.type = type; fl.frequency.value = f; if (q) fl.Q.value = q; const g = AC.createGain(); g.gain.value = 0; src.connect(fl); fl.connect(g); g.connect(AC.destination); return g; };
+      const wind = mk('lowpass', 500, .7), water = mk('bandpass', 1100, 1.2), fire = mk('highpass', 2600), cr = AC.createOscillator(), cg = AC.createGain(), lf = AC.createOscillator(), lg = AC.createGain(); cr.frequency.value = 4300; cg.gain.value = 0; lf.frequency.value = 7; lg.gain.value = .5; lf.connect(lg); lg.connect(cg.gain); cr.connect(cg); cg.connect(AC.destination); src.start(); cr.start(); lf.start(); R6.am = { wind, water, fire, cg };
+    } catch (e) { R6.am = { dead: 1 }; }
+  }
+  function rs6Amb() {
+    const A = R6.am; if (!A || A.dead || !AC) return; const play = G.mode === 'play' && !cfg.bat && cfg.s > 0, v = play ? cfg.s / 100 : 0, p = rsPos(), bi = E.W.biome(p.x, p.z); let wd = 0, wt = 0, fr = 0, cr = 0;
+    if (play && !D.on) { wd = (bi === 2 ? .22 : .05) + Math.min(.06, Math.max(0, p.y) * .004); let near = 0; for (let a = 0; a < 4; a++) if (lakeW(p.x + Math.cos(a * 1.571) * 9, p.z + Math.sin(a * 1.571) * 9) > .3) near = 1; wt = near ? .16 : 0; fr = bi === 6 ? .08 : 0; cr = night6() && bi !== 2 && bi !== 6 ? .012 : 0; }
+    const t = AC.currentTime; A.wind.gain.setTargetAtTime(wd * v, t, .8); A.water.gain.setTargetAtTime(wt * v, t, .8); A.fire.gain.setTargetAtTime(fr * v * (.5 + Math.random() * .5), t, .15); A.cg.gain.setTargetAtTime(cr * v, t, 1);
+  }
+
+  /* 20. Limpeza / telemetria */
+  function rs6Clean(why) {
+    try { vfx.slice().forEach(v => { E.scene.remove(v.m); if (v.mat) v.mat.dispose(); }); vfx.length = 0; parts.forEach(q => E.scene.remove(q.m)); parts.length = 0; document.querySelectorAll('.dmg').forEach(e => e.remove()); if (Object.keys(wkCache).length > 300) for (const k in wkCache) delete wkCache[k]; const k2 = Object.keys(R3.ems); if (k2.length > 40) k2.forEach(k => delete R3.ems[k]); if (P.hist.length > 25) P.hist.length = 25; R6.cleans++; R6.lastClean = now6(); } catch (e) {}
+  }
+
+  /* 1. Boss mundial */
+  const WBD = { n: 'Titã Colossal', hp: 2600, dmg: 34, spd: 2.9, xp: 1500, col: 0xc03a2a, sz: 4.2, drop: 'Núcleo Arcano', boss: true }, beamW = beam6(0xff5a2a);
+  function rs6WbEnd() { const W = R6.wb; mons.slice().forEach(m => { if (m.key === 'wb') rmMon(m); }); beamW.visible = false; setH('rsWb', ''); R6.wbA = false; if (W && !W.fin) { W.fin = 1; if (P.wbK !== W.slot && P.wbP !== W.slot && R6.wbD >= WBD.hp * .08) { P.wbP = W.slot; const g = Math.round(150 * (1 + P.lv * .05)); P.gold += g; P.mat['Essência'] = (P.mat['Essência'] | 0) + 1; P.mat[FR] = (P.mat[FR] | 0) + 2; banner('🌋 PARTICIPAÇÃO', '+' + g + '🪙 · ✨ · 💠×2'); saveP(); } } R6.wbD = 0; }
+  function rs6WbTick() {
+    const n = now6(), slot = Math.floor(n / 18e5), act = (n % 18e5) < 12e5; let W = R6.wb;
+    if (!W || W.slot !== slot) { if (W) rs6WbEnd(); const b = Math.floor(hash(slot, 7, 1290) * 8), pos = slotPos(slot, 1, b); R6.wb = W = pos ? { slot, b, x: pos.x, z: pos.z, hp: 1, ref: null, ann: false, fin: 0 } : { slot, none: 1 }; }
+    if (W.none) return; if (!act || P.wbK === slot) { if (!W.fin) rs6WbEnd(); return; }
+    R6.wbA = true; const p = rsPos(), d = Math.hypot(W.x - p.x, W.z - p.z);
+    if (!W.ann && G.mode === 'play') { W.ann = true; banner('🌋 BOSS MUNDIAL', 'Titã Colossal em ' + BN[W.b] + ' · ' + Math.round(d) + 'm'); }
+    if (W.ref && mons.includes(W.ref)) W.hp = W.ref.hp / W.ref.max; else W.ref = null;
+    if (!W.ref && d < 150 && !D.on) { spawnMon(WBD, W.x, W.z, 'wb'); const m = mons[mons.length - 1]; let nb = 0; others.forEach(r => { if (r.g.visible && Math.hypot(r.g.position.x - W.x, r.g.position.z - W.z) < 100) nb++; }); m.max *= 1 + .6 * nb; m.hp = m.max * W.hp; m.agro = false; W.ref = m; }
+    beamW.visible = !D.on; beamW.position.set(W.x, E.W.H(W.x, W.z) + 20, W.z); setH('rsWb', D.on ? '' : '🌋 Titã ' + arrow6(W.x - p.x, W.z - p.z) + ' ' + Math.round(d) + 'm · ' + Math.round(W.hp * 100) + '% · ' + Math.ceil((12e5 - n % 18e5) / 60000) + ' min');
+  }
+
+  /* 9. Cofre selado cooperativo */
+  const csG = new T.Group(); { const b = new T.Mesh(new T.BoxGeometry(1.6, 1, 1.1), new T.MeshStandardMaterial({ color: 0x4a4a5a, metalness: .6 })), l = new T.Mesh(new T.BoxGeometry(1.7, .2, 1.2), new T.MeshBasicMaterial({ color: 0xff3a3a })); b.position.y = .5; l.position.y = 1.05; csG.add(b, l); } csG.visible = false; E.scene.add(csG); const beamC = beam6(0x5ac8ff);
+  function rs6CsTick(dt) {
+    const n = now6(), slot = Math.floor((n + 6e5) / 12e5), act = ((n + 6e5) % 12e5) < 72e4; let C = R6.cs;
+    if (!C || C.slot !== slot) { mons.slice().forEach(m => { if (m.key === 'cs') rmMon(m); }); const pos = slotPos(slot, 2, -1); R6.cs = C = pos ? { slot, x: pos.x, z: pos.z, prog: 0, ann: false, w: 8, done: P.csK === slot } : { slot, none: 1 }; }
+    if (C.none || C.done || !act) { csG.visible = false; beamC.visible = false; setH('rsCs', ''); if (!act && C.prog > 0) { C.prog = 0; mons.slice().forEach(m => { if (m.key === 'cs') rmMon(m); }); } return; }
+    const p = rsPos(), d = Math.hypot(C.x - p.x, C.z - p.z); if (!C.ann && G.mode === 'play') { C.ann = true; banner('🔒 COFRE SELADO', 'Chame aliados — abre mais rápido com mais jogadores'); }
+    csG.visible = d < 260; csG.position.set(C.x, E.W.H(C.x, C.z), C.z); beamC.visible = d < 260; beamC.position.set(C.x, E.W.H(C.x, C.z) + 20, C.z);
+    if (d < 7 && !D.on && G.mode === 'play') { let np = 0; others.forEach(r => { if (r.g.visible && Math.hypot(r.g.position.x - C.x, r.g.position.z - C.z) < 12) np++; }); C.prog += dt * 1.2 * (1 + np); C.w -= dt; if (C.w <= 0) { C.w = 18; let alive = 0; mons.forEach(m => { if (m.key === 'cs') alive++; }); if (alive < 8) { const bi = E.W.biome(C.x, C.z), pool = MD.filter(m => m.b && m.b.includes(bi) && !m.boss), L = pool.length ? pool : MD.filter(m => !m.boss); for (let i = 0; i < 3; i++) { const a = Math.random() * 6.283; spawnMon(L[Math.floor(Math.random() * L.length)], C.x + Math.cos(a) * 12, C.z + Math.sin(a) * 12, 'cs'); mons[mons.length - 1].agro = true; } } } }
+    if (C.prog >= 100) { C.done = true; P.csK = slot; P.csN++; mons.slice().forEach(m => { if (m.key === 'cs') rmMon(m); }); const g = Math.round(500 * (1 + P.lv * .08)); giveGold(g, p); P.mat['Essência'] = (P.mat['Essência'] | 0) + 3; P.mat[FR] = (P.mat[FR] | 0) + 5; P.key = (P.key | 0) + 2; banner('🔓 COFRE ABERTO', '+' + g + '🪙 · ✨×3 · 💠×5 · 🗝️×2'); saveP(); return; }
+    setH('rsCs', '🔒 Cofre ' + arrow6(C.x - p.x, C.z - p.z) + ' ' + Math.round(d) + 'm · ' + Math.min(100, Math.floor(C.prog)) + '%');
+  }
+
+  /* 8. Waypoints */
+  const wpMs = [0, 1, 2].map(() => { const g = new T.Group(), a = new T.Mesh(new T.CylinderGeometry(.5, .7, 3.2, 6), new T.MeshStandardMaterial({ color: 0x8a8a96 })), o = new T.Mesh(new T.OctahedronGeometry(.5), new T.MeshBasicMaterial({ color: 0x666666 })); a.position.y = 1.6; o.position.y = 3.8; g.add(a, o); g.visible = false; E.scene.add(g); return { g, o, on: false, b: 0, x: 0, z: 0 }; });
+  function rs6WpCalc() { if (R6.wpI >= 8) return; const b = R6.wpI++; let r = null; for (let i = 0; i < 160 && !r; i++) { const x = (hash(b, i, 1400) * 2 - 1) * (HS - 120), z = (hash(b, i, 1450) * 2 - 1) * (HS - 120); if (Math.hypot(x, z) < 120 || E.W.biome(x, z) !== b || E.W.H(x, z) < .5 || lakeW(x, z) > .05 || nearVillage(x, z)) continue; r = { x, z }; } R6.wpp[b] = r; }
+  function rs6WpScan() { const p = rsPos(), L = []; for (const b in R6.wpp) { const q = R6.wpp[b]; if (q) L.push({ b: +b, x: q.x, z: q.z, d: Math.hypot(q.x - p.x, q.z - p.z) }); } L.sort((a, c) => a.d - c.d); wpMs.forEach((F, i) => { const o = L[i]; if (!o || o.d > 160) { F.on = false; F.g.visible = false; return; } F.on = true; F.b = o.b; F.x = o.x; F.z = o.z; F.g.position.set(o.x, E.W.H(o.x, o.z), o.z); F.g.visible = true; F.o.material.color.setHex(P.wp[o.b] ? 0xffd24a : 0x666666); }); const n = L[0]; setH('rsWp', n && n.d < 160 && n.d > 6 ? '🏛️ Pilar ' + arrow6(n.x - p.x, n.z - p.z) + ' ' + Math.round(n.d) + 'm' + (P.wp[n.b] ? '' : ' · inativo') : ''); }
+  const wpP = h('div', 'pan'); wpP.id = 'pWp'; document.body.append(wpP);
+  function rs6WpUse(b) {
+    if (!P.wp[b]) { P.wp[b] = 1; banner('🏛️ PILAR ATIVADO', BN[b]); saveP(); rs6WpScan(); return; }
+    wpP.textContent = ''; const top = h('div', 'rowh'); top.append(hbt('← Fechar', () => wpP.classList.remove('on')), h('h3', '', '🏛️ Pilares · 🪙 ' + P.gold)); wpP.append(top); const p = rsPos(), any = Object.keys(P.wp).filter(k => +k !== b && R6.wpp[k]);
+    if (!any.length) wpP.append(h('small', '', 'Ative outros pilares para viajar.')); any.forEach(k => { const q = R6.wpp[k], d = Math.hypot(q.x - p.x, q.z - p.z), cost = Math.max(5, Math.round(d / 50)); wpP.append(hrow(BN[k] + ' · ' + Math.round(d) + 'm', hbt(cost + '🪙', () => { if (!rsFree() || D.on) return toast('Só fora de combate'); if (now6() < R6.tpCd) return toast('Aguarde ' + Math.ceil((R6.tpCd - now6()) / 1000) + 's'); if (P.gold < cost) return toast('Ouro insuficiente'); P.gold -= cost; R6.tpCd = now6() + 3e4; E.player.position.set(q.x + 2, E.W.H(q.x, q.z), q.z); wpP.classList.remove('on'); banner('🏛️ VIAGEM', BN[k]); saveP(); })));  }); wpP.classList.add('on'); panel(null);
+  }
+  R6.tpCd = 0;
+  function rs6Near(p, best) {
+    let r = null; wpMs.forEach(F => { if (F.on) { const d = Math.hypot(F.x - p.x, F.z - p.z); if (d < Math.min(best, 4.5)) { best = d; r = { k: 'w', b: F.b, d, t: P.wp[F.b] ? '🏛️ Usar pilar (R)' : '🏛️ Ativar pilar (R)' }; } } });
+    if (inVil && R6.svc) { const d = Math.hypot(R6.svc.x - p.x, R6.svc.z - p.z); if (d < Math.min(best, 4.5)) { r = { k: 's', d, t: '🍺 Serviços da Vila (R)' }; } } return r;
+  }
+  const svM = new T.Group(); { const a = new T.Mesh(new T.BoxGeometry(1.4, .8, .8), new T.MeshStandardMaterial({ color: 0x3a3a44 })), t = new T.Mesh(new T.CylinderGeometry(.5, .5, 1, 8), new T.MeshStandardMaterial({ color: 0x8a5a2a })); a.position.y = .4; t.position.set(1.6, .5, 0); svM.add(a, t); } svM.visible = false; E.scene.add(svM);
+  function rs6SvcScan() { const p = rsPos(), cx = Math.floor(p.x / CH), cz = Math.floor(p.z / CH); let f = null; for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) { const st = E.W.structAt(cx + i, cz + j); if (st && st.type === 4 && Math.hypot(st.x - p.x, st.z - p.z) < 70) f = { x: st.x - 4, z: st.z + 3 }; } R6.svc = f; svM.visible = !!f; if (f) svM.position.set(f.x, E.W.H(f.x, f.z), f.z); }
+
+  /* 11. Contra-relógio */
+  const trB = beam6(0x5aff9a), trR = new T.Mesh(new T.RingGeometry(2.6, 3.2, 24), new T.MeshBasicMaterial({ color: 0x5aff9a, side: T.DoubleSide })); trR.rotation.x = -Math.PI / 2; trR.visible = false; E.scene.add(trR);
+  function rs6TrStart() {
+    if (G.mode !== 'play' || D.on || !rsFree() || R6.tr) return toast('Agora não'); const p = rsPos();
+    for (let n = 0; n < 12; n++) { let x = p.x, z = p.z, a = Math.random() * 6.283, tot = 0, cps = [], ok = true; for (let i = 0; i < 3 && ok; i++) { a += (Math.random() - .5) * 1.4; const d = 65 + Math.random() * 25, nx = x + Math.cos(a) * d, nz = z + Math.sin(a) * d; if (Math.abs(nx) > HS - 30 || Math.abs(nz) > HS - 30) { ok = false; break; } for (let k = 1; k <= 4; k++) { const sx = x + (nx - x) * k / 4, sz = z + (nz - z) * k / 4; if (E.W.H(sx, sz) < .2 || lakeW(sx, sz) > .05) ok = false; } cps.push({ x: nx, z: nz }); tot += d; x = nx; z = nz; }
+      if (ok) { const lim = tot / 4.4 + 8; R6.tr = { cps, i: 0, lim, t: lim }; banner('⏱️ CONTRA-RELÓGIO', Math.round(lim) + 's · 3 marcos'); return; } } toast('Terreno ruim aqui, tente em outro lugar');
+  }
+  function rs6TrTick(dt) {
+    const T4 = R6.tr; if (!T4) { trB.visible = trR.visible = false; setH('rsTr', ''); return; } T4.t -= dt; const c = T4.cps[T4.i], p = rsPos(), d = Math.hypot(c.x - p.x, c.z - p.z);
+    trB.visible = trR.visible = true; trB.position.set(c.x, E.W.H(c.x, c.z) + 20, c.z); trR.position.set(c.x, E.W.H(c.x, c.z) + .3, c.z);
+    if (d < 4) { T4.i++; if (T4.i >= T4.cps.length) { const k = Math.max(0, T4.t) / T4.lim, g = Math.round(150 * (1 + P.lv * .05) * (1 + k)); giveGold(g, p); R6.spdU = now6() + 45e3; P.ttN++; banner('⏱️ CONCLUÍDO', '+' + g + '🪙 · velocidade +15% por 45s'); R6.tr = null; saveP(); return; } toast('Marco ' + T4.i + '/' + T4.cps.length); }
+    if (T4.t <= 0 || D.on) { R6.tr = null; toast('⏱️ Tempo esgotado!'); return; } setH('rsTr', '⏱️ ' + Math.ceil(T4.t) + 's · marco ' + (T4.i + 1) + '/3 ' + arrow6(c.x - p.x, c.z - p.z) + ' ' + Math.round(d) + 'm');
+  }
+
+  /* kill hook */
+  function rsKill6(m) {
+    const d = m.d; if (night6()) P.fkN++; else P.fkD++; if (P.dur > 0) P.dur = Math.max(0, P.dur - .08); if (shOn()) P.sh.k--; R6.dirty = 1;
+    if (m.key === 'wb') { const W = R6.wb; P.wbK = W ? W.slot : P.wbK; P.wbN++; const g = Math.round(600 * (1 + P.lv * .1)), q = m.g.position; giveGold(g, q); P.mat['Essência'] = (P.mat['Essência'] | 0) + 4; P.mat[FR] = (P.mat[FR] | 0) + 6; P.key = (P.key | 0) + 2; let tx = '+' + g + '🪙 · ✨×4 · 💠×6 · 🗝️×2'; if (Math.random() < .4 && rs4RelGive()) tx += ' · 🏺'; banner('🌋 TITÃ DERROTADO', tx); rs6WbEnd(); R6.wbD = 0; saveP(); }
+    if (m.key === 'cs' && R6.cs) R6.cs.prog += 3;
+  }
+  function rsCalc6(A) {
+    const L = masL(), a = Math.floor((L + 2) / 3), b = Math.floor((L + 1) / 3), c = Math.floor(L / 3), n = now6(); A.dp += .012 * a; MCDR = .015 * b; MASR = .25 * c;
+    if (P.fac === 'aur') { const r = facRank(); A.def += 4 + 2 * r; A.rg += .002 + .001 * r; } else if (P.fac === 'abi') { const r = facRank(); A.dp += .04 + .01 * r; A.crit += 2; }
+    if (shOn()) A.dp += .1; if (!durOk()) A.dp -= .08; if (n < R6.spdU) A.sp += .15;
+    let tb = 0; R6.tots.forEach(t => { if (t.u > n && Math.hypot(t.x - rsPos().x, t.z - rsPos().z) < 8) tb = 1; }); if (tb) A.dp += .15;
+    const ck = R6.cl && R6.cl.k; DODG = ck === 'fog' ? .1 : 0; if (ck === 'fog') A.crit += 8;
+  }
+
+  /* Painel Hub6 */
+  const hub6 = h('div', 'pan'); hub6.id = 'pHub6'; document.body.append(hub6); const H6T = ['Maestria', 'Forja', 'Taverna', 'Vila', 'Ordem', 'Desafios', 'Insígnias', 'Sistema'];
+  function rsHub6(open, tab) {
+    if (G.mode !== 'play' && G.mode !== 'lobby') return; const on = open === true ? true : !hub6.classList.contains('on'); if (tab !== undefined) R6.tab = tab;
+    if (on) { panel(null); [hub, hub2, hub3, hub4, hub5, mur, mch, wpP, card].forEach(x => x.classList.remove('on')); } hub6.classList.toggle('on', on); if (on) rsHub6R();
+  }
+  function rsHub6R() {
+    if (!hub6.classList.contains('on')) return; hub6.textContent = ''; const top = h('div', 'rowh'); top.append(hbt('← Fechar', () => hub6.classList.remove('on')), h('h3', '', '🌟 Mais · 🪙 ' + P.gold + (inVil ? ' · 🏘️' : ''))); hub6.append(top);
+    const tb = h('div', 'ptabs'); H6T.forEach((n, k) => { const x = h('button', 'btn sm' + (R6.tab === k ? ' on' : ''), n); x.onclick = () => { R6.tab = k; rsHub6R(); }; tb.append(x); }); hub6.append(tb); const B = h('div'); hub6.append(B), vil = () => inVil;
+    if (R6.tab === 0) {
+      const c = char.cls | 0, M = P.mas[c] || { l: 0, x: 0 }; B.append(h('p', '', '⭐ ' + CLASSES[c].nome + ' · Maestria Nv. ' + M.l + '/' + MAXM + (M.l < MAXM ? ' · ' + M.x + '/' + masNeed(M.l) : ' (máx.)')), h('small', '', 'Usar habilidades sobe a maestria. Ciclo de bônus por nível: +1,2% dano → −1,5% recarga → +0,25 alcance de coleta.'));
+      B.append(h('p', '', 'Bônus atuais: +' + (1.2 * Math.floor((M.l + 2) / 3)).toFixed(1) + '% dano · −' + (1.5 * Math.floor((M.l + 1) / 3)).toFixed(1) + '% recarga · +' + (.25 * Math.floor(M.l / 3)).toFixed(2) + ' alcance'));
+    } else if (R6.tab === 1) {
+      B.append(h('p', '', '💠 Fragmentos Arcanos: ' + (P.mat[FR] | 0) + ' · ✨ ' + (P.mat['Essência'] | 0) + ' · 💎 ' + (P.mat.Cristal | 0) + ' · 🗿 Totens: ' + P.tot));
+      B.append(hrow('🗿 Totem de Buff (3✨ + 1💎)', hbt('Fabricar', () => { if ((P.mat['Essência'] | 0) < 3 || (P.mat.Cristal | 0) < 1) return toast('Faltam materiais'); P.mat['Essência'] -= 3; P.mat.Cristal -= 1; P.tot++; saveP(); rsHub6R(); })), h('small', '', 'Usar: tecla 7 ou atalho. Cura e +15% dano em 8m por 12s (aliados próximos também).'));
+      B.append(h('h3', '', 'Evoluir raridade')); const L = []; SLOTS.forEach(sl => { if (P.gear[sl]) L.push(P.gear[sl]); }); P.bag.slice(0, 14).forEach(it => L.push(it));
+      L.filter(it => PROMO[it.r | 0]).forEach(it => { const c = PROMO[it.r | 0]; B.append(hrow(it.nome + ' [' + RAR[it.r | 0][0] + '] → ' + RAR[(it.r | 0) + 1][0] + ' · ' + c[0] + '💠 ' + c[1] + '✨ ' + c[2] + '💎', hbt('Evoluir', () => { rs6Promote(it); rsHub6R(); }))); });
+      B.append(h('h3', '', 'Desmontar (mochila)')); const bg = P.bag.filter(it => !it.fav); const cm = bg.filter(it => (it.r | 0) === 0); B.append(hrow('Desmontar todos os comuns (' + cm.length + ')', hbt('Desmontar', () => { let t = 0; cm.forEach(it => t += rs6Disasm(it)); toast('+' + t + ' Fragmentos'); rsLogT('💠', '+' + t + ' fragmentos'); saveP(); rsHub6R(); })));
+      bg.slice(0, 12).forEach(it => B.append(hrow(it.nome + ' [' + RAR[it.r | 0][0] + '] → ' + FRV[it.r | 0] + '💠', hbt('Desmontar', () => { rs6Disasm(it); saveP(); rsHub6R(); }))));
+    } else if (R6.tab === 2) {
+      const day = Math.floor(now6() / 864e5), free = P.spd !== day; B.append(h('p', '', '🎰 Roleta da Taverna ' + (inVil ? '' : '(apenas em vilas)')), h('small', '', 'Prêmios: ' + TAV.map(t => t[0] + ' ' + t[1]).join(' · ')));
+      B.append(hrow(free ? 'Giro diário GRÁTIS' : 'Giro extra (150🪙)', hbt('Girar', () => { if (!inVil) return toast('Vá a uma vila'); const L2 = h('small', '', '…'); B.append(L2); let n = 0; const iv = setInterval(() => { L2.textContent = TAV[n++ % TAV.length][0] + ' …'; if (n > 12) { clearInterval(iv); rs6Spin(); } }, 90); })));
+    } else if (R6.tab === 3) {
+      B.append(h('small', '', 'Serviços disponíveis dentro das vilas.'));
+      Object.keys(MCT).forEach(k => B.append(hrow('Mercenário: ' + MCT[k][0] + ' (5 min) — ' + (R6.mc && R6.mc.k === k ? Math.ceil(R6.mc.u) + 's' : MCT[k][1] + '🪙'), hbt('Contratar', () => rs6Hire(k)))));
+      B.append(hrow('🔧 Durabilidade da arma: ' + Math.round(P.dur) + '%' + (durOk() ? '' : ' (cega: −8% dano)'), hbt(Math.round(40 + (100 - P.dur) * 2) + '🪙 Reparar', () => { if (!inVil) return toast('Apenas em vilas'); const c = Math.round(40 + (100 - P.dur) * 2); if (P.dur >= 100) return toast('Já está nova'); if (P.gold < c) return toast('Ouro insuficiente'); P.gold -= c; P.dur = 100; rsCalc(); saveP(); rsHub6R(); })));
+      B.append(hrow('🗡️ Afiar: ' + (shOn() ? '+10% dano (' + P.sh.k + ' abates, ' + Math.ceil((P.sh.u - now6()) / 60000) + ' min)' : 'sem afiação'), hbt((80 + P.lv * 6) + '🪙 Afiar', () => { if (!inVil) return toast('Apenas em vilas'); const c = 80 + P.lv * 6; if (P.gold < c) return toast('Ouro insuficiente'); P.gold -= c; P.sh = { k: 50, u: now6() + 9e5 }; rsCalc(); saveP(); toast('🗡️ Arma afiada'); rsHub6R(); })));
+      B.append(h('small', '', '🎯 Boneco de Treino: fica na praça da vila — DPS, crítico e habilidades sem custo de mana.'));
+    } else if (R6.tab === 4) {
+      B.append(h('p', '', P.fac ? FAC[P.fac][0] + ' ' + FAC[P.fac][1] + ' · Marcas ' + (P.facR | 0) + ' · Rank ' + facRank() + '/5' : 'Escolha uma Ordem (muda por 1000🪙):'));
+      ['aur', 'abi'].forEach(f => B.append(hrow(FAC[f][0] + ' ' + FAC[f][1] + ' — ' + FAC[f][3], hbt(P.fac === f ? 'Atual ✅' : P.fac ? '1000🪙' : 'Juntar-se', () => { if (P.fac === f) return; if (P.fac) { if (P.gold < 1000) return toast('Ouro insuficiente'); P.gold -= 1000; } rs6Fac(f); banner(FAC[f][0] + ' ORDEM', FAC[f][1]); rsHub6R(); }))));
+      const Q = rs6FqDay(); if (Q) { B.append(h('h3', '', 'Missões da Ordem (diárias)')); Q.pick.forEach((k, i) => { const o = FQ[P.fac][k], pr = Math.min(o[2], (P[o[1]] | 0) - (Q.base[o[1]] | 0)), done = pr >= o[2], g = 150 + P.lv * 25; B.append(hrow((Q.cl[i] ? '✅ ' : '') + o[0] + ' — ' + pr + '/' + o[2] + ' · ' + g + '🪙 + 1 Marca', Q.cl[i] ? null : hbt(done ? 'Resgatar' : '…', () => { if (!done) return toast('Ainda não concluído'); Q.cl[i] = 1; P.gold += g; P.facR++; addXP(80 + P.lv * 10); banner('🏅 MISSÃO DA ORDEM', o[0]); rsCalc(); saveP(); rsHub6R(); }))); }); }
+    } else if (R6.tab === 5) {
+      B.append(h('small', '', 'Contra-relógio: passe por 3 marcos antes do tempo acabar.')); B.append(hrow(R6.tr ? 'Em andamento: ' + Math.ceil(R6.tr.t) + 's' : 'Iniciar percurso (' + (P.ttN | 0) + ' concluídos)', R6.tr ? hbt('Cancelar', () => { R6.tr = null; rsHub6R(); }) : hbt('Iniciar', () => { hub6.classList.remove('on'); rs6TrStart(); })));
+      const W = R6.wb; B.append(h('h3', '', '🌋 Boss Mundial'), h('p', '', W && !W.none ? BN[W.b] + ' · ' + (R6.wbA ? 'ATIVO' : 'inativo') + ' · derrotados: ' + P.wbN : 'Sem informação'), h('small', '', 'A cada 30 min um Titã surge no mesmo local para todos. Cada jogador enfrenta sua cópia (mais vida com aliados perto). Dano ≥8% garante recompensa de participação.'));
+      const C = R6.cs; B.append(h('h3', '', '🔒 Cofre Selado'), h('p', '', C && !C.none ? (C.done ? 'Aberto neste ciclo' : 'Progresso ' + Math.min(100, Math.floor(C.prog)) + '%') + ' · abertos: ' + P.csN : '—'));
+      B.append(h('h3', '', '🏛️ Pilares: ' + Object.keys(P.wp).length + '/8 ativos'), h('small', '', 'Ative pilares antigos (um por bioma) e viaje entre eles pagando ouro pela distância.'));
+    } else if (R6.tab === 6) {
+      B.append(h('small', '', 'Escolha até 3 insígnias para destacar no seu cartão (clique em jogadores no Ranking).')); MED.forEach(m => { const has = m[3](P), sel = P.ins.includes(m[0]); B.append(hrow((has ? m[1] : '🔒') + ' ' + m[2], has ? hbt(sel ? 'Destacada ✅' : 'Destacar', () => { if (sel) P.ins = P.ins.filter(x => x !== m[0]); else { if (P.ins.length >= 3) return toast('Máximo de 3'); P.ins.push(m[0]); } saveP(); rsHub6R(); }) : null)); });
+      B.append(hbt('Ver meu cartão', () => rs6Card(PLAYER_ID, NICK, P.lv)));
+    } else {
+      let mem = ''; try { if (performance.memory) mem = Math.round(performance.memory.usedJSHeapSize / 1048576) + ' MB'; } catch (e) {} B.append(h('p', '', '🧹 Limpezas automáticas: ' + R6.cleans + (R6.lastClean ? ' · última há ' + Math.round((now6() - R6.lastClean) / 1000) + 's' : '')), h('p', '', 'Memória JS: ' + (mem || 'n/d') + ' · efeitos ' + vfx.length + ' · partículas ' + parts.length + ' · monstros ' + mons.length + ' · drops ' + drops.length));
+      B.append(hbt('Limpar agora', () => { rs6Clean('manual'); rsHub6R(); }), h('small', '', 'Ao trocar de bioma ou sair de dungeons o jogo limpa efeitos, textos flutuantes e caches antigos sozinho.'));
+    }
+  }
+  { const lm6 = $('lobM'), b6 = h('button', 'btn', '🌟 Mais'); b6.onclick = () => rsHub6(); if (lm6) lm6.append(b6); }
+  QA.hub6 = ['🌟', 'Mais', () => rsHub6(), () => '']; QA.tot = ['🗿', 'Totem', rs6Totem, () => P.tot | 0]; QA.tab = ['🎯', 'Trocar alvo', rs6Cycle, () => '']; QA.cdr = ['⏱️', 'Contra-relógio', () => rs6TrStart(), () => '']; QA.wb = ['🌋', 'Boss', () => { const W = R6.wb; toast(W && !W.none && R6.wbA ? 'Titã em ' + BN[W.b] : 'Sem boss ativo'); }, () => ''];
+  addEventListener('keydown', e => { if (/INPUT|TEXTAREA|SELECT/.test(e.target.tagName) || G.mode !== 'play') return; if (e.key === 'Tab') { e.preventDefault(); rs6Cycle(); } else if (e.key === '7') rs6Totem(); else if (e.key === '8') rsHub6(); });
+
+  /* ciclo leve */
+  let r6T = 0;
+  E.updaters.push(dt => {
+    if (G.mode !== 'play') { if (R6.lastD !== null && R6.lastB !== -1) { R6.lastB = -1; rs6Clean('menu'); } rs6Amb(); capeM.visible = auraM.visible = false; if (R6.tr) R6.tr = null; hub6.classList.remove('on'); wpP.classList.remove('on'); card.classList.remove('on'); clEl.className = ''; return; }
+    if (P.fac) { capeM.visible = true; auraM.visible = true; auraM.rotation.z += dt * 1.2; } else capeM.visible = auraM.visible = false;
+    if (MCDR) { const x = dt * MCDR; cd = Math.max(0, cd - x); cds[0] = Math.max(0, cds[0] - x); cds[1] = Math.max(0, cds[1] - x); }
+    if (R6.lock) { tgt = R6.lock; tgtT = Math.max(tgtT, 2); }
+    r6T -= dt; if (r6T > 0) return; r6T = .25;
+    const n = now6(), p = rsPos(); R6.sT -= .25;
+    rs6WbTick(); rs6CsTick(.25); rs6TrTick(.25); rs6McTick(.25); rs6DumTick();
+    R6.tots = R6.tots.filter(t => t.u > n); let tn = 0; R6.tots.forEach(t => { if (Math.hypot(t.x - p.x, t.z - p.z) < 8) { tn = 1; } }); if (tn && hp > 0 && hp < maxHp()) { hp = Math.min(maxHp(), hp + maxHp() * .03 * .25 * 4); updHp(); }
+    totM.forEach((g, i) => { const t = R6.tots[i]; if (!t) { g.visible = false; return; } g.visible = true; g.position.set(t.x, E.W.H(t.x, t.z), t.z); });
+    if (R6.sT <= 0) {
+      R6.sT = 2; if (R6.wpI < 8) rs6WpCalc(); rs6WpScan(); rs6SvcScan(); rs6Clim(); rs6AmbInit(); rs6Amb();
+      const b = E.W.biome(p.x, p.z); if (R6.lastB !== b || R6.lastD !== D.on) { if (R6.lastB !== -1 || R6.lastD !== null) rs6Clean('região'); R6.lastB = b; R6.lastD = D.on; }
+      if (P.cosT) { if (n < P.cosT.u) { TRC = TRL[P.cosT.c][1] === 'rb' ? TRC : TRL[P.cosT.c][1]; } else { P.cosT = null; rsTrcApply(); } }
+      const M = P.mas[char.cls | 0] || { l: 0, x: 0 }; setH('rsMas', '⭐ Maestria ' + M.l + (M.l < MAXM ? ' · ' + Math.round(M.x / masNeed(M.l) * 100) + '%' : ' máx.'));
+      if (hub6.classList.contains('on') && [3, 5, 7].includes(R6.tab)) rsHub6R();
+    }
+    R6.clT -= .25; if (R6.clT <= 0) { R6.clT = 300; rs6Clan(); }
+    R6.mm -= .25; if (R6.mm <= 0) { R6.mm = 300; rs6Clean('periódica'); }
+    if (R6.dirty) { R6.dirty = 0; saveP(); }
+  });
+  { const v = P.fac; if (v) rs6Fac(v); }
   try { rsCalc(); } catch (e) {}
 
   document.body.dataset.mode = 'start';
