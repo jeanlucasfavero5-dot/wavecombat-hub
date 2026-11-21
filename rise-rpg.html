@@ -385,6 +385,8 @@ body.touch.fight #qt{opacity:.2}
   <label>Mostrar FPS <input type="checkbox" id="cF"></label>
   <label>Mira assistida <input type="checkbox" id="cA"></label>
   <label>Vibração <input type="checkbox" id="cV"></label>
+  <label>Efeitos extras (partículas, faróis, flashes) <input type="checkbox" id="cX"></label>
+  <label>Poção automática (vida &lt; 25%) <input type="checkbox" id="cP"></label>
   <div id="adm" style="display:none"></div>
   <div class="row2"><button class="btn" id="cFs">Tela cheia</button><button class="btn" id="cMenu">Menu</button><button class="btn" id="cX">Fechar</button></div>
 </div>
@@ -430,7 +432,7 @@ const URL_ID = (params.get('id') || '').trim();
 const PLAYER_ID = URL_ID || '0'; // fallback para testes locais
 const $ = id => document.getElementById(id);
 const fmt = n => Number(n).toLocaleString('pt-BR');
-const VERSION = '0.088'; // suba a cada atualização enviada
+const VERSION = '0.0151'; // suba a cada atualização enviada
 const DIA = {};
 const G = { mode: 'start' };
 let NICK = 'Visitante';
@@ -1031,7 +1033,7 @@ function initUI(E) {
   });
   /* ── v0.002: perfil/XP, habilidades, clã, passe, chat geral, minimapa, música, lobby ── */
   const P = Object.assign({ lv: 1, xp: 0, sp: 0, sk: {}, seen: [], inv: [], elite: false, bought: 0, claimed: [] }, LS.get('rise_prof_' + PLAYER_ID, {}));
-  const saveP = () => LS.set('rise_prof_' + PLAYER_ID, P);
+  let svT = 0; const saveNow = () => { if (svT) { clearTimeout(svT); svT = 0; } LS.set('rise_prof_' + PLAYER_ID, P); }, saveP = () => { if (!svT) svT = setTimeout(saveNow, 400); };
   const need = l => Math.round(90 * Math.pow(1.12, l - 1));
   function addXP(n) {
     if (evUntil > Date.now()) n = Math.round(n * 1.25);
@@ -1289,7 +1291,7 @@ function initUI(E) {
     if (buf.shield > 0) { const a = Math.min(buf.shield, n); buf.shield -= a; n -= a; if (n <= 0) { dmgText(E.player.position, 'bloqueado', false, '#7fb0ff'); return; } }
     hp -= n;
     const e = $('hurt'); e.classList.remove('on'); void e.offsetWidth; e.classList.add('on'); dmgText(E.player.position, '-' + n, n >= maxHp() * .15, '#ff6b5a'); if (n >= maxHp() * .15) { shk = Math.max(shk, .25); fxFlash('#ff2020', .45); vib(30); }
-    if (hp <= 0) { hp = maxHp(); if (D.on) exitDungeon(); E.player.position.set(0, 0, 0); clearAll(); toast('Você caiu! Voltou ao ponto inicial.'); }
+    if (hp <= 0) { hp = maxHp(); if (D.on) exitDungeon(); E.player.position.set(0, 0, 0); clearAll(); toast('Você caiu! Voltou ao ponto inicial.'); buf.pois = 0; buf.shield = 0; buf.shT = 0; buf.regen = 0; tgt = null; stk = 0; }
     hurtT = 5; const cgE = $('cg'); if (cgE && cgE.classList.contains('x')) cgE.classList.remove('x'); shk = Math.max(shk, .15); sfx('hurt'); updHp();
   }
   function hit(m, dmg, crit) {
@@ -1410,15 +1412,15 @@ function initUI(E) {
         const bd = st && BOSSES[st.type]; if (bd && !mons.some(m => m.key === k) && Date.now() - (bossDead[k] || 0) > 3e5) spawnMon(bd, st.x + 6, st.z, k);
       }
     }
-    mons.slice().forEach(m => {
+    snapA().forEach(m => {
       const g = m.g, q = g.position, dx = p.x - q.x, dz = p.z - q.z, d = Math.hypot(dx, dz);
       if (d > (m.d.boss ? 260 : 100)) return rmMon(m);
-      m.cd -= dt; m.flash = Math.max(0, m.flash - dt); if (m.stn > 0) { m.stn -= dt; m.mat.emissive.setHex(0xffd24a); return; }
-      if (m.frz > 0) { m.frz -= dt; m.mat.emissive.setHex(0x3a7aff); return; }
+      m.cd -= dt; m.flash = Math.max(0, m.flash - dt); if (m.stn > 0) { m.stn -= dt; m.mat.emissive.setHex(0xffd24a); m.bar.quaternion.copy(g.quaternion).invert().multiply(E.camera.quaternion); return; }
+      if (m.frz > 0) { m.frz -= dt; m.mat.emissive.setHex(0x3a7aff); m.bar.quaternion.copy(g.quaternion).invert().multiply(E.camera.quaternion); return; }
       if (d < (m.agro ? 40 : 14)) { if (d > 1.6 * m.sz) { const sp = m.d.spd * dt * (m.slw > 0 ? .5 : 1); q.x += dx / d * sp; q.z += dz / d * sp; } g.rotation.y = Math.atan2(dx, dz); }
       else { m.w -= dt; if (m.w < 0) { m.w = 2 + Math.random() * 3; m.wa = Math.random() * 6.28; } q.x += Math.sin(m.wa) * m.d.spd * .3 * dt; q.z += Math.cos(m.wa) * m.d.spd * .3 * dt; g.rotation.y = m.wa; }
       if (d < 2.1 * m.sz && m.cd <= 0) { m.cd = 1.3; hurt(m.dmg); }
-      q.y = E.W.H(q.x, q.z); m.mat.emissive.setHex(m.flash > 0 ? 0xffffff : 0); m.bar.quaternion.copy(g.quaternion).invert().multiply(E.camera.quaternion);
+      q.y = E.W.H(q.x, q.z); m.mat.emissive.setHex(m.flash > 0 ? 0xffffff : m.brn > 0 ? 0x552200 : m.bld > 0 ? 0x440000 : m.pois > 0 ? 0x220044 : 0); m.bar.quaternion.copy(g.quaternion).invert().multiply(E.camera.quaternion);
     });
     drops.slice().forEach(o => {
       o.t -= dt; o.m.rotation.y += dt * 2; o.m.position.y = o.y + Math.sin(o.t * 4) * .15;
@@ -1575,7 +1577,7 @@ function initUI(E) {
     if (G.mode !== 'play') return;
     if (buf.regen > 0) { buf.regen -= dt; heal(.04 * dt); }
     if (emoteT > 0) { emoteT -= dt; const p = E.player.position; E.player.rotation.y += 9 * dt; p.y = E.W.H(p.x, p.z) + (emoteT > 0 ? Math.abs(Math.sin(emoteT * 7)) * .7 : 0); }
-    mons.slice().forEach(m => { if (m.pois > 0) { m.pois -= dt; m.pt = (m.pt || 0) - dt; if (m.pt <= 0) { m.pt = 1; hit(m, Math.max(2, Math.round(pdmg()[0] * .25)), false); } } });
+    for (let i = mons.length - 1; i >= 0; i--) { const m = mons[i]; if (m && m.pois > 0) { m.pois -= dt; m.pt = (m.pt || 0) - dt; if (m.pt <= 0) { m.pt = 1; hit(m, Math.max(2, Math.round(pdmg()[0] * .25)), false); } } }
   });
   /* ── v0.007: dungeons (Portal de Dungeon → 3 ondas + chefe) ── */
   const D = { on: false, y: 400, st: 0, near: null, g: null, exit: null, ret: { x: 0, z: 0 }, bi: 4, k: 1 };
@@ -1633,7 +1635,7 @@ function initUI(E) {
       else if (D.st === 4) {
         D.st = 5; D.exit.visible = true; addXP(Math.round(400 * D.k)); P.gold += Math.round(150 * D.k); addGear(genGear(Math.round(P.lv + D.k * 3), D.dm || 0));
         QS.forEach(k => { const q = P.q[k.id]; if (q && q.s === 'a' && k.t === 'dungeon') q.n = (q.n || 0) + 1; });
-        saveP(); updQt(); npcMarks(); banner('DUNGEON CONCLUÍDA', 'Saia pelo portal (E)');
+        saveP(); updQt(); npcMarks(); P.dgK = (P.dgK | 0) + 1; banner('DUNGEON CONCLUÍDA', 'Saia pelo portal (E)');
       }
     }
   });
@@ -1669,8 +1671,8 @@ function initUI(E) {
     cloudLoaded = true; lastSnap = ''; cloudSave();
   }
   setInterval(cloudSave, 15000);
-  document.addEventListener('visibilitychange', () => { if (document.hidden) { saveP(); cloudSave(); } });
-  addEventListener('pagehide', () => { saveP(); cloudSave(); });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) { saveNow(); cloudSave(); } });
+  addEventListener('pagehide', () => { saveNow(); cloudSave(); });
   cloudLoad();
   /* ── v0.009: palco do lobby, ambiente (nuvens, vaga-lumes), HUD de habilidades e extras ── */
   var clk = 0, tgt = null, tgtT = 0;
@@ -1849,7 +1851,7 @@ function initUI(E) {
     sc.onclick = sure(sc, () => { let g = 0; cmn.forEach(i => { g += price(i); }); P.bag = P.bag.filter(i => !cmn.includes(i)); P.gold += g; saveP(); toast('+' + g + ' 🪙'); renderPro(); }); B.append(sc);
     const inf = P.bag.filter(i => i.r < 2 && !i.fav && pwr(i) <= pwr(P.gear[i.slot])), sb = h('button', 'btn', 'Vender inferiores (' + inf.length + ' · ' + inf.reduce((a, i) => a + price(i), 0) + '🪙)'); sb.disabled = !inf.length;
     sb.onclick = sure(sb, () => { let g = 0; inf.forEach(i => { g += price(i); }); P.bag = P.bag.filter(i => !inf.includes(i)); P.gold += g; saveP(); toast('+' + g + ' 🪙'); renderPro(); }); B.append(sb);
-    const sr = h('div', 'ptabs'); [['Recentes', 0], ['Raridade', 1], ['Slot', 2], ['Poder', 3], ['Upgrade', 4]].forEach(([n, k]) => { const x = h('button', 'btn sm' + ((P.sortB | 0) === k ? ' on' : ''), n); x.onclick = () => { P.sortB = k; saveP(); renderPro(); }; sr.append(x); });
+    const sr = h('div', 'ptabs'); [['Recentes', 0], ['Raridade', 1], ['Slot', 2], ['Poder', 3], ['Upgrade', 4], ['Valor', 5]].forEach(([n, k]) => { const x = h('button', 'btn sm' + ((P.sortB | 0) === k ? ' on' : ''), n); x.onclick = () => { P.sortB = k; saveP(); renderPro(); }; sr.append(x); });
     const be = h('button', 'btn', '⚡ Equipar melhores'); be.disabled = !bestUp().length; be.onclick = equipBest; B.append(be, sr);
     const fr = h('div', 'ptabs'); ['', 'Arma', 'Armadura', 'Amuleto'].forEach(sl => { const x = h('button', 'btn sm' + ((P.fltS || '') === sl ? ' on' : ''), sl || 'Todos'); x.onclick = () => { P.fltS = sl; saveP(); renderPro(); }; fr.append(x); });
     const rb = h('button', 'btn sm' + ((P.fltR | 0) ? ' on' : ''), 'Raridade ≥ ' + RAR[P.fltR | 0][0]); rb.onclick = () => { P.fltR = ((P.fltR | 0) + 1) % 4; saveP(); renderPro(); }; fr.append(rb);
@@ -1873,7 +1875,7 @@ function initUI(E) {
     if (shk > 0) { shk -= dt; E.camera.position.x += (Math.random() - .5) * shk * 4; E.camera.position.y += (Math.random() - .5) * shk * 4; }
     if (G.mode !== 'play') return;
     if (mp >= 0) mp = Math.min(maxMp(), mp + maxMp() * .02 * dt);
-    mons.slice().forEach(m => {   // efeitos de status
+    snapB().forEach(m => {   // efeitos de status
       if (m.slw > 0) m.slw -= dt;
       [['brn', .5, 0xff7a2a, 3], ['bld', 1, 0xc01818, 4]].forEach(([k, iv, col, mul]) => {
         if (!(m[k] > 0) || !mons.includes(m)) return;
@@ -2278,6 +2280,7 @@ function initUI(E) {
     else if (k === 2) o.sort((x, y) => SLOTS.indexOf(b[x].slot) - SLOTS.indexOf(b[y].slot) || b[y].r - b[x].r);
     else if (k === 3) o.sort((x, y) => pwr(b[y]) - pwr(b[x]));
     else if (k === 4) { const gn = i => pwr(b[i]) - pwr(P.gear[b[i].slot]); o.sort((x, y) => gn(y) - gn(x)); }
+    else if (k === 5) o.sort((x, y) => price(b[y]) - price(b[x]));
     return o.filter(i => (!P.fltS || b[i].slot === P.fltS) && b[i].r >= (P.fltR | 0));
   }
   function bestUp() {
@@ -2295,7 +2298,7 @@ function initUI(E) {
   /* ── v0.020: HUD, resumo de stats, confirmações, feedback ── */
   P.dis = P.dis || {};
   const flEl = h('div'); flEl.id = 'flash'; document.body.append(flEl);
-  function fxFlash(c, o = .5) { flEl.style.background = 'radial-gradient(ellipse at center,transparent 35%,' + c + ')'; flEl.style.setProperty('--o', o); flEl.classList.remove('on'); void flEl.offsetWidth; flEl.classList.add('on'); }
+  function fxFlash(c, o = .5) { if (cfg.fx === false) return; flEl.style.background = 'radial-gradient(ellipse at center,transparent 35%,' + c + ')'; flEl.style.setProperty('--o', o); flEl.classList.remove('on'); void flEl.offsetWidth; flEl.classList.add('on'); }
   function sure(btn, fn, need = true) {
     if (!need) return fn;
     let t = 0;
@@ -2410,7 +2413,7 @@ function initUI(E) {
   $('tc').addEventListener('contextmenu', e => e.preventDefault());
 
   /* ── v0.025–0.027: HUD de alvo, pin, sequência, vagalumes, perfil ── */
-  function stIc(m) { return (m.stn > 0 ? ' 💫' : '') + (m.frz > 0 ? ' ❄️' : '') + (m.bld > 0 ? ' 🩸' : '') + (m.pois > 0 ? ' ☠️' : ''); }
+  function stIc(m) { return (m.stn > 0 ? ' 💫' : '') + (m.frz > 0 ? ' ❄️' : '') + (m.bld > 0 ? ' 🩸' : '') + (m.pois > 0 ? ' ☠️' : '') + (m.brn > 0 ? ' 🔥' : '') + (m.slw > 0 ? ' 🐌' : ''); }
   function tgtTxt(m) { return (m.elite ? '👑 ' : '') + m.d.n + ' Nv.' + Math.max(1, Math.round(m.lv * 5)) + ' · ' + Math.max(0, Math.ceil(m.hp / m.max * 100)) + '%' + stIc(m); }
   function bossTxt(b) { $('bossb').classList.toggle('rg', !!b.rage); return '☠️ ' + b.d.n + (b.rage ? ' 🔥' : '') + ' · ' + Math.max(0, Math.ceil(b.hp / b.max * 100)) + '%' + stIc(b); }
   let stk = 0, stkT = 0;
@@ -2429,7 +2432,7 @@ function initUI(E) {
   ffG.setAttribute('position', new T.BufferAttribute(ffA, 3));
   const ffM = new T.PointsMaterial({ color: 0xffe9a0, size: .22, transparent: true, opacity: 0, depthWrite: false, blending: T.AdditiveBlending }), ffP = new T.Points(ffG, ffM); ffP.frustumCulled = false; ffP.visible = false; E.scene.add(ffP);
   E.updaters.push(dt => {
-    const want = G.mode === 'play' && !D.on ? Math.max(0, Math.min(.9, (.7 - sK) * 2.5)) : 0;
+    const want = G.mode === 'play' && !D.on && cfg.fx !== false ? Math.max(0, Math.min(.9, (.7 - sK) * 2.5)) : 0;
     ffM.opacity += (want - ffM.opacity) * Math.min(1, dt * 2);
     const vis = ffM.opacity > .02; if (ffP.visible !== vis) ffP.visible = vis; if (!vis) return;
     const p = E.player.position, t = Date.now() / 1000;
@@ -2467,14 +2470,14 @@ function initUI(E) {
   E.updaters.push(dt => {
     mlT -= dt; if (mlT > 0 || G.mode !== 'play') return; mlT = 3;
     for (const m of MIL) if (!P.mile[m[0]] && m[2]()) { P.mile[m[0]] = 1; P.gold += m[4]; addXP(m[3]); saveP(); sfx('lvl'); banner('MARCO ALCANÇADO', m[1].slice(3) + ' · +' + m[3] + ' XP · +' + m[4] + '🪙'); break; }
-    if (!evUntil || evUntil < Date.now()) { if (evUntil) { evUntil = 0; toast('Evento encerrado.'); } if (Date.now() - (P.evT || 0) > 6e5 && !D.on) { P.evT = Date.now(); evUntil = P.evT + 6e4; P.evK = (P.evK | 0) + 1; saveP(); fxFlash('#ffd24a', .35); banner('EVENTO: HORA DA CAÇA', '+25% XP e ouro por 60s'); } }
+    if (!evUntil || evUntil < Date.now()) { if (evUntil) { evUntil = 0; toast('Evento encerrado.'); } if (Date.now() - (P.evT || 0) > 6e5 && !D.on) { P.evT = Date.now(); evUntil = P.evT + 6e4; P.evK = (P.evK | 0) + 1; saveP(); fxFlash('#ffd24a', .35); if (Math.random() < .35) { P.col = {}; banner('EVENTO: HORA DO TESOURO', 'Baús, cristais e santuários renovados! +25% XP e ouro'); } else banner('EVENTO: HORA DA CAÇA', '+25% XP e ouro por 60s'); } }
   });
 
   const BRG = new T.TorusGeometry(1.2, .07, 6, 20), BCOL = [0xffa040, 0xff5a4a, 0xb070ff, 0xffd24a, 0x4ade80, 0x5ae6ff], BCG = new T.CylinderGeometry(.3, .7, 16, 8, 1, true), BS = [];
   for (let i = 0; i < 10; i++) { const m = new T.Mesh(BCG, new T.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: .2, depthWrite: false, blending: T.AdditiveBlending, side: T.DoubleSide })); const rg = new T.Mesh(BRG, new T.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: .5, depthWrite: false, blending: T.AdditiveBlending })); rg.rotation.x = Math.PI / 2; m.add(rg); m.visible = false; E.scene.add(m); BS.push(m); }
   let bcT = 0;
   E.updaters.push(dt => {
-    const play = G.mode === 'play' && !D.on;
+    const play = G.mode === 'play' && !D.on && cfg.fx !== false;
     if (!play) { if (BS[0].visible) BS.forEach(m => { m.visible = false; }); return; }
     bcT -= dt;
     if (bcT <= 0) {
@@ -2494,7 +2497,7 @@ function initUI(E) {
   E.updaters.push(dt => {
     const play = G.mode === 'play' && !D.on, p = E.player.position;
     ambT -= dt; if (ambT <= 0) { ambT = .5; ambB = E.W.biome(p.x, p.z); ambM.color.setHex(AMC[ambB] || 0xffffff); ambM.size = ambB === 2 ? .2 : .14; }
-    ambM.opacity += ((play ? .55 : 0) - ambM.opacity) * Math.min(1, dt * 2);
+    ambM.opacity += ((play && cfg.fx !== false ? .55 : 0) - ambM.opacity) * Math.min(1, dt * 2);
     const vis = ambM.opacity > .02; if (ambP.visible !== vis) ambP.visible = vis; if (!vis) return;
     const t = Date.now() / 1000, vy = AMV[ambB] || .1;
     for (let i = 0; i < AMN; i++) {
@@ -2594,6 +2597,35 @@ function initUI(E) {
 
   /* ── v0.082: marcos de longo prazo ── */
   MIL.push(['l50', '⭐ Nível 50', () => P.lv >= 50, 3000, 2500], ['s25', '🔁 25 sessões', () => (P.ses | 0) >= 25, 600, 500], ['v25', '🏅 25 vitórias', () => (P.vit | 0) >= 25, 800, 600], ['d100', '🗺️ 100 descobertas', () => Object.keys(P.dis).length >= 100, 3000, 2000]);
+
+  /* ── v0.094: poção automática (opcional) ── */
+  $('cP').checked = !!cfg.ap; $('cP').onchange = e => { cfg.ap = e.target.checked; applyCfg(); };
+  let apT = 0, apC = 0;
+  E.updaters.push(dt => {
+    apC = Math.max(0, apC - dt); apT -= dt; if (apT > 0) return; apT = .3;
+    if (cfg.ap && G.mode === 'play' && apC <= 0 && P.pot > 0 && hp > 0 && hp < maxHp() * .25) { apC = 8; usePot(); toast('🧪 Poção automática usada'); }
+  });
+
+  /* ── v0.109: limpeza periódica do save (sessões longas) ── */
+  let gcT = 120;
+  E.updaters.push(dt => { gcT -= dt; if (gcT > 0) return; gcT = 120; const n = Date.now(); for (const k in P.col) if (n - P.col[k] > 6e5) delete P.col[k]; });
+
+  /* ── v0.112: snapshots reutilizados (sem alocar arrays por frame) ── */
+  const SA = [], SB = [];
+  function snapA() { SA.length = 0; for (let i = 0; i < mons.length; i++) SA.push(mons[i]); return SA; }
+  function snapB() { SB.length = 0; for (let i = 0; i < mons.length; i++) SB.push(mons[i]); return SB; }
+
+  /* ── v0.142: opção para reduzir efeitos extras ── */
+  $('cX').checked = cfg.fx !== false; $('cX').onchange = e => { cfg.fx = e.target.checked; applyCfg(); };
+
+  /* ── v0.157: marcos de fim de jogo ── */
+  MIL.push(['k3000', '🗡️ 3000 abates', () => P.kills >= 3000, 3000, 2500], ['b50', '☠️ 50 chefes', () => (P.bk | 0) >= 50, 5000, 4000], ['x90', '🧭 Explorar 90% do mapa', () => nExp() >= 5198, 4000, 3000]);
+
+  /* ── v0.0150: marcos de dungeon ── */
+  MIL.push(['dg1', '🌀 Concluir 1 dungeon', () => (P.dgK | 0) >= 1, 300, 250], ['dg10', '🌀 Concluir 10 dungeons', () => (P.dgK | 0) >= 10, 1500, 1200]);
+
+  /* ── v0.0151: marco de forja ── */
+  MIL.push(['w30', '🗡️ Arma Nv. 30', () => (P.wl | 0) >= 30, 3000, 2500]);
 
   document.body.dataset.mode = 'start';
 }
