@@ -539,7 +539,7 @@ const URL_ID = (params.get('id') || '').trim();
 const PLAYER_ID = URL_ID || '0'; // fallback para testes locais
 const $ = id => document.getElementById(id);
 const fmt = n => Number(n).toLocaleString('pt-BR');
-const VERSION = '0.0161'; // suba a cada atualização enviada
+const VERSION = '0.0162'; // suba a cada atualização enviada
 const DIA = {};
 const G = { mode: 'start' };
 let NICK = 'Visitante';
@@ -762,8 +762,10 @@ function biome(x, z) {
 const lakeW = (x, z) => sstep(.78, .86, vn(x * .0042, z * .0042, 8)) * sstep(120, 300, Math.hypot(x, z));
 function H(x, z) {
   const m = Math.max(0, vn(x * .003, z * .003, 3) - .5) * 160, r = (vn(x * .03, z * .03, 4) - .5) * 4;
-  const lk = lakeW(x, z); return (m + r) * sstep(40, 140, Math.hypot(x, z)) * (1 - lk) - lk * 2.6;
+  const lk = lakeW(x, z), tw = trailW(x, z); return (m + r) * (1 - .5 * tw) * sstep(40, 140, Math.hypot(x, z)) * (1 - lk) - lk * 2.6 * (1 - tw);
 }
+const trailW = (x, z) => { if (x * x + z * z < 3600) return 0; return 1 - sstep(.012, .026, Math.abs(vn(x * .0075, z * .0075, 31) - .5)); };
+const TRLC = new THREE.Color(0x7a6542), BRGC = new THREE.Color(0x6b4f2e);
 const roadD = (x, z) => Math.min(Math.abs(z - 130 * Math.sin(x * .0028)), Math.abs(x - 130 * Math.sin(z * .0031 + 1)));
 function structAt(cx, cz) {
   if (Math.abs(cx) < 1 && Math.abs(cz) < 1 || hash(cx, cz, 900) > .22) return null;
@@ -825,7 +827,7 @@ function buildWorld(scene) {
       const x = pos.getX(i) + x0, z = pos.getZ(i) + z0, y = H(x, z); pos.setY(i, y);
       c.setHex(BCH[biome(x, z)]); c.lerp(TC.setHex(BCH[biome(x + 26, z + 26)]), .3); c.lerp(TC.setHex(BCH[biome(x - 26, z - 26)]), .25); c.multiplyScalar(.9 + Math.min(.2, Math.max(0, y) * .01)); if (y > 22) c.lerp(WHITE, Math.min(.7, (y - 22) / 25));
       const rd = roadD(x, z); if (rd < 9) { if (rd < 6) c.lerp(ROADC, 1 - sstep(2, 6, rd)); c.multiplyScalar(1 - .12 * sstep(5, 6.5, rd) * (1 - sstep(6.5, 9, rd))); if (rd < 2) c.lerp(ROADE, .3); if (rd < 5.2) { const pb = hash(Math.round(x * 1.5), Math.round(z * 1.5), 9); c.multiplyScalar(pb < .18 ? .78 : pb > .88 ? 1.18 : 1); } }
-      const lkw = lakeW(x, z); if (lkw > .005 && lkw <= .05) c.lerp(SHORE, .7 * sstep(.005, .02, lkw)); if (lkw > .05) c.lerp(LAKEC, Math.min(1, lkw * 1.4));
+      const lkw = lakeW(x, z); if (lkw > .005 && lkw <= .05) c.lerp(SHORE, .7 * sstep(.005, .02, lkw)); if (lkw > .05) c.lerp(LAKEC, Math.min(1, lkw * 1.4)); { const tw = trailW(x, z); if (tw > 0) c.lerp(lkw > .05 ? BRGC : TRLC, tw * .75); }
       const bq = biome(x, z), j = (hash(Math.round(x), Math.round(z), 5) - .5) * (bq === 6 ? .17 : bq === 2 ? .04 : .09) + (bq === 1 ? Math.sin(x * .8 + Math.sin(z * .25) * 2.2) * .028 : 0) + (bq === 0 || bq === 4 ? Math.sin(x * 1.7) * Math.sin(z * 1.3) * .02 : 0); col.set([c.r + j, c.g + j, c.b + j], i * 3);
     }
     g.setAttribute('color', new THREE.BufferAttribute(col, 3)); g.computeVertexNormals();
@@ -1204,7 +1206,7 @@ function initUI(E) {
     let iy = (keys.w || keys.arrowup ? 1 : 0) - (keys.s || keys.arrowdown ? 1 : 0) + joy.y;
     const len = Math.hypot(ix, iy); if (len > 1) { ix /= len; iy /= len; }
     if (len > .05) {
-      const sp = (3.5 + CLASSES[char.cls].st.Velocidade * .45) * (dash > 0 ? 3 : 1) * (RSP || 1) * ADM.spd * (1 + P.at.dex * .01) * (swim ? .6 : 1);
+      const sp = (3.5 + CLASSES[char.cls].st.Velocidade * .45) * (dash > 0 ? 3 : 1) * (RSP || 1) * ADM.spd * (1 + P.at.dex * .01) * (swim ? .6 : 1) * (R10 ? R10.sm : 1);
       const dx = .7071 * (ix - iy), dz = -.7071 * (ix + iy);
       p.x = Math.max(-HS + 4, Math.min(HS - 4, p.x + dx * sp * dt)); p.z = Math.max(-HS + 4, Math.min(HS - 4, p.z + dz * sp * dt)); p.y = E.W.H(p.x, p.z);
       const r = Math.atan2(dx, dz), d = Math.atan2(Math.sin(r - E.player.rotation.y), Math.cos(r - E.player.rotation.y));
@@ -1344,9 +1346,9 @@ function initUI(E) {
   $('mm').onclick = e => { if (!$('mmW').classList.contains('xl')) { fz = 1; mt = 0; $('mmW').classList.add('xl'); toast('Toque numa vila ou portal descoberto para viajar.'); } else travelClick(e); }; $('mmX').onclick = () => { $('mmW').classList.remove('xl'); mt = 0; };
   const mc = $('mm').getContext('2d'); let mt = 0, lastB = -1;
   function drawMap(p) {
-    const xl = $('mmW').classList.contains('xl'), cvs = $('mm'), S = xl ? 480 : 240, half = S / 2;
+    const xl = $('mmW').classList.contains('xl'), cvs = $('mm'), S = xl ? 720 : 240, half = S / 2;
     if (cvs.width !== S) cvs.width = cvs.height = S;
-    const R = xl ? HS / fz : 160 * (mini2 ? 2 : 1), cx = xl && fz === 1 ? 0 : p.x, cz = xl && fz === 1 ? 0 : p.z, N = xl ? 64 : 40, cs = S / N;
+    const R = xl ? HS / fz : 160 * (mini2 ? 2 : 1), cx = xl && fz === 1 ? 0 : p.x + (xl ? mpX : 0), cz = xl && fz === 1 ? 0 : p.z + (xl ? mpZ : 0), N = xl ? 96 : 40, cs = S / N;
     for (let i = 0; i < N; i++) for (let j = 0; j < N; j++) {
       const wx = cx + ((i + .5) / N - .5) * 2 * R, wz = cz + ((j + .5) / N - .5) * 2 * R;
       mc.fillStyle = xl && !explored(wx, wz) ? '#0b0f0d' : lakeW(wx, wz) > .5 ? '#3f86c4' : BC[E.W.biome(wx, wz)]; mc.fillRect(i * cs, j * cs, cs + 1, cs + 1);
@@ -1918,7 +1920,7 @@ function initUI(E) {
     if (mv > .3 && dust) burst({ x: p.x, y: p.y - .9, z: p.z }, swim ? 0x9fd8ff : 0x9a8a6a, 2);
   });
   /* ── v0.010: mapa completo com névoa e zoom, esquiva, elites, mais monstros/chefes e vilas seguras ── */
-  var fz = 1, mini2 = false, invT = 0, dgCd = 0, exI = -1, exJ = -1, inVil = false;
+  var R10 = null, mpX = 0, mpZ = 0, fz = 1, mini2 = false, invT = 0, dgCd = 0, exI = -1, exJ = -1, inVil = false;
   const EXC = 50, EXN = 76, GOLD = new T.Color(0xffd24a), GL = new T.CylinderGeometry(.04, .04, 1.2, 4);
   if (!P.exp || P.exp.length !== EXN * EXN) P.exp = '0'.repeat(EXN * EXN);
   const gi = v => Math.max(0, Math.min(EXN - 1, Math.floor((v + HS) / EXC))), explored = (x, z) => P.exp[gi(z) * EXN + gi(x)] === '1';
@@ -2082,7 +2084,7 @@ function initUI(E) {
   let tv = null, aT = 0;
   function travelClick(e) {
     if (!e) return; if (D.on) return blk('Mapa indisponível dentro da dungeon.');
-    const p = E.player.position, r = $('mm').getBoundingClientRect(), R = HS / fz, cx = fz === 1 ? 0 : p.x, cz = fz === 1 ? 0 : p.z;
+    const p = E.player.position, r = $('mm').getBoundingClientRect(), R = HS / fz, cx = fz === 1 ? 0 : p.x + mpX, cz = fz === 1 ? 0 : p.z + mpZ;
     const wx = cx + ((e.clientX - r.left) / r.width - .5) * 2 * R, wz = cz + ((e.clientY - r.top) / r.height - .5) * 2 * R, tol = 16 / r.width * 2 * R, k = Math.ceil(tol / CH) + 1;
     let best = null, bd = tol, unk = 0;
     for (let a = Math.floor(wx / CH) - k; a <= Math.floor(wx / CH) + k; a++) for (let b = Math.floor(wz / CH) - k; b <= Math.floor(wz / CH) + k; b++) {
@@ -3074,7 +3076,7 @@ function initUI(E) {
     if (P.ttlA && P.ttl[P.ttlA]) { const tt = TTL.find(x => x[0] === P.ttlA); if (tt) add(tt[4]); }
     if (P.pet && PETS[P.pet] && !(P.xpd && P.xpd.u > n)) add(PETS[P.pet][3]);
     if (n < P.exA) A.dp += .15; if (n < P.exS) A.sp += .2; if (n < R2.pact) { A.dp += .4; A.gp += .5; }
-    try { rsCalc3(A); } catch (e) {} try { rsCalc4(A); } catch (e) {} try { rsCalc5(A); } catch (e) {} try { rsCalc6(A); } catch (e) {} try { rsCalc7(A); } catch (e) {} try { rsCalc8(A); } catch (e) {} try { rsCalc9(A); } catch (e) {} t.dmg += A.dmg; t.hp += A.hp; t.def += A.def; t.crit += A.crit;
+    try { rsCalc3(A); } catch (e) {} try { rsCalc4(A); } catch (e) {} try { rsCalc5(A); } catch (e) {} try { rsCalc6(A); } catch (e) {} try { rsCalc7(A); } catch (e) {} try { rsCalc8(A); } catch (e) {} try { rsCalc9(A); } catch (e) {} try { r10Calc(A); } catch (e) {} t.dmg += A.dmg; t.hp += A.hp; t.def += A.def; t.crit += A.crit;
     DMX = (n < RS.trv ? 1.12 : 1) * (1 + A.dp) * (MODD || 1); SPB = 1 + A.sp; GPB = 1 + A.gp; RGB = A.rg; MGB = A.mg;
   }
 
@@ -3162,6 +3164,7 @@ function initUI(E) {
   }
   const sane = g => { if (!g || typeof g !== 'object' || !SLOTS.includes(g.slot)) return null; const n = (v, M) => Math.round(clamp(v, 0, M)), o = { nome: String(g.nome || 'Item').slice(0, 32), slot: g.slot, r: n(g.r, 3), dmg: n(g.dmg, 3000), hp: n(g.hp, 20000), def: n(g.def, 3000), crit: n(g.crit, 100), up: n(g.up, 20) }; if (g.af && AFX.some(a => a[0] === g.af.k)) o.af = { k: g.af.k, v: n(g.af.v, 200) }; if (g.lv) o.lv = n(g.lv, 999); return o; };
   function rsMsg(d) {
+    if (d && d.t === 'rl') { try { r10In(d); } catch (e) {} return; }
     if (d && ['vt', 'vr', 'vx', 'ai', 'aa', 'as', 'ah', 'ad', 'ax'].includes(d.t)) return rs9In(d); if (d && (d.t === 'of' || d.t === 'bu' || d.t === 'sd' || d.t === 'pm' || d.t === 'cf')) return rs8In(d); if (d && d.t === 'tt') return rs6TotIn(d); if (d && d.t === 'cb') return rs5CbIn(d); if (d && d.t === 'em') return rs3EmoIn(d); if (!d || d.to !== PLAYER_ID || !d.from || d.from === PLAYER_ID || G.mode === 'start') return; const nk = String(d.nick || '?').slice(0, 20);
     if (d.t === 'di' || d.t === 'ti') { if (R2.dInv.length < 3 && !R2.dInv.some(v => v.from === d.from && v.k === d.t[0])) { R2.dInv.push({ from: d.from, nick: nk, k: d.t[0], t: rsNow() }); banner(d.t === 'di' ? '⚔️ DESAFIO DE DUELO' : '🤝 PEDIDO DE TROCA', nk); rsQR(); } }
     else if (d.t === 'da') { if (!R2.duel) duelStart(d.from, nk); }
@@ -3296,7 +3299,7 @@ function initUI(E) {
   const FOOD = [['🍲', 'Ensopado Rústico', 'Regen leve +30 vida', { Erva: 2, Cogumelo: 1 }, { rg: .006, hp: 30 }], ['🍖', 'Assado de Caça', '+8 defesa', { Presa: 2, Erva: 1 }, { def: 8 }], ['🍜', 'Sopa Cristalina', 'Resistência: +50 vida +4 def, mana +1,5/s', { Cristal: 1, Cogumelo: 2 }, { hp: 50, def: 4, mg: 1.5 }]];
   function rsCalc3(A) {
     const n = rsNow(); VAM = 0;
-    SLOTS.forEach(sl => { const it = P.gear[sl]; if (it && it.rn) it.rn.forEach(id => { const r = RUN[id]; if (!r) return; const b = r[3]; for (const k in b) { if (k === 'vam') VAM += b[k]; else A[k] += b[k]; } }); });
+    SLOTS.forEach(sl => { const it = P.gear[sl]; if (it && it.rn) it.rn.forEach(id => { const r = RUN[id]; if (!r) return; const b = r[3]; for (const k in b) { if (k === 'vam') VAM += b[k]; else A[k] += b[k] * (1 + .5 * ((P.r10 && P.r10.rlv && P.r10.rlv[id]) | 0)); } }); });
     if (P.fd && n < P.fd.u && FOOD[P.fd.k]) { const b = FOOD[P.fd.k][4]; for (const k in b) A[k] += b[k]; }
     const pr = P.pr | 0; if (pr) { A.dp += .03 * pr; A.hp += 20 * pr; A.gp += .03 * pr; }
   }
@@ -5158,6 +5161,295 @@ function initUI(E) {
     for (let i = 0; i < ZM; i++) { zmP[i * 3 + 1] += dt * (.25 + (i % 5) * .08); zmP[i * 3] += Math.sin(tt + i) * dt * .1; if (zmP[i * 3 + 1] > 4) zmP[i * 3 + 1] = 0; } zmG.attributes.position.needsUpdate = true;
     if (G.mode === 'select' && !zDrag) E.player.rotation.y += dt * .35;
   });
+
+
+  /* ══ v0.0162: relíquias, recompensas, antídotos, fusão de runas, trilhas, torneio, selos, mercado, fenda, notas, fada, andares, marcos, resumo, layout, save, objetivo, anti-preso, mapa em tela cheia ══ */
+  P.r10 = P.r10 || {}; const X10 = P.r10;
+  X10.rl = X10.rl || { c: 0, g: 0, s: 0 }; X10.rlv = X10.rlv || {}; X10.sl = X10.sl || {}; X10.cn = X10.cn || {}; X10.tr = X10.tr || { w: 0, t: 0, h: [] }; X10.nt = Array.isArray(X10.nt) ? X10.nt : [];
+  X10.fl = (X10.fl | 0) || 1; X10.cs = X10.cs || { ant: 0, ton: 0, bomb: 0 }; X10.kb = X10.kb || { hub: 'f2', cure: 'f3', stuck: 'f4', act: 'f5' }; X10.lf = X10.lf | 0; X10.sz = +X10.sz || 1; X10.bty = X10.bty | 0; X10.fr = X10.fr | 0; X10.fy = X10.fy === 0 ? 0 : 1; X10.ac = X10.ac || {}; X10.fsel = (X10.fsel | 0) || 1;
+  const totXp10 = () => { let s = P.xp; for (let l = 1; l < P.lv; l++) s += need(l); return s; };
+  const nDis10 = () => Object.keys(P.dis || {}).length;
+  R10 = { lp: null, kills0: 0, sm: 1, st: {}, im: {}, tb: null, bell: 0, bt: null, btT: 60, tn: null, tnT: 0, cr: {}, rlSig: '', rlT: 0, cap: null, skCd: 0, stT: 0, act: null, flames: [], sesHide: 0, s0: { xp: totXp10(), g: P.gold, k: P.kills | 0, d: nDis10(), b: (P.seen || []).length, t: Date.now() }, tab: 0, sk: 0, svMsg: '', fyH: 0, fyL: P.lv, stuckT: 0 }; R10.kills0 = P.kills | 0;
+  const cn10 = () => (X10.cn[char.cls] = X10.cn[char.cls] || { k: 0, crit: 0, back: 0, dmg: 0, bty: 0, tn: 0, act: 0, cure: 0 });
+  const cu10 = () => { const k = Math.max(0, (P.kills | 0) - R10.kills0); R10.kills0 = P.kills | 0; if (k > 0 && k < 40) cn10().k += k; };
+  const fm10 = s => Math.floor(s / 3600) + 'h ' + Math.floor(s % 3600 / 60) + 'm';
+
+  /* 1) Relíquias do clã (efetivas = maior nível entre você e membros online do mesmo clã) */
+  const RLN = [['🏺', 'Relíquia do Vigor', 'Capacidade vital +30 vida/nível', 'Minério', 3], ['💰', 'Relíquia da Fortuna', 'Ouro +4%/nível', 'Cristal', 2], ['🧭', 'Relíquia do Andarilho', 'Velocidade de marcha/coleta +1,5%/nível', 'Erva', 3]], RLK = ['c', 'g', 's'];
+  function rlEff(i) { let v = X10.rl[RLK[i]] | 0; if (R5.clan) { const n = Date.now(); for (const k in R10.cr) { const e = R10.cr[k]; if (n - e.t < 150000) v = Math.max(v, e.l[i] | 0); } } return v; }
+  function r10Calc(A) {
+    A.hp += 30 * rlEff(0); A.gp += .04 * rlEff(1); A.sp += .015 * rlEff(2);
+    SEL10.forEach(s => { if (s[5] === char.cls && X10.sl[s[0]]) for (const k in s[8]) A[k] += s[8][k]; });
+  }
+  function r10In(d) {
+    if (d.t === 'rl' && R5.clan && d.g === R5.clan.g && Array.isArray(d.l) && String(d.from) !== PLAYER_ID) { const keys = Object.keys(R10.cr); if (keys.length > 40 && !R10.cr[String(d.from)]) return; R10.cr[String(d.from).slice(0, 24)] = { l: d.l.slice(0, 3).map(v => Math.max(0, Math.min(5, v | 0))), t: Date.now() }; }
+  }
+  function r10Bc() { if (R5.clan && R2.ch && R2.chOk) try { R2.ch.send({ type: 'broadcast', event: 'm', payload: { t: 'rl', from: PLAYER_ID, g: R5.clan.g, l: [X10.rl.c | 0, X10.rl.g | 0, X10.rl.s | 0] } }); } catch (e) {} }
+
+  /* 3) Estados, antídotos, tônicos e bombas */
+  const STN = { bld: ['🩸', 'Sangramento', .02], pois: ['☠️', 'Veneno', .015], brn: ['🔥', 'Queimadura', .03], slw: ['🐌', 'Lentidão', 0] };
+  function r10Stat() { const p = E.player.position, bi = E.W.biome(p.x, p.z), ty = bi === 3 ? 'pois' : bi === 6 ? 'brn' : bi === 2 ? 'slw' : ['bld', 'slw', 'bld', 'pois'][Math.floor(Math.random() * 4)], n = Date.now(); if ((R10.im[ty] || 0) > n || R10.st[ty] > n) return; R10.st[ty] = n + 8000; toast(STN[ty][0] + ' ' + STN[ty][1] + '! Use um Antídoto (F3)'); }
+  function r10Cure(k) {
+    if (G.mode !== 'play') return; const n = Date.now();
+    if ((X10.cs[k] | 0) < 1) return toast('Sem ' + (k === 'ant' ? 'Antídotos' : 'Tônicos') + ' — compre na vila (Extras IV → Mercado)');
+    const act = Object.keys(R10.st).filter(t => R10.st[t] > n); if (k === 'ant' && !act.length) return toast('Nenhum efeito para curar');
+    X10.cs[k]--; const imm = k === 'ton' ? 15000 : 20000; (k === 'ton' ? Object.keys(STN) : act).forEach(t => { R10.im[t] = n + imm; }); R10.st = {}; if (k === 'ton') heal(.35);
+    cn10().cure++; burst(E.player.position, 0x7dffb0, 12); banner(k === 'ant' ? '🧴 ANTÍDOTO' : '🍶 TÔNICO', 'Curado · imune por ' + imm / 1000 + 's'); saveP();
+  }
+  function r10Bomb() {
+    if (G.mode !== 'play') return; if ((X10.cs.bomb | 0) < 1) return toast('Sem Bombas — compre na vila'); X10.cs.bomb--; const p = E.player.position, dm = 60 + P.lv * 6; let c = 0;
+    mons.slice().forEach(m => { if (m.hp > 0 && Math.hypot(m.g.position.x - p.x, m.g.position.z - p.z) < 7) { hit(m, dm, false); c++; } }); burst(p, 0xff9a3a, 26); shk = Math.max(shk, .25); toast('💣 Bomba: ' + c + ' alvo(s)'); saveP();
+  }
+
+  /* 9) Golpe pelas costas / marcos de bônus / 10) rmMon: recompensas de caça e fenda */
+  const r10Hit = hit;
+  hit = function (m, dmg, crit) {
+    try {
+      const p = E.player.position, dx = p.x - m.g.position.x, dz = p.z - m.g.position.z, d = Math.hypot(dx, dz) || 1, dot = (Math.sin(m.g.rotation.y) * dx + Math.cos(m.g.rotation.y) * dz) / d, c = cn10();
+      if (!rxDot && dot < -.35) { dmg = Math.round(dmg * (m.d.boss ? 1.25 : 1.5)); dmgText(m.g.position, '🗡️ costas!', true, '#c58aff'); c.back++; }
+      if (R10.tb && R10.tb.u > Date.now()) dmg = Math.round(dmg * (1 + R10.tb.dp)); if (crit) c.crit++;
+    } catch (e) {}
+    r10Hit(m, dmg, crit);
+  };
+  const r10Hurt = hurt;
+  hurt = function (n) { const h0 = hp; r10Hurt(n); if (hp < h0 && G.mode === 'play') { cn10().dmg += h0 - hp; if (Math.random() < .16) r10Stat(); } };
+  const r10Rm = rmMon;
+  rmMon = function (m) {
+    try {
+      if (m.hp <= 0 && m.key === 'bty') { const g = Math.round(150 + 30 * (m.lv || 1) * 4), x = Math.round(300 * (m.lv || 1)); P.gold += g; addXP(x); X10.bty++; cn10().bty++; X10.fr++; if (Math.random() < .5) { const ids = Object.keys(RUN), id = ids[Math.floor(Math.random() * ids.length)]; P.rn[id] = (P.rn[id] | 0) + 1; } banner('🎯 PROCURADO CAPTURADO', '+' + g + '🪙 +' + x + ' XP · +1 Fragmento de Fenda'); saveP(); R10.bt = null; R10.btT = 150; }
+      else if (m.hp <= 0 && m.key === 'rift10') { P.gold += 800; addXP(1500); addGear(genGear(P.lv + 8, 2)); X10.fr += 1; banner('🌌 ARAUTO DA FENDA DERROTADO', '+800🪙 +1500 XP + equipamento Épico+'); saveP(); }
+    } catch (e) {}
+    r10Rm(m);
+  };
+
+  /* 4) níveis de runa: bônus encaixado ×(1 + 0,5 por nível) via rsCalc3 */
+  function r10Fuse(id) { const r = RUN[id], lv = X10.rlv[id] | 0; if ((P.rn[id] | 0) < 3) return toast('Precisa de 3 runas iguais no banco'); if (lv >= 5) return toast('Nível máximo'); if (P.gold < 120 * (lv + 1)) return toast('Ouro insuficiente'); P.gold -= 120 * (lv + 1); P.rn[id] -= 3; X10.rlv[id] = lv + 1; try { rsCalc(); } catch (e) {} banner('🔮 ' + r[1].toUpperCase(), 'Nível ' + (lv + 1) + ' · bônus +' + (lv + 1) * 50 + '%'); saveP(); }
+
+  /* 7) selos de especialização (por classe) */
+  const SEL10 = [
+    ['w1', 'Baluarte', 'Sofra 3000 de dano', 'dmg', 3000, 0, 0, 0, { def: 4 }], ['w2', 'Carrasco', '150 abates', 'k', 150, 0, 0, 0, { dp: .03 }], ['w3', 'Caçador de Prêmios', '3 procurados', 'bty', 3, 0, 0, 0, { hp: 60 }],
+    ['a1', 'Olho de Águia', '120 críticos', 'crit', 120, 1, 0, 0, { crit: 4 }], ['a2', 'Sombra', '40 golpes pelas costas', 'back', 40, 1, 0, 0, { dp: .03 }], ['a3', 'Maratonista', 'Torneio: onda 8', 'tn', 8, 1, 0, 0, { sp: .03 }],
+    ['m1', 'Arcanista', '200 abates', 'k', 200, 2, 0, 0, { mg: 1 }], ['m2', 'Cataclismo', '80 críticos', 'crit', 80, 2, 0, 0, { dp: .03 }], ['m3', 'Estudioso', '8 marcos ativados', 'act', 8, 2, 0, 0, { gp: .05 }],
+    ['r1', 'Punhal', '80 golpes pelas costas', 'back', 80, 3, 0, 0, { crit: 5 }], ['r2', 'Fantasma', 'Torneio: onda 6', 'tn', 6, 3, 0, 0, { sp: .03 }], ['r3', 'Sortudo', '2 procurados', 'bty', 2, 3, 0, 0, { gp: .05 }],
+    ['c1', 'Fé', '10 curas com antídoto/tônico', 'cure', 10, 4, 0, 0, { rg: .004 }], ['c2', 'Escudo Sagrado', 'Sofra 2500 de dano', 'dmg', 2500, 4, 0, 0, { def: 4 }], ['c3', 'Pastor', '150 abates', 'k', 150, 4, 0, 0, { hp: 60 }]
+  ].map(s => [s[0], s[1], s[2], s[3], s[4], s[5], 0, 0, s[8]]);
+  function r10Seals() { cu10(); const c = cn10(); let ch = 0; SEL10.forEach(s => { if (s[5] === char.cls && !X10.sl[s[0]] && (c[s[3]] | 0) >= s[4]) { X10.sl[s[0]] = 1; ch = 1; banner('🏅 SELO: ' + s[1].toUpperCase(), s[2]); } }); if (ch) { try { rsCalc(); } catch (e) {} saveP(); } }
+
+  /* 8) mercado das vilas */
+  const MKT10 = [['🧪', 'Poção', 35, () => { if (P.pot >= 9) return 0; P.pot++; return 1; }], ['🧴', 'Antídoto', 60, () => { X10.cs.ant++; return 1; }], ['🍶', 'Tônico', 110, () => { X10.cs.ton++; return 1; }], ['💣', 'Bomba', 80, () => { X10.cs.bomb++; return 1; }],
+    ['🍲', 'Ensopado Rústico (10min)', 90, () => { P.fd = { k: 0, u: Date.now() + 6e5 }; return 1; }], ['🍖', 'Assado de Caça (10min)', 120, () => { P.fd = { k: 1, u: Date.now() + 6e5 }; return 1; }], ['🍜', 'Sopa Cristalina (10min)', 160, () => { P.fd = { k: 2, u: Date.now() + 6e5 }; return 1; }]];
+
+  /* 2) Procurados */
+  function r10BtySpawn() {
+    const p = E.player.position, bi = E.W.biome(p.x, p.z), L = MD.filter(m => !m.boss && m.b && m.b.includes(bi)), pool = L.length ? L : MD.filter(m => !m.boss), d = pool[Math.floor(Math.random() * pool.length)], a = Math.random() * 6.283, r = 60 + Math.random() * 30, x = p.x + Math.cos(a) * r, z = p.z + Math.sin(a) * r;
+    if (E.W.H(x, z) < -.3 || nearVillage(x, z)) return false;
+    const def = Object.assign({}, d, { hp: d.hp * 4, dmg: d.dmg * 1.4, xp: d.xp * 5 }); spawnMon(def, x, z, 'bty'); const m = mons[mons.length - 1]; m.d = Object.assign({}, def, { n: '🎯 Procurado: ' + d.n }); m.sz *= 1.3; m.r *= 1.3; m.g.scale.multiplyScalar(1.3); m.mat.color.lerp(GOLD, .55); m.ax = x; m.az = z; m.agro = false; R10.bt = m;
+    banner('🎯 CARTAZ: PROCURADO', d.n + ' foi avistado! Veja a seta e o mapa'); return true;
+  }
+
+  /* 10) Altar da Fenda */
+  const ALT10 = { x: 30, z: 30 }, altG = new T.Group();
+  { const s = zMM(0x4a4d56), c = zMM(0xff4a8a, { emissive: 0xff2a6a, emissiveIntensity: 1.2, transparent: true, opacity: .9 }); zNm(altG, zCy(2.6, 2.9, .5, 12), s, 0, .25, 0); for (let i = 0; i < 4; i++) { const a = i * 1.5708 + .785; zNm(altG, zCy(.25, .3, 3, 6), s, Math.cos(a) * 2, 1.7, Math.sin(a) * 2); } const cr = zNm(altG, zOc(.6), c, 0, 2.4, 0, 0, 0, 0, .8, 1.5, .8); altG.userData.cr = cr; altG.position.set(ALT10.x, E.W.H(ALT10.x, ALT10.z), ALT10.z); E.scene.add(altG); }
+  function r10Summon() {
+    if (G.mode !== 'play' || D.on) return toast('Só no mundo aberto'); const p = E.player.position; if (Math.hypot(p.x - ALT10.x, p.z - ALT10.z) > 14) return toast('Vá até o Altar da Fenda (seta ' + arrow6(ALT10.x - p.x, ALT10.z - p.z) + ')'); if (X10.fr < 5) return toast('Precisa de 5 Fragmentos de Fenda (tem ' + X10.fr + ')');
+    if (mons.some(m => m.key === 'rift10')) return toast('O Arauto já foi invocado'); X10.fr -= 5; const k = 1 + P.lv * .12; spawnMon(Object.assign({}, BOSS, { n: 'Arauto da Fenda', hp: 2500 * k, dmg: 38 * k, spd: 3.6, xp: 1500, col: 0xff4a8a, sz: 3.4 }), ALT10.x, ALT10.z + 8, 'rift10'); mons[mons.length - 1].agro = true; banner('🌌 FENDA ABERTA', 'O Arauto da Fenda surge!'); saveP();
+  }
+
+  /* 6) Torneio solo por ondas */
+  function r10TnStart() {
+    if (G.mode !== 'play' || D.on || inVil || hurtT > 0) return toast('Só em campo aberto, fora de vila e de combate'); if (R10.tn) return; const p = E.player.position; R10.tn = { x: p.x, z: p.z, w: 0, t: 0, nx: 2 }; banner('🏟️ TORNEIO DE ONDAS', 'Sobreviva ao máximo de ondas! Não se afaste da arena.');
+  }
+  function r10TnEnd(why) {
+    const T2 = R10.tn; if (!T2) return; R10.tn = null; mons.slice().forEach(m => { if (m.key === 'tn') r10Rm(m); }); const w = T2.w, t = Math.floor(T2.t), c = cn10();
+    if (w > 0) { X10.tr.h.push({ w, t, d: new Date().toLocaleDateString('pt-BR') }); X10.tr.h.sort((a, b) => b.w - a.w || a.t - b.t); X10.tr.h = X10.tr.h.slice(0, 5); if (w > X10.tr.w || (w === X10.tr.w && t < X10.tr.t)) { X10.tr.w = w; X10.tr.t = t; } c.tn = Math.max(c.tn | 0, w); const f = Math.floor(w / 4); X10.fr += f; P.gold += w * 25; addXP(w * 60); }
+    setH('r10Tn', ''); banner('🏟️ TORNEIO ENCERRADO', 'Onda ' + w + ' · ' + t + 's' + (w ? ' · +' + w * 25 + '🪙 +' + Math.floor(w / 4) + ' fragmentos' : '') + ' (' + why + ')'); saveP();
+  }
+  function r10TnTick(dt) {
+    const T2 = R10.tn; if (!T2) return; const p = E.player.position; T2.t += dt;
+    if (D.on || G.mode !== 'play' || Math.hypot(p.x - T2.x, p.z - T2.z) > 55) return r10TnEnd(D.on ? 'dungeon' : 'saiu/caiu');
+    const left = mons.filter(m => m.key === 'tn' && m.hp > 0).length; T2.nx -= dt;
+    if (!left && T2.nx <= 0) {
+      T2.w++; T2.nx = 4; const w = T2.w, n = Math.min(14, 3 + Math.floor(w * 1.2)), bi = E.W.biome(T2.x, T2.z), L = MD.filter(m => !m.boss && m.b && m.b.includes(bi)), pool = L.length ? L : MD.filter(m => !m.boss), k = 1 + .14 * w;
+      for (let i = 0; i < n; i++) { const a = i / n * 6.283, d = pool[Math.floor(Math.random() * pool.length)], x = T2.x + Math.cos(a) * 17, z = T2.z + Math.sin(a) * 17; spawnMon(Object.assign({}, d, { hp: d.hp * k, dmg: d.dmg * (1 + .08 * w) }), x, z, 'tn'); mons[mons.length - 1].agro = true; }
+      if (w % 5 === 0) { spawnMon(Object.assign({}, BOSS, { n: 'Campeão do Torneio', hp: 700 + 220 * w, dmg: 20 + 2 * w }), T2.x, T2.z + 14, 'tn'); mons[mons.length - 1].agro = true; }
+      banner('ONDA ' + w, n + ' inimigos' + (w % 5 === 0 ? ' + campeão' : '')); heal(.25);
+    }
+    setH('r10Tn', '🏟️ Onda ' + T2.w + ' · restam ' + left + ' · ' + Math.floor(T2.t / 60) + ':' + String(Math.floor(T2.t % 60)).padStart(2, '0'));
+  }
+
+  /* 13) andares escalonados */
+  const r10En = enterDungeon; enterDungeon = function (st) { R10.kf = 0; R10.dclr = 0; R10.dfl = X10.fsel; r10En(st); };
+  const r10Wv = wave; wave = function (n) { if (!R10.kf) { R10.kf = 1; const f = R10.dfl || 1; if (f > 1) D.k *= 1 + .35 * (f - 1); } r10Wv(n); };
+
+  /* 14) marcos: tochas e sinos */
+  function r10NearSt() { const p = E.player.position, cx = Math.floor(p.x / CH), cz = Math.floor(p.z / CH); for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) { const st = E.W.structAt(cx + i, cz + j); if (st && st.type >= 1 && st.type <= 3 && Math.hypot(st.x - p.x, st.z - p.z) < 8) return st; } return null; }
+  function r10Flame(x, z, col) { const g = new T.Group(); zNm(g, zCy(.12, .18, 1.2, 5), zMM(0x3a2a1a), 0, .6, 0); const f = zNm(g, zCo(.3, .8, 6), zMM(col, { emissive: col, emissiveIntensity: 1.4 }), 0, 1.6, 0); g.position.set(x, E.W.H(x, z), z); E.scene.add(g); R10.flames.push({ g, f, u: Date.now() + 6e5 }); }
+  function r10Do() {
+    if (G.mode !== 'play' || D.on) return; const p = E.player.position, n = Date.now();
+    if (Math.hypot(p.x - ALT10.x, p.z - ALT10.z) < 14) return r10Summon();
+    const st = r10NearSt(); if (!st) return; const key = st.x + ',' + st.z; if ((X10.ac[key] || 0) > n) return toast('Marco já ativo (' + Math.ceil((X10.ac[key] - n) / 60000) + ' min)'); X10.ac[key] = n + 6e5; cn10().act++;
+    if (st.type === 3) { R10.tb = { dp: .12, u: n + 12e4 }; r10Flame(st.x + 2.5, st.z + 2.5, 0xffb43a); banner('🔥 TOCHA SAGRADA', '+12% de dano por 2 min'); }
+    else if (st.type === 1) { R10.bell = n + 9e4; r10Flame(st.x + 3, st.z, 0x7ad8ff); const a = P.exp.split(''); for (let x = p.x - 350; x <= p.x + 350; x += 50) for (let z = p.z - 350; z <= p.z + 350; z += 50) { const i = gi(z) * EXN + gi(x); if (i >= 0 && i < a.length) a[i] = '1'; } P.exp = a.join(''); banner('🔔 SINO DA TORRE', 'Mapa revelado ao redor · +15% velocidade por 90s'); }
+    else { const g = 60 + P.lv * 5; P.gold += g; const ids = Object.keys(RUN), id = ids[Math.floor(Math.random() * ids.length)]; P.rn[id] = (P.rn[id] | 0) + 1; if (Math.random() < .3) X10.fr++; r10Flame(st.x - 2.5, st.z + 2.5, 0x9aff7a); banner('🏚️ SEGREDO DAS RUÍNAS', '+' + g + '🪙 · Runa ' + RUN[id][1]); }
+    burst(p, 0xffd24a, 18); saveP();
+  }
+
+  /* 17/19) salvar e anti-preso */
+  async function r10Save() {
+    R10.svMsg = '⏳ Salvando…'; r10R(); saveNow(); let ok = false;
+    try { if (sb && cloudOk && cloudLoaded) { await cloudSave2(); ok = true; } } catch (e) {}
+    R10.svMsg = (ok ? '☁️ Salvo na nuvem e localmente' : '💾 Salvo localmente (nuvem indisponível agora)') + ' · ' + new Date().toLocaleTimeString('pt-BR'); fxFlash(ok ? '#30ff90' : '#ffd24a', .3); banner(ok ? '☁️ SAVE SINCRONIZADO' : '💾 SAVE LOCAL', R10.svMsg); r10R();
+  }
+  function r10Unstick(auto) {
+    if (G.mode !== 'play') return; const p = E.player.position, n = Date.now();
+    if (D.on) { p.set(0, D.y, 22); toast('Posição recuperada'); return; }
+    if (hurtT > 0 && !auto) return blk('Não use em combate.'); if (n < R10.skCd) return blk('Aguarde ' + Math.ceil((R10.skCd - n) / 1000) + 's'); R10.skCd = n + 20000;
+    const t = { x: 0, z: 0 }; let f = false;
+    for (let r = 3; r <= 45 && !f; r += 3) for (let a = 0; a < 12 && !f; a++) { const x = p.x + Math.cos(a * .5236) * r, z = p.z + Math.sin(a * .5236) * r; if (E.W.H(x, z) < -.35 || Math.abs(E.W.H(x, z) - p.y) > 5) continue; t.x = x; t.z = z; E.W.resolve(t, .7); if (Math.abs(t.x - x) < .02 && Math.abs(t.z - z) < .02) f = true; }
+    if (!f) { t.x = 0; t.z = 0; } p.set(t.x, E.W.H(t.x, t.z), t.z); E.camTarget.set(p.x, p.y + 1, p.z); burst(p, 0x9fe0ff, 14); toast(f ? '🆘 Posição recuperada' : '🆘 Levado ao ponto inicial');
+  }
+
+  /* Painel Extras IV */
+  const st10 = h('style'); st10.textContent = '#pHub10{left:50%;top:50%;transform:translate(-50%,-50%);width:min(94vw,560px);max-height:calc(100% - 40px);overflow:auto;z-index:10}#pHub10 .it{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(217,164,65,.2);font-size:13px}#pHub10 .it .btn{padding:5px 10px;font-size:12px}#pHub10 small{opacity:.75}#pHub10 .ptabs{display:flex;flex-wrap:wrap;gap:4px}#pHub10 textarea,#pHub10 input[type=text]{width:100%;font-size:12px}#r10Ses{display:none;position:fixed;left:calc(10px + var(--safe-l));bottom:calc(10px + var(--safe-b));z-index:6;max-width:250px;padding:8px 10px;font-size:12px;background:var(--panel);border:1px solid var(--line);border-radius:10px;line-height:1.5}#r10Ses button{position:absolute;top:2px;right:4px;background:none;border:0;color:inherit}#r10Act{display:none;position:fixed;left:50%;transform:translateX(-50%);bottom:calc(150px + var(--safe-b));z-index:7}body.lefty #tc{transform:scaleX(-1)}#tc button{transform:scale(var(--s,1))}body.lefty #tc button{transform:scaleX(-1) scale(var(--s,1))}body.lefty #joy{transform:scaleX(-1)}body.lefty #rsBar{left:auto;right:calc(8px + var(--safe-r))}#mmHint{display:none}#mmW.xl #mmHint{display:block;position:fixed;left:50%;transform:translateX(-50%);bottom:calc(10px + var(--safe-b));z-index:13;padding:4px 12px;font-size:12px;background:rgba(0,0,0,.6);border:1px solid var(--line);border-radius:8px;pointer-events:none;white-space:nowrap}#mmW.xl{position:fixed!important;inset:0!important;left:0!important;top:0!important;right:0!important;bottom:0!important;transform:none!important;width:100vw!important;height:100vh!important;background:#04070a;display:flex!important;align-items:center;justify-content:center;z-index:12}#mmW.xl #mm{width:min(100vw,100vh,1100px);height:min(100vw,100vh,1100px);border-radius:0;border:0;touch-action:none}#mmW.xl #mmX{position:fixed;top:calc(10px + var(--safe-t));right:calc(10px + var(--safe-r));width:44px;height:44px}#mmW.xl .mz{position:fixed;left:auto!important;right:calc(14px + var(--safe-r))!important;width:42px;height:42px;font-size:18px}#mmW.xl #mmP{top:calc(64px + var(--safe-t))}#mmW.xl #mmM{top:calc(112px + var(--safe-t))}#mmW.xl #mmPin{top:calc(160px + var(--safe-t))!important}#mmW.xl #mmL{top:calc(208px + var(--safe-t))}#mmW.xl #mmN{top:calc(256px + var(--safe-t))}'; document.head.append(st10);
+  const hub10 = h('div', 'pan'); hub10.id = 'pHub10'; document.body.append(hub10); const H10T = ['Resumo', 'Relíquias', 'Caça', 'Runas', 'Mercado', 'Torneio', 'Selos', 'Andares', 'Notas', 'Sistema'];
+  function r10Hub(open, tab) { if (G.mode !== 'play' && G.mode !== 'lobby') return; const on = open === true ? true : !hub10.classList.contains('on'); if (tab !== undefined) R10.tab = tab; if (on) { panel(null); [hub, hub2, hub3, hub4, hub5, mur, mch, hub6, hub7, hub8, hub9].forEach(x => x && x.classList.remove('on')); } hub10.classList.toggle('on', on); if (on) r10R(); }
+  function r10Sum() { cu10(); const s = R10.s0, c = X10.cn[char.cls] || {}; return ['⏱️ Tempo de sessão: ' + fm10((Date.now() - s.t) / 1000), '✨ XP ganho: ' + Math.max(0, totXp10() - s.xp).toLocaleString('pt-BR'), '🪙 Ouro (saldo): ' + (P.gold - s.g >= 0 ? '+' : '') + (P.gold - s.g).toLocaleString('pt-BR'), '⚔️ Abates: ' + Math.max(0, (P.kills | 0) - s.k), '🧭 Descobertas: ' + Math.max(0, nDis10() - s.d) + ' locais · ' + Math.max(0, (P.seen || []).length - s.b) + ' biomas', '🎯 Procurados (total): ' + X10.bty + ' · 🌌 Fragmentos: ' + X10.fr]; }
+  function r10R() {
+    if (!hub10.classList.contains('on')) return; hub10.textContent = ''; const top = h('div', 'rowh'); top.append(hbt('← Fechar', () => hub10.classList.remove('on')), h('h3', '', '✨ Extras IV · 🪙 ' + P.gold)); hub10.append(top);
+    const tb = h('div', 'ptabs'); H10T.forEach((n, k) => { const x = h('button', 'btn sm' + (R10.tab === k ? ' on' : ''), n); x.onclick = () => { R10.tab = k; r10R(); }; tb.append(x); }); hub10.append(tb); const B = h('div'); hub10.append(B); const T10 = R10.tab, now = Date.now();
+    if (T10 === 0) { B.append(h('h3', '', '📋 Progresso da sessão')); r10Sum().forEach(l => B.append(h('div', 'it', l))); B.append(h('small', '', 'Também aparece no lobby ao voltar do jogo.')); }
+    if (T10 === 1) {
+      if (!R5.clan) B.append(h('p', '', 'Entre em um clã (Lobby → Clã) para sincronizar relíquias com os membros. Sem clã, valem só para você.'));
+      else B.append(h('p', '', 'Clã ' + R5.clan.e + ' [' + R5.clan.g + '] ' + R5.clan.n + ' — vale o maior nível entre os membros online.'));
+      RLN.forEach((r, i) => { const k = RLK[i], l = X10.rl[k] | 0, e = rlEff(i), g = 250 * (l + 1), q = r[4] * (l + 1); B.append(hrow(r[0] + ' ' + r[1] + ' Nv.' + l + (e > l ? ' (clã Nv.' + e + ')' : '') + ' — ' + r[2], l >= 5 ? h('span', '', 'MÁX') : hbt('Investir ' + g + '🪙 + ' + q + ' ' + r[3], () => { if (P.gold < g || (P.mat[r[3]] | 0) < q) return toast('Faltam recursos'); P.gold -= g; P.mat[r[3]] -= q; X10.rl[k] = l + 1; try { rsCalc(); } catch (x) {} r10Bc(); saveP(); r10R(); }))); });
+    }
+    if (T10 === 2) {
+      B.append(h('p', '', '🌌 Fragmentos de Fenda: ' + X10.fr + ' · 🎯 Procurados capturados: ' + X10.bty), h('small', '', 'Procurados fogem de você até serem encurralados (vida < 40%). Aparecem a cada ~5 min em campo aberto.'));
+      B.append(hrow(R10.bt && mons.includes(R10.bt) ? 'Alvo ativo: ' + R10.bt.d.n + ' ' + arrow6(R10.bt.g.position.x - E.player.position.x, R10.bt.g.position.z - E.player.position.z) : 'Nenhum procurado ativo', hbt('Invocar agora', () => { if (G.mode !== 'play' || D.on || inVil) return toast('Só em campo aberto'); if (R10.bt && mons.includes(R10.bt)) return toast('Já há um alvo'); r10BtySpawn(); r10R(); })));
+      B.append(h('h3', '', '🌌 Altar da Fenda'), hrow('Altar em X ' + ALT10.x + ' · Z ' + ALT10.z + ' (5 fragmentos)', hbt('Invocar Arauto', () => { r10Summon(); r10R(); })), hbt('📍 Marcar altar no mapa', () => { P.pin = { x: ALT10.x, z: ALT10.z, d0: 0 }; saveP(); toast('📍 Altar marcado'); }));
+    }
+    if (T10 === 3) { B.append(h('small', '', 'Funda 3 runas iguais do banco para subir o nível (+50% de bônus encaixado por nível, até Nv.5).')); Object.keys(RUN).forEach(id => { const r = RUN[id], lv = X10.rlv[id] | 0, q = P.rn[id] | 0; B.append(hrow(r[0] + ' ' + r[1] + ' Nv.' + lv + ' · banco ×' + q, lv >= 5 ? h('span', '', 'MÁX') : hbt('Fundir 3 · ' + 120 * (lv + 1) + '🪙', () => { r10Fuse(id); r10R(); }))); }); }
+    if (T10 === 4) {
+      B.append(h('p', '', inVil ? '🏘️ Você está em uma vila segura.' : '⚠️ Disponível apenas dentro de vilas (ou no lobby).'), h('small', '', 'Em estoque: 🧴 ' + X10.cs.ant + ' · 🍶 ' + X10.cs.ton + ' · 💣 ' + X10.cs.bomb + ' · 🧪 ' + P.pot + '  (F3 antídoto · F7 tônico · F6 bomba)'));
+      MKT10.forEach(m => B.append(hrow(m[0] + ' ' + m[1] + ' — ' + m[2] + '🪙', hbt('Comprar', () => { if (!inVil && G.mode !== 'lobby') return toast('Só em vilas'); if (P.gold < m[2]) return toast('Ouro insuficiente'); if (!m[3]()) return toast('Estoque cheio'); P.gold -= m[2]; try { rsCalc(); } catch (e) {} saveP(); r10R(); }))));
+    }
+    if (T10 === 5) {
+      B.append(h('p', '', '🏆 Recorde: onda ' + X10.tr.w + ' · ' + X10.tr.t + 's'), hrow(R10.tn ? 'Em andamento: onda ' + R10.tn.w : 'Ondas crescentes com campeão a cada 5', R10.tn ? hbt('Encerrar', () => { r10TnEnd('manual'); r10R(); }) : hbt('Iniciar aqui', () => { r10TnStart(); r10R(); })));
+      B.append(h('h3', '', 'Placar (melhores 5)')); if (!X10.tr.h.length) B.append(h('small', '', 'Sem partidas ainda.')); X10.tr.h.forEach((e, i) => B.append(h('div', 'it', (i + 1) + 'º · onda ' + e.w + ' · ' + e.t + 's · ' + e.d)));
+    }
+    if (T10 === 6) { r10Seals(); const c = X10.cn[char.cls] || {}; B.append(h('p', '', 'Selos da sua classe: ' + CLASSES[char.cls].nome)); SEL10.filter(s => s[5] === char.cls).forEach(s => { const ok = X10.sl[s[0]]; B.append(hrow((ok ? '🏅 ' : '🔒 ') + s[1] + ' — ' + s[2] + ' (' + Math.min(s[4], c[s[3]] | 0) + '/' + s[4] + ') · bônus ' + Object.keys(s[8]).map(k => k + ' +' + s[8][k]).join(', '))); }); }
+    if (T10 === 7) {
+      B.append(h('p', '', 'Andar selecionado: ' + X10.fsel + ' · inimigos ×' + (1 + .35 * (X10.fsel - 1)).toFixed(2) + ' · recompensa extra ×' + (1 + .5 * (X10.fsel - 1)).toFixed(2)), h('small', '', 'Vença uma dungeon para liberar o próximo andar (liberado até ' + X10.fl + '). Repita andares quando quiser.'));
+      const g = h('div', 'ptabs'); for (let f = 1; f <= Math.min(30, X10.fl); f++) { const b = h('button', 'btn sm' + (X10.fsel === f ? ' on' : ''), String(f)); b.onclick = () => { X10.fsel = f; saveP(); r10R(); }; g.append(b); } B.append(g);
+    }
+    if (T10 === 8) {
+      const inp = h('input'); inp.type = 'text'; inp.maxLength = 80; inp.placeholder = 'Anotação curta…'; B.append(inp, hrow('Salvar com a posição atual', hbt('📍 Salvar', () => { if (X10.nt.length >= 25) return toast('Limite de 25 notas'); const p = E.player.position; X10.nt.push({ t: (inp.value || 'Ponto de interesse').slice(0, 80), x: Math.round(p.x), z: Math.round(p.z), b: BN[E.W.biome(p.x, p.z)] }); saveP(); r10R(); })));
+      if (!X10.nt.length) B.append(h('small', '', 'Nenhuma nota ainda.')); X10.nt.forEach((n, i) => { const r = h('div', 'it'); r.append(h('span', '', '📝 ' + n.t + ' (' + n.x + ', ' + n.z + ' · ' + n.b + ')')); const s = h('span'); s.append(hbt('📍', () => { P.pin = { x: n.x, z: n.z, d0: 0 }; saveP(); toast('📍 Destino fixado'); }), hbt('🗑️', () => { X10.nt.splice(i, 1); saveP(); r10R(); })); r.append(s); B.append(r); });
+    }
+    if (T10 === 9) {
+      B.append(hrow('Salvar agora (local + nuvem)', hbt('💾 Forçar save', r10Save)), h('small', '', R10.svMsg || 'Último save: automático.'));
+      B.append(hrow('Anti-preso (F4): leva ao ponto livre mais próximo', hbt('🆘 Recuperar', () => r10Unstick())));
+      B.append(hrow('Modo canhoto (joystick à direita)', hbt(X10.lf ? 'Ligado' : 'Desligado', () => { X10.lf = X10.lf ? 0 : 1; document.body.classList.toggle('lefty', !!X10.lf); saveP(); r10R(); })));
+      B.append(hrow('Tamanho dos botões: ' + X10.sz.toFixed(2), h('span')), (() => { const s = h('input'); s.type = 'range'; s.min = .7; s.max = 1.4; s.step = .05; s.value = X10.sz; s.oninput = () => { X10.sz = +s.value; $('tc').style.setProperty('--s', X10.sz); saveP(); }; return s; })());
+      B.append(hrow('Fada companheira', hbt(X10.fy ? 'Ligada' : 'Desligada', () => { X10.fy = X10.fy ? 0 : 1; saveP(); r10R(); })));
+      B.append(h('h3', '', 'Teclas (clique e aperte uma tecla)')); [['hub', 'Abrir Extras IV'], ['cure', 'Antídoto'], ['stuck', 'Anti-preso'], ['act', 'Interagir (tocha/sino/altar)']].forEach(([k, n]) => B.append(hrow(n, hbt(R10.cap === k ? '…aperte' : X10.kb[k].toUpperCase(), () => { R10.cap = k; r10R(); }))));
+      B.append(h('small', '', 'F6 bomba · F7 tônico. Trilhas secretas (caminhos de terra, incluindo pontes sobre lagos) dão +20% de velocidade.'));
+    }
+  }
+  { const lm = $('lobM'), b = h('button', 'btn', '✨ Extras IV'); b.onclick = () => r10Hub(); if (lm) lm.append(b); }
+  Object.assign(QA, { hub10: ['🧿', 'Extras IV', () => r10Hub(), () => ''], ant10: ['🧴', 'Antídoto', () => r10Cure('ant'), () => X10.cs.ant || ''], ton10: ['🍶', 'Tônico', () => r10Cure('ton'), () => X10.cs.ton || ''], bmb10: ['💣', 'Bomba', r10Bomb, () => X10.cs.bomb || ''], stk10: ['🆘', 'Anti-preso', () => r10Unstick(), () => ''], act10: ['🔔', 'Interagir', r10Do, () => ''] });
+  addEventListener('keydown', e => {
+    if (/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return; const k = e.key.toLowerCase();
+    if (R10.cap) { e.preventDefault(); if (k !== 'escape') { X10.kb[R10.cap] = k; toast('Tecla definida: ' + k.toUpperCase()); } R10.cap = null; saveP(); r10R(); return; }
+    const b = X10.kb; if (k === b.hub) { e.preventDefault(); r10Hub(); } else if (G.mode === 'play') { if (k === b.cure) { e.preventDefault(); r10Cure('ant'); } else if (k === b.stuck) { e.preventDefault(); r10Unstick(); } else if (k === b.act) { e.preventDefault(); r10Do(); } else if (k === 'f6') { e.preventDefault(); r10Bomb(); } else if (k === 'f7') { e.preventDefault(); r10Cure('ton'); } }
+  });
+  if (X10.lf) document.body.classList.add('lefty'); if (X10.sz !== 1) $('tc').style.setProperty('--s', X10.sz);
+
+  /* resumo no lobby, botão contextual e hints */
+  const ses10 = h('div'); ses10.id = 'r10Ses'; { const x = h('button', '', '✕'); x.onclick = () => { R10.sesHide = 1; }; ses10.append(x, h('div')); document.body.append(ses10); }
+  const act10 = h('button', 'btn', ''); act10.id = 'r10Act'; act10.onclick = r10Do; document.body.append(act10); let r10Lm = '';
+
+  /* 12) fada companheira */
+  const fy = new T.Group(), fyM = new T.MeshBasicMaterial({ color: 0x7ad8ff }), fyC = zNm(fy, zSp(.13, 8, 6), fyM), fyT = [0, 1, 2].map(i => { const m = zNm(fy, zSp(.07 - i * .015, 6, 5), fyM); m.userData.p = new T.Vector3(); return m; }); fy.visible = false; E.scene.add(fy);
+
+  /* 20) minimapa em tela cheia: arrastar, pinça, duplo toque, zoom na área; redesenho em lote */
+  let r10Mk = '', r10Mt = 0; const mmW10 = $('mmW'), mmC = $('mm'), hint10 = h('div', '', '🗺️ Arraste para mover · pinça/roda/duplo toque para zoom · toque numa vila/portal para viajar'); hint10.id = 'mmHint'; mmW10.append(hint10);
+  const mmRect = () => mmC.getBoundingClientRect();
+  function zoomAt(up, e) {
+    const p = E.player.position, r = mmRect(), o = fz, nz = Math.max(1, Math.min(16, up ? fz * 2 : fz / 2)); if (nz === o) return;
+    const u = ((e.clientX - r.left) / r.width - .5) * 2, v = ((e.clientY - r.top) / r.height - .5) * 2, R0 = HS / o, R1 = HS / nz, c0x = o === 1 ? 0 : p.x + mpX, c0z = o === 1 ? 0 : p.z + mpZ, wx = c0x + u * R0, wz = c0z + v * R0;
+    fz = nz; if (nz === 1) { mpX = mpZ = 0; } else { mpX = wx - u * R1 - p.x; mpZ = wz - v * R1 - p.z; } mt = 0; r10Mk = '';
+  }
+  mmW10.addEventListener('wheel', e => { if (!mmW10.classList.contains('xl')) return; e.preventDefault(); e.stopPropagation(); zoomAt(e.deltaY < 0, e); }, { passive: false, capture: true });
+  mmW10.addEventListener('dblclick', e => { if (mmW10.classList.contains('xl')) { e.preventDefault(); zoomAt(true, e); } });
+  const mps = new Map(); let mdr = 0, mpd = 0;
+  mmC.addEventListener('pointerdown', e => { if (!mmW10.classList.contains('xl')) return; mps.set(e.pointerId, { x: e.clientX, y: e.clientY }); mdr = 0; if (mps.size === 2) { const a = [...mps.values()]; mpd = Math.hypot(a[0].x - a[1].x, a[0].y - a[1].y); } try { mmC.setPointerCapture(e.pointerId); } catch (x) {} });
+  mmC.addEventListener('pointermove', e => {
+    const q = mps.get(e.pointerId); if (!q || !mmW10.classList.contains('xl')) return;
+    if (mps.size === 2) { q.x = e.clientX; q.y = e.clientY; const a = [...mps.values()], d = Math.hypot(a[0].x - a[1].x, a[0].y - a[1].y); mdr = 99; if (mpd && d / mpd > 1.35) { zoomAt(true, { clientX: (a[0].x + a[1].x) / 2, clientY: (a[0].y + a[1].y) / 2 }); mpd = d; } else if (mpd && d / mpd < .74) { zoomAt(false, { clientX: (a[0].x + a[1].x) / 2, clientY: (a[0].y + a[1].y) / 2 }); mpd = d; } return; }
+    const dx = e.clientX - q.x, dy = e.clientY - q.y; mdr += Math.abs(dx) + Math.abs(dy); q.x = e.clientX; q.y = e.clientY;
+    if (fz > 1 && mdr > 6) { const r = mmRect(), R = HS / fz; mpX -= dx / r.width * 2 * R; mpZ -= dy / r.height * 2 * R; mpX = Math.max(-HS, Math.min(HS, mpX)); mpZ = Math.max(-HS, Math.min(HS, mpZ)); mt = 0; r10Mk = ''; }
+  });
+  const mpUp = e => { mps.delete(e.pointerId); if (mps.size < 2) mpd = 0; setTimeout(() => { mdr = 0; }, 60); };
+  mmC.addEventListener('pointerup', mpUp); mmC.addEventListener('pointercancel', mpUp);
+  mmW10.addEventListener('click', e => { if (mdr > 6) { e.stopImmediatePropagation(); e.preventDefault(); } }, true);
+  const r10dm = drawMap;
+  drawMap = function (p) {
+    const xl = mmW10.classList.contains('xl'), n = performance.now(), key = xl ? [Math.round(p.x / 3), Math.round(p.z / 3), fz, Math.round(mpX), Math.round(mpZ), P.pin && P.pin.x, P.pin && P.pin.z, X10.nt.length, R10.bt && R10.bt.g.position.x | 0].join() : [Math.round(p.x * 2), Math.round(p.z * 2), mini2 ? 1 : 0, mons.length].join();
+    if (key === r10Mk && n - r10Mt < (xl ? 1500 : 220)) return; r10Mk = key; r10Mt = n; r10dm(p); try { r10Mm(p, xl); } catch (e) {}
+  };
+  function r10Mm(p, xl) {
+    const S = mmC.width, half = S / 2, R = xl ? HS / fz : 160 * (mini2 ? 2 : 1), cx = xl && fz === 1 ? 0 : p.x + (xl ? mpX : 0), cz = xl && fz === 1 ? 0 : p.z + (xl ? mpZ : 0), X = x => half + (x - cx) / R * half, Z = z => half + (z - cz) / R * half;
+    const pt = (x, z, t, c) => { const px = X(x), py = Z(z); if (px > 8 && px < S - 8 && py > 8 && py < S - 8) { mc.font = (xl ? 18 : 12) + 'px sans-serif'; mc.textAlign = 'center'; mc.fillStyle = c || '#fff'; mc.fillText(t, px, py + 5); } };
+    if (R10.bt && mons.includes(R10.bt)) pt(R10.bt.g.position.x, R10.bt.g.position.z, '🎯'); if (!D.on) pt(ALT10.x, ALT10.z, '🌌'); if (xl) X10.nt.forEach(n => pt(n.x, n.z, '📝'));
+  }
+
+  /* ciclo principal (RISE.updaters) */
+  E.updaters.push((dt, tt) => {
+    const now = Date.now(), p = E.player.position, play = G.mode === 'play';
+    if (!mmW10.classList.contains('xl')) { mpX = mpZ = 0; } else if (fz === 1) { mpX = mpZ = 0; }
+    act10.style.display = 'none'; ses10.style.display = G.mode === 'lobby' && !R10.sesHide ? 'block' : 'none'; if (G.mode !== 'lobby') R10.sesHide = 0;
+    if (G.mode === 'lobby') { const t = r10Sum().join('\n'); if (t !== r10Lm) { r10Lm = t; ses10.lastChild.textContent = ''; ses10.lastChild.append(h('b', '', '📋 Sessão')); r10Sum().forEach(l => ses10.lastChild.append(h('div', '', l))); } }
+    altG.visible = !D.on; altG.userData.cr.rotation.y = tt; altG.userData.cr.position.y = 2.4 + Math.sin(tt * 2) * .15;
+    R10.flames = R10.flames.filter(f => { if (now > f.u) { E.scene.remove(f.g); return false; } f.f.scale.y = 1 + Math.sin(tt * 9 + f.u) * .2; return true; });
+    if (!play) { fy.visible = false; R10.sm = 1; return; }
+    /* estados */
+    R10.stT -= dt; if (R10.stT <= 0) { R10.stT = 1; let msg = ''; for (const t in STN) { if ((R10.st[t] || 0) > now) { const l = Math.ceil((R10.st[t] - now) / 1000); msg += STN[t][0] + ' ' + STN[t][1] + ' ' + l + 's  '; if (STN[t][2] && hp > 1) { hp = Math.max(1, hp - Math.max(1, Math.round(maxHp() * STN[t][2]))); updHp(); dmgText(p, '-', false, t === 'pois' ? '#7dff7d' : t === 'brn' ? '#ff9a3a' : '#ff4a4a'); } } } for (const t in R10.im) if (R10.im[t] > now) msg += '🛡️' + STN[t][0] + ' '; setH('r10St', msg.trim()); }
+    const tw = trailW(p.x, p.z) > .5;
+    R10.sm = ((R10.st.slw || 0) > now ? .65 : 1) * (tw ? 1.2 : 1) * (R10.bell > now ? 1.15 : 1);
+    /* procurados */
+    if (R10.bt && !mons.includes(R10.bt)) { R10.bt = null; R10.btT = Math.max(R10.btT, 90); }
+    R10.btT -= dt; if (!R10.bt && R10.btT <= 0 && !D.on && !inVil && !R10.tn) { R10.btT = 20; if (r10BtySpawn()) R10.btT = 300; }
+    const b = R10.bt; if (b && b.hp > 0) {
+      const q = b.g.position, dx = q.x - p.x, dz = q.z - p.z, d = Math.hypot(dx, dz) || 1;
+      if (b.hp > b.max * .4 && d < 26) { const s = b.d.spd * 1.5 * dt; q.x += dx / d * s; q.z += dz / d * s; b.g.rotation.y = Math.atan2(dx, dz); b.agro = true; }
+      const ax = q.x - b.ax, az = q.z - b.az, ad = Math.hypot(ax, az); if (ad > 70) { q.x -= ax / ad * 6 * dt; q.z -= az / ad * 6 * dt; }
+      q.y = E.W.H(q.x, q.z);
+    }
+    r10TnTick(dt);
+    /* torneio / seals / clã */
+    R10.rlT -= dt; if (R10.rlT <= 0) { R10.rlT = 5; const sg = [0, 1, 2].map(rlEff).join(); if (sg !== R10.rlSig) { R10.rlSig = sg; try { rsCalc(); } catch (e) {} } if (((now / 5000) | 0) % 9 === 0) r10Bc(); r10Seals(); }
+    /* andares: recompensa extra ao concluir */
+    if (D.on && D.st === 5 && !R10.dclr) { R10.dclr = 1; const f = R10.dfl || 1, k = 1 + .5 * (f - 1); if (f > 1) { const g = Math.round(100 * D.k * (k - 1)); P.gold += g; addXP(Math.round(250 * D.k * (k - 1))); toast('🏰 Andar ' + f + ': bônus +' + g + '🪙'); } if (f >= X10.fl && X10.fl < 30) { X10.fl = f + 1; banner('🏰 ANDAR ' + (f + 1) + ' LIBERADO', 'Escolha em Extras IV → Andares'); } if (Math.random() < .5) X10.fr++; saveP(); }
+    /* botão contextual */
+    if (!D.on) { const near = Math.hypot(p.x - ALT10.x, p.z - ALT10.z) < 14, st = r10NearSt(); let t = ''; if (near) t = '🌌 Invocar Arauto (' + X10.fr + '/5)'; else if (st) { const k = st.x + ',' + st.z; t = (X10.ac[k] || 0) > now ? '' : st.type === 3 ? '🔥 Acender tocha' : st.type === 1 ? '🔔 Tocar o sino' : '🏚️ Investigar ruínas'; } if (t) { act10.textContent = t + ' [' + X10.kb.act.toUpperCase() + ']'; act10.style.display = 'block'; } }
+    /* anti-preso automático (sugestão) */
+    const li = Math.hypot(joy.x, joy.y) + ((keys.w || keys.a || keys.s || keys.d) ? 1 : 0), lm = R10.lp ? Math.hypot(p.x - R10.lp.x, p.z - R10.lp.z) : 1; R10.lp = { x: p.x, z: p.z }; if (li > .4 && lm < .01 && hurtT <= 0) { R10.stuckT += dt; if (R10.stuckT > 3 && R10.stuckT - dt <= 3) toast('Preso? Aperte ' + X10.kb.stuck.toUpperCase() + ' ou use 🆘 no menu Extras IV'); } else R10.stuckT = 0;
+    /* objetivo ativo */
+    let ot = null; if (R10.bt && mons.includes(R10.bt)) ot = ['🎯 Procurado', R10.bt.g.position.x, R10.bt.g.position.z]; else if (R10.tn) ot = null; else if (P.pin) ot = ['📍 Destino', P.pin.x, P.pin.z]; else if (X10.fr >= 5 && !D.on) ot = ['🌌 Altar da Fenda', ALT10.x, ALT10.z];
+    setH('r10Ob', ot && !D.on ? arrow6(ot[1] - p.x, ot[2] - p.z) + ' ' + ot[0] + ' · ' + Math.round(Math.hypot(ot[1] - p.x, ot[2] - p.z)) + 'm' : '');
+    /* fada */
+    fy.visible = !!X10.fy; if (X10.fy) {
+      const lh = hp / maxHp(), danger = lh < .35 || mons.some(m => m.agro && m.hp > 0 && Math.hypot(m.g.position.x - p.x, m.g.position.z - p.z) < 10);
+      if (hp - R10.fyH > maxHp() * .03) { fyM.color.setHex(0x66ff99); R10.fyC = .8; burst(p, 0x66ff99, 6); } R10.fyH = hp;
+      if (P.lv !== R10.fyL) { R10.fyL = P.lv; fyM.color.setHex(0xffd24a); R10.fyC = 2; }
+      R10.fyC = Math.max(0, (R10.fyC || 0) - dt); if (!R10.fyC) fyM.color.setHex(danger ? 0xff5a5a : 0x7ad8ff);
+      const a = tt * (danger ? 3.2 : 1.6); fy.position.set(p.x + Math.cos(a) * .95, p.y + 2.2 + Math.sin(tt * 2.3) * .2 + (danger ? Math.sin(tt * 18) * .05 : 0), p.z + Math.sin(a) * .95); fyC.scale.setScalar(1 + Math.sin(tt * 6) * .15);
+      fyT.forEach((m, i) => { const q = m.userData.p; if (!m.userData.i) { q.copy(fy.position); m.userData.i = 1; } q.lerp(fy.position, 1 - Math.exp(-(6 - i * 1.5) * dt)); m.position.set(q.x - fy.position.x, q.y - fy.position.y, q.z - fy.position.z); });
+    }
+  });
+
+  try { rsCalc(); } catch (e) {}
 
   document.body.dataset.mode = 'start';
 }
