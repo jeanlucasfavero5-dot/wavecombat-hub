@@ -539,7 +539,7 @@ const URL_ID = (params.get('id') || '').trim();
 const PLAYER_ID = URL_ID || '0'; // fallback para testes locais
 const $ = id => document.getElementById(id);
 const fmt = n => Number(n).toLocaleString('pt-BR');
-const VERSION = '0.0163'; // suba a cada atualização enviada
+const VERSION = '0.0164'; // suba a cada atualização enviada
 const DIA = {};
 const G = { mode: 'start' };
 let NICK = 'Visitante';
@@ -633,7 +633,7 @@ function initEngine() {
 
   let pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
   renderer.setPixelRatio(pixelRatio);
-  renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.outputEncoding = THREE.sRGBEncoding; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.2;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
@@ -696,11 +696,11 @@ function initEngine() {
     t += dt;
 
     // demo: câmera orbitando suavemente ao redor do personagem
-    const a = G.mode === 'play' ? 0 : t * 0.12;
+    const a = G.mode === 'play' ? camYaw : t * 0.12, zm = G.mode === 'play' ? camZm : 1;
     camera.position.set(
-      camTarget.x + camOffset.x * Math.cos(a) - camOffset.z * Math.sin(a),
-      camTarget.y + camOffset.y,
-      camTarget.z + camOffset.x * Math.sin(a) + camOffset.z * Math.cos(a));
+      camTarget.x + (camOffset.x * Math.cos(a) - camOffset.z * Math.sin(a)) * zm,
+      camTarget.y + camOffset.y * zm,
+      camTarget.z + (camOffset.x * Math.sin(a) + camOffset.z * Math.cos(a)) * zm);
     camera.lookAt(camTarget);
     head.position.y = 2.0 + Math.sin(t * 2) * 0.05;
     ring.rotation.z = t;
@@ -732,6 +732,7 @@ function initEngine() {
   return { THREE, renderer, scene, camera, player, updaters, body, head, ring, camTarget, camOffset, setQuality, W, sun };
 }
 
+var camYaw = 0, camZm = 1;
 let loadingHidden = false;
 function hideLoading() {
   if (loadingHidden) return;
@@ -1207,7 +1208,7 @@ function initUI(E) {
     const len = Math.hypot(ix, iy); if (len > 1) { ix /= len; iy /= len; }
     if (len > .05) {
       const sp = (3.5 + CLASSES[char.cls].st.Velocidade * .45) * (dash > 0 ? 3 : 1) * (RSP || 1) * ADM.spd * (1 + P.at.dex * .01) * (swim ? .6 : 1) * (R10 ? R10.sm : 1);
-      const dx = .7071 * (ix - iy), dz = -.7071 * (ix + iy);
+      const bx = .7071 * (ix - iy), bz = -.7071 * (ix + iy), cy = Math.cos(camYaw), sy = Math.sin(camYaw), dx = bx * cy - bz * sy, dz = bx * sy + bz * cy;
       p.x = Math.max(-HS + 4, Math.min(HS - 4, p.x + dx * sp * dt)); p.z = Math.max(-HS + 4, Math.min(HS - 4, p.z + dz * sp * dt)); p.y = E.W.H(p.x, p.z);
       const r = Math.atan2(dx, dz), d = Math.atan2(Math.sin(r - E.player.rotation.y), Math.cos(r - E.player.rotation.y));
       E.player.rotation.y += d * Math.min(1, dt * 12);
@@ -3853,7 +3854,7 @@ function initUI(E) {
   const slotPos = (() => { const cache = {}; return (slot, salt, bio) => { const k = slot + '|' + salt + '|' + bio; if (k in cache) return cache[k]; let r = null; for (let i = 0; i < 300 && !r; i++) { const x = (hash(slot, i, 1200 + salt) * 2 - 1) * (HS - 150), z = (hash(slot, i, 1250 + salt) * 2 - 1) * (HS - 150); if (Math.hypot(x, z) < 150 || (bio >= 0 && E.W.biome(x, z) !== bio) || E.W.H(x, z) < .5 || lakeW(x, z) > .05 || nearVillage(x, z)) continue; r = { x, z }; } cache[k] = r; return r; }; })();
   const hint6 = (id, top) => { let e = R6.hint[id]; if (!e) { e = h('div', 'rsH'); e.id = id; document.body.append(e); R6.hint[id] = e; } return e; };
   const setH = (id, txt) => { const e = hint6(id); if (txt) { e.style.display = 'block'; if (e.textContent !== txt) e.textContent = txt; } else if (e.style.display) e.style.display = ''; };
-  const arrow6 = (dx, dz) => ['→', '↘', '↓', '↙', '←', '↖', '↑', '↗'][Math.round(((Math.atan2(dz, dx) + 6.283) % 6.283) / .7854) % 8];
+  const arrow6 = (dx0, dz0) => { const c = Math.cos(camYaw), s = Math.sin(camYaw), dx = dx0 * c + dz0 * s, dz = -dx0 * s + dz0 * c; return ['→', '↘', '↓', '↙', '←', '↖', '↑', '↗'][Math.round(((Math.atan2(dz, dx) + 6.283) % 6.283) / .7854) % 8]; };
   const beam6 = c => { const m = new T.Mesh(new T.CylinderGeometry(.7, .7, 40, 8, 1, true), new T.MeshBasicMaterial({ color: c, transparent: true, opacity: .35, side: T.DoubleSide })); m.visible = false; E.scene.add(m); return m; };
   const busy6 = () => busy5() || R6.tr || R6.wbA;
 
@@ -5722,6 +5723,77 @@ function initUI(E) {
   });
   { const rcL = r10Calc; r10Calc = function (A) { rcL(A); try { r11Calc(A); } catch (e) {} }; }
   try { rsCalc(); } catch (e) {}
+
+
+  /* ══ v0.0164: câmera orbital (arrastar / [ ] / roda / pinça) e pacote gráfico ══ */
+  P.r12 = P.r12 || {}; const X12 = P.r12; ['tm', 'vg', 'cl', 'pt', 'sg', 'cg'].forEach(k => { if (X12[k] === undefined) X12[k] = 1; }); X12.sens = +X12.sens || 1; X12.inv = X12.inv | 0; X12.zm = +X12.zm || 1; X12.yaw = +X12.yaw || 0;
+  let yawT = X12.yaw; camYaw = X12.yaw; camZm = Math.max(.55, Math.min(1.6, X12.zm)); let zmT = camZm;
+  const R12 = { kL: 0, kR: 0, dr: null, ps: new Map(), pd: 0, st: 0 };
+  const noCam = t => t && t.closest && t.closest('button,#joy,.pan,#cg,select,input,textarea,label,#rsBar,#r7Q,#tc,#r11Fab,#mmW,#r10Act,#r11Act,#r11Inv,#bmw,.dmg');
+  E.renderer.domElement.addEventListener('contextmenu', e => e.preventDefault());
+  addEventListener('pointerdown', e => {
+    if (G.mode !== 'play' || noCam(e.target) || e.target !== E.renderer.domElement) return; R12.ps.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (R12.ps.size === 1) R12.dr = { id: e.pointerId, mv: 0 }; else if (R12.ps.size === 2) { const a = [...R12.ps.values()]; R12.pd = Math.hypot(a[0].x - a[1].x, a[0].y - a[1].y); R12.dr = null; }
+  }, true);
+  addEventListener('pointermove', e => {
+    const q = R12.ps.get(e.pointerId); if (!q || G.mode !== 'play') return; const dx = e.clientX - q.x, dy = e.clientY - q.y; q.x = e.clientX; q.y = e.clientY;
+    if (R12.ps.size === 2) { const a = [...R12.ps.values()], d = Math.hypot(a[0].x - a[1].x, a[0].y - a[1].y); if (R12.pd) zmT = Math.max(.55, Math.min(1.6, zmT * R12.pd / d)); R12.pd = d; return; }
+    if (R12.dr && R12.dr.id === e.pointerId) { R12.dr.mv += Math.abs(dx) + Math.abs(dy); if (R12.dr.mv > 6) yawT -= dx * .006 * X12.sens * (X12.inv ? -1 : 1); }
+  }, true);
+  const pu12 = e => { R12.ps.delete(e.pointerId); if (R12.ps.size < 2) R12.pd = 0; if (R12.dr && R12.dr.id === e.pointerId) R12.dr = null; };
+  addEventListener('pointerup', pu12, true); addEventListener('pointercancel', pu12, true);
+  E.renderer.domElement.addEventListener('wheel', e => { if (G.mode !== 'play') return; e.preventDefault(); zmT = Math.max(.55, Math.min(1.6, zmT * (e.deltaY > 0 ? 1.08 : .92))); }, { passive: false });
+  addEventListener('keydown', e => { if (/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return; if (e.key === '[') R12.kL = 1; else if (e.key === ']') R12.kR = 1; else if (e.key === 'Home' && G.mode === 'play') { yawT = 0; zmT = 1; } else if (e.key === 'F9') { e.preventDefault(); r12Hub(); } });
+  addEventListener('keyup', e => { if (e.key === '[') R12.kL = 0; else if (e.key === ']') R12.kR = 0; });
+  const yawBtn = (id, t, a, f) => { const b = h('button', '', t); b.id = id; b.setAttribute('aria-label', a); let iv = 0; const go = () => { f(); iv = setInterval(f, 40); }, no = () => { clearInterval(iv); iv = 0; }; b.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); go(); }); ['pointerup', 'pointerleave', 'pointercancel'].forEach(n => b.addEventListener(n, no)); return b; };
+  const cb12 = h('div'); cb12.id = 'r12Cam'; cb12.append(yawBtn('r12L', '⟲', 'Girar câmera para a esquerda', () => { yawT += .07; }), (() => { const b = h('button', '', '⌖'); b.setAttribute('aria-label', 'Recentralizar câmera'); b.onclick = () => { yawT = 0; zmT = 1; }; return b; })(), yawBtn('r12R', '⟳', 'Girar câmera para a direita', () => { yawT -= .07; })); document.body.append(cb12);
+  const st12 = h('style'); st12.textContent = '#r12Cam{display:none;position:fixed;top:calc(8px + var(--safe-t));left:50%;transform:translateX(-50%);z-index:6;gap:6px}body[data-mode=play] #r12Cam{display:flex}body.photo #r12Cam{display:none!important}#r12Cam button{width:38px;height:34px;border-radius:10px;border:1px solid var(--line);background:rgba(10,15,12,.7);color:#fff;font-size:17px;opacity:.7;touch-action:none}#r12Vg{position:fixed;inset:0;z-index:2;pointer-events:none;background:radial-gradient(ellipse at center,rgba(0,0,0,0) 55%,rgba(5,8,14,.42) 100%);transition:opacity .4s}#r12Sun{position:fixed;left:0;top:0;width:340px;height:340px;margin:-170px 0 0 -170px;z-index:2;pointer-events:none;border-radius:50%;background:radial-gradient(circle,rgba(255,236,190,.55) 0,rgba(255,210,140,.18) 35%,rgba(255,200,120,0) 70%);mix-blend-mode:screen;opacity:0;will-change:transform,opacity}#pHub12{left:50%;top:50%;transform:translate(-50%,-50%);width:min(94vw,520px);max-height:calc(100% - 40px);overflow:auto;z-index:10}#pHub12 .it{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(217,164,65,.2);font-size:13px}'; document.head.append(st12);
+  const vg12 = h('div'); vg12.id = 'r12Vg'; const sn12 = h('div'); sn12.id = 'r12Sun'; document.body.append(vg12, sn12);
+
+  /* tone mapping, sombras e brilho solar */
+  const r12Tm = () => { E.renderer.toneMapping = X12.tm ? T.ACESFilmicToneMapping : T.NoToneMapping; E.renderer.toneMappingExposure = 1.2; E.scene.traverse(o => { if (o.material) (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => { m.needsUpdate = true; }); }); };
+  r12Tm(); E.sun.shadow.normalBias = .03;
+
+  /* nuvens em sprites suaves */
+  const cvC = document.createElement('canvas'); cvC.width = cvC.height = 128; { const c = cvC.getContext('2d'); for (let i = 0; i < 7; i++) { const x = 30 + Math.random() * 68, y = 44 + Math.random() * 40, r = 22 + Math.random() * 20, g = c.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, 'rgba(255,255,255,.7)'); g.addColorStop(1, 'rgba(255,255,255,0)'); c.fillStyle = g; c.fillRect(0, 0, 128, 128); } }
+  const clT = new T.CanvasTexture(cvC), clS = []; for (let i = 0; i < 12; i++) { const m = new T.Sprite(new T.SpriteMaterial({ map: clT, transparent: true, opacity: .55, depthWrite: false, fog: false })); m.scale.set(60 + Math.random() * 50, 26 + Math.random() * 16, 1); m.userData = { a: Math.random() * 6.283, r: 60 + Math.random() * 120, h: 55 + Math.random() * 30, s: .004 + Math.random() * .006 }; E.scene.add(m); clS.push(m); }
+
+  /* partículas ambientais por bioma/horário */
+  const pN = 70, pG = new T.BufferGeometry(), pPos = new Float32Array(pN * 3), pSd = []; for (let i = 0; i < pN; i++) { pPos[i * 3] = (Math.random() - .5) * 40; pPos[i * 3 + 1] = Math.random() * 8; pPos[i * 3 + 2] = (Math.random() - .5) * 40; pSd.push(Math.random() * 6.283); } pG.setAttribute('position', new T.BufferAttribute(pPos, 3));
+  const pM = new T.PointsMaterial({ color: 0xffffff, size: .22, transparent: true, opacity: .7, depthWrite: false, blending: T.AdditiveBlending, sizeAttenuation: true }), pts = new T.Points(pG, pM); pts.frustumCulled = false; E.scene.add(pts);
+  const PTC = { 2: [0xeaf4ff, -1.2, .26], 1: [0xe6c890, .2, .18], 3: [0xb8ff7a, .1, .2], 6: [0xff9a4a, 1.6, .2], 7: [0xc8b0ff, .5, .2] };
+
+  /* hub de gráficos e câmera */
+  const hub12 = h('div', 'pan'); hub12.id = 'pHub12'; document.body.append(hub12);
+  function r12Hub(open) { if (G.mode !== 'play' && G.mode !== 'lobby') return; const on = open === true ? true : !hub12.classList.contains('on'); if (on) { panel(null); [hub, hub2, hub3, hub4, hub5, mur, mch, hub6, hub7, hub8, hub9, hub10, hub11].forEach(x => x && x.classList.remove('on')); } hub12.classList.toggle('on', on); if (on) r12R(); }
+  function r12R() {
+    if (!hub12.classList.contains('on')) return; hub12.textContent = ''; const top = h('div', 'rowh'); top.append(hbt('← Fechar', () => hub12.classList.remove('on')), h('h3', '', '🎬 Câmera e Gráficos')); hub12.append(top);
+    const tg = (n, k, f) => hrow(n, hbt(X12[k] ? 'Ligado' : 'Desligado', () => { X12[k] = X12[k] ? 0 : 1; if (f) f(); saveP(); r12R(); }));
+    const sl = (n, min, max, st, k, f) => { const s = h('input'); s.type = 'range'; s.min = min; s.max = max; s.step = st; s.value = X12[k]; s.oninput = () => { X12[k] = +s.value; if (f) f(); saveP(); }; return hrow(n, s); };
+    hub12.append(h('h3', '', '📷 Câmera'), h('small', '', 'Arraste em área livre (ou botão direito/⟲ ⟳, teclas [ ]) para girar · roda/pinça = zoom · Home recentra.'), sl('Sensibilidade do giro', .4, 2.5, .1, 'sens'), hrow('Inverter sentido do giro', hbt(X12.inv ? 'Invertido' : 'Normal', () => { X12.inv = X12.inv ? 0 : 1; saveP(); r12R(); })), hrow('Recentralizar agora', hbt('⌖ Reset', () => { yawT = 0; zmT = 1; })), h('h3', '', '✨ Gráficos'), tg('Tone mapping cinematográfico', 'tm', r12Tm), tg('Vinheta e contraste', 'vg'), tg('Nuvens suaves', 'cl'), tg('Partículas ambientais (pólen, neve, vagalumes)', 'pt'), tg('Brilho do sol', 'sg'), tg('Botões de câmera na tela', 'cg'));
+    hub12.append(hrow('Preset: Ultra (sombras 2048, resolução alta)', hbt('Aplicar', () => { cfg.q = 2; try { LS.set('rise_cfg', cfg); } catch (e) {} E.setQuality(2); toast('Qualidade Ultra aplicada'); })));
+  }
+  { const lm = $('lobM'), b = h('button', 'btn', '🎬 Câmera/Gráficos'); b.onclick = () => r12Hub(); if (lm) lm.append(b); }
+  Object.assign(QA, { cam12: ['🎬', 'Câmera/Gráf.', () => r12Hub(), () => ''], rst12: ['⌖', 'Reset câmera', () => { yawT = 0; zmT = 1; }, () => ''] });
+
+  /* ciclo */
+  const sunV = new T.Vector3(); let r12T = 0;
+  E.updaters.push((dt, tt) => {
+    const play = G.mode === 'play', p = E.player.position;
+    if (play) { if (R12.kL) yawT += 1.8 * dt; if (R12.kR) yawT -= 1.8 * dt; camYaw += (yawT - camYaw) * Math.min(1, dt * 10); camZm += (zmT - camZm) * Math.min(1, dt * 8); r12T -= dt; if (r12T <= 0) { r12T = 3; X12.yaw = Math.round(yawT * 100) / 100; X12.zm = Math.round(zmT * 100) / 100; } } else { camYaw += (0 - camYaw) * Math.min(1, dt * 4); }
+    cb12.style.visibility = X12.cg ? 'visible' : 'hidden'; vg12.style.opacity = X12.vg && G.mode !== 'start' ? 1 : 0;
+    /* brilho do sol */
+    let so = 0; if (X12.sg && play) { sunV.copy(E.sun.position).sub(E.sun.target.position).normalize().multiplyScalar(200).add(E.camera.position).project(E.camera); if (sunV.z < 1 && Math.abs(sunV.x) < 1.2 && Math.abs(sunV.y) < 1.2) { so = Math.min(1, Math.max(0, E.sun.intensity / 1.15)) * (1 - Math.min(1, Math.hypot(sunV.x, sunV.y) * .6)) * (E.W.night ? 0 : 1) * .8; sn12.style.transform = 'translate(' + ((sunV.x * .5 + .5) * innerWidth) + 'px,' + ((-sunV.y * .5 + .5) * innerHeight) + 'px)'; } } sn12.style.opacity = so;
+    /* nuvens */
+    const wx = (typeof R5 !== 'undefined' && R5.wx) ? 1.25 : 1; clS.forEach(c => { c.visible = !!X12.cl && G.mode !== 'start'; if (!c.visible) return; const u = c.userData; u.a += u.s * dt * wx; c.position.set(p.x + Math.cos(u.a) * u.r, u.h, p.z + Math.sin(u.a) * u.r); c.material.opacity = .45 * Math.min(1, Math.max(.15, E.sun.intensity / 1.1)); c.material.color.copy(E.scene.fog.color).lerp(cB12.setHex(0xffffff), .55); });
+    /* partículas */
+    pts.visible = !!X12.pt && play && !D.on; if (pts.visible) {
+      const bi = E.W.biome(p.x, p.z), c = PTC[bi] || [0xe8ffd0, .15, .16], night = E.W.night > .5; pM.color.setHex(bi === 3 || night ? 0xc8ff7a : c[0]); pM.size = night ? .3 : c[2]; pM.opacity = night ? .9 : .55; const a = pG.attributes.position.array;
+      for (let i = 0; i < pN; i++) { const k = i * 3; pSd[i] += dt; a[k] += Math.sin(pSd[i] * .7 + i) * dt * .6; a[k + 1] -= c[1] * dt + Math.sin(pSd[i] * 1.3) * dt * .1; a[k + 2] += Math.cos(pSd[i] * .6 + i) * dt * .6; if (a[k + 1] < 0 || a[k + 1] > 9) a[k + 1] = c[1] > 0 ? 9 : 0.2 + Math.random() * 1.5; if (Math.abs(a[k]) > 20) a[k] *= -.95; if (Math.abs(a[k + 2]) > 20) a[k + 2] *= -.95; }
+      pG.attributes.position.needsUpdate = true; pts.position.set(p.x, E.W.H(p.x, p.z), p.z);
+    }
+  });
+  const cB12 = new T.Color();
 
   document.body.dataset.mode = 'start';
 }
