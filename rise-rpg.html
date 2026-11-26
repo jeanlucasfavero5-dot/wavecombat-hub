@@ -539,7 +539,7 @@ const URL_ID = (params.get('id') || '').trim();
 const PLAYER_ID = URL_ID || '0'; // fallback para testes locais
 const $ = id => document.getElementById(id);
 const fmt = n => Number(n).toLocaleString('pt-BR');
-const VERSION = '0.0165'; // suba a cada atualização enviada
+const VERSION = '0.0166'; // suba a cada atualização enviada
 const DIA = {};
 const G = { mode: 'start' };
 let NICK = 'Visitante';
@@ -5905,6 +5905,94 @@ function initUI(E) {
       try { const ex = m.cx || (m.cx = m.cg.children.find(o => o.userData && o.userData.pv)); if (ex) zAnim(ex, m.cg.children[0], m.cg.children[1], tt, m.sp, m.wk, m.ka, 0, m.cls, false); } catch (e) {}
     });
   });
+
+
+  /* ══ v0.0166: criaturas com mais detalhes e efeitos (auras, status, aparição, morte, impacto) ══ */
+  P.r14 = P.r14 || {}; const X14 = P.r14; X14.fx = X14.fx === 0 ? 0 : 1;
+  const g6C = new T.ConeGeometry(1, 1, 5), g6S = new T.SphereGeometry(1, 8, 6), g6O = new T.OctahedronGeometry(1), g6T = new T.TorusGeometry(1, .06, 6, 28), g6R = new T.RingGeometry(.8, 1, 32).rotateX(-Math.PI / 2);
+  const z6B = (geo, col, em, op) => new T.Mesh(geo, new T.MeshStandardMaterial({ color: col, emissive: em ? col : 0, emissiveIntensity: em ? 1.3 : 0, roughness: .55, transparent: op !== undefined, opacity: op === undefined ? 1 : op }));
+  const z6M = (c, o) => new T.MeshBasicMaterial({ color: c, transparent: true, opacity: o === undefined ? .8 : o, blending: T.AdditiveBlending, depthWrite: false });
+  const SPC6 = n => ({ 'Demônio de Lava': 'ember', 'Yeti': 'frost', 'Lobo Gelado': 'frost', 'Sapo Tóxico': 'pois', 'Golem de Cristal': 'arcane', 'Escorpião': 'dust' })[n] || '';
+  const PC6 = { ember: [1, .5, .15], frost: [.75, .92, 1], pois: [.5, 1, .3], arcane: [.78, .62, 1], dust: [.85, .72, .45], gold: [1, .85, .3], blood: [.9, .1, .1] };
+  const mkO6 = (geo, mat, sc, p, par) => { const o = new T.Mesh(geo, mat); o.scale.set(sc[0], sc[1], sc[2]); o.position.set(p[0], p[1], p[2]); par.add(o); return o; };
+
+  /* detalhes por espécie (anexados ao modelo) */
+  function d6(r, d) {
+    const mg = r.mg, par = mg || r.g, n = d.n, fx = []; r.fx = fx; r.ph = Math.random() * 6.28; r.spc = d.boss ? 'boss' : SPC6(n); r.bc = d.col;
+    if (mg && /Lobo|Leão|Hiena/.test(n)) {
+      const c = n === 'Leão' ? 0x6a3d1a : n === 'Lobo Gelado' ? 0xdff4ff : n === 'Hiena' ? 0x1c1c20 : 0x45454c;
+      for (let i = 0; i < 7; i++) { const t = z6B(g6C, c); t.scale.set(.1, .3, .1); t.position.set(0, 1.58 - Math.abs(i - 3) * .05, -.8 + i * .28); t.rotation.x = -.45; par.add(t); }
+      [-1, 1].forEach(s => { const f = z6B(g6C, 0xf4f0e0); f.scale.set(.03, .11, .03); f.position.set(s * .08, 1.27, 1.66); f.rotation.x = Math.PI; par.add(f); });
+    }
+    if (mg && n === 'Escorpião') { const tl = mg.userData.tail || par, gl = mkO6(g6S, z6M(0xff8a2a, .95), [.12, .12, .12], [0, 2.46, -.8], tl); fx.push((t) => { gl.scale.setScalar(.11 + Math.sin(t * 6 + r.ph) * .025); }); [0, 1, 2].forEach(i => mkO6(g6C, new T.MeshStandardMaterial({ color: 0x2a1a0e }), [.05, .16, .05], [0, 1.3 + i * .4, -.78 - Math.sin(i * .9) * .35], tl)); }
+    if (mg && n === 'Yeti') { const ic = new T.MeshStandardMaterial({ color: 0xbfeaff, emissive: 0x6ac8ff, emissiveIntensity: .7, transparent: true, opacity: .8, roughness: .1 }); [[-.95, 2.45, 0, .5], [.95, 2.45, 0, -.5], [-.4, 2.5, -.5, .2], [.4, 2.5, -.5, -.2], [0, 2.8, -.45, 0]].forEach(([x, y, z, rz]) => { const o = mkO6(g6C, ic, [.12, .55, .12], [x, y, z], par); o.rotation.z = rz; }); }
+    if (mg && n === 'Sapo Tóxico') { const sac = z6M(0x9aff3a, .9), wt = new T.MeshStandardMaterial({ color: 0x3a6a2a, roughness: .9 }); for (let i = 0; i < 6; i++) mkO6(g6S, wt, [.07, .07, .07], [Math.sin(i * 2.3) * .5, .95 + (i % 2) * .1, -.4 + (i % 3) * .35], par); [-1, 1].forEach(s => { const o = mkO6(g6S, sac, [.18, .18, .18], [s * .3, .95, -.55], par); fx.push(t => { o.scale.setScalar(.17 + Math.sin(t * 3 + s) * .04); }); }); }
+    if (mg && n === 'Demônio de Lava') { const fl = z6M(0xff6a1a, .85); [-1, 1].forEach(s => { const o = mkO6(g6C, fl, [.14, .5, .14], [s * .22, 2.95, 0], par); fx.push(t => { o.scale.y = .45 + Math.sin(t * 11 + s * 2) * .15; o.rotation.z = Math.sin(t * 7 + s) * .12; }); }); const cr = z6M(0xffa040, .7); for (let i = 0; i < 4; i++) { const o = mkO6(g6C, cr, [.03, .5, .03], [(i % 2 - .5) * .5, 1.5, .48], par); o.rotation.z = (i - 1.5) * .6; } }
+    if (mg && n === 'Golem de Cristal') { const sh = new T.MeshStandardMaterial({ color: 0xb89aff, emissive: 0x9a7aff, emissiveIntensity: 1, transparent: true, opacity: .85 }), os = []; for (let i = 0; i < 5; i++) os.push(mkO6(g6O, sh, [.17, .32, .17], [0, 2.2, 0], par)); fx.push(t => { os.forEach((o, i) => { const a = t * 1.4 + i * 1.2566; o.position.set(Math.cos(a) * 1.7, 2.1 + Math.sin(t * 2 + i) * .3, Math.sin(a) * 1.7); o.rotation.y = a * 2; }); }); }
+    if (d.boss) {
+      const col = d.col, orb = z6M(col, .95), rg = new T.Mesh(g6R, z6M(col, .55)), ru = new T.Mesh(g6R, z6M(col, .35)), os = []; rg.scale.setScalar(3.2); ru.scale.setScalar(2.2); rg.position.y = ru.position.y = .08; r.g.add(rg, ru);
+      for (let i = 0; i < 3; i++) os.push(mkO6(g6S, orb, [.26, .26, .26], [0, 2, 0], par)); const fl = z6M(col, .8); [-1, 1].forEach(s => { const o = mkO6(g6C, fl, [.2, .7, .2], [s * .95, 2.95, 0], par); fx.push(t => { o.scale.y = .6 + Math.sin(t * 9 + s) * .18; }); });
+      fx.push(t => { rg.rotation.y = t * .8; ru.rotation.y = -t * 1.2; rg.material.opacity = .45 + Math.sin(t * 3) * .12; os.forEach((o, i) => { const a = t * 1.1 + i * 2.094; o.position.set(Math.cos(a) * 2.1, 1.9 + Math.sin(t * 2 + i) * .4, Math.sin(a) * 2.1); }); const au = mg && mg.userData.aura; if (au) au.scale.setScalar(1.7 + Math.sin(t * 2.5) * .15); });
+    }
+  }
+  const z6Mk = mkMon;
+  mkMon = function (dd) { const r = z6Mk(dd); try { if (X14.fx && !dd.duel) d6(r, dd); } catch (e) { console.warn('detalhe monstro', e); } return r; };
+
+  /* aparição / morte: anéis + partículas */
+  const RG6 = [], ringT = (x, z, col, r0, r1, dur) => { let o = RG6.find(q => !q.m.visible); if (!o) { if (RG6.length >= 10) return; const m = new T.Mesh(g6R, z6M(col, .8)); m.visible = false; E.scene.add(m); o = { m, t: 0, d: 1, r0: 1, r1: 2 }; RG6.push(o); } o.m.material.color.setHex(col); o.m.position.set(x, E.W.H(x, z) + .1, z); o.t = 0; o.d = dur; o.r0 = r0; o.r1 = r1; o.m.visible = true; };
+  const WP6 = [], wisp = (x, y, z, col) => { let o = WP6.find(q => !q.m.visible); if (!o) { if (WP6.length >= 24) return; const m = new T.Sprite(new T.SpriteMaterial({ map: clT, color: 0xffffff, transparent: true, opacity: .7, depthWrite: false, blending: T.AdditiveBlending })); m.visible = false; E.scene.add(m); o = { m, t: 0, vx: 0, vz: 0 }; WP6.push(o); } o.m.material.color.setHex(col); o.m.position.set(x, y, z); o.t = 1.1; o.vx = (Math.random() - .5) * 1.5; o.vz = (Math.random() - .5) * 1.5; o.m.scale.setScalar(.5 + Math.random() * .5); o.m.visible = true; };
+  const spcCol = m => ({ ember: 0xff7a2a, frost: 0xbfe8ff, pois: 0x7dff4a, arcane: 0xc8a0ff, dust: 0xd8b878, boss: m.bc || 0xc27bff })[m.spc] || (m.elite ? 0xffd24a : 0xffb8a0);
+  const r14Rm = rmMon;
+  rmMon = function (m) {
+    try { if (X14.fx && m.hp <= 0 && m.key !== 'trn' && m.g && m.g.visible && G.mode === 'play') { const q = m.g.position, c = spcCol(m), n = m.d && m.d.boss ? 14 : 6; ringT(q.x, q.z, c, .6 * m.sz, (m.d && m.d.boss ? 7 : 3.2) * m.sz, .7); for (let i = 0; i < n; i++) wisp(q.x + (Math.random() - .5) * m.sz, q.y + .6 + Math.random() * 1.4 * m.sz, q.z + (Math.random() - .5) * m.sz, c); burst(q, c, m.d && m.d.boss ? 22 : 10); } } catch (e) {}
+    r14Rm(m);
+  };
+  const r14Hit = hit;
+  hit = function (m, dmg, crit) { r14Hit(m, dmg, crit); try { if (X14.fx && m.g && m.key !== 'duel') { m.pulse = .16; if (!cfg.bat) burst(m.g.position, crit ? 0xffd24a : spcCol(m), crit ? 7 : 3); } } catch (e) {} };
+
+  /* partículas de aura ligadas às criaturas */
+  const NP6 = 192, PS6 = 12, pg6 = new T.BufferGeometry(), pp6 = new Float32Array(NP6 * 3), pc6 = new Float32Array(NP6 * 3); pg6.setAttribute('position', new T.BufferAttribute(pp6, 3)); pg6.setAttribute('color', new T.BufferAttribute(pc6, 3));
+  const pm6 = new T.PointsMaterial({ size: .3, vertexColors: true, transparent: true, opacity: .85, depthWrite: false, blending: T.AdditiveBlending, sizeAttenuation: true }), pt6 = new T.Points(pg6, pm6); pt6.frustumCulled = false; E.scene.add(pt6);
+
+  /* status visuais por criatura (criados sob demanda) */
+  function st6(m) {
+    if (m.sx) return m.sx; const h = (m.mg && m.mg.userData.h) || 2, g = new T.Group(), fire = new T.Group(), ice = new T.Mesh(new T.BoxGeometry(1.8, h, 1.8), z6M(0x8ad8ff, .35)), stars = new T.Group();
+    for (let i = 0; i < 3; i++) { const f = new T.Mesh(g6C, z6M(i % 2 ? 0xff6a1a : 0xffb43a, .8)); f.scale.set(.3, .8, .3); f.position.set((i - 1) * .4, 1 + (i % 2) * .4, 0); fire.add(f); } for (let i = 0; i < 3; i++) { const s = new T.Mesh(g6O, z6M(0xffe35a, .95)); s.scale.setScalar(.12); stars.add(s); }
+    ice.position.y = h / 2; stars.position.y = h + .5; fire.visible = ice.visible = stars.visible = false; g.add(fire, ice, stars); m.g.add(g); return (m.sx = { fire, ice, stars, h });
+  }
+  function el6(m) {
+    if (m.ex) return; const e = new T.Group(), rg = new T.Mesh(g6T, z6M(0xffd24a, .9)); rg.rotation.x = Math.PI / 2; rg.scale.setScalar(1.3); rg.position.y = .15; const gl = new T.Mesh(g6S, z6M(0xffd24a, .35)); gl.scale.setScalar(.55); gl.position.y = ((m.mg && m.mg.userData.h) || 2) + .7; e.add(rg, gl); e.userData = { rg, gl }; m.g.add(e); m.ex = e;
+  }
+
+  /* ciclo principal */
+  E.updaters.push((dt, tt) => {
+    if (G.mode !== 'play' || !X14.fx) { pt6.visible = false; RG6.forEach(o => o.m.visible = false); WP6.forEach(o => o.m.visible = false); return; }
+    const p = E.player.position, now = performance.now(); pt6.visible = true; zEye.emissiveIntensity = .85 + Math.sin(tt * 3.2) * .35; let slot = 0, cnt = 0;
+    RG6.forEach(o => { if (!o.m.visible) return; o.t += dt; const k = o.t / o.d; if (k >= 1) { o.m.visible = false; return; } o.m.scale.setScalar(o.r0 + (o.r1 - o.r0) * k); o.m.material.opacity = .8 * (1 - k); });
+    WP6.forEach(o => { if (!o.m.visible) return; o.t -= dt; if (o.t <= 0) { o.m.visible = false; return; } o.m.position.x += o.vx * dt; o.m.position.z += o.vz * dt; o.m.position.y += dt * 1.8; o.m.material.opacity = Math.min(.7, o.t); });
+    for (let i = 0; i < mons.length; i++) {
+      const m = mons[i]; if (!m.g || m.hp <= 0 || m.key === 'duel') continue; const q = m.g.position, d = Math.hypot(q.x - p.x, q.z - p.z); if (d > 48) { m.g.visible = true; continue; }
+      const h = (m.mg && m.mg.userData.h) || 2;
+      /* aparição */
+      if (!m.born) { m.born = now; m.bs = m.g.scale.x; ringT(q.x, q.z, spcCol(m), .3, 2.6 * m.sz, .6); }
+      const age = (now - m.born) / 1000, ap = Math.min(1, age / .55), eas = 1 - Math.pow(1 - ap, 3); m.pulse = Math.max(0, (m.pulse || 0) - dt); const sq = 1 + (m.pulse > 0 ? m.pulse * 1.1 : 0), br = 1 + Math.sin(tt * 2.2 + (m.ph || 0)) * .014;
+      m.g.scale.set(m.bs * (.6 + .4 * eas) * sq, m.bs * (.6 + .4 * eas) * sq * br, m.bs * (.6 + .4 * eas) * sq);
+      if (m.fx) m.fx.forEach(f => f(tt, dt, m));
+      /* status */
+      const frz = m.frz > 0, brn = m.brn > 0, stn = m.stn > 0 && m.stn < 100;
+      if (frz || brn || stn || m.sx) { const s = st6(m); s.ice.visible = frz; s.fire.visible = brn; s.stars.visible = stn; if (brn) s.fire.children.forEach((f, k) => { f.scale.y = .6 + Math.sin(tt * 12 + k * 2) * .25; f.position.y = .9 + Math.sin(tt * 9 + k) * .1; }); if (stn) s.stars.children.forEach((c, k) => { const a = tt * 4 + k * 2.094; c.position.set(Math.cos(a) * .5, 0, Math.sin(a) * .5); }); }
+      /* elite */
+      if (m.elite) { el6(m); m.ex.userData.rg.rotation.z = tt * 1.5; m.ex.userData.gl.scale.setScalar(.5 + Math.sin(tt * 4) * .08); }
+      /* partículas */
+      if (cnt < NP6 / PS6 && d < 34) {
+        const sp = m.pois > 0 ? 'pois' : brn ? 'ember' : frz ? 'frost' : m.bld > 0 ? 'blood' : m.spc === 'boss' ? 'arcane' : m.spc || (m.elite ? 'gold' : ''); cnt++;
+        if (sp) { const c = sp === 'arcane' && m.spc === 'boss' ? [((m.bc >> 16) & 255) / 255, ((m.bc >> 8) & 255) / 255, (m.bc & 255) / 255] : PC6[sp] || PC6.gold, up = sp === 'ember' || sp === 'pois' || sp === 'gold' || sp === 'blood', R = (sp === 'arcane' ? 1.5 : sp === 'dust' ? 1.2 : .9) * m.sz;
+          for (let j = 0; j < PS6; j++) { const k = slot * 3, ph = (tt * (up ? .6 : .35) + j / PS6 + (m.ph || 0) * .1) % 1, a = j * 2.4 + tt * (sp === 'arcane' ? 1.5 : .6); pp6[k] = q.x + Math.cos(a) * R * (up ? .6 + ph * .3 : 1); pp6[k + 1] = q.y + (up ? .3 + ph * h * .9 : sp === 'dust' ? .15 + Math.abs(Math.sin(tt * 2 + j)) * .4 : h * .35 + Math.sin(a * 1.3 + j) * h * .35); pp6[k + 2] = q.z + Math.sin(a) * R * (up ? .6 + ph * .3 : 1); const f = up ? 1 - ph : .75; pc6[k] = c[0] * f; pc6[k + 1] = c[1] * f; pc6[k + 2] = c[2] * f; slot++; } }
+      }
+    }
+    for (let k = slot * 3; k < NP6 * 3; k += 3) { pp6[k + 1] = -999; } pg6.attributes.position.needsUpdate = true; pg6.attributes.color.needsUpdate = true;
+  });
+  { const lm = $('lobM'); }
 
   document.body.dataset.mode = 'start';
 }
